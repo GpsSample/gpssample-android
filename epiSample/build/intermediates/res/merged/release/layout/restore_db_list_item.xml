@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.path.episample.android.views.SingleChoiceView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/light_blue"
+    android:orientation="vertical"
+    android:paddingBottom="1dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="1dp" >
+
+    <RelativeLayout
+        android:id="@+id/selectContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/item_background_state" >
+
+       <RelativeLayout
+            android:id="@+id/censusInfoContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="1dp"
+            android:background="@color/white"
+            android:descendantFocusability="blocksDescendants" >
+
+            <ImageView
+                android:id="@+id/censusImageView"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="3dp"
+                android:contentDescription="@string/device"
+                android:src="@drawable/ic_database"
+                android:focusableInTouchMode="true" />
+
+            <LinearLayout
+                android:id="@+id/infoLinearLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dip"
+                android:layout_toRightOf="@id/censusImageView"
+                android:orientation="vertical"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp" >
+
+                <TextView
+                    android:id="@+id/dbNameTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="@string/database_name"
+                    android:textColor="@color/dark_blue" />
+
+                <TextView
+                    android:id="@+id/createdDateTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/created_date"
+                    android:textColor="@color/dark_brown"
+                    android:textSize="12sp"
+                    android:paddingTop="3dp"  />
+                
+            </LinearLayout>
+
+            <RadioButton 
+                android:id="@+id/radiobutton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:focusable="false"
+                android:clickable="false" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</org.path.episample.android.views.SingleChoiceView>

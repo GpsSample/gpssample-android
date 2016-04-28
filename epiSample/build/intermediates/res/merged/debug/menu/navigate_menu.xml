@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/filter_menu"
+        android:icon="@drawable/ic_action_filter"
+        android:showAsAction="always"
+        android:title="@string/filter"/>
+    <item
+        android:id="@+id/sort_menu"
+        android:icon="@drawable/ic_action_sort"
+        android:showAsAction="always"
+        android:title="@string/sort">
+        <menu>
+            <group android:checkableBehavior="single">
+            
+            <item
+                android:id="@+id/point_types"
+                android:title="@string/point_types" />
+            <item
+                android:id="@+id/closest_points"
+                android:title="@string/closest_points" />
+            <item
+                android:id="@+id/farthest_points"
+                android:title="@string/farthest_points" />
+            <item
+                android:id="@+id/newest_entry"
+                android:title="@string/newest_entry" />
+            <item
+                android:id="@+id/oldest_entry"
+                android:title="@string/oldest_entry" />
+            <item
+                android:id="@+id/enumerator_name"
+                android:title="@string/enumerator_name" />
+            <item
+                android:id="@+id/device_id"
+                android:title="@string/device_id" />
+            </group>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/filter_by_place_name_menu"
+        android:icon="@drawable/ic_filter_by_place_name"
+        android:showAsAction="always"
+        android:title="@string/filter_by_place_name"/>
+    <item
+        android:id="@+id/map_menu"
+        android:icon="@drawable/ic_action_map"
+        android:showAsAction="always"
+        android:title="@string/map"/>
+
+</menu>

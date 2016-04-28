@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ProgressWheel="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/light_blue"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin" >
+
+        <RelativeLayout
+            android:id="@+id/infoContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/item_background_state"
+            android:padding="10dp" >
+
+            <FrameLayout
+                android:id="@+id/compassContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:paddingRight="10dp" >
+
+                <org.path.episample.android.views.CompassView
+                    android:id="@+id/compass"
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
+                    android:src="@drawable/compass" />
+
+                <org.path.episample.android.views.CompassView
+                    android:id="@+id/censusLocation"
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
+                    android:src="@drawable/census_bearing"
+                    android:visibility="gone" />
+
+                <org.path.episample.android.views.CompassView
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
+                    android:src="@drawable/compass_heading" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/distanceContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/compassContainer"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/distanceTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/finalizedTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/incompleteTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/notStartedTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/gpsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/distanceContainer"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@id/compassContainer" >
+
+                <com.todddavies.components.progressbar.ProgressWheel
+                    android:id="@+id/signalQualitySpinner"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    ProgressWheel:barColor="#2E9121"
+                    ProgressWheel:barLen="30dp"
+                    ProgressWheel:barWidth="3dp"
+                    ProgressWheel:rimColor="#332E9121"
+                    ProgressWheel:rimWidth="1dp"
+                    ProgressWheel:text="@string/acc_value"
+                    ProgressWheel:textColor="#2E9121"
+                    ProgressWheel:textSize="12sp" />
+
+                <LinearLayout
+                    android:id="@+id/directionContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/signalQualitySpinner"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/headingTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/dark_blue"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/bearingTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/dark_blue"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/totalCensusTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/infoContainer"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/item_background_state"
+            android:gravity="center"
+            android:textColor="@color/dark_blue"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/totalCensusTextView"
+            android:background="@drawable/item_background_state"
+            android:orientation="vertical" >
+
+            <android.support.v4.widget.SwipeRefreshLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/swipe_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <ListView
+                    android:id="@+id/android:list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    android:scrollbars="none" />
+            </android.support.v4.widget.SwipeRefreshLayout>
+
+            <TextView
+                android:id="@id/android:empty"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:text="@string/no_points_to_display" />
+        </FrameLayout>
+    </RelativeLayout>
+
+</LinearLayout>

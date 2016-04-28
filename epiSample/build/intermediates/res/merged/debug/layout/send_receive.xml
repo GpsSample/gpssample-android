@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_blue"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin" >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/item_background_state"
+        android:padding="4dp"
+        android:text="@string/this_device"
+        android:textColor="@color/dark_blue"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/item_background_state"
+        android:padding="6dp" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="6dp"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/dark_blue"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/myDeviceImageView"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="@string/device"
+                android:src="@drawable/ic_device" />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/myDeviceNameTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="3dp"
+                    android:singleLine="true"
+                    android:text="@string/me"
+                    android:textColor="@color/dark_blue" />
+
+                <TextView
+                    android:id="@+id/myDeviceStatusTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/myDeviceNameTextView"
+                    android:paddingLeft="3dp"
+                    android:singleLine="true"
+                    android:textColor="@color/dark_brown"
+                    android:textSize="12sp" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/connectWithFriendsButtonContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|right"
+            android:layout_marginRight="4dp"
+            android:background="@drawable/curve_border_blue_button"
+            android:clickable="true"
+            android:visibility="gone" >
+
+            <ImageButton
+                android:id="@+id/connectWithFriendsImageButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="-2dp"
+                android:background="@drawable/left_border_blue_part_of_button"
+                android:contentDescription="@string/save"
+                android:src="@drawable/ic_connect_with_friends" />
+
+            <TextView
+                android:id="@+id/createConnectionTextView"
+                android:layout_width="90dp"
+                android:layout_height="40dp"
+                android:layout_toRightOf="@id/connectWithFriendsImageButton"
+                android:gravity="center"
+                android:text="@string/connect"
+                android:textColor="#ffffff"
+                android:textSize="16sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/discoverPeersButtonContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|right"
+            android:layout_marginRight="4dp"
+            android:background="@drawable/curve_border_blue_button"
+            android:clickable="true" >
+
+            <ImageButton
+                android:id="@+id/discoverPeersImageButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="-2dp"
+                android:background="@drawable/left_border_blue_part_of_button"
+                android:contentDescription="@string/save"
+                android:src="@drawable/ic_search" />
+
+            <TextView
+                android:id="@+id/discoverPeersTextView"
+                android:layout_width="90dp"
+                android:layout_height="40dp"
+                android:layout_toRightOf="@id/discoverPeersImageButton"
+                android:gravity="center"
+                android:text="@string/connect"
+                android:textColor="#ffffff"
+                android:textSize="16sp" />
+        </RelativeLayout>
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:background="@drawable/item_background_state"
+        android:padding="4dp"
+        android:text="@string/connected_peers"
+        android:textColor="@color/dark_blue"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/findDeviceLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/item_background_state"
+        android:orientation="vertical" >
+
+        <ListView
+            android:id="@+id/android:list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none" />
+
+        <TextView
+            android:id="@id/android:empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:text="@string/team_lead_device_not_connected" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/sendPullButtonContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/item_background_state"
+        android:padding="10dp" >
+
+        <RelativeLayout
+            android:id="@+id/receiveButtonContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/curve_border_blue_button"
+            android:clickable="true" >
+
+            <ImageButton
+                android:id="@+id/receiveImageButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="-2dp"
+                android:background="@drawable/left_border_blue_part_of_button"
+                android:contentDescription="@string/save"
+                android:src="@drawable/ic_pull_data" />
+
+            <TextView
+                android:id="@+id/receiveTextView"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:layout_toRightOf="@id/receiveImageButton"
+                android:gravity="center"
+                android:text="@string/receive"
+                android:textColor="#ffffff"
+                android:textSize="16sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/sendButtonContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/curve_border_blue_button"
+            android:clickable="true" >
+
+            <ImageButton
+                android:id="@+id/sendImageButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="-2dp"
+                android:background="@drawable/left_border_blue_part_of_button"
+                android:contentDescription="@string/save"
+                android:src="@drawable/ic_send_data" />
+
+            <TextView
+                android:id="@+id/sendTextView"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:layout_toRightOf="@id/sendImageButton"
+                android:gravity="center"
+                android:text="@string/send"
+                android:textColor="#ffffff"
+                android:textSize="16sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/peersDiscoveredContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/item_background_state"
+        android:baselineAligned="false"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="6dp" >
+
+        <ProgressBar
+            android:id="@+id/searchingProgressBar"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:indeterminateDrawable="@drawable/blue_progress_bar"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/peersDiscoveredTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:text="@string/start_peer_discovery"
+            android:textColor="@color/dark_blue"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/item_background_state"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:paddingBottom="6dp"
+        android:paddingTop="6dp" >
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <TextView
+                android:id="@+id/infoValidTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/total_valid"
+                android:textColor="@color/total_info"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/totalValidTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/infoValidTextView"
+                android:gravity="center"
+                android:paddingTop="5dp"
+                android:text="@string/zero"
+                android:textColor="@color/spinner_text_color_green"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <TextView
+                android:id="@+id/infoInvalidTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/total_invalid"
+                android:textColor="@color/total_info"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/totalInalidTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/infoInvalidTextView"
+                android:gravity="center"
+                android:paddingTop="5dp"
+                android:text="@string/zero"
+                android:textColor="@color/spinner_text_color_red"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <TextView
+                android:id="@+id/infoExcludedTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/total_excluded"
+                android:textColor="@color/total_info"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/totalExcludedTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/infoExcludedTextView"
+                android:gravity="center"
+                android:paddingTop="5dp"
+                android:text="@string/zero"
+                android:textColor="@color/total_info"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (C) 2009 University of Washington
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+-->
+<resources>
+
+    <drawable name="white">#ffffffff</drawable>
+    <drawable name="black">#ff000000</drawable>
+
+    <drawable name="option_on">#4285f4</drawable>
+	<drawable name="option_off">#bed3f7</drawable>
+
+	<color name="pressed_blue">#4285f4</color>
+	<color name="light_blue">#d1dbea</color>
+	<color name="title_bar_blue">#4285f4</color>
+	<color name="shadow">#999999</color>
+	<color name="text_white">#ffffffff</color>
+	<color name="white_color">#ffffffff</color>
+	<color name="black_color">#ff000000</color>
+	<color name="background_light_blue">#b6c1cb</color>
+	<color name="dark_blue">#536379</color>
+	<color name="sky_blue">#ffa9c5e8</color>
+	<color name="dark_brown">#828282</color>
+	<color name="light_brown">#fafafa</color>
+	<color name="brown">#9fa2a6</color>
+	<color name="line_brown">#e0e2e5</color>
+	<color name="line_blue">#c0ccde</color>
+	<color name="selected_row_blue">#eaf1fd</color>
+	<color name="selected_row_base_blue">#e0e9fa</color>
+	<color name="swip_to_refresh_color">#4387e4</color>
+	<color name="red">#FF0000</color>
+	
+	<color name="text_hint_color">#9ea7c0</color>
+	<color name="light_green">#d1de71</color>
+	<color name="light_yellow">#fbec9b</color>
+	<color name="light_black">#7d7b7b</color>
+	<color name="light_red">#FFE5CC</color>
+	<color name="text_black">#000033</color>
+	<color name="spinner_text_color">#8c96a2</color>
+	
+	<color name="spinner_bar_color_green">#2E9121</color>
+	<color name="spinner_bar_color_yellow">#C7A900</color>
+	<color name="spinner_bar_color_red">#FF0000</color>
+	<color name="spinner_bar_color_black">#000000</color>
+	
+	<color name="spinner_rim_color_green">#332E9121</color>
+	<color name="spinner_rim_color_yellow">#C7A900</color>
+	<color name="spinner_rim_color_red">#33FF0000</color>
+	<color name="spinner_rim_color_black">#33000000</color>
+	
+	<color name="spinner_text_color_green">#2E9121</color>
+	<color name="spinner_text_color_yellow">#C7A900</color>
+	<color name="spinner_text_color_red">#FF0000</color>
+	<color name="spinner_text_color_black">#000000</color>
+	
+	<color name="total_info">#9ea7b3</color>
+	<color name="transparent_bg">#00ffffff</color>
+    
+</resources>

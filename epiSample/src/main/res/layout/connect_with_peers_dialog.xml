@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="5dip" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dialog_title_bar"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="1dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="@string/connect"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/closeDialogImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/close_button"
+            android:contentDescription="@string/exit"
+            android:clickable="true"
+            android:onClick="closeClickListener" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:background="@drawable/bottom_dialog"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/scanLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="visible" >
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dip"
+                android:layout_gravity="center"
+                android:layout_weight="1" >
+
+                <LinearLayout
+                    android:id="@+id/findDeviceLinearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" >
+
+                    <ImageView
+                        android:id="@+id/connectionFoundImageView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/connection_found"
+                        android:visibility="gone" />
+					<ListView
+                        android:id="@+id/android:list"
+                        style="@style/decive_scan_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scrollbars="none" />
+                    
+                    <TextView
+				        android:id="@id/android:empty"
+				        android:layout_width="match_parent"
+				        android:layout_height="match_parent"
+				        android:gravity="center"
+				        android:text="@string/no_devices_found"
+				        android:paddingLeft="4dp"
+				        android:paddingRight="4dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/loadingLinearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone" >
+
+                    <ProgressBar
+                        android:id="@+id/searchingProgressBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/large_loading_progressbar_style" />
+
+                    <TextView
+                        android:id="@+id/messageTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="10dip"
+                        android:gravity="center"
+                        android:text="@string/searching_4_peers"
+                        android:textColor="#ff8e8e8e" />
+                </LinearLayout>
+
+            </FrameLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dip"
+                android:background="@drawable/divider_line" />
+
+            <RelativeLayout
+                        android:id="@+id/discoverPeersButtonContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" 
+                        android:background="@drawable/curve_border_blue_button"
+                        android:clickable="true"
+                        android:onClick="rediscoverPeersClickListener"
+                        android:layout_margin="5dp" >
+
+                        <ImageButton
+                            android:id="@+id/discoverPeersImageButton"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginRight="-2dp"
+                            android:background="@drawable/left_border_blue_part_of_button"
+                            android:contentDescription="@string/save"
+                            android:src="@drawable/ic_search"
+                            android:onClick="rediscoverPeersClickListener" />
+
+                        <TextView
+                            android:id="@+id/discoverPeersTextView"
+                            android:layout_width="90dp"
+                            android:layout_height="40dp"
+                            android:layout_toRightOf="@id/discoverPeersImageButton"
+                            android:gravity="center"
+                            android:text="@string/connect"
+                            android:textColor="#ffffff"
+                            android:textSize="16sp" />
+                        </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

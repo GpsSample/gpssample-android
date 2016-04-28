@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.path.episample.android.views.TwoItemMultipleChoiceView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:paddingRight="8dip"
+	android:paddingLeft="8dip"
+	android:paddingTop="4dip"
+	android:paddingBottom="4dip">
+   	<ImageView
+		android:id="@+id/imageButton1"
+		android:layout_width="40dp"
+		android:layout_height="40dp"
+		android:layout_centerVertical="true"
+		android:layout_alignParentTop="true"
+		android:src="@+drawable/ic_census_by_date"
+		android:contentDescription="@string/remove"
+		android:textAppearance="?android:attr/textAppearanceLarge"/>
+	<TextView
+		android:id="@+id/dateTextView"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerVertical="true"
+		android:gravity="center"
+		android:layout_toRightOf="@+id/imageButton1"
+		android:textColor="@color/dark_blue"
+		android:paddingLeft="10dp"
+		android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+	<CheckBox
+		android:id="@+id/checkbox"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_vertical"
+		android:focusable="false"
+		android:clickable="false"
+		android:layout_centerVertical="true"
+		android:layout_alignParentRight="true"
+		android:button="@drawable/checkbox" />
+</org.path.episample.android.views.TwoItemMultipleChoiceView>

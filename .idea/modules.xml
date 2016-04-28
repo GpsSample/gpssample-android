@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/EpiSample.iml" filepath="$PROJECT_DIR$/EpiSample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/androidCommon/androidCommon.iml" filepath="$PROJECT_DIR$/androidCommon/androidCommon.iml" />
+      <module fileurl="file://$PROJECT_DIR$/epiSample/epiSample.iml" filepath="$PROJECT_DIR$/epiSample/epiSample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/progressWheel/progressWheel.iml" filepath="$PROJECT_DIR$/progressWheel/progressWheel.iml" />
+    </modules>
+  </component>
+</project>

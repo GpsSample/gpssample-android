@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/distance_menu"
+        android:icon="@drawable/ic_distance"
+        android:showAsAction="always"
+        android:title="@string/distance_menu">
+        <menu>
+            <group android:checkableBehavior="single">
+            
+            <item
+                android:id="@+id/close_points"
+                android:title="@string/close_points" />
+            <item
+                android:id="@+id/distant_points"
+                android:title="@string/distant_points" />
+            </group>
+        </menu>
+    </item>
+
+</menu>

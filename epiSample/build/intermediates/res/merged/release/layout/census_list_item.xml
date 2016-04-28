@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/light_blue"
+    android:orientation="vertical"
+    android:paddingBottom="1dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="1dp" >
+
+    <RelativeLayout
+        android:id="@+id/selectContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/item_background_state" >
+
+       <RelativeLayout
+            android:id="@+id/censusInfoContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="1dp"
+            android:background="@color/white" >
+
+            <ImageView
+                android:id="@+id/censusImageView"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="3dp"
+                android:contentDescription="@string/device" />
+
+            <LinearLayout
+                android:id="@+id/infoLinearLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dip"
+                android:layout_toRightOf="@id/censusImageView"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/headNameTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="@string/head_name"
+                    android:textColor="@color/dark_blue" />
+
+                <TextView
+                    android:id="@+id/houseNoTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/house_number"
+                    android:textColor="@color/dark_brown"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/commentTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/comment"
+                    android:textColor="@color/dark_brown"
+                    android:textSize="12sp"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/placeNameTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/dark_brown"
+                    android:textSize="12sp"
+                    android:text="@string/place_name_hierarchy" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/censusInfoBaseContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/censusInfoContainer"
+            android:gravity="right"
+            android:background="@drawable/item_background_brown"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/distanceTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="26dp"
+                android:gravity="right|center"
+                android:paddingRight="6dp"
+                android:singleLine="true"
+                android:text="@string/distance"
+                android:textColor="@color/dark_brown"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>

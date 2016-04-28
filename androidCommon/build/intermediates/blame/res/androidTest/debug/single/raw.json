@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "C:\\Users\\bserda\\AndroidStudioProjects\\EpiSample\\androidCommon\\build\\intermediates\\res\\merged\\androidTest\\debug\\raw\\license.txt",
+        "source": "C:\\Users\\bserda\\AndroidStudioProjects\\EpiSample\\androidCommon\\build\\intermediates\\bundles\\debug\\res\\raw\\license.txt"
+    },
+    {
+        "merged": "C:\\Users\\bserda\\AndroidStudioProjects\\EpiSample\\androidCommon\\build\\intermediates\\res\\merged\\androidTest\\debug\\raw\\gtm_analytics",
+        "source": "C:\\Users\\bserda\\AndroidStudioProjects\\EpiSample\\androidCommon\\build\\intermediates\\exploded-aar\\com.google.android.gms\\play-services-analytics\\8.4.0\\res\\raw\\gtm_analytics"
+    }
+]

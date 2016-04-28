@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/light_blue"
+    android:orientation="vertical"
+    android:paddingBottom="1dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="1dp" >
+
+    <RelativeLayout
+        android:id="@+id/selectContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/item_background_state" >
+
+        <RelativeLayout
+            android:id="@+id/infoRelativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="1dp" >
+
+            <ImageView
+                android:id="@+id/deviceImageView"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="3dp"
+                android:contentDescription="@string/device"
+                android:src="@drawable/ic_device" />
+
+            <LinearLayout
+                android:id="@+id/infoLinearLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dip"
+                android:layout_toRightOf="@id/deviceImageView"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/deviceNameTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="@string/device"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/deviceStatusTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/join"
+                    android:textColor="@color/dark_brown"
+                    android:textSize="12sp" />
+            </LinearLayout>
+            
+            <ImageView
+                android:id="@+id/disconnectImageView"
+				android:layout_width="40dp"
+				android:layout_height="40dp"
+				android:background="@drawable/circular_button"
+				android:layout_alignParentRight="true"
+				android:layout_centerVertical="true"
+				android:contentDescription="@string/disconnect"
+				android:src="@drawable/ic_disconnect"
+				android:layout_marginRight="6dp"/>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/totalLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/infoRelativeLayout"
+            android:baselineAligned="false"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="3dp" >
+
+            <TextView
+                android:id="@+id/totalValidTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="53dp"
+                android:layout_weight="1"
+                android:text="@string/send_receive_valid"
+                android:textColor="@color/dark_brown"
+                android:textSize="13sp"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/totalInalidTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/send_receive_invalid"
+                android:textColor="@color/dark_brown"
+                android:textSize="13sp"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/totalExcludedTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/send_receive_excluded"
+                android:textColor="@color/dark_brown"
+                android:textSize="13sp"
+                android:singleLine="true" />
+        </LinearLayout>
+
+       <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/totalLinearLayout"
+            android:background="@drawable/item_background_brown"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:layout_marginRight="1dp"
+            android:paddingLeft="40dp" >
+
+            <RelativeLayout
+                android:id="@+id/receivedContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_marginLeft="2dp" >
+
+                <ImageView
+                    android:id="@+id/receivedImageView"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginLeft="2dp"
+                    android:contentDescription="@string/device"
+                    android:gravity="left|center"
+                    android:src="@drawable/ic_received" />
+
+                <TextView
+                    android:id="@+id/receivedTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="26dp"
+                    android:layout_toRightOf="@id/receivedImageView"
+                    android:gravity="left|center"
+                    android:paddingLeft="3dp"
+                    android:text="@string/received"
+                    android:textColor="@color/dark_brown"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:singleLine="true" />
+            </RelativeLayout>
+            
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp" >
+
+                <ImageView
+                    android:id="@+id/sendImageView"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginLeft="2dp"
+                    android:contentDescription="@string/device"
+                    android:gravity="left|center"
+                    android:src="@drawable/ic_sent" />
+
+                <TextView
+                    android:id="@+id/sentTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="26dp"
+                    android:layout_toRightOf="@id/sendImageView"
+                    android:gravity="left|center"
+                    android:paddingLeft="3dp"
+                    android:text="@string/sent"
+                    android:textColor="@color/dark_brown"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:singleLine="true" />
+            </RelativeLayout>
+           
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>

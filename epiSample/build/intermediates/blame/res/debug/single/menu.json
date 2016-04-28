@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "C:\\Users\\bserda\\AndroidStudioProjects\\EpiSample\\epiSample\\build\\intermediates\\res\\merged\\debug\\menu\\invalidate_menu.xml",
+        "source": "C:\\Users\\bserda\\AndroidStudioProjects\\EpiSample\\epiSample\\src\\main\\res\\menu\\invalidate_menu.xml"
+    },
+    {
+        "merged": "C:\\Users\\bserda\\AndroidStudioProjects\\EpiSample\\epiSample\\build\\intermediates\\res\\merged\\debug\\menu\\navigate_menu.xml",
+        "source": "C:\\Users\\bserda\\AndroidStudioProjects\\EpiSample\\epiSample\\src\\main\\res\\menu\\navigate_menu.xml"
+    }
+]

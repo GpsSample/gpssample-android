@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/light_blue"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/parentLinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/light_blue"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_horizontal_margin"
+                android:paddingBottom="@dimen/activity_horizontal_margin" >
+                
+               <LinearLayout
+                    android:id="@+id/showSelectedContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="7dp"
+                    android:background="@drawable/item_background_state"
+                    android:orientation="vertical" >
+                    <CheckBox
+	                    android:id="@+id/mainPointCheckBox"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:button="@drawable/checkbox"
+	                    android:checked="false"
+	                    android:padding="7dp"
+	                    android:textSize="16sp"
+	                    android:text="@string/main_points"
+	                    android:textColor="@color/dark_blue" />
+                    <CheckBox
+	                    android:id="@+id/additionalPointCheckBox"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:button="@drawable/checkbox"
+	                    android:checked="false"
+	                    android:padding="7dp"
+	                    android:textSize="16sp"
+	                    android:text="@string/additional_points"
+	                    android:textColor="@color/dark_blue" />
+                    <CheckBox
+	                    android:id="@+id/alternatePointCheckBox"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:button="@drawable/checkbox"
+	                    android:checked="false"
+	                    android:padding="7dp"
+	                    android:textSize="16sp"
+	                    android:text="@string/alternate_points"
+	                    android:textColor="@color/dark_blue" />
+                    <CheckBox
+	                    android:id="@+id/excludedPointCheckBox"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:button="@drawable/checkbox"
+	                    android:checked="false"
+	                    android:padding="7dp"
+	                    android:textSize="16sp"
+	                    android:text="@string/excluded_points"
+	                    android:textColor="@color/dark_blue" />
+                    <CheckBox
+	                    android:id="@+id/pointNotSelectedCheckBox"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:button="@drawable/checkbox"
+	                    android:checked="false"
+	                    android:padding="7dp"
+	                    android:textSize="16sp"
+	                    android:text="@string/not_selected_points"
+	                    android:textColor="@color/dark_blue" />
+					<CheckBox
+	                    android:id="@+id/finalizedPointsCheckBox"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:button="@drawable/checkbox"
+	                    android:checked="false"
+	                    android:padding="7dp"
+	                    android:textSize="16sp"
+	                    android:text="@string/finalized_points"
+	                    android:textColor="@color/dark_blue" />
+					
+                    </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/selectContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@drawable/item_background_state"
+                    android:gravity="center" >
+
+                    <RelativeLayout
+                        android:id="@+id/selectButtonContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:background="@drawable/curve_border_blue_button"
+                        android:clickable="true"
+                        android:onClick="selectClickListener" >
+
+                        <ImageButton
+                            android:id="@+id/selectImageButton"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginRight="-2dp"
+                            android:background="@drawable/left_border_blue_part_of_button"
+                            android:contentDescription="@string/select"
+                            android:onClick="selectClickListener"
+                            android:src="@drawable/ic_tick" />
+
+                        <TextView
+                            android:id="@+id/selectButton"
+                            android:layout_width="80dp"
+                            android:layout_height="40dp"
+                            android:layout_toRightOf="@id/selectImageButton"
+                            android:gravity="center"
+                            android:text="@string/select_place_name_button"
+                            android:textColor="#ffffff"
+                            android:textSize="16sp" />
+                    </RelativeLayout>
+                </RelativeLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

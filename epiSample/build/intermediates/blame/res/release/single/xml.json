@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "C:\\Users\\bserda\\AndroidStudioProjects\\EpiSample\\epiSample\\build\\intermediates\\res\\merged\\release\\xml\\admin_preferences.xml",
+        "source": "C:\\Users\\bserda\\AndroidStudioProjects\\EpiSample\\epiSample\\src\\main\\res\\xml\\admin_preferences.xml"
+    },
+    {
+        "merged": "C:\\Users\\bserda\\AndroidStudioProjects\\EpiSample\\epiSample\\build\\intermediates\\res\\merged\\release\\xml\\preferences.xml",
+        "source": "C:\\Users\\bserda\\AndroidStudioProjects\\EpiSample\\epiSample\\src\\main\\res\\xml\\preferences.xml"
+    }
+]

@@ -1,0 +1,22 @@
+[
+    {
+        "merged": "C:\\Users\\bserda\\AndroidStudioProjects\\EpiSample\\epiSample\\build\\intermediates\\res\\merged\\debug\\raw\\assetszip",
+        "source": "C:\\Users\\bserda\\AndroidStudioProjects\\EpiSample\\epiSample\\src\\main\\res\\raw\\assetszip"
+    },
+    {
+        "merged": "C:\\Users\\bserda\\AndroidStudioProjects\\EpiSample\\epiSample\\build\\intermediates\\res\\merged\\debug\\raw\\gtm_analytics",
+        "source": "C:\\Users\\bserda\\AndroidStudioProjects\\EpiSample\\epiSample\\build\\intermediates\\exploded-aar\\com.google.android.gms\\play-services-analytics\\8.4.0\\res\\raw\\gtm_analytics"
+    },
+    {
+        "merged": "C:\\Users\\bserda\\AndroidStudioProjects\\EpiSample\\epiSample\\build\\intermediates\\res\\merged\\debug\\raw\\frameworkzip",
+        "source": "C:\\Users\\bserda\\AndroidStudioProjects\\EpiSample\\epiSample\\src\\main\\res\\raw\\frameworkzip"
+    },
+    {
+        "merged": "C:\\Users\\bserda\\AndroidStudioProjects\\EpiSample\\epiSample\\build\\intermediates\\res\\merged\\debug\\raw\\tableszip",
+        "source": "C:\\Users\\bserda\\AndroidStudioProjects\\EpiSample\\epiSample\\src\\main\\res\\raw\\tableszip"
+    },
+    {
+        "merged": "C:\\Users\\bserda\\AndroidStudioProjects\\EpiSample\\epiSample\\build\\intermediates\\res\\merged\\debug\\raw\\license.txt",
+        "source": "C:\\Users\\bserda\\AndroidStudioProjects\\EpiSample\\epiSample\\build\\intermediates\\exploded-aar\\EpiSample\\androidCommon\\unspecified\\res\\raw\\license.txt"
+    }
+]

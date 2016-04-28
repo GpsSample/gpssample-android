@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_blue"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin" >
+
+    <TextView
+            android:id="@+id/totalDatabasesTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/item_background_state"
+            android:gravity="center"
+            android:textColor="@color/dark_blue"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/item_background_state"
+        android:orientation="vertical" >
+
+        <ListView
+            android:id="@+id/android:list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none" />
+
+        <TextView
+            android:id="@id/android:empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:text="@string/no_backup_files_found" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/joinRestoreButtonsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/item_background_state"
+        android:padding="10dp" >
+
+        <RelativeLayout
+            android:id="@+id/joinRestoreButtonContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/curve_border_blue_button"
+            android:clickable="true" >
+
+            <ImageButton
+                android:id="@+id/joinRestoreImageButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="-2dp"
+                android:background="@drawable/left_border_blue_part_of_button"
+                android:contentDescription="@string/join_restore"
+                android:src="@drawable/ic_join_restore" />
+
+            <TextView
+                android:id="@+id/joinRestoreTextView"
+                android:layout_width="110dp"
+                android:layout_height="40dp"
+                android:layout_toRightOf="@id/joinRestoreImageButton"
+                android:gravity="center"
+                android:text="@string/join_restore"
+                android:textColor="#ffffff"
+                android:textSize="16sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/restoreButtonContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/curve_border_blue_button"
+            android:clickable="true" >
+
+            <ImageButton
+                android:id="@+id/restoreImageButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="-2dp"
+                android:background="@drawable/left_border_blue_part_of_button"
+                android:contentDescription="@string/restore"
+                android:src="@drawable/ic_restore" />
+
+            <TextView
+                android:id="@+id/restoreTextView"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:layout_toRightOf="@id/restoreImageButton"
+                android:gravity="center"
+                android:text="@string/restore"
+                android:textColor="#ffffff"
+                android:textSize="16sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</LinearLayout>

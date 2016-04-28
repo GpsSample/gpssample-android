@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.google.android.gms\play-services-wallet\8.4.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="f2df436a8f02ce7e4d7d209671fc45f97c470f0e">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-wallet-8.4.0_42bef49a7448c35fd29d0daff813bcadb6474b9e.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\EpiSample\androidCommon\unspecified\jars\libs\aggregate-rest-interface-2014-11-24.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="3fe8de2715b309b84004ca19cfc5c6c3847b103e">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\aggregate-rest-interface-2014-11-24_8b6ab80515a7ed70ccff22bf61c5e105e87387df.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\EpiSample\androidCommon\unspecified\jars\libs\jackson-module-jaxb-annotations-2.4.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="9985615010b2184f7e2fefcb88cdf7809ad30189">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\jackson-module-jaxb-annotations-2.4.1_5e69c2ca7d7db6c878e4961c084126d370ccdef6.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.google.android.gms\play-services-maps\8.4.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="04de44f90606c77f3b28cf44861f306290505aac">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-maps-8.4.0_9f8f33e0b2f5faa1cc9466beac3bfcde23629fbe.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\EpiSample\androidCommon\unspecified\jars\libs\jackson-jaxrs-json-provider-2.4.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="956c2ff1f9e97819b0bcf78be403982a0095b562">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\jackson-jaxrs-json-provider-2.4.1_8a32015cf5cae785c1d65ba2834a6a193cc0da31.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.google.android.gms\play-services-vision\8.4.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="dfecc4d835cdabcdecf7e95f0d20a3ef1e9d8ef4">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-vision-8.4.0_168d4e972975303e82bfc5bb06ec03612dadaae7.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\EpiSample\androidCommon\unspecified\jars\libs\kxml2-2.3.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="af4bcdd4f46add4901f47c250054c66702a53726">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\kxml2-2.3.0_1a617b4ec82e7067213798816e0eb9494eb9e1d1.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\EpiSample\androidCommon\unspecified\jars\libs\jsr311-api-1.1.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="58badb6cf19a24a7170dbe6c82011eb8caa52192">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\jsr311-api-1.1.1_03e24a0cea579c9e7ea9a115f9ff42cd122a31aa.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.google.android.gms\play-services-measurement\8.4.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="613298b7aa012f121ce542881c0a599ebd8078f2">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-measurement-8.4.0_e7ea1b2b76af776c202b7788615f4014f261d50b.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\EpiSample\androidCommon\unspecified\jars\libs\jackson-jaxrs-xml-provider-2.4.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="bf76ed374be4e0d8879d2a63e05d9250d62a1ea2">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\jackson-jaxrs-xml-provider-2.4.1_e713036c5f39eca08652550055db5c0e2bfdafe6.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.google.android.gms\play-services-games\8.4.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="3a364cc6b698d1b3b2d284f64618daaa7fe77ddf">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-games-8.4.0_d75b1a87f6ded6fd6850c9ecaa302fc353c46267.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.android.support\mediarouter-v7\23.0.0\jars\libs\internal_impl-23.0.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="03d38bb042efe3e5ce27ba66b729a9523c36d8fe">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\internal_impl-23.0.0_292c7b403c2c9280cd384424421796cdfc6c3934.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.google.android.gms\play-services-location\8.4.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="a8412b654dab86d57bf90683367488211c8a81f1">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-location-8.4.0_96c2459076fbc197cba00f9b86c185698a008aea.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.google.android.gms\play-services-wearable\8.4.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="e167a34eaca0b31704212f43f9576ea84e05046f">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-wearable-8.4.0_3bd0617ce09ffecdbf8f440c2c3a97b483736fb0.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.google.android.gms\play-services-identity\8.4.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="b82b8e847173c28efffcd291b2a0b1ae9ad17fa4">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-identity-8.4.0_9e8f1b5141e43060c7eec9ccc634d4d5fa4d8a01.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\.gradle\caches\modules-2\files-2.1\joda-time\joda-time\2.2\a5f29a7acaddea3f4af307e8cf2d0cc82645fd7d\joda-time-2.2.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="a5f29a7acaddea3f4af307e8cf2d0cc82645fd7d">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\joda-time-2.2_9b5d3b101c5b4fd6a30f070c4b40ed285a803f5b.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.1\jars\libs\internal_impl-23.1.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="a4de9c81ae239414e1ed0f86441b02abaf29bca9">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\internal_impl-23.1.1_651f3fbb029a0f54973073af00bb1f93ea3c1b5b.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\EpiSample\androidCommon\unspecified\jars\libs\jcl-over-slf4j-1.6.6.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="890fe91ed1480721865f359c60f34a1661c0138b">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\jcl-over-slf4j-1.6.6_33f02d14b590ea5704e224552edc479e7fbb9ed6.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.1\2e66da15851f9f5b5079228f856c2f090ba98c38\gson-2.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="2e66da15851f9f5b5079228f856c2f090ba98c38">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\gson-2.1_00d133175e119245eea9aaefbc5edde43c9556e4.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\EpiSample\androidCommon\unspecified\jars\libs\jackson-dataformat-xml-2.4.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="631198380a530a27a7e4a70a9daa028a5bce37dd">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\jackson-dataformat-xml-2.4.1_fc9428d0ec368949dfef91c1590ab3e23eabe976.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.google.android.gms\play-services-ads\8.4.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="b5e7892fb0708e792e0e933c4c0a0ca0ac7831fb">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-ads-8.4.0_e010c1a4d1c22700c4f9324f23a8ca2f96c41455.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.google.android.gms\play-services-appinvite\8.4.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="9fe026fb4c7fce21bc5142f6e1bdf844f28061ac">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-appinvite-8.4.0_da5b154e312893307daddcb12831cd0bd53810db.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\EpiSample\androidCommon\unspecified\jars\libs\commons-codec-1.9.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="8701bf14e55d2568211b3dbdc4143144021e1c78">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\commons-codec-1.9_a298b9b3b16c525936b1b49205800605030dc317.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\EpiSample\androidCommon\unspecified\jars\libs\wink-jackson2-client-1.4-sources.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="26d5c40ebdc8d07982abfdb2f681c145939fcf3c">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\wink-jackson2-client-1.4-sources_a34dd6bb127c1528d2d1aad94f4fa1fdecd32f00.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\EpiSample\androidCommon\unspecified\jars\libs\httpclientandroidlib-4.2.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="79f4103d61a591ea19c7e227bf676171f1ee1eaf">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\httpclientandroidlib-4.2.1_806451f108b8f692d093388444920b6af2e8350a.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\EpiSample\androidCommon\unspecified\jars\libs\slf4j-api-1.6.6.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="a7bedd7f9f9979db5d09c7bbee03ad605badc934">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\slf4j-api-1.6.6_ae465dd1f13436078edf06bf42eab117cfbcfc89.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.google.android.gms\play-services-drive\8.4.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="b36f30ac5ee5d5214f4b1e2ac49f11889d58e71a">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-drive-8.4.0_affa82c510513641cc5ff47f1c3e3d94bd65e97f.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.google.android.gms\play-services-plus\8.4.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="1a78298e7724d5440d210bcb946b3493250d354d">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-plus-8.4.0_b561cdd91209008307cdfd3ca8092606891d0f03.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\EpiSample\androidCommon\unspecified\jars\libs\commons-lang3-3.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="0b384990831b8fff5edcb4bb9a0dd1ca60ea4684">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\commons-lang3-3.1_d78abb14c5862755462b48646273c39baedd3696.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\EpiSample\androidCommon\unspecified\jars\libs\jackson-jaxrs-base-2.4.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="4ab9978a1a96931702df721dfd2c1255cec2b531">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\jackson-jaxrs-base-2.4.1_52f7f67803d308d84312c43c6131a5bf1eff4192.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.google.android.gms\play-services-auth\8.4.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="966e5771a5a2ebfb31bf00d7cd6cd2546d245517">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-auth-8.4.0_8a6138683b4fbc15b8e5fa32875c99b817a65aa4.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\EpiSample\androidCommon\unspecified\jars\libs\jackson-core-2.4.1.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="bf12708386855ac38c0b9ad4e2ceb2509188c094">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\jackson-core-2.4.1.1_d316404a6fac9985189530341d64e4a7b2f4d2fd.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.google.android.gms\play-services-appindexing\8.4.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="65d086ee9daaf87b5af62ad24471edafa433354c">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-appindexing-8.4.0_fd48c06ec2a267075ea2bef05205e83f62c08642.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\EpiSample\androidCommon\unspecified\jars\libs\wink-jackson2-common-1.4-sources.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="de2704978633f6524fe8b4bd38fe25b23fe66c2e">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\wink-jackson2-common-1.4-sources_9edb04a4b09ed396c85aaf03f40f26834f582358.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.android.support\mediarouter-v7\23.0.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="d358b3dd49a7c67844622dcbc9cf4339e13952ce">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.android.support-mediarouter-v7-23.0.0_c482c517266f9f5089552a714025f2eba0998daf.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.google.android.gms\play-services-analytics\8.4.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="1c9f35e952b212c843f7bd2c7eec8e82ad95602e">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-analytics-8.4.0_dd4193731d72617780e22c81f24bb5181aeba01f.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.google.android.gms\play-services-nearby\8.4.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="9cad249cf62751a323d9af568caf12284b7d6062">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-nearby-8.4.0_177a7a040fb4c9b3b3bc8d48d7b8d90fa8ba4344.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.google.android.gms\play-services-fitness\8.4.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="c54246475c1bb64ac6857d1320364bfbfeda2c46">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-fitness-8.4.0_65c1ab1fdf1cfef82a8eb726536d5e2c0320c920.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\EpiSample\androidCommon\unspecified\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="13462eb2bb0eb33182f6cbb2a4d1cfc3198a3039">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\EpiSample-androidCommon-unspecified_290fbb478c1d2f1c3d1749e8edf99bcdd3cb92b5.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.google.android.gms\play-services-cast\8.4.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="551e78f21acf69ebfb489c0e79647824c838013e">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-cast-8.4.0_1ef27cbcc2fb5246ce3936c017e5d20d0fb3af0a.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\EpiSample\progressWheel\unspecified\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="039191c7f38baf88897972a678b3dfcc37c1d59a">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\EpiSample-progressWheel-unspecified_1607c87dd3fb1f998cf934146b5fa6b952aaabb4.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\EpiSample\androidCommon\unspecified\jars\libs\commons-io-2.4.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="f084c1803dac7378949425e91320b53db9b8a0c7">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\commons-io-2.4_49264cc00de8b6a2e488bbec655d5db4be9cab4d.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.google.android.gms\play-services-gcm\8.4.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="2d7fe76982677315c4dc4edfb459c8ca718a9d4c">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-gcm-8.4.0_141c0e31a8e1f58b571e6a345d0dbd4783df2ce5.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\EpiSample\androidCommon\unspecified\jars\libs\jackson-databind-2.4.1.3.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="9e2e22c97a15a25442b2f2bf8ed1cf1912ab698c">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\jackson-databind-2.4.1.3_2dfec036bed3384f08566ba779f465d3c1f9ca8c.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.1\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="6cbc7773921fcfedbe55657578f0cbfe614778dc">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.android.support-support-v4-23.1.1_5c69b5b6ef0ddcc543037e020b6cdecd8cb52680.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.google.android.gms\play-services-base\8.4.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="fef2b3e4b6b1b0e5fe7b69fa137a5fa55a3182ab">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-base-8.4.0_4623f6da8bac5e35b897d11cb7c3ffee2856e296.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\EpiSample\androidCommon\unspecified\jars\libs\jackson-annotations-2.4.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="6df3afe93b63652b64b807abfa2eb533cdc181ae">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\jackson-annotations-2.4.1_c45879b03c0e0c7ef53fbd7263ff4dbfe0379589.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\EpiSample\androidCommon\unspecified\jars\libs\woodstox-core-asl-4.1.4.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="94255e889b808992a3c51e92aac4319aae838264">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\woodstox-core-asl-4.1.4_1b83ccc091eef1b1d761ff678fd12cacfc4d76fc.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.google.android.gms\play-services-panorama\8.4.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="08d34b2d135c1cc96ab506fd8bf6916d1e2f391a">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-panorama-8.4.0_c3c1f21fb82f3aed796c8fbb633e02fa094e39e5.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.1.1\support-annotations-23.1.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="8d680ba5a623724d1fb0e81c36a790f023a6cede">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\support-annotations-23.1.1_3db6ba7ab2130d81cce12dba4bbb9623edb339ed.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.google.android.gms\play-services-basement\8.4.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="8e673cdfadd8f2d98fdb2fda2285c30f6e449782">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-basement-8.4.0_2e174c4512cf8454b8b735253ed31caf8e703a81.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.google.android.gms\play-services-safetynet\8.4.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="0194a7409c40de94fb539d4ad9928ec5d47afeb7">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-safetynet-8.4.0_e9df0288c52b8311a0bbc3e5ac236721036eee74.jar" />
+    </item>
+    <item
+        jar="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.0.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="4fcf0b1879f8caf497c073e1432d398e9e2988c1">
+        <dex dex="C:\Users\bserda\AndroidStudioProjects\EpiSample\epiSample\build\intermediates\pre-dexed\debug\com.android.support-appcompat-v7-23.0.0_e317b4103428be0c00ecc00f47b271b7bc34406b.jar" />
+    </item>
+
+</items>

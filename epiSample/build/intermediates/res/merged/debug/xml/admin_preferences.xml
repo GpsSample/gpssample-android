@@ -1,0 +1,339 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <Preference
+        android:key="odk_preferences"
+        android:summary="@string/admin_access_settings"
+        android:title="@string/general_preferences" 
+        android:persistent="false">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="org.path.episample.android.preferences.PreferencesActivity"
+            android:targetPackage="org.path.episample.android" >
+            <extra
+                android:name="adminMode"
+                android:value="true" />
+        </intent>
+    </Preference>
+
+    <org.path.episample.android.preferences.PasswordDialogPreference
+        android:id="@+id/admin_pw"
+        android:defaultValue=""
+        android:dialogTitle="Change Admin Password"
+        android:key="admin_pw"
+        android:title="Admin Password" 
+        android:persistent="false" />
+    
+    <Preference
+        android:key="place_list_dialog"
+        android:summary="@string/place_name_list_tip"
+        android:title="@string/place_name_list" >
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="org.path.episample.android.preferences.PlaceListActivity"
+            android:targetPackage="org.path.episample.android" >
+        </intent>
+    </Preference>
+
+    <Preference
+        android:key="load_points_dialog"
+        android:summary="@string/load_points_tip"
+        android:title="@string/load_points" >
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="org.path.episample.android.preferences.LoadPointsActivity"
+            android:targetPackage="org.path.episample.android" >
+        </intent>
+    </Preference>
+    
+    <Preference 
+        android:key="clear_all_data" 
+	    android:title="@string/clear_all_data"
+	    android:summary="@string/clear_all_data_summary">    
+	</Preference> 
+		
+    <PreferenceCategory android:title="@string/user_access_main_menu" >
+        <CheckBoxPreference
+            android:id="@+id/collect"
+            android:defaultValue="true"
+            android:key="collect"
+            android:title="@string/collect_button" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/send_receive"
+            android:defaultValue="true"
+            android:key="send_receive"
+            android:title="@string/send_receive_wifi_direct" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/send_receive_bt"
+            android:defaultValue="true"
+            android:key="send_receive_bt"
+            android:title="@string/send_receive_bluetooth" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/select"
+            android:defaultValue="true"
+            android:key="select"
+            android:title="@string/select_button" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/navigate"
+            android:defaultValue="true"
+            android:key="navigate"
+            android:title="@string/navigate_button" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/backup_census"
+            android:defaultValue="true"
+            android:key="backup_census"
+            android:title="@string/backup_census" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/restore_census"
+            android:defaultValue="true"
+            android:key="restore_census"
+            android:title="@string/restore_census" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/edit_census"
+            android:defaultValue="false"
+            android:key="edit_census"
+            android:title="@string/edit_census" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/remove_census"
+            android:defaultValue="false"
+            android:key="remove_census"
+            android:title="@string/remove_census" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/invalidate_census"
+            android:defaultValue="false"
+            android:key="invalidate_census"
+            android:title="@string/invalidate_census" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/edit_saved"
+            android:defaultValue="true"
+            android:key="edit_saved"
+            android:title="@string/review_data_button" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/send_finalized"
+            android:defaultValue="true"
+            android:key="send_finalized"
+            android:title="@string/send_data_button" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/get_blank"
+            android:defaultValue="true"
+            android:key="get_blank"
+            android:title="@string/get_forms" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/delete_saved"
+            android:defaultValue="true"
+            android:key="delete_saved"
+            android:title="@string/manage_files" 
+            android:persistent="false" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/user_access_preferences" >
+        <CheckBoxPreference
+            android:id="@+id/change_server"
+            android:defaultValue="true"
+            android:key="change_server"
+            android:title="@string/change_server" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/change_username"
+            android:defaultValue="true"
+            android:key="change_username"
+            android:title="@string/change_username_default" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/change_password"
+            android:defaultValue="true"
+            android:key="change_password"
+            android:title="@string/password" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/change_google_account"
+            android:defaultValue="true"
+            android:key="change_google_account"
+            android:title="@string/selected_google_account_text" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/change_font_size"
+            android:defaultValue="true"
+            android:key="change_font_size"
+            android:title="@string/font_size" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/show_splash_screen"
+            android:defaultValue="true"
+            android:key="show_splash_screen"
+            android:title="@string/show_splash" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/select_splash_screen"
+            android:defaultValue="true"
+            android:key="select_splash_screen"
+            android:title="@string/splash_path" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/change_interviewer_name"
+            android:defaultValue="true"
+            android:key="change_interviewer_name"
+            android:title="@string/interviewer_name" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/change_phone_number"
+            android:defaultValue="true"
+            android:key="change_phone_number"
+            android:title="@string/phone_number" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/change_device_name"
+            android:defaultValue="true"
+            android:key="change_device_name"
+            android:title="@string/device_name" 
+            android:persistent="false" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/user_access_form_entry" >
+        <CheckBoxPreference
+            android:id="@+id/access_settings"
+            android:defaultValue="true"
+            android:key="access_settings"
+            android:summary="@string/found_in_menu"
+            android:title="@string/general_preferences" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/change_language"
+            android:defaultValue="true"
+            android:key="change_language"
+            android:summary="@string/found_in_menu"
+            android:title="@string/change_language" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/jump_to"
+            android:defaultValue="true"
+            android:key="jump_to"
+            android:summary="@string/found_in_menu"
+            android:title="@string/view_hierarchy" 
+            android:persistent="false" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/general_setting" >
+        <CheckBoxPreference
+            android:id="@+id/clean_data_from_previous_date"
+            android:defaultValue="false"
+            android:key="clean_data_from_previous_date"
+            android:title="@string/clean_data_from_previous_date" 
+            android:persistent="false" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/collect_module_setting" >
+        <EditTextPreference
+			android:id="@+id/gps_accuracy_thresholds"
+			android:key="gps_accuracy_thresholds"
+			android:title="@string/gps_accuracy_thresholds"
+			android:inputType="number"
+			android:defaultValue="@string/gps_accuracy_thresholds_default_value"
+			android:dialogTitle="@string/change_gps_accuracy_thresholds" 
+			android:persistent="false"/>
+        <CheckBoxPreference
+            android:id="@+id/comment_mandatory"
+            android:defaultValue="false"
+            android:key="comment_mandatory"
+            android:title="@string/comment_mandatory" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/auto_increment_house_number"
+            android:defaultValue="true"
+            android:key="auto_increment_house_number"
+            android:title="@string/auto_increment_house_number" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/edit_saved_data"
+            android:defaultValue="false"
+            android:key="edit_saved_data"
+            android:title="@string/edit_saved_data" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/device_has_low_quality_gps"
+            android:defaultValue="false"
+            android:key="device_has_low_quality_gps"
+            android:title="@string/device_has_low_quality_gps" 
+            android:summary="@string/device_has_low_quality_gps_desc"
+            android:persistent="false" />
+        <org.path.episample.android.preferences.MinuteSecondPickerPreference
+            android:id="@+id/delay"
+			android:key="delay"
+			android:title="@string/delay"
+			android:defaultValue="00:45" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/send_receive_module_setting" >
+        <CheckBoxPreference
+            android:id="@+id/team_lead_device"
+            android:defaultValue="false"
+            android:key="team_lead_device"
+            android:title="@string/team_lead_device" 
+            android:persistent="false" />
+        <CheckBoxPreference
+            android:id="@+id/wifi_state_control"
+            android:defaultValue="true"
+            android:key="wifi_state_control"
+            android:title="@string/wifi_state_control" 
+            android:persistent="false" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/select_module_setting" >
+        <EditTextPreference
+			android:id="@+id/set_fixed_number_of_main_points"
+			android:key="set_fixed_number_of_main_points"
+			android:title="@string/set_fixed_number_of_main_points"
+			android:inputType="number"
+			android:defaultValue="@string/set_fixed_number_of_main_points_default_value"
+			android:dialogTitle="@string/set_fixed_number_of_main_points" 
+			android:persistent="false"/>
+		<EditTextPreference
+			android:id="@+id/set_fixed_number_of_additional_points"
+			android:key="set_fixed_number_of_additional_points"
+			android:title="@string/set_fixed_number_of_additional_points"
+			android:inputType="number"
+			android:defaultValue="@string/set_fixed_number_of_additional_points_default_value"
+			android:dialogTitle="@string/set_fixed_number_of_additional_points" 
+			android:persistent="false"/>
+		<EditTextPreference
+			android:id="@+id/set_fixed_number_of_alternate_points"
+			android:key="set_fixed_number_of_alternate_points"
+			android:title="@string/set_fixed_number_of_alternate_points"
+			android:inputType="number"
+			android:dialogTitle="@string/set_fixed_number_of_alternate_points" 
+			android:persistent="false"/>	
+    </PreferenceCategory>
+    
+   <PreferenceCategory android:title="@string/navigate_module_setting" >
+	    <Preference
+	        android:key="selected_form_id"
+	        android:summary="@string/form_chooser_tip"
+	        android:title="@string/form_chooser" >
+	        <intent
+	            android:action="android.intent.action.VIEW"
+	            android:targetClass="org.path.episample.android.activities.FormChooserListActivity"
+	            android:targetPackage="org.path.episample.android" >
+	        </intent>
+	    </Preference>
+	    
+	    <CheckBoxPreference
+            android:id="@+id/show_filter_by_place_name"
+            android:defaultValue="false"
+            android:key="show_filter_by_place_name"
+            android:title="@string/show_place_filter_icon" 
+            android:persistent="false" />
+	    
+	    <CheckBoxPreference
+            android:id="@+id/show_mark_as_finalized_by_friends_menu"
+            android:defaultValue="true"
+            android:key="show_mark_as_finalized_by_friends_menu"
+            android:title="@string/show_mark_as_finalized_by_friends_menu" 
+            android:persistent="false" />	
+    </PreferenceCategory>
+</PreferenceScreen>

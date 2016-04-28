@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/light_blue"
+    android:orientation="vertical"
+    android:paddingBottom="1dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="1dp" >
+
+    <LinearLayout
+            android:id="@+id/pairContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/distanceTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:background="@drawable/item_background_state"
+                android:padding="5dp"
+                android:text="@string/distance"
+                android:textColor="@color/dark_blue"
+                android:textSize="13sp" />
+
+            <RelativeLayout
+                android:id="@+id/censusInfoContainer1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/item_background_state"
+                android:padding="5dp" >
+
+                <ImageView
+                    android:id="@+id/censusImageView1"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="3dp"
+                    android:contentDescription="@string/device"
+                    android:src="@drawable/ic_house_1" />
+
+                <LinearLayout
+                    android:id="@+id/infoLinearLayout1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dip"
+                    android:layout_toRightOf="@id/censusImageView1"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/headNameTextView1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="@string/head_name"
+                        android:textColor="@color/dark_blue" />
+
+                    <TextView
+                        android:id="@+id/houseNoTextView1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/house_number"
+                        android:textColor="@color/dark_brown" />
+                </LinearLayout>
+
+                <ImageButton
+	                android:id="@+id/invalidateImageButton1"
+					android:layout_width="40dp"
+					android:layout_height="40dp"
+					android:background="@drawable/circular_button"
+					android:layout_alignParentRight="true"
+					android:layout_centerVertical="true"
+					android:contentDescription="@string/disconnect"
+					android:src="@drawable/ic_invalidate"
+					android:layout_marginRight="6dp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/censusInfoContainer2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/item_background_state"
+                android:padding="5dp" >
+
+                <ImageView
+                    android:id="@+id/censusImageView2"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="3dp"
+                    android:contentDescription="@string/device"
+                    android:src="@drawable/ic_house_2" />
+
+                <LinearLayout
+                    android:id="@+id/infoLinearLayout2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dip"
+                    android:layout_toRightOf="@id/censusImageView2"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/headNameTextView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="@string/head_name"
+                        android:textColor="@color/dark_blue" />
+
+                    <TextView
+                        android:id="@+id/houseNoTextView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/house_number"
+                        android:textColor="@color/dark_brown" />
+                </LinearLayout>
+
+                <ImageButton
+	                android:id="@+id/invalidateImageButton2"
+					android:layout_width="40dp"
+					android:layout_height="40dp"
+					android:background="@drawable/circular_button"
+					android:layout_alignParentRight="true"
+					android:layout_centerVertical="true"
+					android:contentDescription="@string/disconnect"
+					android:src="@drawable/ic_invalidate"
+					android:layout_marginRight="6dp"/>
+            </RelativeLayout>
+        </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="urn:oasis:names:tc:xliff:document:1.2">
+    <string msgid="4600421777120114993" name="abc_action_bar_home_description">"Navegar para a página inicial"</string>
+    <string msgid="1397052879051804371" name="abc_action_bar_home_description_format">"%1$s, %2$s"</string>
+    <string msgid="6623331958280229229" name="abc_action_bar_home_subtitle_description_format">"%1$s, %2$s, %3$s"</string>
+    <string msgid="1594238315039666878" name="abc_action_bar_up_description">"Navegar para cima"</string>
+    <string msgid="3588849162933574182" name="abc_action_menu_overflow_description">"Mais opções"</string>
+    <string msgid="4076576682505996667" name="abc_action_mode_done">"Concluído"</string>
+    <string msgid="7468859129482906941" name="abc_activity_chooser_view_see_all">"Ver tudo"</string>
+    <string msgid="2031811694353399454" name="abc_activitychooserview_choose_application">"Selecione um app"</string>
+    <string msgid="7723749260725869598" name="abc_search_hint">"Pesquisar..."</string>
+    <string msgid="3691816814315814921" name="abc_searchview_description_clear">"Limpar consulta"</string>
+    <string msgid="2550479030709304392" name="abc_searchview_description_query">"Consulta de pesquisa"</string>
+    <string msgid="8264924765203268293" name="abc_searchview_description_search">"Pesquisar"</string>
+    <string msgid="8928215447528550784" name="abc_searchview_description_submit">"Enviar consulta"</string>
+    <string msgid="893419373245838918" name="abc_searchview_description_voice">"Pesquisa por voz"</string>
+    <string msgid="3421042268587513524" name="abc_shareactionprovider_share_with">"Compartilhar com"</string>
+    <string msgid="7165123711973476752" name="abc_shareactionprovider_share_with_application">"Compartilhar com %s"</string>
+    <string msgid="1603543279005712093" name="abc_toolbar_collapse_description">"Recolher"</string>
+    <string name="accept_location">Gravar Localização</string>
+    <string name="access_error">"Erro enquanto acessa %s: "</string>
+    <string name="activity_not_found">Nenhuma atividade detectada por: %s</string>
+    <string name="added_on_date_at_time">\'Adicionada\' EEE, MMM dd, yyyy \'em\' HH:mm</string>
+    <string name="admin_access_settings">Tap for admin access to settings</string>
+    <string name="admin_password_changed">Admin password successfully changed</string>
+    <string name="admin_password_disabled">Admin password disabled</string>
+    <string name="admin_password_incorrect">Sorry, password is incorrect!</string>
+    <string name="admin_password_mismatch">Sorry, passwords do not match!</string>
+    <string name="admin_preferences">Admin Settings</string>
+    <string name="app_name">ODK Survey</string>
+    <string name="app_url">http://opendatakit.org</string>
+    <string name="cancel">Cancelar</string>
+    <string name="cancel_location">Cancelar</string>
+    <string name="change_font_size">Tamanho da Fonte do Texto</string>
+    <string name="change_formlist_url">Listagem do caminho do formulário (adicionado do URL do Servidor)</string>
+    <string name="change_language">Alterar Idioma</string>
+    <string name="change_password">Senha</string>
+    <string name="change_protocol">Protocolo</string>
+    <string name="change_server">Server Protocol and URL</string>
+    <string name="change_server_url">URL do Servidor</string>
+    <string name="change_splash_path">Trocar Imagem</string>
+    <string name="change_submission_url">Caminho para submeter (adicionado do URL do Servidor)</string>
+    <string name="change_username">Usuário ODK</string>
+    <string name="change_username_default">Username</string>
+    <string name="change_view">Ver Alteração</string>
+    <string name="click_to_web">Toque para visitar http://opendatakit.org</string>
+    <string name="client">Cliente</string>
+    <string msgid="2785372108150982144" name="common_google_play_services_api_unavailable_text">"<ns1:g id="APP_NAME">%1$s</ns1:g> exige um ou mais serviços do Google Play que não estão disponíveis no momento. Entre em contato com o desenvolvedor para receber ajuda."</string>
+    <string msgid="7334167077229901382" name="common_google_play_services_enable_button">"Ativar o Google Play Services"</string>
+    <string msgid="2016066508617425489" name="common_google_play_services_enable_text">"<ns1:g id="APP_NAME">%1$s</ns1:g> só funciona com o Google Play Services ativado."</string>
+    <string msgid="4763733806837472840" name="common_google_play_services_enable_title">"Ativar o Google Play Services"</string>
+    <string msgid="5765996826213593005" name="common_google_play_services_install_button">"Instalar o Google Play Services"</string>
+    <string msgid="1545874412485515659" name="common_google_play_services_install_text_phone">"<ns1:g id="APP_NAME">%1$s</ns1:g> não funciona sem o Google Play Services, o qual não está instalado no seu smartphone."</string>
+    <string msgid="2742131317258851812" name="common_google_play_services_install_text_tablet">"<ns1:g id="APP_NAME">%1$s</ns1:g> não funciona sem o Google Play Services, o qual não está instalado no seu tablet."</string>
+    <string msgid="2110712637922504348" name="common_google_play_services_install_title">"Instalar o Google Play Services"</string>
+    <string msgid="8004809446015217370" name="common_google_play_services_invalid_account_text">"A conta especificada não existe no dispositivo. Escolha outra conta."</string>
+    <string msgid="9894539456463288" name="common_google_play_services_invalid_account_title">"Conta inválida"</string>
+    <string msgid="2602915190038884860" name="common_google_play_services_network_error_text">"É necessária uma conexão de dados para conectar ao Google Play Services."</string>
+    <string msgid="5183831421651758225" name="common_google_play_services_network_error_title">"Erro na rede"</string>
+    <string msgid="3936796119014022295" name="common_google_play_services_notification_ticker">"Erro do Google Play Services"</string>
+    <string msgid="6951442375899151085" name="common_google_play_services_restricted_profile_text">"O acesso a contas a partir de um perfil restrito não é compatível."</string>
+    <string msgid="4958149393843193760" name="common_google_play_services_restricted_profile_title">"Perfil restrito"</string>
+    <string msgid="59739986196915578" name="common_google_play_services_sign_in_failed_text">"Erro ao fazer login na conta especificada. Escolha outra conta."</string>
+    <string msgid="8431204498860131150" name="common_google_play_services_sign_in_failed_title">"Falha de login"</string>
+    <string msgid="7170719956698345984" name="common_google_play_services_unknown_issue">"<ns1:g id="APP_NAME">%1$s</ns1:g> está tendo problemas com os serviços do Google Play. Se o problema persistir, entre em contato com o desenvolvedor para receber ajuda."</string>
+    <string msgid="4291190028362992831" name="common_google_play_services_unsupported_text">"<ns1:g id="APP_NAME">%1$s</ns1:g> depende do Google Play Services, o qual não é compatível com seu dispositivo. Entre em contato com o fabricante para receber ajuda."</string>
+    <string msgid="909734065366822541" name="common_google_play_services_unsupported_title">"Google Play Services"</string>
+    <string msgid="2221302284291941971" name="common_google_play_services_update_button">"Atualizar"</string>
+    <string msgid="6230553430311881723" name="common_google_play_services_update_text">"<ns1:g id="APP_NAME">%1$s</ns1:g> só funciona com uma versão atualizada do Google Play Services."</string>
+    <string msgid="2926201203597631481" name="common_google_play_services_update_title">"Atualizar o Google Play Services"</string>
+    <string msgid="1576144479907495032" name="common_google_play_services_updating_text">"<ns1:g id="APP_NAME">%1$s</ns1:g> não funciona sem o Google Play Services, o qual está sendo atualizado no momento."</string>
+    <string msgid="1604540693139938838" name="common_google_play_services_updating_title">"Google Play Services em atualização"</string>
+    <string msgid="8334920661858223093" name="common_google_play_services_wear_update_text">"É necessária uma nova versão do Google Play Services. Ele será atualizado em breve."</string>
+    <string msgid="311697239335516384" name="common_open_on_phone">"Abrir no smartphone"</string>
+    <string msgid="3156914698180786012" name="common_signin_button_text">"Fazer login"</string>
+    <string msgid="1483290677806110088" name="common_signin_button_text_long">"Fazer login com o Google"</string>
+    <string name="default_completed">Finalizado como Padrão</string>
+    <string name="default_completed_summary">Marcar formulário finalizado como padrão</string>
+    <string name="default_odk_formlist">/formList</string>
+    <string name="default_odk_submission">/submission</string>
+    <string name="default_server_url">https://opendatakit-2.appspot.com</string>
+    <string name="default_splash_path">ODK Default</string>
+    <string name="delete_confirm">Apagar %s formulário(s)?</string>
+    <string name="delete_file">Apagar Selecionados</string>
+    <string name="delete_no">Não Apagar</string>
+    <string name="delete_yes">Apagar Formulários</string>
+    <string name="disksync_in_progress">Sorry, a disk sync is already in progress!</string>
+    <string name="download">Pegar Selecionados</string>
+    <string name="download_forms_result">Baixar Resultado</string>
+    <string name="download_in_progress">Sorry, a download is already in progress!</string>
+    <string name="downloading_data">Conectando com o Servidor</string>
+    <string name="enter_admin_password">Enter Admin Password</string>
+    <string name="enter_data_button">Formulário em Branco</string>
+    <string name="enter_new_password">Enter new password</string>
+    <string name="error_occured">Ocorreu um erro</string>
+    <string name="expanding_expansion_files">Processing APK expansion files</string>
+    <string name="expanding_file">Accessing APK expansion file: %1$s</string>
+    <string name="expansion_complete">APK expansion files successfully expanded</string>
+    <string name="expansion_failed">Unable to expand APK expansion files</string>
+    <string name="expansion_progress">%1$s\n\n(%2$s of %3$s).</string>
+    <string name="expansion_unzipping">Unzipping: %1$s. Destination: %2$s</string>
+    <string name="fetching_file">Baixando %1$s.\n\nFormulário(s) %2$s de %3$s</string>
+    <string name="fetching_manifest">%s. Acessando manifesto</string>
+    <string name="file_delete_in_progress">Desculpe, a ação de apagar está em andamento!</string>
+    <string name="file_deleted_error">Desculpe, %1$s de %2$s formulário(s) selecionado falhou ao apagar!</string>
+    <string name="file_deleted_ok">%s formulário(s) apagados com sucesso!</string>
+    <string name="file_fetch_failed">Erro: %2$s (%3$s) em %1$s</string>
+    <string name="finished_disk_scan">Varredura finalizada. Todos formulários carregados.</string>
+    <string name="font_size">Tamanho da Fonte do Texto</string>
+    <string name="font_size_extra_large">Extra Grande</string>
+    <string name="font_size_extra_small">Muito Pequeno</string>
+    <string name="font_size_large">Grande</string>
+    <string name="font_size_medium">Medio</string>
+    <string name="font_size_small">Pequeno</string>
+    <string name="form_download_progress">%1$s. Acessando arquivos de mídia: %2$s (%3$s de %4$s)</string>
+    <string name="form_download_unzipping">%1$s. Unzipping: %2$s (%3$s of %4$s). File: %5$s</string>
+    <string name="form_load_error">Sorry, unable to load form.</string>
+    <string name="form_scan_starting">Procurando por formulários …</string>
+    <string name="formlist_url">Lista de Caminho do Formulário</string>
+    <string name="found_in_menu">Found using Menu button in Form Entry</string>
+    <string name="general_preferences">Alterar configuração</string>
+    <string name="get_forms">Carregar Formulário em Branco</string>
+    <string name="get_location">Gravar Localização</string>
+    <string name="getting_location">Carregando Localização</string>
+    <string name="go_to_location">Ir para Localização</string>
+    <string name="google_account">Selecionar Uma Conta Google</string>
+    <string name="list_failed_with_error">Listagem de formulários falhou. %s.</string>
+    <string name="load_remote_form_error">Erro na Listagem de Formulários</string>
+    <string name="loading_video">Loading vídeo …</string>
+    <string name="location_accuracy">Precisão de %1$s m</string>
+    <string name="location_provider_accuracy">Usando %1$s. Precisão de %2$s m.</string>
+    <string name="manage_files">Apagar Formulário Salvo</string>
+    <string name="manifest_server_error">Manifestar uma resposta quando não ha uma versão do Open Rosa — servidor ruin?</string>
+    <string name="manifest_tag_error">Manifesto %s entrada está faltando uma ou mais tags: arquivo, hash, ou downloadURL</string>
+    <string name="mark_as_finalized_summary">Disable to save forms based on default status (as selected in Change Settings)</string>
+    <string name="mark_as_finished">Finalizing forms</string>
+    <string name="media_save_failed">Save of media attachment failed.</string>
+    <string msgid="8327680881775995150" name="mr_media_route_button_content_description">"Transmitir"</string>
+    <string msgid="7553005460920830010" name="mr_media_route_chooser_searching">"Procurando dispositivos…"</string>
+    <string msgid="7106830097177242655" name="mr_media_route_chooser_title">"Conectar ao dispositivo"</string>
+    <string msgid="109793632378378069" name="mr_media_route_controller_disconnect">"Desconectar"</string>
+    <string msgid="3641544772007543920" name="mr_media_route_controller_no_info_available">"Nenhuma informação disponível"</string>
+    <string msgid="8315773974194466049" name="mr_media_route_controller_pause">"Pausar"</string>
+    <string msgid="5214423499524760404" name="mr_media_route_controller_play">"Reproduzir"</string>
+    <string msgid="379358765881274425" name="mr_media_route_controller_settings_description">"Configurações de rota"</string>
+    <string msgid="5398645111664294430" name="mr_media_route_controller_stop">"Interromper transmissão"</string>
+    <string msgid="5441529851481176817" name="mr_system_route_name">"Sistema"</string>
+    <string msgid="7498112907524977311" name="mr_user_route_category_name">"Dispositivos"</string>
+    <string name="no_connection">Sem conexão disponível</string>
+    <string name="no_formdef_json">%1$s. No formDef.json</string>
+    <string name="no_forms_uploaded">Desculpe, nenhum formulário foi enviado.</string>
+    <string name="no_items_display">Nada disponível para mostrar</string>
+    <string name="no_items_display_forms">Nada disponível para mostrar.\n\nTente obter e preencher um formulário em branco.</string>
+    <string name="no_items_display_instances">Nada disponível para mostrar.\n\nFinalizar formulários salvos antes de enviar.</string>
+    <string name="no_manifest">%1$s. No manifest or empty manifest</string>
+    <string name="noselect_error">Desculpe, você não selecionou nenhum formulário!</string>
+    <string name="not_yet_sent">Never Uploaded</string>
+    <string name="ok">OK</string>
+    <string name="parse_openrosa_formlist_failed">O servidor não tinha formulários disponíveis compatíveis com OpenRosa version 1.0 standard: %s</string>
+    <string name="password">Senha</string>
+    <string msgid="2132213647576279742" name="place_autocomplete_clear_button">"Limpar pesquisa"</string>
+    <string msgid="4600782048316473865" name="place_autocomplete_search_hint">"Pesquisar"</string>
+    <string name="please_wait">Por favor, aguarde um pouco.</string>
+    <string name="please_wait_long">Por favor, aguarde. Isto levará alguns minutos.</string>
+    <string name="protocol">Protocolo</string>
+    <string name="provider_disabled_error">Desculpe, provedor de localização desabilitado!</string>
+    <string name="refresh">Atualizar</string>
+    <string name="review_data">Editar Formulário Salvo</string>
+    <string name="review_data_button">Editar Formulário Salvo</string>
+    <string name="root_element_error">Elemento raiz não é &amp;lt;manifest\> — foi %s</string>
+    <string name="root_namespace_error">Root element Namespace incorreto: %s</string>
+    <string name="save_as">Saved form renaming</string>
+    <string name="save_as_summary">Disable to prevent renaming of forms at end of form entry</string>
+    <string name="save_mid">Mid-form saving</string>
+    <string name="save_mid_summary">Disable to allow user to save only at end of form</string>
+    <string name="searching_for_expansion_files">Searching for APK expansion files</string>
+    <string name="select_another_image">Selecionar Outra Imagem</string>
+    <string name="selected_google_account_text">Conta Google</string>
+    <string name="send_data">Enviar Formulário Finalizado</string>
+    <string name="send_data_button">Enviar Formulário finalizado</string>
+    <string name="send_selected_data">Enviar selecionado</string>
+    <string name="sending_failed_on_date_at_time">\'O Envio falhou em\' EEE, MMM dd, yyyy \'em\' HH:mm</string>
+    <string name="sending_items">Enviando %1$s de %2$s Formulário(s)</string>
+    <string name="sent_on_date_at_time">\'Envido em\' EEE, MMM dd, yyyy \'em\' HH:mm</string>
+    <string name="server_auth_credentials">Por favor, entre com nome do usuário e senha para do servidor:\n%s</string>
+    <string name="server_platform_google_forms">Google Forms</string>
+    <string name="server_platform_odk_aggregate">ODK Aggregate</string>
+    <string name="server_platform_other">Other</string>
+    <string name="server_preferences">Servidor</string>
+    <string name="server_requires_auth">Servidor Requer Autenticação</string>
+    <string name="server_url">URL</string>
+    <string name="shortcut_name">ODK Survey Form</string>
+    <string name="show_sent_and_unsent_forms">Formulários enviados e não enviados</string>
+    <string name="show_splash">Mostrar Splash Screen</string>
+    <string name="show_splash_summary">Mostrar quando a aplicação iniciar</string>
+    <string name="show_unsent_forms">Apenas formulários não enviados</string>
+    <string name="splash_path">Selecionada imagem Splash</string>
+    <string msgid="2869576371154716097" name="status_bar_notification_info_overflow">"999+"</string>
+    <string name="submission_url">Caminho para submeter</string>
+    <string name="success">Sucesso</string>
+    <string name="toggle_selected">Alternar todos</string>
+    <string name="upload_in_progress">Sorry, instance upload is already in progress!</string>
+    <string name="uploading_data">Eviando Formulário</string>
+    <string name="url_error">Desculpe, URL inválida!</string>
+    <string name="use_odk_default">Usar Imagem Padrão</string>
+    <string name="user_access_form_entry">User can access Form Entry items:</string>
+    <string name="user_access_main_menu">User can access Main Menu items:</string>
+    <string name="user_access_preferences">User can access Change Settings items:</string>
+    <string name="username">Nome do usuário</string>
+    <string name="verify_new_password">Re-enter new password</string>
+    <string name="version">Versão?</string>
+    <string name="view_hierarchy">Ir para atual</string>
+    <string msgid="4184147110658930238" name="wallet_buy_button_place_holder">"Comprar com o Google"</string>
+    <string name="xforms_file_exists">%1$s file was downloaded from the server but should not be present in %2$s</string>
+</resources>

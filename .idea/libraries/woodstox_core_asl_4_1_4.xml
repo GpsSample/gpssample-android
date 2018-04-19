@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="woodstox-core-asl-4.1.4">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/androidCommon/libs/woodstox-core-asl-4.1.4.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="jsr311-api-1.1.1">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/androidCommon/libs/jsr311-api-1.1.1.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

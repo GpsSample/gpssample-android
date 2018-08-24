@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="toolbarVm"
+            type="org.taskforce.episample.toolbar.viewmodels.ToolbarViewModel" />
+
+        <variable
+            name="headerVm"
+            type="org.taskforce.episample.config.base.ConfigHeaderViewModel" />
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.permissions.viewmodels.PermissionsViewModel" />
+
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:id="@+id/scrollFrame"
+            android:layout_marginTop="56dp"
+            android:layout_above="@id/footer">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp">
+
+                <include
+                    android:id="@+id/header"
+                    layout="@layout/app_config_header"
+                    app:vm="@{headerVm}" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/permissionsList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:adapter="@{vm.permissionsAdapter}"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:id="@+id/footer"
+            android:layout_alignParentBottom="true">
+
+            <Button
+                android:id="@+id/next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{() -> vm.next()}"
+                android:text="@{vm.buttonText}"
+                android:background="@color/colorAccent"
+                android:minWidth="200dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:elevation="8dp"
+                android:layout_centerInParent="true"
+                android:textColor="@color/textColorInverse"/>
+
+        </RelativeLayout>
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/app_toolbar"
+            app:vm="@{toolbarVm}"/>
+
+    </RelativeLayout>
+
+</layout>

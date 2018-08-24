@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background">#DA6509</color>
+    <color name="colorPrimary">#1b6789</color>
+    <color name="colorPrimaryDark">#15526e</color>
+    <color name="colorAccent">#2aa1d5</color>
+    <color name="colorPrimaryLight">#e1f5fe</color>
+    <color name="textColorPrimary">#de000000</color>
+    <color name="textColorInverse">#ffffff</color>
+    <color name="textColorInverseDisabled">#66ffffff</color>
+    <color name="greyHighlights">#e6e6e6</color>
+    <color name="colorError">#b71c1c</color>
+    <color name="textColorDisabled">#a6a6a6</color>
+    <color name="textColorDetails">#757575</color>
+    <color name="colorWarning">#e9660d</color>
+    <color name="mainBackground">#142aa1d5</color>
+    <color name="defaultBackground">#FAFAFA</color>
+    <color name="monochromeAccent">#EAEAEA</color>
+    <color name="gpsAcceptable">#88b374</color>
+    <color name="incomplete">#fd6c6c</color>
+</resources>

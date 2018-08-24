@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="vm"
+            type="org.taskforce.episample.collection.viewmodels.CollectCardViewModel" />
+    </data>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        visibleOrGone="@{vm.visibility}">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/collectItemLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/collectCardTitle"
+            app:layout_constraintTop_toBottomOf="@+id/collectCardTitle">
+
+            <TextView
+                android:id="@+id/collectCardType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@{vm.itemType}"
+                android:textColor="@color/textColorDetails"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="HOUSEHOLD" />
+
+            <TextView
+                android:id="@+id/collectCardTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="@{vm.title}"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toStartOf="@+id/collectCardImage"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/collectCardType"
+                tools:text="Mastprem Duhan" />
+
+            <TextView
+                android:id="@+id/collectCardDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="@{vm.addedDate}"
+                android:textColor="@color/textColorDetails"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/collectCardTitle"
+                tools:text="Added 01/05/18 at 13:23" />
+
+            <TextView
+                android:id="@+id/collectCardDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="@{vm.distance}"
+                android:textColor="@color/textColorDetails"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/collectCardDate"
+                tools:text="0.2 km away" />
+
+            <LinearLayout
+                android:id="@+id/collectCardWrapper"
+                visibleOrGone="@{vm.showIncompleteAndNotes}"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/collectCardImage"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/collectCardDistance">
+
+                <TextView
+                    android:id="@+id/incompleteWarning"
+                    visibleOrGone="@{vm.showIncomplete}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:background="@color/incomplete"
+                    android:text="@string/collect_incomplete"
+                    android:textColor="@color/textColorInverse"
+                    android:textSize="12sp"
+                    tools:text="INCOMPLETE" />
+
+                <TextView
+                    android:id="@+id/collectCardNotePrefix"
+                    visibleOrGone="@{vm.showNotePrefix}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:text="@string/collect_card_notes"
+                    android:textStyle="bold"
+                    android:textSize="12sp"
+                    tools:text="Notes:" />
+                
+                <TextView
+                    android:id="@+id/collectCardNote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{vm.note}"
+                    android:textSize="12sp"
+                    tools:text="No answer at door" />
+            </LinearLayout>
+
+            <include
+                android:id="@+id/collectCardGpsPrecision"
+                layout="@layout/app_gps_precision"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/collectCardTitle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:vm="@{vm.gpsPrecisionVm}" />
+
+            <ImageView
+                android:id="@+id/collectCardImage"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="8dp"
+                imageUrl="@{vm.imageUrl}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/collectCardGpsPrecision"
+                app:layout_constraintVertical_bias="0.0"
+                tools:src="@mipmap/ic_launcher" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v7.widget.CardView>
+
+</layout>

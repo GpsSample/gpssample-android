@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="titleText"
+            type="java.lang.String" />
+        <variable
+            name="explanationText"
+            type="java.lang.String" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{titleText}"
+            android:textSize="24sp"
+            android:lineSpacingExtra="8sp"/>
+
+        <TextView
+            android:id="@+id/explanation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{explanationText}"
+            android:layout_marginTop="8dp"
+            android:textSize="14sp"
+            android:lineSpacingExtra="6sp"/>
+
+    </LinearLayout>
+
+</layout>

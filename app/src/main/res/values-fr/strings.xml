@@ -1,0 +1,18 @@
+<resources>
+    <!-- Permission Strings -->
+    <string name="permission_toolbar_title">Permissions</string>
+    <string name="welcome_title">Bienvenue à GPSSample</string>
+    <string name="permission_description">GPSSample a besoin d\'accès à certaines fonctionnalités pour travailler.</string>
+    <string name="permission_title_location">Localisation</string>
+    <string name="permission_description_location">Permet à EipiSample d\'enregistrer les coordonnées GPS lors de l\'énumération et fourir des instructions de naviation.</string>
+    <string name="permission_title_camera">Caméra</string>
+    <string name="permission_description_camera">Permet aux enquêteurs de prendre des photos des zones pour identification et navigation. Cette fonctionnalité peut être désactivée.</string>
+    <string name="permission_title_wifi">Transmission WiFi</string>
+    <string name="permission_description_wifi">Permet à GPSSample de synchroniser les données et les configurations avec d\'autres.</string>
+    <string name="allow_all">PERMETTRE À TOUS DE CONTINUER</string>
+    <string name="allow_continue">CONTINUER</string>
+    <string name="alert_permission_not_all">Toutes les permissions sont requises.</string>
+    <string name="alert_permission_action">AUTORISE TOUT</string>
+    <string name="config_name_title">Nommez Cette Configuration</string>
+    <string name="config_name_hint">Nom de Configuration</string>
+</resources>

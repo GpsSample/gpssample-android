@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="org.taskforce.episample.R" />
+
+        <variable
+            name="languageService"
+            type="org.taskforce.episample.config.language.LanguageService" />
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.config.base.ConfigStartViewModel" />
+
+        <variable
+            name="syncVm"
+            type="org.taskforce.episample.sync.ui.ReceiverSyncStatusViewModel" />
+
+        <variable
+            name="toolbarVm"
+            type="org.taskforce.episample.toolbar.viewmodels.ToolbarViewModel" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/syncBar"
+            layout="@layout/layout_receiver_sync_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            bind:layout_constraintBottom_toBottomOf="parent"
+            bind:layout_constraintEnd_toEndOf="parent"
+            bind:layout_constraintStart_toStartOf="parent"
+            bind:vm="@{syncVm}" />
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="56dp"
+            android:fillViewport="true"
+            bind:layout_constraintBottom_toTopOf="@id/syncBar"
+            bind:layout_constraintEnd_toEndOf="parent"
+            bind:layout_constraintStart_toStartOf="parent"
+            bind:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <include
+                    android:id="@+id/header"
+                    layout="@layout/layout_config_header"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    bind:titleText="@{languageService.getString(R.string.welcome_title)}"
+                    bind:explanationText="@{languageService.getString(R.string.config_count, vm.configCount)}"/>
+
+                <android.support.v7.widget.CardView
+                    visibleOrGone="@{vm.studyVisibility}"
+                    android:layout_width="match_parent"
+                    android:layout_height="160dp"
+                    android:layout_marginTop="24dp"
+                    android:elevation="12dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingBottom="16dp"
+                        android:paddingEnd="24dp"
+                        android:paddingStart="16dp"
+                        android:paddingTop="24dp">
+
+                        <ImageView
+                            android:id="@+id/studyIcon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp"
+                            android:layout_marginTop="28dp"
+                            android:src="@drawable/icon_attach_darkgray_24" />
+
+                        <TextView
+                            android:id="@+id/name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignTop="@id/studyIcon"
+                            android:layout_toEndOf="@id/studyIcon"
+                            android:text="@{vm.currentStudyName}"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_above="@id/name"
+                            android:layout_alignStart="@id/name"
+                            android:layout_marginBottom="4dp"
+                            android:text="@{languageService.getString(R.string.study_title)}"
+                            android:textColor="@color/textColorDetails"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignStart="@id/name"
+                            android:layout_below="@id/name"
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/textColorDetails"
+                            android:text="@{languageService.getString(R.string.study_date, vm.currentStudyDate)}"
+                            android:textSize="12sp" />
+                        <TextView
+                            android:id="@+id/sign_in"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentBottom="true"
+                            android:onClick="@{() -> vm.editStudy.invoke()}"
+                            android:padding="4dp"
+                            android:text="@{languageService.getString(R.string.study_edit_config)}"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/edit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:layout_toEndOf="@id/sign_in"
+                            android:layout_marginStart="32dp"
+                            android:padding="4dp"
+                            android:onClick="@{vm.signIn}"
+                            android:text="@{languageService.getString(R.string.study_sign_in)}"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="14sp" />
+
+                    </RelativeLayout>
+
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.AppCompatButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="24dp"
+                    android:background="@color/colorAccent"
+                    android:onClick="@{() -> vm.createNewConfiguration.invoke()}"
+                    android:paddingEnd="12dp"
+                    android:paddingStart="12dp"
+                    android:text="@{languageService.getString(R.string.config_new)}"
+                    android:textColor="@color/textColorInverse" />
+
+                <TextView
+                    android:id="@+id/viewConfigurations"
+                    visibleOrGone="@{vm.viewConfigurationsVisibility}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:onClick="@{() -> vm.showAllConfigurations.invoke()}"
+                    android:text="@{languageService.getString(R.string.config_view)}"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/uploadExplanation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="@{languageService.getString(R.string.config_upload_explanation)}"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/uploadUrl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{vm.uploadUrl}"
+                    android:textColor="@color/textColorDetails"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </android.support.v4.widget.NestedScrollView>
+
+        <include
+            layout="@layout/app_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            bind:layout_constraintEnd_toEndOf="parent"
+            bind:layout_constraintStart_toStartOf="parent"
+            bind:layout_constraintTop_toTopOf="parent"
+            bind:vm="@{toolbarVm}" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

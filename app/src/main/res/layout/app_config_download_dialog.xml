@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.config.transfer.TransferDialogViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            visible="@{vm.progressVisibility}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/download"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="24dp"
+            android:text="@{vm.title}"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/config_transfer_dialog_title" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/inputWrapper"
+            visible="@{vm.urlVisibility}"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="16dp"
+            android:hint="@{vm.hint}"
+            app:error="@{vm.error}"
+            app:errorEnabled="true"
+            app:layout_constraintBottom_toTopOf="@+id/download"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toBottomOf="@id/title"
+            tools:error="Any"
+            tools:errorEnabled="true">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/urlInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="@={vm.url}"
+                android:textSize="16sp"
+                tools:hint="@string/config_transfer_dialog_hint"
+                tools:text="Foo" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:id="@+id/download"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:layout_marginEnd="16dp"
+            android:enabled="@{vm.downloadEnabled}"
+            android:onClick="@{() -> vm.download()}"
+            android:paddingBottom="9dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="12dp"
+            android:text="@{vm.download}"
+            android:textColor="@{context.getColor(vm.downloadTextColor)}"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/inputWrapper"
+            tools:text="@string/config_transfer_dialog_download" />
+
+        <TextView
+            android:id="@+id/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:onClick="@{() -> vm.cancel()}"
+            android:paddingBottom="9dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="12dp"
+            android:text="@{vm.cancel}"
+            android:textColor="@color/colorAccent"
+            android:textSize="14sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/download"
+            app:layout_constraintEnd_toStartOf="@+id/download"
+            tools:text="@string/cancel" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="24dp" />
+
+    </android.support.constraint.ConstraintLayout>
+    </RelativeLayout>
+</layout>

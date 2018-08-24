@@ -1,0 +1,112 @@
+def rawBuildNumber = System.getenv("BITRISE_BUILD_NUMBER") ?: "0"
+def buildNumber = Integer.parseInt(rawBuildNumber)
+
+def geoApiPropertiesFile = rootProject.file("geo_api.properties")
+def geoApiProperties = new Properties()
+geoApiProperties.load(new FileInputStream(geoApiPropertiesFile))
+
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.25.4'
+    }
+}
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+
+apply plugin: 'io.fabric'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
+android {
+
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        applicationId "org.taskforce.episample"
+        minSdkVersion 21
+        targetSdkVersion 27
+        versionCode buildNumber
+        versionName "2.0"
+        testInstrumentationRunner "org.taskforce.episample.mock.MockTestRunner"
+        vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
+
+        buildConfigField "String", "FILE_DIRECTORY_NAME", "\"EpiSample\""
+        manifestPlaceholders = [geoApiKey:geoApiProperties['apiKey']]
+    }
+    buildTypes {
+        debug {
+            ext.enableCrashlytics = false
+        }
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    dataBinding {
+        enabled = true
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation"org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "com.android.support:multidex:1.0.3"
+    implementation "com.android.support:appcompat-v7:$rootProject.ext.androidSupportLibraryVersion"
+    implementation "com.android.support:support-v4:$rootProject.ext.androidSupportLibraryVersion"
+    implementation "com.android.support:cardview-v7:$rootProject.ext.androidSupportLibraryVersion"
+    implementation "com.android.support:recyclerview-v7:$rootProject.ext.androidSupportLibraryVersion"
+    implementation "com.android.support:design:$rootProject.ext.androidSupportLibraryVersion"
+    implementation "com.android.support:exifinterface:$rootProject.ext.androidSupportLibraryVersion"
+    implementation "android.arch.lifecycle:extensions:1.1.1"
+    implementation "com.wonderkiln:camerakit:0.13.1"
+    implementation "com.squareup.okhttp3:okhttp:$rootProject.ext.okHttp3Version"
+    implementation "com.google.android.gms:play-services-maps:$rootProject.ext.googlePlayServicesVersion"
+    implementation "com.google.android.gms:play-services-location:$rootProject.ext.googlePlayServicesVersion"
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation "com.squareup.retrofit2:converter-gson:2.3.0"
+    implementation "com.squareup.retrofit2:converter-jackson:2.1.0"
+    implementation "com.squareup.picasso:picasso:2.71828"
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
+    implementation "io.reactivex.rxjava2:rxjava:2.1.10"
+    implementation "com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0"
+    implementation "com.google.dagger:dagger:2.13"
+    kapt "com.google.dagger:dagger-compiler:2.13"
+    kaptAndroidTest "com.google.dagger:dagger-compiler:2.13"
+    implementation "android.arch.persistence.room:rxjava2:1.1.1"
+    implementation "android.arch.persistence.room:runtime:1.1.1"
+    implementation 'org.nanohttpd:nanohttpd:2.3.1'
+    kapt "android.arch.persistence.room:compiler:1.1.1"
+    testImplementation 'junit:junit:4.12'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    implementation "com.android.support:support-annotations:$rootProject.ext.androidSupportLibraryVersion"
+    androidTestImplementation "com.android.support:recyclerview-v7:$rootProject.ext.androidSupportLibraryVersion"
+    androidTestImplementation "com.android.support:support-v4:$rootProject.ext.androidSupportLibraryVersion"
+    androidTestImplementation "com.android.support:design:$rootProject.ext.androidSupportLibraryVersion"
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+    androidTestImplementation 'org.mockito:mockito-android:2.19.0'
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
+        transitive = true
+    }
+    kapt "com.android.databinding:compiler:$rootProject.ext.gradleVersion"
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.6"
+    implementation "com.fasterxml.jackson.core:jackson-core:2.9.6"
+    implementation "com.fasterxml.jackson.core:jackson-databind:2.9.6"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:2.9.6"
+}

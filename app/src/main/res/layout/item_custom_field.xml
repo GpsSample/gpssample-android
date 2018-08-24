@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="vm"
+            type="org.taskforce.episample.config.fields.CustomFieldItemViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{vm.name}"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/name"
+            android:text="@{vm.description}"
+            android:textColor="@color/textColorDisabled" />
+
+        <ImageView
+            android:id="@+id/edit"
+            visibleOrGone="@{vm.displayEdit}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/name"
+            android:layout_marginEnd="20dp"
+            android:layout_toStartOf="@id/delete"
+            android:src="@drawable/icon_edit_darkgray_24" />
+
+        <ImageView
+            android:id="@+id/delete"
+            visibleOrGone="@{vm.displayDelete}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@id/name"
+            android:src="@drawable/icon_delete_darkgray_24" />
+
+    </RelativeLayout>
+
+</layout>

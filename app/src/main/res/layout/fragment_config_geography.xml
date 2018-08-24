@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="headerVm"
+            type="org.taskforce.episample.config.base.ConfigHeaderViewModel" />
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.config.geography.GeographyViewModel" />
+
+        <variable
+            name="transferVm"
+            type="org.taskforce.episample.config.transfer.TransferViewModel" />
+    </data>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <include
+                android:id="@+id/header"
+                layout="@layout/app_config_header"
+                app:vm="@{headerVm}" />
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/quickstartButton"
+                visibleOrGone="@{vm.quickstartVisibility}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="24dp"
+                android:background="@color/colorAccent"
+                android:textColor="@color/textColorInverse"
+                android:minWidth="160dp"
+                android:onClick="@{() -> vm.quickstart.invoke()}"
+                android:text="@{vm.quickstartButtonText}" />
+
+            <TextView
+                visibleOrGone="@{vm.viewMapVisibility}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="24dp"
+                android:paddingBottom="16dp"
+                android:paddingEnd="16dp"
+                android:textColor="@color/colorAccent"
+                android:textSize="16sp"
+                android:text="@{vm.viewMapText}" />
+
+            <TextView
+                android:id="@+id/quickstartExplanation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:lineSpacingExtra="4sp"
+                android:text="@{vm.quickstartExplanation}"
+                android:textColor="@color/textColorDisabled"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/enumerationAreaTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="@{vm.enumerationAreaTitle}"
+                android:textColor="@color/textColorDetails"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/enumerationAreaList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                android:adapter="@{vm.adapter}"
+                tools:listitem="@layout/item_config_geography_area"/>
+
+            <TextView
+                android:id="@+id/enumerationAreaError"
+                visibleOrGone="@{vm.enumerationAreaErrorVisibility}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textColorDetails"
+                android:textStyle="italic"
+                android:text="@{vm.enumerationAreaError}" />
+
+            <include
+                android:id="@+id/transfer"
+                layout="@layout/app_config_transfer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:vm="@{transferVm}" />
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+</layout>

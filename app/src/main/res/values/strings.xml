@@ -1,0 +1,291 @@
+<resources>
+    <!-- Required Fields -->
+    <string name="language_code">eng</string>
+    <string name="language_name">English</string>
+    <string name="is_admin">true</string>
+    <string name="is_user">true</string>
+    <!-- End Required Fields -->
+
+    <string name="app_name">GPSSample</string>
+
+    <string name="cancel">CANCEL</string>
+    <string name="signin">SIGN IN</string>
+    <string name="share">SHARE</string>
+
+    <!-- Permission Strings -->
+    <string name="permission_toolbar_title">Permissions</string>
+    <string name="welcome_title">Welcome to GPSSample</string>
+    <string name="permission_description">GPSSample needs access to some basic system features in order to run.</string>
+    <string name="permission_title_location">Current Location</string>
+    <string name="permission_description_location">Allows GPSSample to record GPS coordinates during enumeration as well as provide navigation instructions.</string>
+    <string name="permission_title_camera">Camera</string>
+    <string name="permission_description_camera">Allows enumerators to take photos of areas for better identification and navigation. This feature can be disabled on the configuration level.</string>
+    <string name="permission_title_wifi">WiFi Data Transfer</string>
+    <string name="permission_description_wifi">Allows your device to sync GPSSample data and configurations with other devices on the network.</string>
+    <string name="allow_all">ALLOW ALL TO CONTINUE</string>
+    <string name="allow_continue">CONTINUE</string>
+    <string name="alert_permission_not_all">All permissions are required.</string>
+    <string name="alert_permission_action">ALLOW ALL</string>
+    <string name="alert_permission_in_settings">You can change this permission in settings.</string>
+    <string name="alert_permission_in_settings_negative">NEGATIVE</string>
+    <string name="alert_permission_in_settings_positive">GO TO SETTINGS</string>
+
+    <!-- Config Strings -->
+    <string name="config">Configuration</string>
+    <string name="configs">Configurations</string>
+    <string name="config_new">Create New Configuration</string>
+    <string name="config_view">VIEW ALL CONFIGURATIONS</string>
+    <string name="config_back">BACK</string>
+    <string name="config_next">NEXT</string>
+    <string name="config_done">DONE</string>
+    <string name="config_count">There are currently %s configurations on this device.</string>
+    <!-- This is "no" in the context of "there are no configs..." not "no" as in "no you cannot do this." -->
+    <string name="config_count_zero">no</string>
+    <string name="config_upload_explanation">To upload a configuration, connect your computer and this device to the same network and visit this address in your web browser:</string>
+    <string name="config_all_toolbar_title">All Configurations</string>
+    <string name="config_toolbar_title">New Configuration</string>
+    <string name="config_name_title">Name This Configuration</string>
+    <string name="config_name_explanation">This name is used to identify your configuration when sharing it to other devices as well as in the device configuration list.</string>
+    <string name="config_name_hint">Configuration Name</string>
+    <string name="config_name_duplicate_error">A configuration with this name already exists.</string>
+    <string name="config_name_length_error_short">Configuration names must be at least four letters long.</string>
+    <string name="config_name_length_error_long">Configuration names can be no longer than 32 letters.</string>
+    <string name="config_upload_title">Upload Files</string>
+    <string name="config_upload_files_explanation">Upload files for use in your configuration, such as  map data, geographical data,  icon files, and language files.</string>
+    <string name="config_lang_title">Languages</string>
+    <string name="config_lang_explanation">Select any languages you want to include with this configuration. Users will be able to choose from these languages in their settings.
+If the file contains data for Admin as well, the language will be immediately accessible from the language overflow menu in the toolbar.</string>
+    <string name="config_lang_list_title">Languages</string>
+    <string name="config_lang_error_none">At least one language is required.</string>
+    <string name="config_transfer_receiving_files">Receiving Files&#8230;</string>
+    <string name="config_transfer_files_title">Uploaded Files</string>
+    <string name="config_transfer_button">GET FILE FROM URL</string>
+    <string name="config_transfer_explanation">To upload %s, connect your computer and this device to the same network and visit this address in your web browser:</string>
+    <string name="config_transfer_default">files</string>
+    <string name="config_list_empty">None</string>
+    <string name="config_lang_admin">Admin</string>
+    <string name="config_lang_user">Users</string>
+    <string name="config_server_auth_title">Server Authentication</string>
+    <string name="config_server_auth_description">Enter server information for uploads from supervisor devices.</string>
+    <string name="config_server_type">Server Type</string>
+    <string name="config_server_url">Server URL</string>
+    <string name="config_server_user">Username</string>
+    <string name="config_server_password">Password</string>
+    <string name="config_upload_skip">SKIP THIS STEP</string>
+    <string name="config_geography_title">Geography</string>
+    <string name="config_geography_explanation">Define enumeration areas and their geographical boundaries. GPSSample will automatically download maps of the areas for offline use.</string>
+    <string name="config_geography_quickstart">QUICK START</string>
+    <string name="config_geography_quickstart_alternate">VIEW MAP</string>
+    <string name="config_geography_quickstart_explanation">Quick Start lets you proceed with a single enumeration area by specifying a location and a radius for the map download.</string>
+    <string name="config_enumeration_area_title">Enumeration Areas</string>
+    <string name="config_geography_dialog_title">Get Enumeration Area</string>
+    <string name="config_geography_dialog_latitude_hint">Latitude</string>
+    <string name="config_geography_dialog_longitude_hint">Longitude</string>
+    <string name="config_geography_dialog_cancel">CANCEL</string>
+    <string name="config_geography_dialog_get_area">GET AREA</string>
+    <string name="config_geography_dialog_radius_hint">Radius (km)</string>
+    <string name="config_landmarks_title">Landmarks</string>
+    <string name="config_landmarks_explanation">Upload landmark types to your maps to assist in navigation. Define custom icons for different types of landmarks.</string>
+    <string name="config_landmarks_types">Landmark Types</string>
+    <string name="config_landmarks_types_add">ADD LANDMARK TYPE</string>
+    <string name="config_landmarks_skip">SKIP THIS STEP</string>
+    <string name="config_landmarks_add_title">Add Landmark Type</string>
+    <string name="config_add_save">SAVE</string>
+    <string name="config_landmarks_add_hint">Landmark Type</string>
+    <string name="config_landmarks_add_icon_title">Select Icon</string>
+    <string name="config_landmarks_add_button">GET ICON FROM URL</string>
+    <string name="config_landmarks_add_error">A landmark must both have a name and a selected icon before it can be saved.</string>
+    <string name="config_fields_title">Enumeration Fields</string>
+    <string name="config_fields_explanation">First, enter the enumeration subject for your study (default is households).</string>
+    <string name="config_fields_hint">Enumeration Subjects</string>
+    <string name="config_fields_default">Households</string>
+    <string name="config_fields_explanation_2">Now, enter the fields for enumerators to populate for each of the %s.</string>
+    <string name="config_fields_subject_error">Enumeration Subject must have a value.</string>
+    <string name="config_fields_list_title">Fields</string>
+    <string name="config_fields_description_automatic">Automatically Assigned (Non-editable)</string>
+    <string name="config_fields_description_primary">Primary Label Text</string>
+    <string name="config_fields_description_contains_pii">Contains PII</string>
+    <string name="config_fields_add">ADD FIELD</string>
+    <string name="config_fields_add_title">Create Field</string>
+    <string name="config_fields_add_name_hint">Field Name</string>
+    <string name="config_fields_add_key_hint">Custom Key (optional)</string>
+    <string name="config_fields_add_dropdown_hint">Field Type</string>
+    <string name="config_fields_add_dropdown_dialog_title">Add a Custom Key</string>
+    <string name="config_fields_add_dropdown_dialog_hint">Key</string>
+    <string name="config_fields_add_another">ADD ANOTHER</string>
+    <string name="config_fields_add_pii">Personally Identifiable Information</string>
+    <string name="config_fields_add_required">Required</string>
+    <string name="config_fields_add_integer_only">Integer Only</string>
+    <string name="config_fields_add_date_explanation">Date and time formats will be specified later in configuration.</string>
+    <string name="config_fields_add_date_year">Year</string>
+    <string name="config_fields_add_date_month">Month</string>
+    <string name="config_fields_add_date_day">Day</string>
+    <string name="config_fields_add_date_time">Time</string>
+    <string name="config_fields_add_default_time_text">Default to current date and time</string>
+    <string name="config_display_title">Display Preferences</string>
+    <string name="config_display_explanation">Enter default display information.</string>
+    <string name="config_display_default_language">Default Language</string>
+    <string name="config_display_date_format">Date Format</string>
+    <string name="config_display_time_format">Time Format</string>
+    <string name="config_user_settings_title">User Settings</string>
+    <string name="config_user_settings_explanation">Define settings and permissions for enumerators and supervisors using this configuration.</string>
+    <string name="config_user_settings_collection_title">Collection Settings</string>
+    <string name="config_user_settings_gps_preferred_title">GPS Preferred Precision (m)</string>
+    <string name="config_user_settings_gps_minimum_title">GPS Minimum Precision (m)</string>
+    <string name="config_user_settings_gps_minimum_error">Minimum precision should be larger than preferred precision</string>
+    <string name="config_user_settings_photo_compression_hint">Photo Compression Level</string>
+    <string name="config_user_settings_gps_explanation">GPSSample will force enumerators to wait up to two minutes to record a point’s location with the preferred precision. If unsuccessful, GPSSample will save the point with a lower precision. If the point does not meet the minimum precision specified, it will be marked invalid for sampling.</string>
+    <string name="config_user_settings_distance_check">Enforce distance between households</string>
+    <string name="config_user_settings_minimum_distance">Minimum Distance (m)</string>
+    <string name="config_user_settings_distance_small_hint">Cannot exceed minimum precision specified above.</string>
+    <string name="config_user_settings_photos">Allow photos during collection</string>
+    <string name="config_user_settings_comment">Require comment during collection</string>
+    <string name="config_user_settings_comment_small_hint">Photos also fulfill this requirement, if enabled.</string>
+    <string name="config_user_settings_permissions">User Permissions</string>
+    <string name="config_user_settings_permissions_disable_photo">Allow supervisors to disable photos</string>
+    <string name="config_user_settings_permissions_password">Require supervisor password</string>
+    <string name="config_user_settings_permissions_password_hint">Default supervisor password</string>
+    <string name="config_admin_title">Admin Security</string>
+    <string name="config_admin_explanation">Enter a password to protect this configuration from unauthorized edits. No changes can be made to this configuration in the future without this password.</string>
+    <string name="config_admin_password">Password</string>
+    <string name="config_sampling_title">Sampling Method</string>
+    <string name="config_sampling_explanation">Select the statistical method to use when generating your sample.</string>
+    <string name="config_sampling_method_select_title">Sampling Method</string>
+    <string name="config_sampling_method_input_low_error">Sampling method size must be a number greater than 0.</string>
+    <string name="config_sampling_method_size">Sample Size</string>
+    <string name="config_sampling_method_input_percent_high_error">Sampling method percentage must be less than or equal to 100.</string>
+    <string name="config_sampling_subset_title">Sample Subsets</string>
+    <string name="config_sampling_subset_explanation">Define any subsets and assign which proportion of the sample each should contribute.</string>
+    <string name="config_survey_select_title">Survey Application</string>
+    <string name="config_survey_select_description">Select which fields to export to ODK Collect after enumerators navigate to a household in the sample.</string>
+    <string name="config_survey_select_list_title">Fields to Export</string>
+    <string name="config_survey_select_pii_warning">Contains Pii</string>
+    <string name="config_password_error_blank">Password cannot be blank.</string>
+
+    <string name="config_transfer_success">Transfer successful</string>
+    <string name="config_transfer_dialog_title">Download File From URL</string>
+    <string name="config_transfer_dialog_hint">URL</string>
+    <string name="config_transfer_dialog_cancel">CANCEL</string>
+    <string name="config_transfer_dialog_download">DOWNLOAD</string>
+    <string name="config_transfer_screen_created">created</string>
+    <string name="config_transfer_dialog_error">Could not get file from URL.</string>
+
+    <string name="config_success_title">Success</string>
+    <string name="config_success_description">Your configuration is being saved. Once it has been saved, you will be able to share it to other devices on the network.</string>
+    <string name="config_success_back">RETURN TO MAIN SCREEN</string>
+    <string name="config_success_retry">RETRY</string>
+    <string name="config_success_create_study">CREATE A STUDY</string>
+    <string name="config_success_created">Created %s</string>
+    <string name="config_success_error">Unable to save config. Please retry.</string>
+
+    <string name="config_all_transfer_explanation">To access these files on the network, connect your computer and this device to the same network and visit this address in your web browser:</string>
+    <string name="config_all_menu_create">Create Study</string>
+    <string name="config_all_menu_duplicate">Duplicate</string>
+    <string name="config_all_menu_share">Share</string>
+    <string name="config_all_menu_delete">Delete</string>
+
+
+    <string name="config_saved">Configuration Saved</string>
+
+    <string name="config_copy">Duplicate</string>
+    <string name="config_share">Share</string>
+    <string name="config_delete">Delete</string>
+
+    <string name="study_title">Current Study</string>
+    <string name="study_date">Created %s</string>
+    <string name="study_sign_in">SIGN IN</string>
+    <string name="study_edit_config">EDIT SETTINGS</string>
+    <string name="study_name">Study Name</string>
+    <string name="study_password">Study Password</string>
+    <string name="study_create">CREATE STUDY</string>
+    <string name="study_create_title">Create a Study</string>
+    <string name="study_create_header">New Study</string>
+    <string name="study_create_description">In order to use this configuration to collect a sample, create a study by giving it a name.</string>
+    <string name="study_create_share">CREATE &amp; SHARE</string>
+    <string name="study_password_help">Store this password in a safe place. It cannot be recovered or reset if lost.</string>
+    <string name="study_transfer_help">Upload any collection points, landmarks, and map layers that you want to use in your study.</string>
+    <string name="study_transfer_title">Collection Points &amp; Map Data (optional)</string>
+    <string name="study_create_error_button">RETRY</string>
+    <string name="study_create_error">Unable to save your study to disk. Please retry.</string>
+
+    <string name="unknown_user">Unknown User</string>
+
+    <string name="login_title">Welcome to GPSSample</string>
+    <string name="login_signin_supervisor">Sign in as supervisor</string>
+    <string name="login_admin">ADMIN</string>
+    <string name="login_signin">SIGN IN</string>
+    <string name="login_name_hint">Your Name</string>
+    <string name="login_password_supervisor_hint">Supervisor Password</string>
+    <string name="login_admin_title">Admin Sign In</string>
+    <string name="login_admin_hint">Study Password</string>
+    <string name="login_invalid_password">Invalid password, please try again.</string>
+
+    <string name="main_commentary_never_synced">Never synced with supervisor</string>
+    <string name="main_commentary_last_synced">Last synced %s at %s</string>
+    <string name="main_signed_in_as">Signed in as %s</string>
+    <string name="main_collect_title">Collect</string>
+    <string name="main_collect_description">Record households and landmarks</string>
+    <string name="main_navigate_title">Navigate</string>
+    <string name="main_navigate_description">Find and survey assigned households</string>
+    <string name="main_sync_title">Sync</string>
+    <string name="main_sync_description">Send and receive data</string>
+    <string name="main_sample_title">Sample</string>
+    <string name="main_sample_description">Create a sample for surveying</string>
+    <string name="main_report_title">Final Report</string>
+    <string name="main_report_description">Send survey data to remote server</string>
+
+    <string name="collect_title">%s Places Added</string>
+    <string name="collect_button_household">+ HOUSEHOLD</string>
+    <string name="collect_button_landmark">+ LANDMARK</string>
+    <string name="collect_add_text">TAKE A PICTURE</string>
+    <string name="collect_exclude">Exclude</string>
+    <string name="collect_notes_hint">Notes</string>
+    <string name="collect_save_complete">SAVE %s</string>
+    <string name="collect_save_incomplete">SAVE AS INCOMPLETE</string>
+    <string name="collect_save_landmark">SAVE LANDMARK</string>
+    <string name="collect_landmark_name_hint">Landmark Name</string>
+    <string name="collect_add_landmark_title">New Landmark</string>
+    <string name="collect_add_item_title">New %s</string>
+
+    <string name="default_subject">household</string>
+    <string name="custom_field_record_id">Record ID</string>
+    <string name="server_options">ODK Aggregate</string>
+    <string name="not_discoverable">Not discoverable.</string>
+    <string name="discoverable">Discoverable on network as %1$s</string>
+    <string name="network_settings">Network Settings</string>
+
+    <string name="collect_gps_waiting">Waiting for GPS Signal&#8230;</string>
+    <string name="collect_incomplete">INCOMPLETE</string>
+    <string name="collect_card_notes">Notes:</string>
+
+    <string name="landmark_apartments">Apartments</string>
+    <string name="landmark_barn_shed">Barn/Shed</string>
+    <string name="landmark_bridge">Bridge</string>
+    <string name="landmark_bus_stop">Bus Stop</string>
+    <string name="landmark_hotel">Hotel</string>
+    <string name="landmark_market">Market</string>
+    <string name="landmark_medical">Medical</string>
+    <string name="landmark_meeting_place">Meeting Place</string>
+    <string name="landmark_official">Official Building</string>
+    <string name="landmark_park">Park</string>
+    <string name="landmark_petrol">Petrol Station</string>
+    <string name="landmark_river_stream">River/Stream</string>
+    <string name="landmark_school">School</string>
+    <string name="landmark_shop">Shop</string>
+    <string name="landmark_tree">Tree</string>
+    <string name="landmark_water_source">Water Source</string>
+    <string name="landmark_worship">Place of Worship</string>
+
+    <string name="custom_checkbox">Checkbox</string>
+    <string name="custom_date">Date</string>
+    <string name="custom_dropdown">Dropdown</string>
+    <string name="custom_number_integer">Integer only</string>
+    <string name="custom_number">Number</string>
+    <string name="custom_text">Text</string>
+    <string name="photo_options_no_compression">No Compression</string>
+    <string name="photo_options_some_compression">Some Compression</string>
+    <string name="photo_options_maximum_compression">Maximum Compression</string>
+    <string name="config_all_duplicate_error">There was a problem duplicating your configuration.</string>
+    <string name="config_all_delete_error">There was a problem deleting your configuration.</string>
+
+</resources>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.config.survey.SurveyExportItemViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <CheckBox
+            android:id="@+id/customFieldExportChecked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true" />
+
+        <TextView
+            android:id="@+id/customFieldTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/customFieldExportChecked"
+            android:layout_toEndOf="@id/customFieldExportChecked"
+            android:text="@{vm.title}"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/customFieldDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@id/customFieldTitle"
+            android:layout_below="@id/customFieldTitle"
+            android:text="@{vm.description}"
+            android:textColor="@color/textColorDetails"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/piiWarning"
+            visibleOrGone="@{vm.isPii}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@id/customFieldTitle"
+            android:layout_below="@id/customFieldDescription"
+            android:src="@drawable/icon_warning_orange_18" />
+
+        <TextView
+            visibleOrGone="@{vm.isPii}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/piiWarning"
+            android:text="@{vm.piiWarningText}"
+            android:textColor="@color/colorWarning"
+            android:textSize="14sp" />
+
+    </RelativeLayout>
+
+</layout>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="headerVm"
+            type="org.taskforce.episample.config.base.ConfigHeaderViewModel" />
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.config.settings.server.ServerSettingsViewModel" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <include
+                android:id="@+id/header"
+                layout="@layout/app_config_header"
+                bind:vm="@{headerVm}" />
+
+            <TextView
+                android:id="@+id/selectTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:textColor="@color/textColorDetails"
+                android:textSize="12sp"
+                android:text="@{vm.selectTitle}" />
+
+            <Spinner
+                style="@style/Widget.AppCompat.Spinner.Underlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/serverSelectDropdown"
+                android:adapter="@{vm.serverTypeAdapter}" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/urlInputWrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="@{vm.urlHint}">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/urlInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="@={vm.url}"
+                    android:textSize="18sp" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/usernameInputWrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="@{vm.userHint}">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/usernameInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="@={vm.username}"
+                    android:textSize="18sp" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/passwordInputWrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="@{vm.passwordHint}">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/passwordInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:inputType="textPassword"
+                    android:text="@={vm.password}"
+                    android:textSize="18sp" />
+
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</layout>

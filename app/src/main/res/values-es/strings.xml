@@ -1,0 +1,16 @@
+<resources>
+    <!-- Permission Strings -->
+    <string name="permission_toolbar_title">Permissions</string>
+    <string name="welcome_title">Bienvenido a GPSSample</string>
+    <string name="permission_description">GPSSample necesita acceso a algunas características básicas del sistema para poder ejecutar.</string>
+    <string name="permission_title_location">Ubicación actual</string>
+    <string name="permission_description_location">Permite a GPSSample registrar las coordenadas de GPS durante la enumeración, así como proporcionar instrucciones de navegación.</string>
+    <string name="permission_title_camera">Cámara</string>
+    <string name="permission_description_camera">Permite a los encuestadores tomar fotos de las áreas para una mejor identificación y navegación. Esta función se puede deshabilitar en el nivel de configuración.</string>
+    <string name="permission_title_wifi">Transferencia de datos WiFi</string>
+    <string name="permission_description_wifi">Permite que su dispositivo sincronice datos y configuraciones de GPSSample con otros dispositivos en la red.</string>
+    <string name="allow_all">PERMITIR TODO CONTINUAR</string>
+    <string name="allow_continue">CONTINUAR</string>
+    <string name="alert_permission_not_all">Todos los permisos son obligatorios</string>
+    <string name="alert_permission_action">PERMITIR TODO</string>
+</resources>

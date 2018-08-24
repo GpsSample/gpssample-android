@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.config.transfer.TransferViewModel"/>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            visibleOrGone="@{vm.showFileList}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/fileListHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="@{vm.fileListHeader}"
+                android:textColor="@color/textColorDetails"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                visibleOrGone="@{vm.fileLoadingDisplayed}">
+
+                <ProgressBar
+                    android:id="@+id/fileLoadingIndicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:indeterminate="true"
+                    android:indeterminateTint="@color/colorPrimaryDark"/>
+
+                <TextView
+                    android:text="@{vm.fileListLoadingText}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="14sp"
+                    android:textColor="@color/textColorDetails"
+                    android:layout_marginStart="16dp"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/fileListEmpty"
+                visibleOrGone="@{vm.fileListEmpty}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{vm.fileListEmptyText}"
+                android:textColor="@color/textColorDetails"
+                android:textSize="14sp"
+                android:textStyle="italic"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/fileList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/downloadButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            android:onClick="@{vm.getFileFromUrl}"
+            android:text="@{vm.downloadButtonText}"
+            android:textColor="@color/colorAccent"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/uploadExplanation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@{vm.uploadExplanation}"
+            android:textColor="@color/textColorDetails"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/uploadUrl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{vm.uploadUrl}"
+            android:textSize="14sp"
+            android:textColor="@color/textColorDetails"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+</layout>

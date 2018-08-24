@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="headerVm"
+            type="org.taskforce.episample.config.base.ConfigHeaderViewModel" />
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.config.transfer.ConfigTransferViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <include
+            android:id="@+id/header"
+            layout="@layout/app_config_header"
+            bind:vm="@{headerVm}" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/header"
+            android:layout_marginTop="24dp"
+            android:text="@{vm.transferTitle}"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/transferDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@{vm.transferDetails}"
+            android:textColor="@color/textColorDetails"
+            android:textSize="14sp" />
+
+        <RelativeLayout
+            android:id="@+id/inProgressWrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/transferDetails"
+            visibleOrGone="@{vm.inProgress}">
+
+            <ProgressBar
+                android:id="@+id/transferProgress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:progress="@{vm.progress}" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/transferProgress"
+                android:layout_toEndOf="@id/transferProgress"
+                android:text="@{vm.displayTransferPercentage}"
+                android:textColor="@color/textColorDetails"
+                android:textSize="14sp" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="40dp"
+            android:onClick="@{() -> vm.finish()}"
+            android:text="@{vm.cancel}" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/transferDetails"
+            visibleOrGone="@{vm.inProgress}">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:src="@drawable/icon_checkmark_disabled"
+                android:id="@+id/transferSuccessfulCheckmark"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{vm.transferSuccessful}"
+                android:textColor="@color/textColorDetails"
+                android:textSize="14sp"
+                android:layout_toEndOf="@id/transferSuccessfulCheckmark"
+                android:layout_alignBaseline="@id/transferSuccessfulCheckmark"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+</layout>

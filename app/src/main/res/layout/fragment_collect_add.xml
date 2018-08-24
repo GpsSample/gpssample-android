@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="toolbarVm"
+            type="org.taskforce.episample.toolbar.viewmodels.ToolbarViewModel" />
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.collection.viewmodels.CollectAddViewModel" />
+
+        <variable
+            name="gpsVm"
+            type="org.taskforce.episample.collection.ui.CollectGpsPrecisionViewModel" />
+
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="56dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <FrameLayout
+                    android:id="@+id/map"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp" />
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/photoWrapper"
+                    android:layout_width="150dp"
+                    android:layout_height="120dp"
+                    android:layout_below="@id/map"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="-60dp"
+                    android:background="@android:color/white">
+
+                    <ImageView
+                        visibleOrGone="@{vm.showPhoto}"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                    <android.support.constraint.ConstraintLayout
+                        visibleOrGone="@{vm.showPhotoButton}"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/monochromeAccent">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/photo_empty"
+                            app:layout_constraintBottom_toTopOf="@id/photoText"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/photoText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="8dp"
+                            android:text="@{vm.photoText}"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                    </android.support.constraint.ConstraintLayout>
+
+                </android.support.v7.widget.CardView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/topWrapper"
+                    android:layout_below="@id/photoWrapper">
+
+                    <LinearLayout
+                        visibleOrGone="@{vm.isLandmark}"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingEnd="16dp"
+                        android:paddingStart="16dp">
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/landmarkName"
+                            error="@{vm.landmarkError}"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@{vm.landmarkHint}"
+                            app:errorEnabled="@{vm.landmarkErrorEnabled}"
+                            app:errorTextAppearance="@style/errorStyle">
+
+                            <android.support.design.widget.TextInputEditText
+                                android:id="@+id/landmarkNameInput"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:singleLine="true"
+                                android:inputType="textCapWords"
+                                android:text="@={vm.landmarkName}"
+                                android:textSize="18sp" />
+
+                        </android.support.design.widget.TextInputLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                imageUrl="@{vm.landmarkImage}"
+                                placeholderRes="@{@drawable/icon_landmark_default}" />
+
+                            <Spinner
+                                android:id="@+id/landmarkImageSelector"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:adapter="@{vm.landmarkOptionAdapter}"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/excludeWrapper"
+                        visibleOrGone="@{vm.showExclude}"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal">
+
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="@={vm.exclude}" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:text="@{vm.excludeText}" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/topWrapper"
+                    android:orientation="vertical"
+                    android:paddingStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:paddingEnd="16dp">
+
+                    <LinearLayout
+                        visibleOrGone="@{!vm.isLandmark}"
+                        android:id="@+id/customFieldHolder"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/notesWrapper"
+                        error="@{vm.notesError}"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:hint="@{vm.notesHint}"
+                        app:errorEnabled="@{vm.notesErrorEnabled}"
+                        app:errorTextAppearance="@style/errorStyle">
+
+                        <android.support.design.widget.TextInputEditText
+                            android:id="@+id/notesInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:singleLine="true"
+                            android:inputType="textCapSentences"
+                            android:text="@={vm.notes}"
+                            android:textSize="18sp" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/gpsView"
+                        android:background="@color/textColorDisabled"
+                        android:textColor="@color/textColorInverse"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="12dp"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="4dp"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:text="@{vm.gpsDisplay}"/>
+
+                    <include
+                        android:id="@+id/gpsPrecision"
+                        layout="@layout/app_gps_precision"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        app:vm="@{vm.gpsVm}" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:background="@{vm.saveButtonBackground}"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:paddingBottom="12dp"
+                        android:paddingEnd="36dp"
+                        android:paddingStart="36dp"
+                        android:onClick="@{() -> vm.saveItem()}"
+                        android:paddingTop="12dp"
+                        android:text="@{vm.saveButtonText}"
+                        android:textColor="@{vm.saveButtonTextColor}"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </android.support.v4.widget.NestedScrollView>
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/app_toolbar"
+            app:vm="@{toolbarVm}" />
+
+    </RelativeLayout>
+
+</layout>

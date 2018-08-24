@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.config.sampling.SamplingSelectionViewModel" />
+
+        <variable
+            name="languageService"
+            type="org.taskforce.episample.config.language.LanguageService" />
+
+        <variable
+            name="headerVm"
+            type="org.taskforce.episample.config.base.ConfigHeaderViewModel" />
+    </data>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <include
+                android:id="@+id/header"
+                layout="@layout/app_config_header"
+                app:vm="@{headerVm}" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:textColor="@color/textColorDisabled"
+                android:textSize="12sp" />
+
+            <Spinner
+                android:id="@+id/sampleMethodTypeSelector"
+                style="@style/Widget.AppCompat.Spinner.Underlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adapter="@{vm.samplingSelectionDropdownProvider.samplingSelectionTypeAdapter}" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp">
+
+                <android.support.design.widget.TextInputLayout
+                    error="@{languageService.getString(vm.samplingMethodError)}"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/sampleMethodInputTypeSelector"
+                    android:hint="@{languageService.getString(vm.sampleSizeHint)}"
+                    app:errorEnabled="@{vm.errorEnabled}"
+                    android:id="@+id/sampleSizeInputWrapper"
+                    app:errorTextAppearance="@style/errorStyle">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/sampleSizeInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:inputType="numberDecimal"
+                        android:text="@={vm.sampleSizeInput}"
+                        android:textSize="16sp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <Spinner
+                    android:id="@+id/sampleMethodInputTypeSelector"
+                    style="@style/Widget.AppCompat.Spinner.Underlined"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/sampleSizeInputWrapper"
+                    android:adapter="@{vm.samplingSelectionDropdownProvider.samplingSelectionInputTypeAdapter}" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</layout>

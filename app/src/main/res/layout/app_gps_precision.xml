@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="vm"
+            type="org.taskforce.episample.collection.ui.CollectGpsPrecisionViewModel"/>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/gps1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:src="@drawable/gps_indicator"
+            android:layout_gravity="center_vertical"
+            app:enabled="@{vm.gps1Enabled}"
+            android:tint="@{vm.displayColor}" />
+
+        <ImageView
+            android:id="@+id/gps2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:src="@drawable/gps_indicator"
+            android:layout_gravity="center_vertical"
+            app:enabled="@{vm.gps2Enabled}"
+            android:tint="@{vm.displayColor}" />
+
+        <ImageView
+            android:id="@+id/gps3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/gps_indicator"
+            app:enabled="@{vm.gps3Enabled}"
+            android:tint="@{vm.displayColor}" />
+
+        <TextView
+            android:id="@+id/gpsText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@{vm.displayColor}"
+            android:text="@{vm.displayValue}"/>
+
+    </LinearLayout>
+
+</layout>

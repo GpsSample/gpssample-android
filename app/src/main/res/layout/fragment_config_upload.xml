@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.config.base.ConfigUploadViewModel" />
+
+        <variable
+            name="headerVm"
+            type="org.taskforce.episample.config.base.ConfigHeaderViewModel" />
+
+        <variable
+            name="transferVm"
+            type="org.taskforce.episample.config.transfer.TransferViewModel" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <include
+                android:id="@+id/header"
+                layout="@layout/app_config_header"
+                bind:vm="@{headerVm}" />
+
+            <include
+                android:id="@+id/transfer"
+                layout="@layout/app_config_transfer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/header"
+                android:layout_marginTop="32dp"
+                bind:vm="@{transferVm}" />
+
+            <TextView
+                android:id="@+id/skipButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:onClick="@{() -> vm.skip()}"
+                android:text="@{vm.skipText}"
+                android:textColor="@color/colorAccent"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</layout>

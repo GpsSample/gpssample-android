@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/permissionChecked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:layout_marginTop="24dp"
+            android:clickable="false" />
+
+        <TextView
+            android:id="@+id/permissionTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/permissionChecked"
+            android:layout_marginBottom="8dp"
+            android:layout_toEndOf="@id/permissionChecked"
+            android:lineSpacingExtra="8sp"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/permissionText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@id/permissionTitle"
+            android:layout_below="@id/permissionTitle"
+            android:layout_gravity="center_vertical"
+            android:lineSpacingExtra="4sp"
+            android:textSize="12sp" />
+
+    </RelativeLayout>
+
+</layout>

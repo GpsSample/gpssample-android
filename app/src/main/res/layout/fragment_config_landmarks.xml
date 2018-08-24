@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="headerVm"
+            type="org.taskforce.episample.config.base.ConfigHeaderViewModel" />
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.config.landmark.LandmarkViewModel" />
+
+        <variable
+            name="transferVm"
+            type="org.taskforce.episample.config.transfer.TransferViewModel" />
+    </data>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <include
+                android:id="@+id/header"
+                layout="@layout/app_config_header"
+                app:vm="@{headerVm}" />
+
+            <TextView
+                android:id="@+id/landmarkHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="@{vm.landmarkHeader}"
+                android:textSize="16sp"
+                android:textColor="@color/textColorDetails"
+                android:textStyle="bold" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/landmarkList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="4dp"
+                android:adapter="@{vm.landmarkAdapter}"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
+
+            <TextView
+                android:id="@+id/landmarkError"
+                visibleOrGone="@{vm.landmarkErrorVisibility}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textColorDetails"
+                android:textStyle="italic"
+                android:text="@{vm.landmarkError}" />
+
+            <TextView
+                android:id="@+id/addLandmark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:paddingEnd="8dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:textSize="16sp"
+                android:textColor="@color/colorAccent"
+                android:onClick="@{() -> vm.addLandmark.invoke()}"
+                android:text="@{vm.addLandmarkText}" />
+
+            <include
+                android:id="@+id/transfer"
+                layout="@layout/app_config_transfer"
+                app:vm="@{transferVm}" />
+
+            <TextView
+                android:id="@+id/skip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:textColor="@color/colorAccent"
+                android:textSize="14sp"
+                android:layout_marginTop="24dp"
+                android:layout_gravity="end"
+                visibleOrGone="@{vm.skipVisibility}"
+                android:onClick="@{() -> vm.skip()}"
+                android:text="@{vm.skip}" />
+
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</layout>

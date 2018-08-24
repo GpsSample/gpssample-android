@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.config.landmark.LandmarkAddViewModel" />
+
+        <variable
+            name="transferVm"
+            type="org.taskforce.episample.config.transfer.TransferViewModel" />
+    </data>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:orientation="vertical">
+
+            <Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@color/colorPrimary"
+                android:elevation="8dp"
+                android:paddingEnd="8dp"
+                android:paddingStart="24dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/close"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="32dp"
+                        android:onClick="@{() -> vm.close.invoke()}"
+                        android:src="@drawable/icon_close_white" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@id/close"
+                        android:text="@{vm.title}"
+                        android:textColor="@color/textColorInverse"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/save"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:onClick="@{() -> vm.save()}"
+                        android:text="@{vm.save}"
+                        android:textColor="@{vm.saveColor}" />
+
+                </RelativeLayout>
+            </Toolbar>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:orientation="vertical">
+
+                <android.support.design.widget.TextInputLayout
+                    error="@{vm.error}"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:hint="@{vm.hint}"
+                    app:errorEnabled="@{vm.errorEnabled}"
+                    app:errorTextAppearance="@style/errorStyle">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/landmarkNameInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:text="@={vm.landmarkName}"
+                        android:textSize="18sp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:text="@{vm.landmarkIconTitle}"
+                    android:textSize="16sp"
+                    android:textColor="@color/textColorDetails"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/landmarkIconGrid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:nestedScrollingEnabled="false"/>
+
+                <include
+                    android:id="@+id/transfer"
+                    layout="@layout/app_config_transfer"
+                    app:vm="@{transferVm}" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</layout>

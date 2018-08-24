@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.main.MainViewModel" />
+
+        <variable
+            name="toolbarVm"
+            type="org.taskforce.episample.toolbar.viewmodels.ToolbarViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/mainBackground">
+
+        <TextView
+            android:id="@+id/signedIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/toolbar"
+            android:layout_marginTop="12dp"
+            android:background="@android:color/transparent"
+            android:text="@{vm.signIn}"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/signedIn"
+            android:layout_centerHorizontal="true"
+            android:background="@android:color/transparent"
+            android:text="@{vm.commentary}" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical"
+            android:paddingBottom="8dp"
+            android:paddingEnd="8dp"
+            android:paddingStart="8dp">
+
+            <ImageView
+                visibleOrGone="@{vm.supervisor}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/main_graphic_mobile" />
+
+            <include
+                android:id="@+id/collect"
+                layout="@layout/fragment_main_card"
+                app:vm="@{vm.collectVm}" />
+
+            <include
+                android:id="@+id/navigate"
+                layout="@layout/fragment_main_card"
+                app:vm="@{vm.navigateVm}" />
+
+            <include
+                android:id="@+id/sync"
+                layout="@layout/fragment_main_card"
+                app:vm="@{vm.syncVm}" />
+
+            <include
+                android:id="@+id/sample"
+                layout="@layout/fragment_main_card"
+                app:vm="@{vm.sampleVm}" />
+
+            <include
+                android:id="@+id/report"
+                layout="@layout/fragment_main_card"
+                app:vm="@{vm.finalVm}" />
+
+        </LinearLayout>
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/app_toolbar"
+            android:layout_height="56dp"
+            android:layout_width="match_parent"
+            app:vm="@{toolbarVm}" />
+
+    </RelativeLayout>
+
+</layout>

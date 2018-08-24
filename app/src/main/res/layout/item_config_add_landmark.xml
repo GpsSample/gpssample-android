@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.config.landmark.LandmarkItemAddViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@{vm.background}"
+        android:onClick="@{() -> vm.selected()}">
+
+        <ImageView
+            imageUrl="@{vm.iconUrl}"
+            placeholderRes="@{@drawable/icon_landmark_default}"
+            android:layout_width="@dimen/landmark_grid_icon_width"
+            android:layout_height="@dimen/landmark_grid_icon_height"
+            android:scaleType="centerInside"/>
+
+    </LinearLayout>
+
+</layout>

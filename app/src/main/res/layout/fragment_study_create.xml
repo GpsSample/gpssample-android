@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="headerVm"
+            type="org.taskforce.episample.config.base.ConfigHeaderViewModel" />
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.config.study.StudyCreateViewModel" />
+
+        <variable
+            name="transferVm"
+            type="org.taskforce.episample.config.transfer.TransferViewModel" />
+
+        <variable
+            name="toolbarVm"
+            type="org.taskforce.episample.toolbar.viewmodels.ToolbarViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/footer"
+            android:layout_marginTop="56dp"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <include
+                    android:id="@+id/header"
+                    layout="@layout/app_config_header"
+                    app:vm="@{headerVm}" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:hint="@{vm.nameHint}">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/nameInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapWords"
+                        android:singleLine="true"
+                        android:text="@={vm.name}"
+                        android:textSize="16sp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:hint="@{vm.passwordHint}">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/passwordInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:inputType="textPassword"
+                        android:singleLine="true"
+                        android:text="@={vm.password}"
+                        android:textSize="16sp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@{vm.passwordHelp}"
+                    android:textColor="@color/textColorDetails"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginTop="12dp"
+                    android:text="@{vm.transferHelp}"
+                    android:textColor="@color/textColorDetails"
+                    android:textSize="14sp" />
+
+                <include
+                    android:id="@+id/transfer"
+                    layout="@layout/app_config_transfer"
+                    app:vm="@{transferVm}" />
+
+            </LinearLayout>
+
+        </android.support.v4.widget.NestedScrollView>
+
+        <RelativeLayout
+            android:id="@+id/footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:padding="16dp">
+
+            <TextView
+                visible="@{vm.displayError}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="8dp"
+                android:id="@+id/errorMessage"
+                android:text="@{vm.errorText}"
+                android:textColor="@color/colorError"/>
+
+            <android.support.v7.widget.AppCompatButton
+                visibleOrGone="@{vm.displayError}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/errorMessage"
+                android:layout_marginTop="12dp"
+                android:background="@color/colorError"
+                android:clickable="@{!vm.buttonEnabled}"
+                android:elevation="8dp"
+                android:minWidth="200dp"
+                android:onClick="@{() -> vm.createStudy()}"
+                android:paddingBottom="4dp"
+                android:paddingEnd="12dp"
+                android:paddingStart="12dp"
+                android:paddingTop="4dp"
+                android:text="@{vm.errorButtonText}"
+                android:textColor="@color/textColorInverse"
+                android:textSize="14sp" />
+
+            <android.support.v7.widget.AppCompatButton
+                visible="@{!vm.displayError}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_below="@id/errorMessage"
+                android:layout_centerHorizontal="true"
+                android:background="@{vm.buttonColor}"
+                android:clickable="@{vm.buttonEnabled}"
+                android:elevation="8dp"
+                android:minWidth="200dp"
+                android:onClick="@{() -> vm.createStudy()}"
+                android:paddingBottom="4dp"
+                android:paddingEnd="12dp"
+                android:paddingStart="12dp"
+                android:paddingTop="4dp"
+                android:text="@{vm.createButtonText}"
+                android:textColor="@color/textColorInverse"
+                android:textSize="14sp" />
+
+        </RelativeLayout>
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/app_toolbar"
+            app:vm="@{toolbarVm}" />
+
+    </RelativeLayout>
+</layout>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CollectGpsPrecision">
+        <attr name="minPrecision" format="integer"/>
+        <attr name="preferredPrecision" format="integer" />
+        <attr name="noPrecisionColor" format="color" />
+        <attr name="minPrecisionColor" format="color" />
+        <attr name="preferredPrecisionColor" format="color" />
+    </declare-styleable>
+</resources>

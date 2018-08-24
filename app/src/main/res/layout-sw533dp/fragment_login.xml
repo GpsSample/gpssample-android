@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.auth.LoginViewModel" />
+    </data>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:padding="32dp">
+
+            <android.support.constraint.Guideline
+                android:id="@+id/topGuide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.3" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/topGuide"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="40dp"
+                    android:text="@{vm.welcome}"
+                    android:textColor="@color/textColorInverse"
+                    android:textSize="24sp" />
+
+                <EditText
+                    android:layout_width="400dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="24dp"
+                    android:background="@drawable/login_input_background"
+                    android:elevation="4dp"
+                    android:inputType="text"
+                    android:hint="@{vm.nameHint}"
+                    android:padding="16dp"
+                    android:text="@={vm.name}"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:layout_width="400dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="40dp"
+                    android:adapter="@{vm.languageSelectAdapter}"
+                    android:background="@drawable/login_input_background"
+                    android:elevation="4dp"
+                    android:padding="16dp"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="36dp"
+                    android:onClick="@{() -> vm.displaySupervisorSignIn()}">
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@android:color/white"
+                        android:checked="@{vm.supervisorSignIn}"
+                        android:onClick="@{() -> vm.displaySupervisorSignIn()}" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:text="@{vm.supervisorSignInText}"
+                        android:textColor="@color/textColorInverse"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+                <EditText
+                    visibleOrGone="@{vm.supervisorSignIn}"
+                    android:layout_width="400dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="36dp"
+                    android:background="@drawable/login_input_background"
+                    android:elevation="4dp"
+                    android:inputType="textPassword"
+                    android:hint="@{vm.passwordHint}"
+                    android:padding="16dp"
+                    android:text="@={vm.password}" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/login_input_background"
+                    android:elevation="4dp"
+                    android:onClick="@{() -> vm.signIn()}"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:paddingStart="48dp"
+                    android:paddingEnd="48dp"
+                    android:text="@{vm.signInText}"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@drawable/login_admin_background"
+                android:elevation="8dp"
+                android:onClick="@{() -> vm.adminSignIn()}"
+                android:padding="12dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/icon_settings_white_18" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{vm.admin}"
+                    android:textColor="@color/textColorInverse"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+        </android.support.constraint.ConstraintLayout>>
+    </android.support.v4.widget.NestedScrollView>
+</layout>

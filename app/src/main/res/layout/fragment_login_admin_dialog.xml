@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="vm"
+            type="org.taskforce.episample.auth.LoginAdminDialogViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingEnd="4dp"
+        android:paddingStart="24dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:text="@{vm.title}"
+            android:textSize="20sp"
+            tools:text="Admin Sign In"/>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/inputWrapper"
+            error="@{vm.error}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="16dp"
+            android:hint="@{vm.hint}"
+            app:errorEnabled="@{vm.errorEnabled}"
+            app:errorTextAppearance="@style/errorStyle"
+            tools:hint="Study Password">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:inputType="textPassword"
+                android:text="@={vm.input}"
+                android:textSize="18sp" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/inputWrapper">
+
+            <TextView
+                android:id="@+id/cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{() -> vm.cancel()}"
+                android:padding="16dp"
+                android:text="@{vm.cancel}"
+                android:textColor="@color/colorAccent"
+                android:textSize="16sp"
+                tools:text="CANCEL"/>
+
+            <TextView
+                android:id="@+id/download"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{() -> vm.done()}"
+                android:padding="16dp"
+                android:text="@{vm.done}"
+                android:textColor="@color/colorAccent"
+                android:textSize="16sp"
+                tools:text="SIGN IN"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</layout>

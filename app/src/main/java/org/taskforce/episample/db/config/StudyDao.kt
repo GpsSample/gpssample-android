@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
 import org.taskforce.episample.db.collect.Enumeration
 import org.taskforce.episample.db.collect.GpsBreadcrumb
+import org.taskforce.episample.db.collect.ResolvedEnumeration
 import java.util.*
 
 @Dao
@@ -53,4 +54,7 @@ abstract class StudyDao : ConfigDao() {
                 enumerationSubject
         )
     }
+
+    @Query("SELECT * FROM enumeration_table WHERE study_id LIKE :studyId ")
+    abstract fun getResolvedEnumerationsSync(studyId: String): List<ResolvedEnumeration>
 }

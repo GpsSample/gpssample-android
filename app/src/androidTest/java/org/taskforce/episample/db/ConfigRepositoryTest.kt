@@ -48,7 +48,7 @@ class ConfigRepositoryTest {
         configBuilder.adminSettings = AdminSettings(adminPassword)
         configBuilder.enumerationSubject = enumerationSingular
 
-        configRepository?.insertConfigFromBuildManager(configBuilder, {
+        configRepository?.insertConfigFromBuildManager(configBuilder) {
             val resolvedConfigs = configRepository!!.getResolvedConfigSync(it)
             assertEquals(1, resolvedConfigs.size)
             assertEquals(configName, resolvedConfigs[0].name)
@@ -58,7 +58,7 @@ class ConfigRepositoryTest {
             synchronized(syncObject) {
                 syncObject.notify()
             }
-        })
+        }
 
         synchronized(syncObject) {
             syncObject.wait()

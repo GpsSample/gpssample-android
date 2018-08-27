@@ -18,14 +18,15 @@ import org.taskforce.episample.db.config.customfield.CustomFieldType
 import org.taskforce.episample.db.config.customfield.CustomFieldValue
 import org.taskforce.episample.db.config.customfield.metadata.CustomFieldMetadata
 import org.taskforce.episample.db.config.customfield.metadata.NumberMetadata
-import org.taskforce.episample.db.config.customfield.value.IntValue
+import org.taskforce.episample.db.config.customfield.value.DoubleValue
 import org.taskforce.episample.db.filter.Filter
-import org.taskforce.episample.db.filter.integers.IntRuleFactory
+import org.taskforce.episample.db.filter.doubles.DoubleRuleFactory
 import java.io.IOException
 import java.util.*
 
 @RunWith(AndroidJUnit4::class)
-class IntFilterEnumerationTest {
+class DoubleFilterEnumerationTest {
+    private val filterValue = 5.0
     private var configDao: ConfigDao? = null
     private var resolvedConfigDao: ResolvedConfigDao? = null
     private var studyDao: StudyDao? = null
@@ -57,7 +58,7 @@ class IntFilterEnumerationTest {
 
         studyDao?.insert(insertStudy, insertStudyConfig, insertConfigId)
 
-        val numberMetadata = NumberMetadata(true)
+        val numberMetadata = NumberMetadata(false)
         customField = makeCustomField("name",
                 CustomFieldType.NUMBER,
                 numberMetadata,
@@ -71,9 +72,9 @@ class IntFilterEnumerationTest {
             val insertEnumeration = makeEnumeration(studyId, enumerationId)
             studyDao?.insert(insertEnumeration)
 
-            val intValue = org.taskforce.episample.db.config.customfield.value.IntValue(i)
+            val doubleValue = DoubleValue(i.toDouble())
 
-            val insertFieldValue = CustomFieldValue(intValue,
+            val insertFieldValue = CustomFieldValue(doubleValue,
                     CustomFieldType.NUMBER,
                     enumerationId,
                     customField.id)
@@ -91,13 +92,13 @@ class IntFilterEnumerationTest {
     /*
         Before you alter this, please note the following:
         All the following tests are based on a setup where a configuration with an integer custom field has been added, along with 10 enumerations
-        where the custom field value which has been added is an integer taking the values [1..10] have been added
+        where the custom field value which has been added is a double taking the values [1..10] have been added
 
-        So for example, the test filterLessThan is attempting to filter the results less than the value 5
-        So we would expect enumerations with the following values to be found [1, 2, 3, 4] for a size of 4
+        So for example, the test filterLessThan is attempting to filter the results less than the value 5.0
+        So we would expect enumerations with the following values to be found [1.0, 2.0, 3.0, 4.0] for a size of 4
 
         For filterGreaterThanEqualTo, it is attempting to filter results that are greater than or equal to 5
-        So we would expect enumerations with the following values to be found [5, 6, 7, 8, 9, 10] for a size of 6
+        So we would expect enumerations with the following values to be found [5.0, 6.0, 7.0, 8.0, 9.0, 10.0] for a size of 6
 
         And so on and so forth.
      */
@@ -105,11 +106,9 @@ class IntFilterEnumerationTest {
     @Test
     @Throws(Exception::class)
     fun filterLessThan() {
-        val filterValue = 5
-
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.IntRules.LESS_THAN, customField, filterValue)))
+        val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.DoubleRules.LESS_THAN, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filter(it)
@@ -117,18 +116,16 @@ class IntFilterEnumerationTest {
 
         Assert.assertEquals(4, filteredEnumerations?.size)
         filteredEnumerations?.forEach {
-            Assert.assertTrue((it.customFieldValues.first().value as IntValue).intValue < filterValue)
+            Assert.assertTrue((it.customFieldValues.first().value as DoubleValue).doubleValue < filterValue)
         }
     }
 
     @Test
     @Throws(Exception::class)
     fun filterLessThanEqualTo() {
-        val filterValue = 5
-
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.IntRules.LESS_THAN_OR_EQUAL_TO, customField, filterValue)))
+        val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.DoubleRules.LESS_THAN_OR_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filter(it)
@@ -136,18 +133,16 @@ class IntFilterEnumerationTest {
 
         Assert.assertEquals(5, filteredEnumerations?.size)
         filteredEnumerations?.forEach {
-            Assert.assertTrue((it.customFieldValues.first().value as IntValue).intValue <= filterValue)
+            Assert.assertTrue((it.customFieldValues.first().value as DoubleValue).doubleValue<= filterValue)
         }
     }
 
     @Test
     @Throws(Exception::class)
     fun filterGreaterThan() {
-        val filterValue = 5
-
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.IntRules.GREATER_THAN, customField, filterValue)))
+        val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.DoubleRules.GREATER_THAN, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filter(it)
@@ -155,18 +150,16 @@ class IntFilterEnumerationTest {
 
         Assert.assertEquals(5, filteredEnumerations?.size)
         filteredEnumerations?.forEach {
-            Assert.assertTrue((it.customFieldValues.first().value as IntValue).intValue > filterValue)
+            Assert.assertTrue((it.customFieldValues.first().value as DoubleValue).doubleValue > filterValue)
         }
     }
 
     @Test
     @Throws(Exception::class)
     fun filterGreaterThanEqualTo() {
-        val filterValue = 5
-
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.IntRules.GREATER_THAN_OR_EQUAL_TO, customField, filterValue)))
+        val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.DoubleRules.GREATER_THAN_OR_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filter(it)
@@ -174,18 +167,16 @@ class IntFilterEnumerationTest {
 
         Assert.assertEquals(6, filteredEnumerations?.size)
         filteredEnumerations?.forEach {
-            Assert.assertTrue((it.customFieldValues.first().value as IntValue).intValue >= filterValue)
+            Assert.assertTrue((it.customFieldValues.first().value as DoubleValue).doubleValue >= filterValue)
         }
     }
 
     @Test
     @Throws(Exception::class)
     fun filterEqualTo() {
-        val filterValue = 5
-
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.IntRules.IS_EQUAL_TO, customField, filterValue)))
+        val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.DoubleRules.IS_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filter(it)
@@ -193,18 +184,16 @@ class IntFilterEnumerationTest {
 
         Assert.assertEquals(1, filteredEnumerations?.size)
         filteredEnumerations?.forEach {
-            Assert.assertTrue((it.customFieldValues.first().value as IntValue).intValue == filterValue)
+            Assert.assertTrue((it.customFieldValues.first().value as DoubleValue).doubleValue == filterValue)
         }
     }
 
     @Test
     @Throws(Exception::class)
     fun filterNotEqualTo() {
-        val filterValue = 5
-
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.IntRules.IS_NOT_EQUAL_TO, customField, filterValue)))
+        val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.DoubleRules.IS_NOT_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filter(it)
@@ -212,7 +201,7 @@ class IntFilterEnumerationTest {
 
         Assert.assertEquals(9, filteredEnumerations?.size)
         filteredEnumerations?.forEach {
-            Assert.assertTrue((it.customFieldValues.first().value as IntValue).intValue != filterValue)
+            Assert.assertTrue((it.customFieldValues.first().value as DoubleValue).doubleValue != filterValue)
         }
     }
 

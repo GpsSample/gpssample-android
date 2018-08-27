@@ -62,7 +62,6 @@ class CollectCardViewModel(userSettings: UserSettings?,
         @SuppressLint("SimpleDateFormat")
         override fun get(): String? {
             return itemData.get()?.dateCreated?.let { 
-                // TODO: Create DisplaySettings and get the date/time format from it
                 "Added ${DateUtil.getFormattedDate(it, displaySettings)} at " +
                         "${DateUtil.getFormattedTime(it, displaySettings)}"
             }
@@ -75,8 +74,21 @@ class CollectCardViewModel(userSettings: UserSettings?,
     }
 
     @get:Bindable
+    val showExcluded = object: ObservableField<Boolean>(itemData) {
+        override fun get(): Boolean? {
+            val item = itemData.get()
+            return if (item is Enumeration) {
+                item.excluded
+            } else {
+                false
+            }
+        }
+    }
+
+
+    @get:Bindable
     val showIncompleteAndNotes = object: ObservableField<Boolean>(itemData) {
-        override fun get(): Boolean? = itemData.get()?.isIncomplete ?: false || !itemData.get()?.note.isNullOrEmpty()
+        override fun get(): Boolean? = itemData.get()?.isIncomplete ?: false || showExcluded.get() ?: false || !itemData.get()?.note.isNullOrEmpty()
     }
 
 

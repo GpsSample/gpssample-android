@@ -42,6 +42,7 @@ class MockCollectManager : CollectManager {
             MockEnumeration.createMockEnumeration(title = "Joe Doe",
                     location = LatLng(37.422065, -122.0846862),
                     gpsPrecision = 3.2,
+                    excluded = true,
                     image = "file:///sdcard/Pictures/profile copy.jpg")
     )
 

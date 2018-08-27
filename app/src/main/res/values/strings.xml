@@ -256,6 +256,7 @@ If the file contains data for Admin as well, the language will be immediately ac
 
     <string name="collect_gps_waiting">Waiting for GPS Signal&#8230;</string>
     <string name="collect_incomplete">INCOMPLETE</string>
+    <string name="collect_excluded">EXCLUDED</string>
     <string name="collect_card_notes">Notes:</string>
 
     <string name="landmark_apartments">Apartments</string>

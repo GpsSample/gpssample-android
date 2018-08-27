@@ -27,6 +27,7 @@ class IntegrationCollectManager(application: Application,
 
         override val image = dbEnumeration.image
         override val isIncomplete = dbEnumeration.isIncomplete
+        override val excluded = dbEnumeration.isExcluded
         override val title = dbEnumeration.title
         override val note = dbEnumeration.note
         override val location = LatLng(dbEnumeration.lat, dbEnumeration.lng)

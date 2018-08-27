@@ -21,6 +21,8 @@ class Enumeration(
         val note: String?,
         @ColumnInfo(name = "is_complete")
         val isIncomplete: Boolean,
+        @ColumnInfo(name = "is_excluded")
+        val isExcluded: Boolean,
         @ColumnInfo(name = "gps_precision")
         val gpsPrecision: Double,
         @ColumnInfo(name = "study_id")

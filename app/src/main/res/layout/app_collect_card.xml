@@ -90,6 +90,20 @@
                 app:layout_constraintEnd_toStartOf="@+id/collectCardImage"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/collectCardDistance">
+                
+                <TextView
+                    android:id="@+id/excludedLabel"
+                    visibleOrGone="@{vm.showExcluded}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:background="@color/excluded"
+                    android:text="@string/collect_excluded"
+                    android:textColor="@color/textColorInverse"
+                    android:textSize="12sp"
+                    tools:text="EXCLUDED" />
 
                 <TextView
                     android:id="@+id/incompleteWarning"

@@ -730,6 +730,7 @@ class SimpleEntityReadWriteTest {
                     0.0,
                     null,
                     false,
+                    false,
                     10.0,
                     studyId,
                     id = enumerationId

@@ -41,6 +41,10 @@ abstract class StudyDao : ConfigDao() {
         val enumerationSubject = getEnumerationSubjectSync(sourceConfigId)?.apply {
             this.configId = insertConfig.id
         }
+        val userSettings = getUserSettingsSync(sourceConfigId)?.apply {
+            this.configId = insertConfig.id
+        }
+
         val customFields = getFieldsByConfigSync(sourceConfigId)
         customFields.forEach {
             it.id = UUID.randomUUID().toString()
@@ -51,7 +55,8 @@ abstract class StudyDao : ConfigDao() {
                 insertConfig,
                 customFields,
                 adminSettings,
-                enumerationSubject
+                enumerationSubject,
+                userSettings
         )
     }
 

@@ -12,6 +12,7 @@ import org.junit.runner.RunWith
 import org.taskforce.episample.config.fields.CustomField
 import org.taskforce.episample.config.fields.CustomFieldTypeConstants
 import org.taskforce.episample.config.settings.admin.AdminSettings
+import org.taskforce.episample.config.settings.user.UserSettings
 import org.taskforce.episample.db.config.customfield.CustomFieldType
 import java.io.IOException
 
@@ -43,10 +44,13 @@ class ConfigRepositoryTest {
         val configName = "Config 1"
         val enumerationSingular = "Person"
         val adminPassword = "anypassword"
-
+        val gpsMinimumPrecision = 40.0
+        val gpsPreferredPrecision = 20.0
         val configBuilder = org.taskforce.episample.config.base.Config(name = configName)
         configBuilder.adminSettings = AdminSettings(adminPassword)
         configBuilder.enumerationSubject = enumerationSingular
+        configBuilder.userSettings = UserSettings(gpsMinimumPrecision, gpsPreferredPrecision,
+                false, null, false, false, null, false, false, null)
 
         configRepository?.insertConfigFromBuildManager(configBuilder) {
             val resolvedConfigs = configRepository!!.getResolvedConfigSync(it)
@@ -54,6 +58,8 @@ class ConfigRepositoryTest {
             assertEquals(configName, resolvedConfigs[0].name)
             assertEquals(adminPassword, resolvedConfigs[0].adminSettings.password)
             assertEquals(enumerationSingular, resolvedConfigs[0].enumerationSubject.singular)
+            assertEquals(gpsMinimumPrecision, resolvedConfigs[0].userSettings.gpsMinimumPrecision)
+            assertEquals(gpsPreferredPrecision, resolvedConfigs[0].userSettings.gpsPreferredPrecision)
 
             synchronized(syncObject) {
                 syncObject.notify()
@@ -73,6 +79,8 @@ class ConfigRepositoryTest {
         val configName = "Config 1"
         val enumerationSingular = "Person"
         val adminPassword = "anypassword"
+        val gpsMinimumPrecision = 40.0
+        val gpsPreferredPrecision = 20.0
 
         val configBuilder = org.taskforce.episample.config.base.Config(name = configName)
         configBuilder.adminSettings = AdminSettings(adminPassword)
@@ -81,6 +89,8 @@ class ConfigRepositoryTest {
                 CustomField(true, true, true, true, true, "Custom Number", CustomFieldType.NUMBER,
                         mapOf(CustomFieldTypeConstants.INTEGER_ONLY to true))
         )
+        configBuilder.userSettings = UserSettings(gpsMinimumPrecision, gpsPreferredPrecision,
+                false, null, false, false, null, false, false, null)
 
         configRepository?.insertConfigFromBuildManager(configBuilder) {
             val resolvedConfigs = configRepository!!.getResolvedConfigSync(it)
@@ -88,7 +98,8 @@ class ConfigRepositoryTest {
             assertEquals(configName, resolvedConfigs[0].name)
             assertEquals(adminPassword, resolvedConfigs[0].adminSettings.password)
             assertEquals(enumerationSingular, resolvedConfigs[0].enumerationSubject.singular)
-
+            assertEquals(gpsMinimumPrecision, resolvedConfigs[0].userSettings.gpsMinimumPrecision)
+            assertEquals(gpsPreferredPrecision, resolvedConfigs[0].userSettings.gpsPreferredPrecision)
             val config = configRepository!!.getConfigSync(it)
 
             configRepository?.insertStudy(config, "Study Name", "Study Password") { configId, _ ->
@@ -99,6 +110,8 @@ class ConfigRepositoryTest {
                 assertEquals(configName, resolvedConfig.name)
                 assertEquals(adminPassword, resolvedConfig.adminSettings.password)
                 assertEquals(enumerationSingular, resolvedConfig.enumerationSubject.singular)
+                assertEquals(gpsMinimumPrecision, resolvedConfig.userSettings.gpsMinimumPrecision)
+                assertEquals(gpsPreferredPrecision, resolvedConfig.userSettings.gpsPreferredPrecision)
 
                 synchronized(syncObject) {
                     syncObject.notify()

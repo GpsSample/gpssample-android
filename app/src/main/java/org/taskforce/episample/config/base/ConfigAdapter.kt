@@ -142,7 +142,7 @@ class ConfigAdapter(fragmentManager: FragmentManager) :
 //                ChildFragmentType.SURVEY_EXPORT,
 //                ChildFragmentType.SERVER_SETTINGS,
 //                ChildFragmentType.DISPLAY_SETTINGS,
-//                ChildFragmentType.USER_SETTINGS,
+                ChildFragmentType.USER_SETTINGS,
                 ChildFragmentType.ADMIN_SETTINGS
         )
 

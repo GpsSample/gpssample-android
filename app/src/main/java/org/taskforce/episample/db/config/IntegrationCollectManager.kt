@@ -5,6 +5,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Transformations
 import com.google.android.gms.maps.model.LatLng
 import org.taskforce.episample.core.interfaces.*
+import org.taskforce.episample.core.interfaces.UserSettings
 import org.taskforce.episample.core.mock.MockBreadcrumb
 import org.taskforce.episample.core.mock.MockCollectManager
 import org.taskforce.episample.db.ConfigRepository
@@ -12,22 +13,6 @@ import org.taskforce.episample.db.ConfigRepository
 class IntegrationCollectManager(application: Application,
                                 override val configId: String,
                                 override val studyId: String): CollectManager {
-    override fun updateEnumerationItem(item: org.taskforce.episample.core.interfaces.Enumeration) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun updateLandmark(landmark: Landmark) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun addEnumerationItem(item: org.taskforce.episample.core.interfaces.Enumeration) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun addLandmark(landmark: Landmark) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     val configRepository = ConfigRepository(application)
 
     val mockCollectManager = MockCollectManager()
@@ -39,6 +24,7 @@ class IntegrationCollectManager(application: Application,
     }
 
     class Enumeration(dbEnumeration: org.taskforce.episample.db.collect.Enumeration): org.taskforce.episample.core.interfaces.Enumeration {
+
         override val image = dbEnumeration.image
         override val isIncomplete = dbEnumeration.isIncomplete
         override val title = dbEnumeration.title
@@ -49,7 +35,6 @@ class IntegrationCollectManager(application: Application,
         override val displayDate = "TODO"
         override val customFieldValues: List<CustomFieldValue> = listOf()
     }
-
     override fun getLandmarks(): LiveData<List<Landmark>> {
         return mockCollectManager.getLandmarks()
     }
@@ -74,9 +59,11 @@ class IntegrationCollectManager(application: Application,
     override fun getLandmarkTypes(): LiveData<List<LandmarkType>> {
         return mockCollectManager.getLandmarkTypes()
     }
-    
+
     override fun getUserSettings(): LiveData<UserSettings> {
-        return mockCollectManager.getUserSettings()
+        return Transformations.map(configRepository.getResolvedConfig(configId), {
+            return@map it.userSettings
+        })
     }
 
     override fun getDisplaySettings(): LiveData<DisplaySettings> {
@@ -85,5 +72,21 @@ class IntegrationCollectManager(application: Application,
 
     override fun addBreadcrumb(breadcrumb: Breadcrumb) {
         mockCollectManager.addBreadcrumb(breadcrumb)
+    }
+
+    override fun updateEnumerationItem(item: org.taskforce.episample.core.interfaces.Enumeration) {
+        mockCollectManager.updateEnumerationItem(item)
+    }
+
+    override fun updateLandmark(landmark: Landmark) {
+        mockCollectManager.updateLandmark(landmark)
+    }
+
+    override fun addEnumerationItem(item: org.taskforce.episample.core.interfaces.Enumeration) {
+        mockCollectManager.addEnumerationItem(item)
+    }
+
+    override fun addLandmark(landmark: Landmark) {
+        mockCollectManager.addLandmark(landmark)
     }
 }

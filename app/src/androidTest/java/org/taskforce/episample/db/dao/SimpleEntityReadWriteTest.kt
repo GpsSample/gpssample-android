@@ -83,7 +83,8 @@ class SimpleEntityReadWriteTest {
         configDao?.insert(config,
                 listOf(),
                 org.taskforce.episample.db.config.AdminSettings(adminPassword, config.id),
-                EnumerationSubject(enumerationSingular, enumerationPlural, enumerationLabel, config.id))
+                EnumerationSubject(enumerationSingular, enumerationPlural, enumerationLabel, config.id),
+                makeUserSettings(config.id))
 
         val resolvedConfigs = resolvedConfigDao!!.getConfigSync(config.id)
         assertEquals(1, resolvedConfigs.size)
@@ -103,7 +104,9 @@ class SimpleEntityReadWriteTest {
         configDao?.insert(config,
                 listOf(),
                 org.taskforce.episample.db.config.AdminSettings(adminPassword, config.id),
-                EnumerationSubject("singular", "plural", "primaryLabel", config.id))
+                EnumerationSubject("singular", "plural", "primaryLabel", config.id),
+                makeUserSettings(config.id)
+        )
 
         configDao?.insert(org.taskforce.episample.db.config.AdminSettings("foo", config.id))
     }
@@ -117,7 +120,9 @@ class SimpleEntityReadWriteTest {
         configDao?.insert(config,
                 listOf(),
                 AdminSettings(adminPassword, config.id),
-                EnumerationSubject("singular", "plural", "primaryLabel", config.id))
+                EnumerationSubject("singular", "plural", "primaryLabel", config.id),
+                makeUserSettings(config.id)
+        )
 
         configDao?.insert(EnumerationSubject("singular", "plural", "primaryLabel", config.id))
     }
@@ -137,7 +142,8 @@ class SimpleEntityReadWriteTest {
                 insertConfig,
                 listOf(),
                 AdminSettings(adminPassword, insertConfig.id),
-                EnumerationSubject(enumerationSingular, enumerationPlural, enumerationLabel, insertConfig.id)
+                EnumerationSubject(enumerationSingular, enumerationPlural, enumerationLabel, insertConfig.id),
+                makeUserSettings(insertConfig.id)
         )
 
 
@@ -167,9 +173,8 @@ class SimpleEntityReadWriteTest {
                 insertConfig,
                 listOf(),
                 AdminSettings(adminPassword, insertConfig.id),
-                EnumerationSubject(enumerationSingular, enumerationPlural, enumerationLabel, insertConfig.id
-                )
-
+                EnumerationSubject(enumerationSingular, enumerationPlural, enumerationLabel, insertConfig.id),
+                makeUserSettings(insertConfig.id)
         )
 
         val config = configDao!!.getConfigSync(insertConfig.id)
@@ -633,7 +638,8 @@ class SimpleEntityReadWriteTest {
         configDao?.insert(config,
                 listOf(insertField),
                 AdminSettings("anypassword", config.id),
-                EnumerationSubject("Person", "People", "Point of Contact", config.id)
+                EnumerationSubject("Person", "People", "Point of Contact", config.id),
+                makeUserSettings(config.id)
         )
 
         val resolvedConfig = resolvedConfigDao?.getConfigSync(config.id)
@@ -646,7 +652,8 @@ class SimpleEntityReadWriteTest {
                 insertConfig,
                 listOf(),
                 AdminSettings("anypassword", insertConfig.id),
-                EnumerationSubject("Person", "People", "Point of Contact", insertConfig.id)
+                EnumerationSubject("Person", "People", "Point of Contact", insertConfig.id),
+                makeUserSettings(configId)
         )
     }
 
@@ -689,7 +696,8 @@ class SimpleEntityReadWriteTest {
         configDao?.insert(Config("Config Name", id = configId),
                 listOf(),
                 org.taskforce.episample.db.config.AdminSettings("password", configId),
-                EnumerationSubject("s", "p", "l", configId))
+                EnumerationSubject("s", "p", "l", configId),
+                makeUserSettings(configId))
 
         configDao?.insert(*convertedFields.toTypedArray())
 
@@ -710,6 +718,10 @@ class SimpleEntityReadWriteTest {
                     isPersonallyIdentifiableInformation = false,
                     metadata = metadata,
                     configId = configId)
+        }
+
+        fun makeUserSettings(configId: String, gpsMinimumPrecision: Double = 40.0, gpsPreferredPrecision: Double = 20.0): UserSettings {
+            return UserSettings(gpsMinimumPrecision, gpsPreferredPrecision, configId)
         }
 
         fun makeEnumeration(studyId: String, enumerationId: String): Enumeration {

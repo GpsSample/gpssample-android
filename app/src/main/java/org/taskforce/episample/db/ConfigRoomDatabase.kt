@@ -16,16 +16,17 @@ import org.taskforce.episample.db.config.customfield.CustomFieldDao
 import org.taskforce.episample.db.config.customfield.CustomFieldValue
 
 
-@Database(version = 22,
+@Database(version = 23,
         entities = [
-            (AdminSettings::class),
-            (Config::class),
-            (CustomField::class),
-            (CustomFieldValue::class),
-            (Enumeration::class),
-            (EnumerationSubject::class),
-            (GpsBreadcrumb::class),
-            (Study::class)
+            AdminSettings::class,
+            Config::class,
+            CustomField::class,
+            CustomFieldValue::class,
+            Enumeration::class,
+            EnumerationSubject::class,
+            GpsBreadcrumb::class,
+            Study::class,
+            UserSettings::class
         ])
 
 abstract class ConfigRoomDatabase : RoomDatabase() {

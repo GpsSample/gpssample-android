@@ -43,20 +43,30 @@ abstract class ConfigDao : CustomFieldDao {
     abstract fun insert(customField: CustomField)
 
     @Insert
+    abstract fun insert(userSettings: UserSettings)
+
+    @Insert
     abstract fun insert(vararg customField: CustomField)
 
     @Query("SELECT * FROM enumeration_subject_table WHERE enumeration_subject_config_id LIKE :configId")
     abstract fun getEnumerationSubjectSync(configId: String): EnumerationSubject?
 
+    @Query("SELECT * FROM user_settings_table WHERE user_settings_config_id LIKE :configId")
+    abstract fun getUserSettingsSync(configId: String): UserSettings?
+
     @Transaction
-    open fun insert(config: Config, customFields: List<CustomField>, adminSettings: AdminSettings?, enumerationSubject: EnumerationSubject?) {
+    open fun insert(config: Config, customFields: List<CustomField>, adminSettings: AdminSettings?, enumerationSubject: EnumerationSubject?, userSettings: UserSettings?) {
         insert(config)
-        if (adminSettings != null) {
-            insert(adminSettings)
+        adminSettings?.let {
+            insert(it)
         }
-        if (enumerationSubject != null) {
-            insert(enumerationSubject)
+        enumerationSubject?.let {
+            insert(it)
         }
+        userSettings?.let {
+            insert(it)
+        }
+
         insert(*customFields.toTypedArray())
     }
 
@@ -70,6 +80,9 @@ abstract class ConfigDao : CustomFieldDao {
         val enumerationSubject = getEnumerationSubjectSync(sourceConfig.id)?.apply {
             this.configId = insertConfig.id
         }
+        val userSettings = getUserSettingsSync(sourceConfig.id)?.apply {
+            this.configId = insertConfig.id
+        }
 
         val customFields = getFieldsByConfigSync(insertConfig.id)
         customFields.forEach {
@@ -80,7 +93,8 @@ abstract class ConfigDao : CustomFieldDao {
         insert(insertConfig,
                 customFields,
                 adminSettings,
-                enumerationSubject)
+                enumerationSubject,
+                userSettings)
 
         return insertConfig.id
     }

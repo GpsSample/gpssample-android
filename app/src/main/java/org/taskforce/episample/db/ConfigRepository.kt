@@ -36,9 +36,9 @@ class ConfigRepository(application: Application, injectedDatabase: ConfigRoomDat
         }
     })
 
-    private fun studyToNullable(studyId: String): LiveData<Study?> = Transformations.map(studyDao.getStudy(studyId), {
-        return@map it as Study?
-    })
+    private fun studyToNullable(studyId: String): LiveData<Study?> = Transformations.map(studyDao.getStudy(studyId)) {
+        return@map it
+    }
 
     private val study: LiveData<Study?> = Transformations.switchMap(allConfigs, {
         val studyConfig = it.firstOrNull() { config ->
@@ -98,7 +98,11 @@ class ConfigRepository(application: Application, injectedDatabase: ConfigRoomDat
             it.makeDBConfig(insertConfig.id)
         }
 
-        InsertConfigAsyncTask(configDao).execute(InsertConfigInput(insertConfig, insertAdminSettings, insertEnumerationSubject, insertCustomFields, callback))
+        val insertUserSettings = config.userSettings?.let {
+            UserSettings(it.gpsMinimumPrecision, it.gpsPreferredPrecision, insertConfig.id)
+        }
+
+        InsertConfigAsyncTask(configDao).execute(InsertConfigInput(insertConfig, insertAdminSettings, insertEnumerationSubject, insertCustomFields, insertUserSettings, callback))
     }
 
     fun duplicateConfig(config: Config, callback: (configId: String) -> Unit) {
@@ -134,6 +138,7 @@ private data class InsertConfigInput(val config: Config,
                                      val adminSettings: AdminSettings?,
                                      val enumerationSubject: EnumerationSubject?,
                                      val customFields: List<CustomField>,
+                                     val userSettings: UserSettings?,
                                      val callback: (configId: String) -> Unit)
 
 private class InsertConfigAsyncTask(private val asyncTaskDao: ConfigDao) : AsyncTask<InsertConfigInput, Void, Void>() {
@@ -144,7 +149,8 @@ private class InsertConfigAsyncTask(private val asyncTaskDao: ConfigDao) : Async
                 input.config,
                 input.customFields,
                 input.adminSettings,
-                input.enumerationSubject
+                input.enumerationSubject,
+                input.userSettings
         )
         input.callback(input.config.id)
         return null

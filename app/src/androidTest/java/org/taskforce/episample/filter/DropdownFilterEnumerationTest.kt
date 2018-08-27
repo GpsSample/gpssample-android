@@ -16,18 +16,21 @@ import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.customfield.CustomFieldDao
 import org.taskforce.episample.db.config.customfield.CustomFieldType
 import org.taskforce.episample.db.config.customfield.CustomFieldValue
+import org.taskforce.episample.db.config.customfield.metadata.CustomDropdown
 import org.taskforce.episample.db.config.customfield.metadata.CustomFieldMetadata
-import org.taskforce.episample.db.config.customfield.metadata.EmptyMetadata
-import org.taskforce.episample.db.config.customfield.value.BooleanValue
+import org.taskforce.episample.db.config.customfield.metadata.DropdownMetadata
+import org.taskforce.episample.db.config.customfield.value.DropdownValue
 import org.taskforce.episample.db.filter.Filter
-import org.taskforce.episample.db.filter.checkbox.BooleanRuleFactory
+import org.taskforce.episample.db.filter.dropdown.DropdownRuleFactory
 import java.io.IOException
 import java.util.*
 
 
 @RunWith(AndroidJUnit4::class)
-class BooleanFilterEnumerationTest {
-    private val filterValue = false
+class DropdownFilterEnumerationTest {
+    private val filterValue = CustomDropdown("Value 1")
+    private val nonFilterValue = CustomDropdown("Value 2")
+
     private var configDao: ConfigDao? = null
     private var resolvedConfigDao: ResolvedConfigDao? = null
     private var studyDao: StudyDao? = null
@@ -59,9 +62,14 @@ class BooleanFilterEnumerationTest {
 
         studyDao?.insert(insertStudy, insertStudyConfig, insertConfigId)
 
-        customField = makeCustomField("isOddNumber",
-                CustomFieldType.CHECKBOX,
-                EmptyMetadata(),
+        customField = makeCustomField("some dropdown",
+                CustomFieldType.DROPDOWN,
+                DropdownMetadata(
+                        listOf(
+                                filterValue,
+                                nonFilterValue
+                        )
+                ),
                 configId
         )
 
@@ -72,9 +80,9 @@ class BooleanFilterEnumerationTest {
             val insertEnumeration = makeEnumeration(studyId, enumerationId)
             studyDao?.insert(insertEnumeration)
 
-            val doubleValue = BooleanValue(i % 2 == 1)
+            val dropdownValue = DropdownValue(if (i % 5 == 0) filterValue.key else nonFilterValue.key)
 
-            val insertFieldValue = CustomFieldValue(doubleValue,
+            val insertFieldValue = CustomFieldValue(dropdownValue,
                     CustomFieldType.CHECKBOX,
                     enumerationId,
                     customField.id)
@@ -91,11 +99,11 @@ class BooleanFilterEnumerationTest {
 
     /*
         Before you alter this, please note the following:
-        All the following tests are based on a setup where a configuration with an integer custom field has been added, along with 10 enumerations
-        where the custom field value which has been added is a boolean taking the values [1..10] % 2 == 1 (IE is the current index odd) have been added
+        All the following tests are based on a setup where a configuration with an dropdown custom field has been added, along with 10 enumerations
+        where the custom field value which has been added is a dropdown with value == "Value 1" for the 5th enumeration and "Value 2" otherwise
 
-        So for example, the test filterEqualTo is attempting to filter the results which are equal to false
-        So we would expect 5 enumations with the value of all of them being false
+        So for example, the test filterEqualTo is attempting to filter the results which are equal to "Value 1"
+        So we would expect 1 enumeration
 
         And so on and so forth.
      */
@@ -104,15 +112,15 @@ class BooleanFilterEnumerationTest {
     fun filterEqualTo() {
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(BooleanRuleFactory.makeRule(BooleanRuleFactory.BooleanRules.IS_EQUAL_TO, customField, filterValue)))
+        val filterLessThan = Filter(listOf(DropdownRuleFactory.makeRule(DropdownRuleFactory.DropdownRules.IS_EQUAL_TO, customField, filterValue.key)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filter(it)
         }
 
-        Assert.assertEquals(5, filteredEnumerations?.size)
+        Assert.assertEquals(1, filteredEnumerations?.size)
         filteredEnumerations?.forEach {
-            Assert.assertTrue((it.customFieldValues.first().value as BooleanValue).boolValue == filterValue)
+            Assert.assertTrue((it.customFieldValues.first().value as DropdownValue).customDropdownId == filterValue.key)
         }
     }
 
@@ -121,15 +129,15 @@ class BooleanFilterEnumerationTest {
     fun filterNotEqualTo() {
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(BooleanRuleFactory.makeRule(BooleanRuleFactory.BooleanRules.IS_NOT_EQUAL_TO, customField, filterValue)))
+        val filterLessThan = Filter(listOf(DropdownRuleFactory.makeRule(DropdownRuleFactory.DropdownRules.IS_NOT_EQUAL_TO, customField, filterValue.key)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filter(it)
         }
 
-        Assert.assertEquals(5, filteredEnumerations?.size)
+        Assert.assertEquals(9, filteredEnumerations?.size)
         filteredEnumerations?.forEach {
-            Assert.assertTrue((it.customFieldValues.first().value as BooleanValue).boolValue != filterValue)
+            Assert.assertTrue((it.customFieldValues.first().value as DropdownValue).customDropdownId == filterValue.key)
         }
     }
 

@@ -1,4 +1,4 @@
-package org.taskforce.episample.db.filter.booleans
+package org.taskforce.episample.db.filter.checkbox
 
 import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.customfield.value.BooleanValue

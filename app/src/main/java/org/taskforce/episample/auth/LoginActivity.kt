@@ -12,21 +12,24 @@ class LoginActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val configId = intent.getStringExtra(ARG_CONFIG_ID)!!
+        val studyId = intent.getStringExtra(ARG_STUDY_ID)!!
+
         setContentView(R.layout.activity_login)
         supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.loginFrame, LoginFragment.newInstance())
+                .replace(R.id.loginFrame, LoginFragment.newInstance(configId, studyId))
                 .commit()
     }
 
-    override fun finish() {
-        (application as EpiApplication).clearCollectComponent()
-        super.finish()
-    }
-
     companion object {
-        fun startActivity(context: Context) {
-            context.startActivity(Intent(context, LoginActivity::class.java))
+        const val ARG_CONFIG_ID = "ARG_CONFIG_ID"
+        const val ARG_STUDY_ID = "ARG_STUDY_ID"
+        fun startActivity(context: Context, configId: String, studyId: String) {
+            val intent = Intent(context, LoginActivity::class.java)
+            intent.putExtra(ARG_CONFIG_ID, configId)
+            intent.putExtra(ARG_STUDY_ID, studyId)
+            context.startActivity(intent)
         }
     }
 }

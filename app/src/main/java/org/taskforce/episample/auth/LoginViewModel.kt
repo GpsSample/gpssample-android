@@ -1,6 +1,8 @@
 package org.taskforce.episample.auth
 
 import android.app.Application
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.Transformations
 import android.databinding.BaseObservable
@@ -9,37 +11,33 @@ import android.widget.ArrayAdapter
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.config.language.LanguageService
+import org.taskforce.episample.core.interfaces.Config
 import org.taskforce.episample.core.interfaces.ConfigManager
+import org.taskforce.episample.db.ConfigRepository
+import org.taskforce.episample.db.config.ResolvedConfig
+import org.taskforce.episample.managers.LiveConfig
 import org.taskforce.episample.utils.bindDelegate
 import javax.inject.Inject
 
 class LoginViewModel(application: Application,
-        languageService: LanguageService,
-        val languageSelectAdapter: ArrayAdapter<String>,
-        private val signIn: (name: String) -> Unit,
-        private val signInAsSupervisor: (name: String) -> Unit,
-        private val displaysAdminLoginDialog: () -> Unit) : BaseObservable() {
+                     languageService: LanguageService,
+                     val configId: String,
+                     val languageSelectAdapter: ArrayAdapter<String>,
+                     private val signIn: (name: String, config: Config) -> Unit,
+                     private val signInAsSupervisor: (name: String, config: Config) -> Unit,
+                     private val displaysAdminLoginDialog: () -> Unit) : BaseObservable() {
 
-    @Inject
-    lateinit var configManager: ConfigManager
+    val configRepository = ConfigRepository(application)
+    val configData = configRepository.getResolvedConfig(configId)
 
-    init {
-        (application as EpiApplication).collectComponent?.inject(this)
+    val configObserver: Observer<ResolvedConfig> = Observer {
+
+        config = it?.let { return@let LiveConfig(application, it!!) }
+        adminPassword = it?.adminSettings?.password
     }
 
-    val adminPasswordData = Transformations.map(configManager.getConfig(), {
-        return@map it.adminSettings.password
-    })
-
-    val adminPasswordObserver: Observer<String> = Observer {
-        adminPassword = it
-    }
-
+    var config: Config? = null
     var adminPassword: String? = null
-        set(newValue) {
-            field = newValue
-            adminPasswordData.removeObserver(adminPasswordObserver)
-        }
 
     init {
         languageService.update = {
@@ -49,7 +47,7 @@ class LoginViewModel(application: Application,
             passwordHint = languageService.getString(R.string.login_password_supervisor_hint)
         }
 
-        adminPasswordData.observeForever(adminPasswordObserver)
+        configData.observeForever(configObserver)
     }
 
     @get:Bindable
@@ -89,8 +87,8 @@ class LoginViewModel(application: Application,
                 if (password != null) {
                     password?.let { password ->
                         name?.let {
-                            if (password == adminPassword) { //currentConfig.adminSettings?.password) {
-                                signInAsSupervisor(name!!)
+                            if (password == adminPassword) {
+                                signInAsSupervisor(it, config!!)
                             } else {
                                 //TODO: display incorrect password error.
                             }
@@ -101,7 +99,7 @@ class LoginViewModel(application: Application,
                 }
             } else {
                 name?.let {
-                    signIn(it)
+                    signIn(it, config!!)
                 }
             }
         }

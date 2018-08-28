@@ -4,7 +4,6 @@ import com.squareup.leakcanary.LeakCanary
 import dagger.Component
 import org.mockito.Mockito
 import org.taskforce.episample.EpiApplication
-import org.taskforce.episample.TransferDialogTest
 import org.taskforce.episample.config.base.ConfigStorage
 import org.taskforce.episample.injection.EpiComponent
 import org.taskforce.episample.injection.EpiModule
@@ -15,9 +14,7 @@ class MockEpiApplication : EpiApplication() {
 
     @Singleton
     @Component(modules = [EpiModule::class, MockConfigStorageModule::class, StudyStorageModule::class])
-    interface TestComponent : EpiComponent {
-        fun inject(transferDialogTest: TransferDialogTest)
-    }
+    interface TestComponent : EpiComponent
 
     override fun onCreate() {
         super.onCreate()

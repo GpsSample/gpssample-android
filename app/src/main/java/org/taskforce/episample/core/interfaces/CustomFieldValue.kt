@@ -7,5 +7,8 @@ interface CustomFieldValue {
     val value: CustomFieldValueType
     val type: CustomFieldType
     val customFieldId: String
-    val id: String
 }
+
+data class LiveCustomFieldValue(override val value: CustomFieldValueType,
+                                override val type: CustomFieldType,
+                                override val customFieldId: String) : CustomFieldValue

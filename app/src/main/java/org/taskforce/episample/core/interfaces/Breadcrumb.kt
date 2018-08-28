@@ -8,3 +8,7 @@ interface Breadcrumb {
     val gpsPrecision: Double
     val dateCreated: Date
 }
+
+data class LiveBreadcrumb(override val location: LatLng,
+                          override val gpsPrecision: Double,
+                          override val dateCreated: Date): Breadcrumb

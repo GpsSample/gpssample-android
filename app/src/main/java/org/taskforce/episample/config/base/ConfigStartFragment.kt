@@ -14,6 +14,7 @@ import org.taskforce.episample.auth.LoginActivity
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.config.transfer.TransferManager
 import org.taskforce.episample.databinding.FragmentConfigStartBinding
+import org.taskforce.episample.db.ConfigRoomDatabase
 import org.taskforce.episample.injection.CollectModule
 import org.taskforce.episample.sync.core.DirectTransferService
 import org.taskforce.episample.sync.ui.ReceiverSyncStatusViewModel
@@ -59,10 +60,7 @@ class ConfigStartFragment : Fragment() {
                             Toast.makeText(requireContext(), "TODO", Toast.LENGTH_SHORT).show()
                         },
                         { config, studyId ->
-                            (requireActivity().application as EpiApplication)
-                                    .createCollectComponent(CollectModule(requireActivity().application,
-                                            config.id, studyId))
-                            LoginActivity.startActivity(requireContext())
+                            LoginActivity.startActivity(requireContext(), config.id, studyId)
                             requireActivity().finish()
                         },
                         transferManager

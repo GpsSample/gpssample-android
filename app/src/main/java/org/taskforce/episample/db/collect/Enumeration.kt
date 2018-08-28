@@ -32,4 +32,4 @@ class Enumeration(
         @ColumnInfo(name = "date_created")
         val dateCreated: Date = Date(),
         @PrimaryKey
-        var id: String)
+        var id: String = UUID.randomUUID().toString())

@@ -6,23 +6,29 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import android.text.SpannableStringBuilder
+import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.config.language.LanguageService
+import org.taskforce.episample.core.interfaces.UserSession
 import org.taskforce.episample.db.ConfigRepository
 import org.taskforce.episample.utils.boldSubstring
 import java.util.*
+import javax.inject.Inject
 
 class MainViewModel(
         application: Application,
         languageService: LanguageService,
-        private val userName: String,
         private val lastSynced: Date?,
-        val isSupervisor: Boolean,
         collectOnClick: () -> Unit,
         navigateOnClick: () -> Unit,
         syncOnClick: () -> Unit,
         sampleOnClick: () -> Unit,
         finalOnClick: () -> Unit) : AndroidViewModel(application) {
+
+    val supervisor = MutableLiveData<Boolean>().apply { value = false }
+
+    @Inject
+    lateinit var userSession: UserSession
 
     val configRepository = ConfigRepository(getApplication())
     val studyTitle: LiveData<String> = Transformations.map(configRepository.getStudy(), {
@@ -31,6 +37,8 @@ class MainViewModel(
     })
 
     init {
+        (application as EpiApplication).collectComponent!!.inject(this)
+        supervisor.value = userSession.isSupervisor
         languageService.update = {
             // TODO show last synced date
 //            commentary = if (lastSynced != null) {
@@ -40,11 +48,11 @@ class MainViewModel(
 //            } else {
 //                languageService.getString(R.string.main_commentary_never_synced)
 //            }
-            signIn.value = boldSubstring(languageService.getString(R.string.main_signed_in_as, userName), userName)
+            signIn.value = boldSubstring(languageService.getString(R.string.main_signed_in_as, userSession.username), userSession.username)
         }
     }
 
-    val signIn = MutableLiveData<SpannableStringBuilder>().apply { value = boldSubstring(languageService.getString(R.string.main_signed_in_as, userName), userName) }
+    val signIn = MutableLiveData<SpannableStringBuilder>().apply { value = boldSubstring(languageService.getString(R.string.main_signed_in_as, userSession.username), userSession.username) }
 
     // TODO show last synced date
     // languageService.getString(R.string.main_commentary_last_synced,
@@ -79,13 +87,13 @@ class MainViewModel(
             R.drawable.sample_graphic,
             languageService.getString(R.string.main_sample_title),
             languageService.getString(R.string.main_sample_description),
-            isSupervisor,
+            userSession.isSupervisor,
             sampleOnClick)
 
     val finalVm = MainItemViewModel(
             R.drawable.report_graphic,
             languageService.getString(R.string.main_report_title),
             languageService.getString(R.string.main_report_description),
-            isSupervisor,
+            userSession.isSupervisor,
             finalOnClick)
 }

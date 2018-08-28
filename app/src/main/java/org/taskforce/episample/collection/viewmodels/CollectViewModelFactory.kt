@@ -8,6 +8,7 @@ import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Observable
 import io.reactivex.Single
 import org.taskforce.episample.config.language.LanguageService
+import org.taskforce.episample.core.interfaces.EnumerationSubject
 
 class CollectViewModelFactory(private val application: Application,
                               private val languageService: LanguageService,

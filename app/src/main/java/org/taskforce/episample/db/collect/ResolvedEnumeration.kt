@@ -2,6 +2,9 @@ package org.taskforce.episample.db.collect
 
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
+import com.google.android.gms.maps.model.LatLng
+import org.taskforce.episample.core.interfaces.Enumeration
+import org.taskforce.episample.core.interfaces.LiveEnumeration
 import org.taskforce.episample.db.config.customfield.CustomFieldValue
 import org.taskforce.episample.db.converter.DateConverter
 import java.util.*
@@ -12,10 +15,14 @@ class ResolvedEnumeration(
         val lat: Double,
         val lng: Double,
         val note: String?,
+        @ColumnInfo(name = "is_excluded")
+        val isExcluded: Boolean,
         @ColumnInfo(name = "is_complete")
         val isIncomplete: Boolean,
         @ColumnInfo(name = "gps_precision")
         val gpsPrecision: Double,
+        @ColumnInfo(name = "collector_name")
+        val collectorName: String? = null,
         val title: String? = null,
         val image: String? = null,
         @ColumnInfo(name = "date_created")
@@ -24,13 +31,22 @@ class ResolvedEnumeration(
 
     @Relation(parentColumn = "id", entityColumn = "enumeration_id")
     lateinit var customFieldValues: List<CustomFieldValue>
+
+    fun makeLiveEnumeration(): Enumeration = LiveEnumeration(image,
+            isIncomplete, isExcluded, title, note, LatLng(lat, lng), gpsPrecision, "TODO", customFieldValues.map { it as org.taskforce.episample.core.interfaces.CustomFieldValue }, dateCreated)
 }
 
 @Dao
 interface ResolvedEnumerationDao {
     @Query("SELECT * from enumeration_table WHERE id LIKE :enumerationId")// e INNER JOIN custom_field_value_table c ON c.enumeration_id = e.id WHERE e.id LIKE :enumerationId")
-    fun getEnumeration(enumerationId: String): LiveData<List<ResolvedEnumeration>>
+    fun getResolvedEnumeration(enumerationId: String): LiveData<ResolvedEnumeration?>
 
     @Query("SELECT * from enumeration_table WHERE id LIKE :enumerationId")// e INNER JOIN custom_field_value_table c ON c.enumeration_id = e.id WHERE e.id LIKE :enumerationId")
-    fun getEnumerationSync(enumerationId: String): List<ResolvedEnumeration>
+    fun getResolvedEnumerationSync(enumerationId: String): ResolvedEnumeration?
+
+    @Query("SELECT * from enumeration_table WHERE study_id LIKE :studyId")
+    fun getResolvedEnumerations(studyId: String): LiveData<ResolvedEnumeration?>
+
+    @Query("SELECT * from enumeration_table WHERE study_id LIKE :studyId")
+    fun getResolvedEnumerationsSync(studyId: String): List<ResolvedEnumeration>
 }

@@ -3,8 +3,8 @@ package org.taskforce.episample.config.settings.display
 import java.io.Serializable
 import java.util.*
 
-class DisplaySettings(private var isDateMetric: Boolean = false,
-                      private var isTime24Hour: Boolean = false) : Serializable {
+class DisplaySettings(var isDateMetric: Boolean = false,
+                      var isTime24Hour: Boolean = false) : Serializable {
 
 
     fun getFormattedDate(date: Date, longForm: Boolean): String {

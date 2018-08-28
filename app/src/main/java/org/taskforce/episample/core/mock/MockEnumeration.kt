@@ -9,7 +9,7 @@ data class MockEnumeration(override val title: String?,
                            override val location: LatLng,
                            override val gpsPrecision: Double,
                            override val isIncomplete: Boolean,
-                           override val excluded: Boolean,
+                           override val isExcluded: Boolean,
                            override val image: String?,
                            override val note: String?,
                            override val dateCreated: Date = Date()): Enumeration {

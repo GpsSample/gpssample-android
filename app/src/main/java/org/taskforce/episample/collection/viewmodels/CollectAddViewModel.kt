@@ -20,6 +20,9 @@ import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.LiveDataTriple
 import org.taskforce.episample.core.interfaces.CollectManager
+import org.taskforce.episample.core.interfaces.Config
+import org.taskforce.episample.core.interfaces.ConfigManager
+import org.taskforce.episample.core.interfaces.LiveEnumeration
 import org.taskforce.episample.fileImport.models.LandmarkType
 import javax.inject.Inject
 
@@ -37,22 +40,21 @@ class CollectAddViewModel(
         private val goToNext: () -> Unit,
         private val takePicture: () -> Unit) : AndroidViewModel(application) {
 
-    init {
-        (application as EpiApplication).collectComponent?.inject(this)
-    } 
+    @Inject
+    lateinit var config: Config
 
     @Inject
     lateinit var collectManager: CollectManager
+
+    init {
+        (application as EpiApplication).collectComponent?.inject(this)
+    } 
 
     var gpsVm: CollectGpsPrecisionViewModel? = null
 
     val gpsBreadcrumbs = collectManager.getBreadcrumbs()
 
     val collectItems = collectManager.getCollectItems()
-
-    val userSettings = collectManager.getUserSettings()
-
-    val enumerationSubject = collectManager.getEnumerationSubject()
 
     val landmarkTypes = collectManager.getLandmarkTypes()
 
@@ -72,11 +74,9 @@ class CollectAddViewModel(
         }
     }
 
-    val showPhotoButton = Transformations.map(userSettings) {
-        it.allowPhotos
-    }
+    val showPhotoButton = config.userSettings.allowPhotos
 
-    val showPhotoCard = Transformations.map(userSettings) { it.allowPhotos }
+    val showPhotoCard = config.userSettings.allowPhotos
 
     val showPhotoText = MutableLiveData<String>().apply {
         value = languageService.getString(R.string.collect_add_text)
@@ -100,7 +100,7 @@ class CollectAddViewModel(
     
     val primaryLabelError = MutableLiveData<String>().apply { value = "" }
     
-    val primaryLabelHint = Transformations.map(enumerationSubject) { "${it.primaryLabel} *" }
+    val primaryLabelHint = "${config.enumerationSubject.primaryLabel} *"
     
     val primaryLabelErrorEnabled = MutableLiveData<Boolean>().apply { value = false }
     
@@ -151,10 +151,9 @@ class CollectAddViewModel(
     }
 
     // TODO: If not sufficiently precise, start a countdown that disables the button
-    val saveButtonPair = LiveDataPair(isEnumerationValid, enumerationSubject)
-    val saveButtonText = Transformations.map(saveButtonPair) {
-        val isEnumerationValid = it.first ?: false
-        val subject = it.second
+    val saveButtonText = Transformations.map(isEnumerationValid) {
+        val isEnumerationValid = it
+        val subject = config.enumerationSubject
         
         if (isLandmark) {
             languageService.getString(R.string.collect_save_landmark)
@@ -167,21 +166,23 @@ class CollectAddViewModel(
         }
     }
 
-    val saveButtonTextColor: LiveData<Int> = Transformations.map(isValidLive) {
-        if (isSufficientlyPrecise) {
-            saveButtonEnabledTextColor
-        } else {
-            saveButtonDisabledTextColor
-        }
-    }
+    val saveButtonTextColor = MutableLiveData<Int>().apply { value = saveButtonDisabledTextColor }
+//            : LiveData<Int> = Transformations.map(isValidLive) {
+//        if (isSufficientlyPrecise) {
+//            return@map saveButtonEnabledTextColor
+//        } else {
+//            return@map saveButtonDisabledTextColor
+//        }
+//    }
 
-    val saveButtonBackground: LiveData<Int> = Transformations.map(isValidLive) {
-        if (isSufficientlyPrecise) {
-            saveButtonEnabledColor
-        } else {
-            saveButtonDisabledColor
-        }
-    }
+    val saveButtonBackground = MutableLiveData<Int>().apply { value = saveButtonDisabledColor}
+//            : LiveData<Int> = Transformations.map(isValidLive) {
+//        if (isSufficientlyPrecise) {
+//            return@map saveButtonEnabledColor
+//        } else {
+//            return@map saveButtonDisabledColor
+//        }
+//    }
 
     val photoText = ObservableField(languageService.getString(R.string.collect_add_text))
 
@@ -196,7 +197,7 @@ class CollectAddViewModel(
     private val customFieldViewModels = mutableListOf<AbstractCustomViewModel>()
 
     private val isSufficientlyPrecise
-        get() = (location.value?.accuracy ?: 9999.0f < userSettings.value?.gpsPreferredPrecision ?: 0.0)
+        get() = (location.value?.accuracy ?: 9999.0f < config.userSettings.gpsPreferredPrecision)
 
 //    private val isValid
 //        get() =
@@ -241,15 +242,25 @@ class CollectAddViewModel(
     }
 
     fun saveItem() {
-        val isValid = isValidLive.value ?: false
+        // TODO bind is valid to button's enabled state
+        val isValid = true
         if (isValid) {
-            // TODO insert record into db
-//            if (isLandmark) {
-//                studyManager.addLandmark(landmarkItem)
-//            } else {
-//                studyManager.addEnumerationPoint(enumerationItem)
-//            }
-            goToNext()
+            location.value?.let { location ->
+                gpsVm?.precision?.get()?.let { gpsPrecision ->
+                    // TODO map screen data to LiveEnumeration
+                    collectManager?.addEnumerationItem(LiveEnumeration(null,
+                            false,
+                            exclude.value ?: false,
+                            "Enumeration Title",
+                            null,
+                            LatLng(location.latitude, location.longitude),
+                            gpsPrecision,
+                            "Display Date",
+                            listOf())) {
+                        goToNext()
+                    }
+                }
+            }
         }
     }
 }

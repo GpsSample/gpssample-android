@@ -9,18 +9,22 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.taskforce.episample.db.ConfigRoomDatabase
-import org.taskforce.episample.db.collect.Enumeration
 import org.taskforce.episample.db.collect.ResolvedEnumerationDao
-import org.taskforce.episample.db.config.*
+import org.taskforce.episample.db.config.ConfigDao
+import org.taskforce.episample.db.config.ResolvedConfigDao
+import org.taskforce.episample.db.config.Study
+import org.taskforce.episample.db.config.StudyDao
 import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.customfield.CustomFieldDao
 import org.taskforce.episample.db.config.customfield.CustomFieldType
 import org.taskforce.episample.db.config.customfield.CustomFieldValue
-import org.taskforce.episample.db.config.customfield.metadata.CustomFieldMetadata
 import org.taskforce.episample.db.config.customfield.metadata.NumberMetadata
 import org.taskforce.episample.db.config.customfield.value.DoubleValue
 import org.taskforce.episample.db.filter.Filter
 import org.taskforce.episample.db.filter.doubles.DoubleRuleFactory
+import org.taskforce.episample.db.utils.CommonSetup.Companion.makeCustomField
+import org.taskforce.episample.db.utils.CommonSetup.Companion.makeEnumeration
+import org.taskforce.episample.db.utils.CommonSetup.Companion.setupConfig
 import java.io.IOException
 import java.util.*
 
@@ -47,22 +51,18 @@ class DoubleFilterEnumerationTest {
         resolvedEnumerationDao = db?.resolvedEnumerationDao()
 
         val insertConfigId = UUID.randomUUID().toString()
-        setupConfig(insertConfigId)
+        setupConfig(configDao!!, insertConfigId)
 
-        val config = configDao!!.getConfigSync(insertConfigId)
         studyId = UUID.randomUUID().toString()
-        val configId = "configId"
 
         val insertStudy = Study("Study 1", "Study Password", id = studyId)
-        val insertStudyConfig = Config(config.name, Date(), studyId = insertStudy.id, id = configId)
-
-        studyDao?.insert(insertStudy, insertStudyConfig, insertConfigId)
+        studyDao?.insert(insertStudy, insertConfigId)
 
         val numberMetadata = NumberMetadata(false)
         customField = makeCustomField("name",
                 CustomFieldType.NUMBER,
                 numberMetadata,
-                configId
+                insertConfigId
         )
 
         configDao?.insert(customField)
@@ -202,45 +202,6 @@ class DoubleFilterEnumerationTest {
         Assert.assertEquals(9, filteredEnumerations?.size)
         filteredEnumerations?.forEach {
             Assert.assertTrue((it.customFieldValues.first().value as DoubleValue).doubleValue != filterValue)
-        }
-    }
-
-    private fun setupConfig(configId: String) {
-        val insertConfig = Config("Config 1", id = configId)
-        configDao?.insert(
-                insertConfig,
-                listOf(),
-                AdminSettings("anypassword", insertConfig.id),
-                EnumerationSubject("Person", "People", "Point of Contact", insertConfig.id)
-        )
-    }
-
-    companion object {
-        fun makeCustomField(name: String,
-                            type: CustomFieldType,
-                            metadata: CustomFieldMetadata,
-                            configId: String): CustomField {
-            return CustomField(name,
-                    type,
-                    isAutomatic = false,
-                    isPrimary = false,
-                    shouldExport = false,
-                    isRequired = false,
-                    isPersonallyIdentifiableInformation = false,
-                    metadata = metadata,
-                    configId = configId)
-        }
-
-        fun makeEnumeration(studyId: String, enumerationId: String): Enumeration {
-            return Enumeration("Jesse",
-                    0.0,
-                    0.0,
-                    null,
-                    false,
-                    10.0,
-                    studyId,
-                    id = enumerationId
-            )
         }
     }
 }

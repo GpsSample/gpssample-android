@@ -4,11 +4,21 @@ import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
+import android.arch.persistence.room.Update
 
 @Dao
 interface CustomFieldDao {
     @Insert
     fun insert(customFieldValue: CustomFieldValue)
+
+    @Insert
+    fun insert(vararg customFieldValue: CustomFieldValue)
+
+    @Update
+    fun update(customFieldValue: CustomFieldValue)
+
+    @Update
+    fun update(vararg customFieldValue: CustomFieldValue)
 
     @Query("SELECT * from custom_field_table WHERE id LIKE :customFieldId")
     fun getField(customFieldId: String): LiveData<List<CustomField>>

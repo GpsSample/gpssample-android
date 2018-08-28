@@ -12,8 +12,13 @@ import org.junit.runner.RunWith
 import org.taskforce.episample.config.fields.CustomField
 import org.taskforce.episample.config.fields.CustomFieldTypeConstants
 import org.taskforce.episample.config.settings.admin.AdminSettings
+import org.taskforce.episample.config.settings.display.DisplaySettings
 import org.taskforce.episample.config.settings.user.UserSettings
+import org.taskforce.episample.core.interfaces.LiveCustomFieldValue
+import org.taskforce.episample.db.collect.Enumeration
 import org.taskforce.episample.db.config.customfield.CustomFieldType
+import org.taskforce.episample.db.config.customfield.value.IntValue
+import org.taskforce.episample.db.utils.CommonSetup
 import java.io.IOException
 
 @RunWith(AndroidJUnit4::class)
@@ -81,6 +86,8 @@ class ConfigRepositoryTest {
         val adminPassword = "anypassword"
         val gpsMinimumPrecision = 40.0
         val gpsPreferredPrecision = 20.0
+        val isMetricDate = true
+        val is24HourTime = true
 
         val configBuilder = org.taskforce.episample.config.base.Config(name = configName)
         configBuilder.adminSettings = AdminSettings(adminPassword)
@@ -91,6 +98,7 @@ class ConfigRepositoryTest {
         )
         configBuilder.userSettings = UserSettings(gpsMinimumPrecision, gpsPreferredPrecision,
                 false, null, false, false, null, false, false, null)
+        configBuilder.displaySettings = DisplaySettings(isMetricDate, is24HourTime)
 
         configRepository?.insertConfigFromBuildManager(configBuilder) {
             val resolvedConfigs = configRepository!!.getResolvedConfigSync(it)
@@ -100,6 +108,8 @@ class ConfigRepositoryTest {
             assertEquals(enumerationSingular, resolvedConfigs[0].enumerationSubject.singular)
             assertEquals(gpsMinimumPrecision, resolvedConfigs[0].userSettings.gpsMinimumPrecision)
             assertEquals(gpsPreferredPrecision, resolvedConfigs[0].userSettings.gpsPreferredPrecision)
+            assertEquals(isMetricDate, resolvedConfigs[0].displaySettings.isMetricDate)
+            assertEquals(is24HourTime, resolvedConfigs[0].displaySettings.is24HourTime)
             val config = configRepository!!.getConfigSync(it)
 
             configRepository?.insertStudy(config, "Study Name", "Study Password") { configId, _ ->
@@ -112,6 +122,8 @@ class ConfigRepositoryTest {
                 assertEquals(enumerationSingular, resolvedConfig.enumerationSubject.singular)
                 assertEquals(gpsMinimumPrecision, resolvedConfig.userSettings.gpsMinimumPrecision)
                 assertEquals(gpsPreferredPrecision, resolvedConfig.userSettings.gpsPreferredPrecision)
+                assertEquals(isMetricDate, resolvedConfig.displaySettings.isMetricDate)
+                assertEquals(is24HourTime, resolvedConfig.displaySettings.is24HourTime)
 
                 synchronized(syncObject) {
                     syncObject.notify()
@@ -124,4 +136,59 @@ class ConfigRepositoryTest {
         }
     }
 
+    @Test
+    @Throws(Exception::class)
+    fun insertReadUpdateEnumerations() {
+        val syncObject = Object()
+        val expectedLat = 121.0
+        val expectedLng = 133.1231
+        val expectedNumberFieldValue = 20
+
+        val integerCustomField = CustomField(true, true, true, true, true, "Custom Number", CustomFieldType.NUMBER,
+                mapOf(CustomFieldTypeConstants.INTEGER_ONLY to true))
+
+        CommonSetup.setupConfigAndStudy(configRepository!!, customFields = listOf(integerCustomField)) { configId, studyId ->
+
+            val resolvedConfig = configRepository!!.getResolvedConfigSync(configId).first()
+            val enumeration = Enumeration("Jesse",
+                    expectedLat, expectedLng, null, true, false, 25.12, studyId, null, null)
+
+            val customFieldValues = listOf(
+                    LiveCustomFieldValue(
+                            IntValue(expectedNumberFieldValue),
+                            CustomFieldType.NUMBER,
+                            resolvedConfig.customFields.first().id
+                    )
+            )
+
+            configRepository!!.insertEnumerationItem(enumeration, customFieldValues, {
+
+                val enumerations = configRepository!!.getResolvedEnumerationsSync(studyId)
+                val dbCustomFieldValues = enumerations.first().customFieldValues
+
+                assertEquals(expectedLat, enumerations.first().lat)
+                assertEquals(expectedLng, enumerations.first().lng)
+                val intValue = enumerations.first().customFieldValues.first().value as IntValue
+                assertEquals(expectedNumberFieldValue, intValue.intValue)
+
+                enumeration.collectorName = "New collector name"
+                (dbCustomFieldValues.first().value as IntValue).intValue = 10
+
+                configRepository!!.updateEnumerationItem(enumeration, dbCustomFieldValues, {
+
+                    val updatedEnumeration = configRepository!!.getResolvedEnumerationsSync(studyId)
+                    val intValue = updatedEnumeration.first().customFieldValues[0].value as IntValue
+                    assertEquals(10, intValue.intValue)
+                    assertEquals("New collector name", updatedEnumeration.first().collectorName)
+                    synchronized(syncObject) {
+                        syncObject.notify()
+                    }
+                })
+            })
+        }
+
+        synchronized(syncObject) {
+            syncObject.wait()
+        }
+    }
 }

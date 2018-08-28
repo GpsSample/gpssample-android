@@ -22,12 +22,15 @@ class Config(
         var id: String = UUID.randomUUID().toString()
 ) : Serializable {
 
+    data class CustomLandmarkTypeInput(val name: String, val iconLocation: String)
+
     var completeness = 1
     var userSettings: UserSettings? = null
     var serverSettings: ServerSettings? = null
     var samplingMethod: SamplingMethod? = null
     var offlineTiles: Collection<OfflineTile>? = null
     var landmarkTypes = listOf<LandmarkType>()
+    var customLandmarkTypes = listOf<CustomLandmarkTypeInput>()
     var geography: Geography? = null
     var displaySettings = DisplaySettings()
     var customLanguages = listOf<CustomLanguage>()

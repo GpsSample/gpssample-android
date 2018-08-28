@@ -20,7 +20,6 @@ import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.fragment_collect_add.*
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
-import org.taskforce.episample.auth.AuthManager
 import org.taskforce.episample.collection.managers.CollectIconFactory
 import org.taskforce.episample.collection.managers.CollectionItemMarkerManager
 import org.taskforce.episample.collection.viewmodels.CollectAddViewModel
@@ -36,9 +35,6 @@ class CollectAddFragment : Fragment() {
 
     @Inject
     lateinit var languageManager: LanguageManager
-
-    @Inject
-    lateinit var authManager: AuthManager
 
     lateinit var locationClient: FusedLocationProviderClient
     lateinit var collectIconFactory: CollectIconFactory
@@ -158,19 +154,16 @@ class CollectAddFragment : Fragment() {
                 requireActivity().supportFragmentManager.popBackStack()
             })
 
-            collectViewModel.userSettings.observe(this@CollectAddFragment, Observer {
-                it?.let {
-                    val vm = CollectGpsPrecisionViewModel(it.gpsMinimumPrecision,
-                            it.gpsPreferredPrecision,
-                            requireContext().getCompatColor(R.color.colorError),
-                            requireContext().getCompatColor(R.color.colorWarning),
-                            requireContext().getCompatColor(R.color.gpsAcceptable))
-                    
-                    gpsVm = vm
+            val userSettings = collectViewModel.config.userSettings
+            val vm = CollectGpsPrecisionViewModel(userSettings.gpsMinimumPrecision,
+                    userSettings.gpsPreferredPrecision,
+                    requireContext().getCompatColor(R.color.colorError),
+                    requireContext().getCompatColor(R.color.colorWarning),
+                    requireContext().getCompatColor(R.color.gpsAcceptable))
 
-                    collectViewModel.gpsVm = vm
-                }
-            })
+            gpsVm = vm
+
+            collectViewModel.gpsVm = vm
         }
         binding.setLifecycleOwner(this)
 
@@ -198,16 +191,13 @@ class CollectAddFragment : Fragment() {
             this@CollectAddFragment.landmarkImageSelector.adapter = adapter
         })
 
-        collectViewModel.enumerationSubject.observe(this@CollectAddFragment, Observer {
-            it?.let {
-                binding.toolbarVm?.title = if (arguments?.getBoolean(IS_LANDMARK) == true) {
-                    languageManager.getString(R.string.collect_add_landmark_title)
-                } else {
-                    languageManager.getString(R.string.collect_add_item_title, it.singular.capitalize())
-                }
-            }
-        })
-        
+        val enumerationSubject = collectViewModel.config.enumerationSubject
+        binding.toolbarVm?.title = if (arguments?.getBoolean(IS_LANDMARK) == true) {
+            languageManager.getString(R.string.collect_add_landmark_title)
+        } else {
+            languageManager.getString(R.string.collect_add_item_title, enumerationSubject.singular.capitalize())
+        }
+
         return binding.root
     }
 

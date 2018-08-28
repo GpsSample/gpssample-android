@@ -10,24 +10,27 @@ import org.taskforce.episample.core.interfaces.Enumeration
 import java.util.*
 
 class MockCollectManager : CollectManager {
-    override fun updateLandmark(landmark: Landmark) {
+    override fun updateLandmark(landmark: Landmark, callback: () -> Unit) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun updateEnumerationItem(item: Enumeration) {
+    override fun updateEnumerationItem(item: Enumeration, callback: () -> Unit) {
+
+    }
+
+    override fun addEnumerationItem(item: Enumeration, callback: (enumerationId: String) -> Unit) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun addEnumerationItem(item: Enumeration) {
+    override fun addLandmark(landmark: Landmark, callback: (landmarkId: String) -> Unit) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun addLandmark(landmark: Landmark) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override val studyId: String = "ANY"
-    override val configId: String = "ANY"
+    override val userSession = LiveUserSession(
+            "username",
+            false,
+            studyId = "ANY",
+            configId = "ANY")
 
     private val enumerations = listOf(
             MockEnumeration.createMockEnumeration(title = "John Doe",
@@ -48,7 +51,7 @@ class MockCollectManager : CollectManager {
 
     override fun getEnumerations(): LiveData<List<Enumeration>> {
         return MutableLiveData<List<Enumeration>>().apply {
-            value = enumerations
+            postValue(enumerations)
         }
     }
 
@@ -62,7 +65,7 @@ class MockCollectManager : CollectManager {
 
     override fun getLandmarks(): LiveData<List<Landmark>> {
         return MutableLiveData<List<Landmark>>().apply {
-            value = landmarks
+            postValue(landmarks)
         }
     }
 
@@ -78,17 +81,11 @@ class MockCollectManager : CollectManager {
             MockBreadcrumb(8.0, LatLng(37.42113431, -122.086075205)),
             MockBreadcrumb(1.4, LatLng(37.42205705, -122.084666302)))
     private val breadCrumbLiveData = MutableLiveData<List<Breadcrumb>>().apply {
-        value = breadcrumbs
+        postValue(breadcrumbs)
     }
     
     override fun getBreadcrumbs(): MutableLiveData<List<Breadcrumb>> {
         return breadCrumbLiveData
-    }
-
-    override fun getEnumerationSubject(): LiveData<EnumerationSubject> {
-        return MutableLiveData<EnumerationSubject>().apply {
-            value = MockEnumerationSubject.createMockEnumerationSubject()
-        }
     }
 
     override fun getLandmarkTypes(): LiveData<List<LandmarkType>> {
@@ -101,15 +98,7 @@ class MockCollectManager : CollectManager {
         }
     }
 
-    override fun getUserSettings(): LiveData<UserSettings> {
-        return MutableLiveData<UserSettings>().apply { value = MockUserSettings.createMockUserSettings() }
-    }
-
-    override fun getDisplaySettings(): LiveData<DisplaySettings> {
-        return MutableLiveData<DisplaySettings>().apply { value = MockDisplaySettings.createMockDisplaySettings() }
-    }
-    
-    override fun addBreadcrumb(breadcrumb: Breadcrumb) {
+    override fun addBreadcrumb(breadcrumb: Breadcrumb, callback: (breadcrumbId: String) -> Unit) {
         breadcrumbs.add(breadcrumb)
         breadCrumbLiveData.postValue(breadcrumbs)
     }

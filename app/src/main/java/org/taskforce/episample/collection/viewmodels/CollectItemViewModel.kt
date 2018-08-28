@@ -2,6 +2,7 @@ package org.taskforce.episample.collection.viewmodels
 
 import org.taskforce.episample.core.interfaces.CollectItem
 import org.taskforce.episample.core.interfaces.DisplaySettings
+import org.taskforce.episample.core.interfaces.Enumeration
 import org.taskforce.episample.utils.DateUtil
 
 
@@ -16,7 +17,7 @@ class CollectItemViewModel(val icon: String?,
             collectItem.title,
             getDateString(collectItem, displaySettings),
             incompleteText,
-            collectItem.isIncomplete
+            (collectItem as? Enumeration)?.isIncomplete ?: false
     )
     
     companion object {

@@ -16,18 +16,17 @@ import java.util.*
 
 @TypeConverters(DateConverter::class)
 class GpsBreadcrumb(
-        override val dateCreated: Date,
         override val gpsPrecision: Double,
         @ColumnInfo(name = "collector_name")
         var collectorName: String,
         val lat: Double,
         val lng: Double,
         @ColumnInfo(name = "study_id")
-        var studyId: String): Breadcrumb {
+        var studyId: String,
+        override val dateCreated: Date = Date(),
+        @PrimaryKey()
+        var id: String = UUID.randomUUID().toString()): Breadcrumb {
 
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    var id: Long = 0
 
     override val location: LatLng
         get() = LatLng(lat, lng)

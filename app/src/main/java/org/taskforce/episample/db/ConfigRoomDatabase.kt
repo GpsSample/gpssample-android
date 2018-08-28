@@ -6,15 +6,13 @@ import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
 import android.os.AsyncTask
+import org.taskforce.episample.db.collect.*
 import org.taskforce.episample.db.collect.Enumeration
-import org.taskforce.episample.db.collect.GpsBreadcrumb
-import org.taskforce.episample.db.collect.GpsBreakcrumbDao
-import org.taskforce.episample.db.collect.ResolvedEnumerationDao
 import org.taskforce.episample.db.config.*
 import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.customfield.CustomFieldDao
 import org.taskforce.episample.db.config.customfield.CustomFieldValue
-
+import org.taskforce.episample.db.config.landmark.CustomLandmarkType
 
 @Database(version = 23,
         entities = [
@@ -22,8 +20,11 @@ import org.taskforce.episample.db.config.customfield.CustomFieldValue
             Config::class,
             CustomField::class,
             CustomFieldValue::class,
+            CustomLandmarkType::class,
+            DisplaySettings::class,
             Enumeration::class,
             EnumerationSubject::class,
+            Landmark::class,
             GpsBreadcrumb::class,
             Study::class,
             UserSettings::class

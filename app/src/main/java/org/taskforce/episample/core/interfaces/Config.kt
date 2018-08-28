@@ -3,10 +3,13 @@ package org.taskforce.episample.core.interfaces
 import java.util.*
 
 interface Config {
-    var name: String
+    val name: String
     val dateCreated: Date
     val id: String
-    var adminSettings: AdminSettings
-    var enumerationSubject: EnumerationSubject
-    var customFields: List<CustomField>
+    val adminSettings: AdminSettings
+    val userSettings: UserSettings
+    val displaySettings: DisplaySettings
+    val enumerationSubject: EnumerationSubject
+    val customFields: List<CustomField>
+    val landmarkTypes: List<LandmarkType>
 }

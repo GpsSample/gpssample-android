@@ -1,6 +1,7 @@
 package org.taskforce.episample.db.config.customfield
 
 import android.arch.persistence.room.*
+import org.taskforce.episample.core.interfaces.CustomFieldValue
 import org.taskforce.episample.db.collect.Enumeration
 import org.taskforce.episample.db.config.customfield.value.CustomFieldValueType
 import org.taskforce.episample.db.converter.CustomFieldTypeConverter
@@ -23,12 +24,20 @@ import java.util.*
         CustomFieldValueTypeConverter::class
 )
 class CustomFieldValue(
-        val value: CustomFieldValueType,
-        val type: CustomFieldType,
+        override val value: CustomFieldValueType,
+        override val type: CustomFieldType,
         @ColumnInfo(name = "enumeration_id")
         val enumerationId: String,
         @ColumnInfo(name = "custom_field_id")
-        val customFieldId: String,
+        override val customFieldId: String,
         @PrimaryKey
         val id: String = UUID.randomUUID().toString()
-)
+): CustomFieldValue {
+
+    companion object {
+        fun makeDBCustomFieldValue(customFieldValue: CustomFieldValue, enumerationId: String): org.taskforce.episample.db.config.customfield.CustomFieldValue = CustomFieldValue(customFieldValue.value,
+                customFieldValue.type,
+                enumerationId,
+                customFieldValue.customFieldId)
+    }
+}

@@ -19,7 +19,6 @@ import io.reactivex.Single
 import kotlinx.android.synthetic.main.fragment_collect.*
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
-import org.taskforce.episample.auth.AuthManager
 import org.taskforce.episample.collection.managers.CollectIconFactory
 import org.taskforce.episample.collection.managers.CollectionItemMarkerManager
 import org.taskforce.episample.collection.viewmodels.CollectCardViewModel
@@ -39,20 +38,18 @@ class CollectFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMap.O
     lateinit var languageManager: LanguageManager
     lateinit var languageService: LanguageService
 
-    @Inject
-    lateinit var authManager: AuthManager
-
     lateinit var locationClient: FusedLocationProviderClient
     lateinit var collectIconFactory: CollectIconFactory
     lateinit var markerManager: CollectionItemMarkerManager
 
     lateinit var collectViewModel: CollectViewModel
 
-    lateinit var adapter: CollectItemAdapter
+    var adapter: CollectItemAdapter? =  null
     lateinit var mapFragment: SupportMapFragment
     lateinit var breadcrumbPath: PolylineOptions
-    lateinit var cardVm: CollectCardViewModel
+    lateinit var collectCardVm: CollectCardViewModel
 
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (requireActivity().application as EpiApplication).component.inject(this)
@@ -63,10 +60,7 @@ class CollectFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMap.O
         collectIconFactory = CollectIconFactory(requireContext().resources)
 
         breadcrumbPath = PolylineOptions().clickable(false)
-    }
 
-    @SuppressLint("MissingPermission")
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
         val lastKnownLocationObservable = Observable.create<Pair<LatLng, Float>> { emitter ->
             locationClient.requestLocationUpdates(LocationRequest.create().apply {
@@ -82,69 +76,66 @@ class CollectFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMap.O
             }, null)
         }
 
+        collectViewModel = ViewModelProviders.of(this@CollectFragment,
+                CollectViewModelFactory(
+                        requireActivity().application,
+                        languageService,
+                        Single.create<GoogleMap> { single ->
+                            mapFragment.getMapAsync {
+                                single.onSuccess(it)
+                            }
+                        },
+                        lastKnownLocationObservable,
+                        {
+                            showCollectAddScreen(it)
+                        },
+                        {
+                            requireActivity().supportFragmentManager.popBackStack()
+                        })).get(CollectViewModel::class.java)
+
+        val userSettings = collectViewModel.config.userSettings
+        val enumerationSubject = collectViewModel.config.enumerationSubject
+        val displaySettings = collectViewModel.config.displaySettings
+
+        collectCardVm = CollectCardViewModel(userSettings,
+                enumerationSubject,
+                displaySettings,
+                lastKnownLocationObservable,
+                requireContext().getCompatColor(R.color.colorError),
+                requireContext().getCompatColor(R.color.colorWarning),
+                requireContext().getCompatColor(R.color.gpsAcceptable))
+
+        mapFragment = SupportMapFragment()
+        mapFragment.getMapAsync {
+            markerManager = CollectionItemMarkerManager(collectIconFactory, it)
+
+            it.isMyLocationEnabled = true
+            it.mapType = GoogleMap.MAP_TYPE_SATELLITE
+            it.setOnMarkerClickListener(this@CollectFragment)
+            it.setOnMapClickListener(this@CollectFragment)
+        }
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = FragmentCollectBinding.inflate(inflater.context.inflater).apply {
-            mapFragment = SupportMapFragment()
             childFragmentManager
                     .beginTransaction()
                     .replace(R.id.collectionMap, mapFragment)
                     .commit()
 
-            mapFragment.getMapAsync {
-                markerManager = CollectionItemMarkerManager(collectIconFactory, it)
-
-                it.isMyLocationEnabled = true
-                it.mapType = GoogleMap.MAP_TYPE_SATELLITE
-                it.setOnMarkerClickListener(this@CollectFragment)
-                it.setOnMapClickListener(this@CollectFragment)
-            }
-
-            collectViewModel = ViewModelProviders.of(this@CollectFragment.requireActivity(),
-                    CollectViewModelFactory(
-                            requireActivity().application,
-                            languageService,
-                            Single.create<GoogleMap> { single ->
-                                mapFragment.getMapAsync {
-                                    single.onSuccess(it)
-                                }
-                            },
-                            lastKnownLocationObservable,
-                            {
-                                showCollectAddScreen(it)
-                            },
-                            {
-                                requireActivity().supportFragmentManager.popBackStack()
-                            })).get(CollectViewModel::class.java)
             vm = collectViewModel
+            cardVm = collectCardVm
         }
 
-        collectViewModel.userDisplaySettingsSubjectTriple.observe(this, Observer {
-            val subject = it?.first
-            val userSettings = it?.second
-            val displaySettings = it?.third
+        adapter = CollectItemAdapter(CollectIconFactory(requireContext().resources),
+                languageService.getString(R.string.collect_incomplete),
+                collectViewModel.config.displaySettings)
+        binding.collectList.adapter = adapter
 
-            cardVm = CollectCardViewModel(userSettings,
-                    subject,
-                    displaySettings,
-                    lastKnownLocationObservable,
-                    requireContext().getCompatColor(R.color.colorError),
-                    requireContext().getCompatColor(R.color.colorWarning),
-                    requireContext().getCompatColor(R.color.gpsAcceptable))
-
-            binding.cardVm = cardVm
-        })
-
-        collectViewModel.displaySettings.observe(this, Observer {
-            it?.let {
-                adapter = CollectItemAdapter(CollectIconFactory(requireContext().resources),
-                        languageService.getString(R.string.collect_incomplete),
-                        it)
-                binding.collectList.adapter = adapter
-            }
-        })
-
-        collectViewModel.collectItems.observe(this, Observer { items ->
+        collectViewModel.collectItems.observe(this, Observer {
+            val items = it
             val sortedItems = items?.sortedByDescending { it.dateCreated } ?: emptyList()
-            adapter.data = sortedItems
+            adapter?.data = sortedItems
 
             val titleText = languageService.getString(R.string.collect_title, "${items?.size ?: 0}")
             collectTitle.text = titleText
@@ -170,16 +161,16 @@ class CollectFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMap.O
     override fun onMarkerClick(marker: Marker?): Boolean {
         marker?.let {
             val collectItem = it.tag as CollectItem
-            cardVm.visibility = true
-            cardVm.itemData.set(collectItem)
+            collectCardVm.visibility = true
+            collectCardVm.itemData.set(collectItem)
         }
 
         return true
     }
 
     override fun onMapClick(marker: LatLng?) {
-        if (cardVm.visibility) {
-            cardVm.visibility = false
+        if (collectCardVm.visibility) {
+            collectCardVm.visibility = false
         }
     }
 

@@ -14,6 +14,7 @@ import org.taskforce.episample.config.transfer.TransferFileBucket
 import org.taskforce.episample.config.transfer.TransferManager
 import org.taskforce.episample.config.transfer.TransferViewModel
 import org.taskforce.episample.databinding.FragmentStudyCreateBinding
+import org.taskforce.episample.db.ConfigRoomDatabase
 import org.taskforce.episample.injection.CollectModule
 import org.taskforce.episample.toolbar.managers.LanguageManager
 import org.taskforce.episample.toolbar.viewmodels.ToolbarViewModel
@@ -52,10 +53,7 @@ class StudyCreateFragment : Fragment() {
                             requireContext().getCompatColor(R.color.colorAccent),
                             requireContext().getCompatColor(R.color.textColorDisabled),
                             { configId, studyId ->
-                                (requireActivity().application as EpiApplication)
-                                        .createCollectComponent(CollectModule(requireActivity().application,
-                                                configId, studyId))
-                                LoginActivity.startActivity(requireContext())
+                                LoginActivity.startActivity(requireContext(), configId, studyId)
                                 requireActivity().finish()
                             },
                             configId,

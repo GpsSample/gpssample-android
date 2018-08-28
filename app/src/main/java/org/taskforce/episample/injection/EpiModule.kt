@@ -3,7 +3,6 @@ package org.taskforce.episample.injection
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import org.taskforce.episample.auth.AuthManager
 import org.taskforce.episample.collection.managers.GpsBreadcrumbManager
 import org.taskforce.episample.config.base.ConfigManager
 import org.taskforce.episample.config.base.ConfigStorage
@@ -59,8 +58,4 @@ class EpiModule(private val context: Context) {
     @Provides
     @Singleton
     fun provideSyncManager() = SyncManager()
-
-    @Singleton
-    @Provides
-    fun provideAuthManager() = AuthManager()
 }

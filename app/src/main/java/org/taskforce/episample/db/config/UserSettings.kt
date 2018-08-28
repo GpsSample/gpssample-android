@@ -18,6 +18,7 @@ class UserSettings(
         override val gpsMinimumPrecision: Double,
         @ColumnInfo(name = "user_settings_gps_preferred_precision")
         override val gpsPreferredPrecision: Double,
+        override val allowPhotos: Boolean,
         @PrimaryKey
         @ColumnInfo(name = "user_settings_config_id")
         var configId: String) : UserSettings

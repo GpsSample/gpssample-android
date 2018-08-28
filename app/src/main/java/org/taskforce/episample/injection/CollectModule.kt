@@ -4,17 +4,32 @@ import android.app.Application
 import dagger.Module
 import dagger.Provides
 import org.taskforce.episample.core.interfaces.CollectManager
+import org.taskforce.episample.core.interfaces.Config
 import org.taskforce.episample.core.interfaces.ConfigManager
-import org.taskforce.episample.db.config.IntegrationCollectManager
+import org.taskforce.episample.core.interfaces.UserSession
+import org.taskforce.episample.db.ConfigRepository
+import org.taskforce.episample.db.ConfigRoomDatabase
+import org.taskforce.episample.db.config.LiveCollectManager
 import org.taskforce.episample.managers.LiveConfigManager
 
 @Module
 class CollectModule(val application: Application,
-                    val configId: String,
-                    val studyId: String) {
-    @Provides
-    fun providesCollectManager(): CollectManager = IntegrationCollectManager(application, configId, studyId)
+                    val db: ConfigRoomDatabase,
+                    val userSession: UserSession,
+                    val config: Config) {
 
     @Provides
-    fun providesConfigManager(): ConfigManager = LiveConfigManager(application, configId)
+    fun providesUserSession(): UserSession = userSession
+
+    @Provides
+    fun providesCollectManager(configManager: ConfigManager, configRepository: ConfigRepository): CollectManager = LiveCollectManager(application, configManager, configRepository, userSession)
+
+    @Provides
+    fun providesConfigManager(configRepository: ConfigRepository): ConfigManager = LiveConfigManager(configRepository, config.id)
+
+    @Provides
+    fun providesConfigRepository() = ConfigRepository(application, db)
+
+    @Provides
+    fun providesConfig(): Config = config
 }

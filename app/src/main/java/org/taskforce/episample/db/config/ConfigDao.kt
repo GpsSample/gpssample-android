@@ -2,8 +2,10 @@ package org.taskforce.episample.db.config
 
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
+import org.taskforce.episample.core.interfaces.LandmarkType
 import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.customfield.CustomFieldDao
+import org.taskforce.episample.db.config.landmark.CustomLandmarkType
 import java.util.*
 
 @Dao
@@ -46,7 +48,13 @@ abstract class ConfigDao : CustomFieldDao {
     abstract fun insert(userSettings: UserSettings)
 
     @Insert
+    abstract fun insert(displaySettings: DisplaySettings)
+
+    @Insert
     abstract fun insert(vararg customField: CustomField)
+
+    @Insert
+    abstract fun insert(vararg customLandmarkType: CustomLandmarkType)
 
     @Query("SELECT * FROM enumeration_subject_table WHERE enumeration_subject_config_id LIKE :configId")
     abstract fun getEnumerationSubjectSync(configId: String): EnumerationSubject?
@@ -54,9 +62,21 @@ abstract class ConfigDao : CustomFieldDao {
     @Query("SELECT * FROM user_settings_table WHERE user_settings_config_id LIKE :configId")
     abstract fun getUserSettingsSync(configId: String): UserSettings?
 
+    @Query("SELECT * FROM display_settings_table WHERE display_settings_config_id LIKE :configId")
+    abstract fun getDisplaySettingsSync(configId: String): DisplaySettings?
+
+    @Query("SELECT * FROM custom_landmark_type_table WHERE config_id LIKE :configId")
+    abstract fun getLandmarkTypesByConfigSync(configId: String): List<CustomLandmarkType>
+
     @Transaction
-    open fun insert(config: Config, customFields: List<CustomField>, adminSettings: AdminSettings?, enumerationSubject: EnumerationSubject?, userSettings: UserSettings?) {
+    open fun insert(config: Config,
+                    customFields: List<CustomField>,
+                    landmarkTypes: List<CustomLandmarkType>,
+                    adminSettings: AdminSettings?,
+                    enumerationSubject: EnumerationSubject?,
+                    userSettings: UserSettings?, displaySettings: DisplaySettings?) {
         insert(config)
+
         adminSettings?.let {
             insert(it)
         }
@@ -66,13 +86,17 @@ abstract class ConfigDao : CustomFieldDao {
         userSettings?.let {
             insert(it)
         }
+        displaySettings?.let {
+            insert(it)
+        }
 
         insert(*customFields.toTypedArray())
+        insert(*landmarkTypes.toTypedArray())
     }
 
     @Transaction
-    open fun duplicate(sourceConfig: Config, newName: String): String {
-        val insertConfig = Config(newName)
+    open fun duplicate(sourceConfig: Config, newName: String, studyId: String? = null): String {
+        val insertConfig = Config(newName, studyId = studyId)
 
         val adminSettings = getAdminSettingsSync(sourceConfig.id)?.apply {
             this.configId = insertConfig.id
@@ -83,19 +107,31 @@ abstract class ConfigDao : CustomFieldDao {
         val userSettings = getUserSettingsSync(sourceConfig.id)?.apply {
             this.configId = insertConfig.id
         }
+        val displaySettings = getDisplaySettingsSync(sourceConfig.id)?.apply {
+            this.configId = insertConfig.id
+        }
 
-        val customFields = getFieldsByConfigSync(insertConfig.id)
+        val customFields = getFieldsByConfigSync(sourceConfig.id)
         customFields.forEach {
+            it.id = UUID.randomUUID().toString()
+            it.configId = insertConfig.id
+        }
+
+        val landmarkTypes = getLandmarkTypesByConfigSync(sourceConfig.id)
+        landmarkTypes.forEach {
             it.id = UUID.randomUUID().toString()
             it.configId = insertConfig.id
         }
 
         insert(insertConfig,
                 customFields,
+                landmarkTypes,
                 adminSettings,
                 enumerationSubject,
-                userSettings)
+                userSettings,
+                displaySettings)
 
         return insertConfig.id
     }
+
 }

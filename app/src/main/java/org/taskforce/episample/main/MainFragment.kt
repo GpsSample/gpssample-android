@@ -7,11 +7,12 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
+import kotlinx.android.synthetic.main.fragment_main.*
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
-import org.taskforce.episample.auth.AuthManager
 import org.taskforce.episample.collection.ui.CollectFragment
 import org.taskforce.episample.config.language.LanguageService
+import org.taskforce.episample.core.interfaces.CollectManager
 import org.taskforce.episample.databinding.FragmentMainBinding
 import org.taskforce.episample.sync.managers.SyncManager
 import org.taskforce.episample.toolbar.managers.LanguageManager
@@ -21,30 +22,21 @@ import javax.inject.Inject
 class MainFragment : Fragment() {
 
     @Inject
-    lateinit var authManager: AuthManager
-
-    @Inject
     lateinit var languageManager: LanguageManager
 
     @Inject
     lateinit var syncManager: SyncManager
 
     lateinit var viewModel: MainViewModel
-    lateinit var username: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (requireActivity().application as EpiApplication).component.inject(this)
 
-
-        username = authManager.username!!
-
         viewModel = ViewModelProviders.of(this, MainViewModelFactory(
                 requireActivity().application,
                 LanguageService(languageManager),
-                username,
                 syncManager.lastSynced,
-                authManager.isSupervisor,
                 collectOnClick = {
                     requireFragmentManager()
                             .beginTransaction()

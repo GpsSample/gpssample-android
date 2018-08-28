@@ -15,6 +15,10 @@ import android.widget.TextView
 import org.taskforce.episample.R
 import org.taskforce.episample.config.fields.CustomDropdown
 import org.taskforce.episample.config.fields.CustomFieldTypeConstants
+import org.taskforce.episample.core.interfaces.LandmarkTypeMetadata
+import org.taskforce.episample.db.collect.Enumeration
+import org.taskforce.episample.db.collect.GpsBreadcrumb
+import org.taskforce.episample.db.collect.Landmark
 import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.customfield.CustomFieldType
 import org.taskforce.episample.db.config.customfield.metadata.*
@@ -106,4 +110,40 @@ fun org.taskforce.episample.config.fields.CustomField.makeDBConfig(configId: Str
             metadata,
             configId
     )
+}
+
+fun org.taskforce.episample.core.interfaces.Enumeration.toDBEnumeration(collectorName: String, studyId: String): Enumeration {
+    return Enumeration(collectorName,
+            location.latitude,
+            location.longitude,
+            note,
+            isIncomplete,
+            isExcluded,
+            gpsPrecision,
+            studyId,
+            title,
+            image,
+            dateCreated)
+}
+
+fun org.taskforce.episample.core.interfaces.Breadcrumb.toDBBreadcrumb(collectorName: String, studyId: String): GpsBreadcrumb {
+    return GpsBreadcrumb(gpsPrecision,
+            collectorName,
+            location.latitude,
+            location.longitude,
+            studyId
+    )
+}
+
+fun org.taskforce.episample.core.interfaces.Landmark.toDBLandmark(collectorName: String, studyId: String): Landmark {
+    return Landmark(collectorName,
+            location.latitude,
+            location.longitude,
+            note,
+            image,
+            (landmarkType.metadata as? LandmarkTypeMetadata.BuiltInLandmark)?.type,
+            (landmarkType.metadata as? LandmarkTypeMetadata.CustomId)?.id,
+            studyId = studyId,
+            gpsPrecision = gpsPrecision,
+            dateCreated = dateCreated)
 }

@@ -2,6 +2,7 @@ package org.taskforce.episample.injection
 
 import dagger.Subcomponent
 import org.taskforce.episample.auth.LoginViewModel
+import org.taskforce.episample.collection.viewmodels.CollectAddViewModel
 import org.taskforce.episample.collection.viewmodels.CollectViewModel
 
 @CollectScope
@@ -9,4 +10,5 @@ import org.taskforce.episample.collection.viewmodels.CollectViewModel
 interface CollectComponent {
     fun inject(collectViewModel: CollectViewModel)
     fun inject(loginViewModel: LoginViewModel)
+    fun inject(collectAddViewModel: CollectAddViewModel)
 }

@@ -94,8 +94,10 @@ class MockCollectManager : CollectManager {
     override fun getLandmarkTypes(): LiveData<List<LandmarkType>> {
         return MutableLiveData<List<LandmarkType>>().apply {
             val landmarkType = MockLandmarkType.createMockLandmarkType(name = "Nature")
+            val defaultType = MockLandmarkType.createMockLandmarkType()
+            val othertype = MockLandmarkType.createMockLandmarkType(name = "Other")
 
-            value = listOf(landmarkType)
+            value = listOf(defaultType, landmarkType, othertype)
         }
     }
 

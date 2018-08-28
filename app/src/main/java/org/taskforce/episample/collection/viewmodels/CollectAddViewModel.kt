@@ -1,243 +1,237 @@
 package org.taskforce.episample.collection.viewmodels
 
 import android.annotation.SuppressLint
-import android.databinding.BaseObservable
-import android.databinding.Bindable
+import android.app.Application
+import android.arch.lifecycle.AndroidViewModel
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
+import android.databinding.ObservableField
 import android.location.Location
-import android.widget.ArrayAdapter
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Observable
-import org.taskforce.episample.BR
+import io.reactivex.Single
+import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
-import org.taskforce.episample.collection.models.EnumerationItem
-import org.taskforce.episample.collection.models.LandmarkItem
 import org.taskforce.episample.collection.ui.CollectGpsPrecisionViewModel
-import org.taskforce.episample.config.fields.CustomFieldDataItem
 import org.taskforce.episample.config.language.LanguageService
+import org.taskforce.episample.core.LiveDataPair
+import org.taskforce.episample.core.LiveDataTriple
+import org.taskforce.episample.core.interfaces.CollectManager
 import org.taskforce.episample.fileImport.models.LandmarkType
-import org.taskforce.episample.utils.bindDelegate
+import javax.inject.Inject
 
 class CollectAddViewModel(
+        application: Application,
         languageService: LanguageService,
         landmarkObservable: Observable<LandmarkType>,
-        mapObservable: Observable<GoogleMap>,
+        mapObservable: Single<GoogleMap>,
         locationObservable: Observable<Location>,
         val isLandmark: Boolean,
         private val saveButtonEnabledColor: Int,
         private val saveButtonDisabledColor: Int,
         private val saveButtonEnabledTextColor: Int,
         private val saveButtonDisabledTextColor: Int,
-        val landmarkOptionAdapter: ArrayAdapter<String>,
-        minimumPrecision: Double,
-        preferredPrecision: Double,
-        lowestColor: Int,
-        mediumColor: Int,
-        highestColor: Int,
-        private val goToNext: () -> Unit) : BaseObservable() {
+        private val goToNext: () -> Unit,
+        private val takePicture: () -> Unit) : AndroidViewModel(application) {
 
-    // TODO set once using db
-    private val gpsMinimumPrecision: Double = 20.0
-    private val enumerationSubject: String = "Households"
+    init {
+        (application as EpiApplication).collectComponent?.inject(this)
+    } 
+
+    @Inject
+    lateinit var collectManager: CollectManager
+
+    var gpsVm: CollectGpsPrecisionViewModel? = null
+
+    val gpsBreadcrumbs = collectManager.getBreadcrumbs()
+
+    val collectItems = collectManager.getCollectItems()
+
+    val userSettings = collectManager.getUserSettings()
+
+    val enumerationSubject = collectManager.getEnumerationSubject()
+
+    val landmarkTypes = collectManager.getLandmarkTypes()
 
     init {
         languageService.update = {
-            showPhotoText = languageService.getString(R.string.collect_add_text)
-            excludeText = languageService.getString(R.string.collect_exclude)
-            notesHint = languageService.getString(R.string.collect_notes_hint)
-            saveButtonText = languageService.getString(R.string.collect_save_incomplete)
-            photoText = languageService.getString(R.string.collect_add_text)
-            gpsDisplay = languageService.getString(R.string.collect_gps_waiting)
+            showPhotoText.postValue(languageService.getString(R.string.collect_add_text))
+            excludeText.postValue(languageService.getString(R.string.collect_exclude))
+            notesHint.set(languageService.getString(R.string.collect_notes_hint))
+            photoText.set(languageService.getString(R.string.collect_add_text))
+            gpsDisplay.set(languageService.getString(R.string.collect_gps_waiting))
         }
         landmarkObservable.subscribe {
-            selectedLandmark = it
+            selectedLandmark.postValue(it)
         }
         locationObservable.subscribe {
-            gpsDisplay = "${it.latitude},${it.longitude}"
+            gpsDisplay.set("${it.latitude}, ${it.longitude}")
         }
     }
 
-    @get:Bindable
-    var showPhoto by bindDelegate(false, { _, _ ->
-        notifyPropertyChanged(BR.showPhotoButton)
-    })
+    val showPhotoButton = Transformations.map(userSettings) {
+        it.allowPhotos
+    }
 
-    @get:Bindable
-    var showPhotoButton by bindDelegate(!showPhoto)
+    val showPhotoCard = Transformations.map(userSettings) { it.allowPhotos }
 
-    @get:Bindable
-    var showPhotoText by bindDelegate(languageService.getString(R.string.collect_add_text))
+    val showPhotoText = MutableLiveData<String>().apply {
+        value = languageService.getString(R.string.collect_add_text)
+    }
 
-    @get:Bindable
-    var exclude by bindDelegate(false)
+    val exclude = MutableLiveData<Boolean>().apply { value = false }
 
-    @get:Bindable
-    var showExclude by bindDelegate(!isLandmark)
+    var showExclude = MutableLiveData<Boolean>().apply { value = !isLandmark }
 
-    @get:Bindable
-    var excludeText by bindDelegate(languageService.getString(R.string.collect_exclude))
+    val excludeText = MutableLiveData<String>().apply {
+        value = languageService.getString(R.string.collect_exclude)
+    }
 
-    @get:Bindable
-    var notesError by bindDelegate<String?>(null)
+    val notesError = MutableLiveData<String>().apply { value = "" }
 
-    @get:Bindable
-    var notesHint by bindDelegate(languageService.getString(R.string.collect_notes_hint))
+    val notesHint = ObservableField(languageService.getString(R.string.collect_notes_hint))
 
-    @get:Bindable
-    var notes by bindDelegate<String?>(null)
+    val notes = MutableLiveData<String>()
+    
+    val showCustomFields = MutableLiveData<Boolean>().apply { value = !isLandmark }
+    
+    val primaryLabelError = MutableLiveData<String>().apply { value = "" }
+    
+    val primaryLabelHint = Transformations.map(enumerationSubject) { "${it.primaryLabel} *" }
+    
+    val primaryLabelErrorEnabled = MutableLiveData<Boolean>().apply { value = false }
+    
+    val primaryLabel = MutableLiveData<String>().apply { value = "" }
 
-    @get:Bindable
-    var notesErrorEnabled by bindDelegate(false)
+    var location = MutableLiveData<Location?>().apply { value = null }
 
-    @get:Bindable
-    var saveButtonText by bindDelegate(
-            if (isLandmark) {
-                languageService.getString(R.string.collect_save_landmark)
-            } else {
-                if (isValid) {
-                    enumerationSubject.toUpperCase()
-                } else {
-                    languageService.getString(R.string.collect_save_incomplete)
+    val notesErrorEnabled = MutableLiveData<Boolean>().apply { value = false }
+
+    val selectedLandmark = MutableLiveData<LandmarkType>()
+
+    val landmarkImage = Transformations.map(selectedLandmark) { it.iconLocation }
+
+    var landmarkName = MutableLiveData<String>().apply { value = "" }
+
+    // TODO: add the custom fields as a source
+    val enumerationInputs = LiveDataPair(primaryLabel, location)
+    val isEnumerationValid = Transformations.map(enumerationInputs) {
+        val primaryLabel = it.first
+
+        !isLandmark && 
+                !primaryLabel.isNullOrBlank() && 
+                isSufficientlyPrecise
+    }
+
+    val landmarkInputs = LiveDataTriple(landmarkName, selectedLandmark, location)
+    val isLandmarkValid = Transformations.map(landmarkInputs) {
+        val landmarkName = it.first
+
+        isLandmark &&
+                isSufficientlyPrecise &&
+                !landmarkName.isNullOrEmpty() &&
+                selectedLandmark.value != null &&
+                customFieldViewModels.filter {
+                    it.customField.isRequired || it.customField.isAutomatic
+                }.fold(true) { acc, next ->
+                    acc && next.value != null
                 }
-            }
-    )
+    }
 
-    @get:Bindable
-    var saveButtonTextColor by bindDelegate(
-            if (isValid) {
-                saveButtonEnabledTextColor
-            } else {
-                saveButtonDisabledTextColor
-            }
-    )
 
-    @get:Bindable
-    var saveButtonBackground by bindDelegate(
-            if (isValid) {
-                saveButtonEnabledColor
-            } else {
-                saveButtonDisabledColor
-            }
-    )
+    val validPair = LiveDataPair(isEnumerationValid, isLandmarkValid)
+    val isValidLive = Transformations.map(validPair) {
+        val validEnumeration = it.first ?: false
+        val validLandmark = it.second ?: false
 
-    @get:Bindable
-    var photoText by bindDelegate(languageService.getString(R.string.collect_add_text))
+        validEnumeration || validLandmark
+    }
 
-    @get:Bindable
-    var landmarkName: String? by bindDelegate<String?>(null, { _, _ ->
-        if (isValid) {
-            saveButtonBackground = saveButtonEnabledColor
-            saveButtonTextColor = saveButtonEnabledTextColor
+    // TODO: If not sufficiently precise, start a countdown that disables the button
+    val saveButtonPair = LiveDataPair(isEnumerationValid, enumerationSubject)
+    val saveButtonText = Transformations.map(saveButtonPair) {
+        val isEnumerationValid = it.first ?: false
+        val subject = it.second
+        
+        if (isLandmark) {
+            languageService.getString(R.string.collect_save_landmark)
         } else {
-            saveButtonBackground = saveButtonDisabledColor
-            saveButtonTextColor = saveButtonDisabledTextColor
+            if (isEnumerationValid) {
+                languageService.getString(R.string.collect_save_complete, subject?.singular?.toUpperCase() ?: "")
+            } else {
+                languageService.getString(R.string.collect_save_incomplete)
+            }
         }
-    })
+    }
 
-    @get:Bindable
-    var landmarkHint by bindDelegate(languageService.getString(R.string.collect_landmark_name_hint))
+    val saveButtonTextColor: LiveData<Int> = Transformations.map(isValidLive) {
+        if (isSufficientlyPrecise) {
+            saveButtonEnabledTextColor
+        } else {
+            saveButtonDisabledTextColor
+        }
+    }
 
-    @get:Bindable
-    var landmarkError by bindDelegate<String?>(null)
+    val saveButtonBackground: LiveData<Int> = Transformations.map(isValidLive) {
+        if (isSufficientlyPrecise) {
+            saveButtonEnabledColor
+        } else {
+            saveButtonDisabledColor
+        }
+    }
 
-    @get:Bindable
-    var landmarkErrorEnabled by bindDelegate(false)
+    val photoText = ObservableField(languageService.getString(R.string.collect_add_text))
 
-    @get:Bindable
-    var landmarkImage by bindDelegate<String?>(null)
+    val landmarkHint = ObservableField(languageService.getString(R.string.collect_landmark_name_hint))
 
-    @get:Bindable
-    var gpsDisplay by bindDelegate(languageService.getString(R.string.collect_gps_waiting))
+    val landmarkError = ObservableField("")
+
+    val landmarkErrorEnabled = ObservableField(false)
+
+    val gpsDisplay = ObservableField(languageService.getString(R.string.collect_gps_waiting))
 
     private val customFieldViewModels = mutableListOf<AbstractCustomViewModel>()
 
     private val isSufficientlyPrecise
-        get() = (location?.accuracy ?: 9999.0f < gpsMinimumPrecision.toFloat())
+        get() = (location.value?.accuracy ?: 9999.0f < userSettings.value?.gpsPreferredPrecision ?: 0.0)
 
-    private val isValid
-        get() =
-            if (isLandmark) {
-                isSufficientlyPrecise && (landmarkName?.isNotBlank() == true)
-            } else {
-                isSufficientlyPrecise &&
-                        customFieldViewModels.filter {
-                            it.customField.isRequired || it.customField.isAutomatic
-                        }.fold(true, { acc, next ->
-                            acc && next.value != null
-                        })
-            }
-
-    var gpsVm = CollectGpsPrecisionViewModel(
-            minimumPrecision,
-            preferredPrecision,
-            lowestColor,
-            mediumColor,
-            highestColor)
-
-    var location: Location? = null
+//    private val isValid
+//        get() =
+//            if (isLandmark) {
+//                isSufficientlyPrecise && (landmarkName.value?.isNotBlank() ?: false)
+//            } else {
+//                isSufficientlyPrecise &&
+//                        customFieldViewModels.filter {
+//                            it.customField.isRequired || it.customField.isAutomatic
+//                        }.fold(true, { acc, next ->
+//                            acc && next.value != null
+//                        })
+//            }
 
     var googleMap: GoogleMap? = null
 
-    var selectedLandmark: LandmarkType? = null
-        set(value) {
-            field = value
-            landmarkImage = value?.iconLocation
-        }
-
-    var isCopied = false
-
-    private val landmarkItem: LandmarkItem
-        get() = LandmarkItem(
-                LatLng(location!!.latitude, location!!.longitude),
-                selectedLandmark!!,
-                landmarkName,
-                notes)
-
-    private val enumerationItem: EnumerationItem
-        get() = EnumerationItem(
-                LatLng(location!!.latitude, location!!.longitude),
-                location!!.accuracy.toDouble(),
-                isCopied,
-                customFieldViewModels.filter {
-                    it.customField.isRequired
-                }.map {
-                    it.value != null
-                }.fold(true) { acc, b ->
-                    acc && b
-                },
-                exclude,
-                notes,
-                customFieldViewModels.mapNotNull {
-                    if (it.value != null) {
-                        it.customField.customKey to
-                                CustomFieldDataItem(
-                                        it.customField.type,
-                                        it.customField.isPrimary,
-                                        it.value!!
-                                )
-                    } else {
-                        null
-                    }
-                }.toMap()
-        )
-
     init {
-        mapObservable.subscribe {
-            googleMap = it
+        mapObservable.subscribe { map ->
+            googleMap = map
             @SuppressLint("MissingPermission")
-            it.isMyLocationEnabled = true
-            it.mapType = GoogleMap.MAP_TYPE_SATELLITE
-            location?.let { location ->
-                it.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 18.0f))
+            map.isMyLocationEnabled = true
+            map.mapType = GoogleMap.MAP_TYPE_SATELLITE
+            location.value?.let { location ->
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 18.0f))
             }
         }
+        
         locationObservable.subscribe {
-            if (it.accuracy < (location?.accuracy ?: 1000.0f)) {
-                location = it
-                googleMap?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(it.latitude, it.longitude)))
-                gpsDisplay = "%.5f ".format(it.latitude) + ", %.5f".format(it.longitude)
-                gpsVm.precision.set(it.accuracy.toDouble())
+            if (it.accuracy < (location.value?.accuracy ?: 1000.0f)) {
+                if (location.value == null) {
+                    googleMap?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(it.latitude, it.longitude)))
+                }
+                location.postValue(it)
+                gpsDisplay.set("%.5f ".format(it.latitude) + ", %.5f".format(it.longitude))
+                gpsVm?.precision?.set(it.accuracy.toDouble())
             }
         }
     }
@@ -247,6 +241,7 @@ class CollectAddViewModel(
     }
 
     fun saveItem() {
+        val isValid = isValidLive.value ?: false
         if (isValid) {
             // TODO insert record into db
 //            if (isLandmark) {

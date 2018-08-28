@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -32,24 +33,23 @@
                 android:layout_height="wrap_content">
 
                 <FrameLayout
-                    android:id="@+id/map"
+                    android:id="@+id/collectAddMap"
                     android:layout_width="match_parent"
                     android:layout_height="200dp" />
 
                 <android.support.v7.widget.CardView
                     android:id="@+id/photoWrapper"
+                    visibleOrGone="@{vm.showPhotoCard}"
                     android:layout_width="150dp"
                     android:layout_height="120dp"
-                    android:layout_below="@id/map"
+                    android:layout_below="@id/collectAddMap"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="20dp"
                     android:layout_marginTop="-60dp"
                     android:background="@android:color/white">
 
                     <ImageView
-                        visibleOrGone="@{vm.showPhoto}"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"/>
 
                     <android.support.constraint.ConstraintLayout
                         visibleOrGone="@{vm.showPhotoButton}"
@@ -64,7 +64,8 @@
                             app:layout_constraintBottom_toTopOf="@id/photoText"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:src="@mipmap/ic_launcher" />
 
                         <TextView
                             android:id="@+id/photoText"
@@ -77,7 +78,8 @@
                             android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent" />
+                            app:layout_constraintStart_toStartOf="parent"
+                            tools:text="TAKE A PICTURE"/>
 
                     </android.support.constraint.ConstraintLayout>
 
@@ -86,6 +88,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
                     android:orientation="vertical"
                     android:id="@+id/topWrapper"
                     android:layout_below="@id/photoWrapper">
@@ -105,7 +108,8 @@
                             android:layout_height="wrap_content"
                             android:hint="@{vm.landmarkHint}"
                             app:errorEnabled="@{vm.landmarkErrorEnabled}"
-                            app:errorTextAppearance="@style/errorStyle">
+                            app:errorTextAppearance="@style/errorStyle"
+                            tools:hint="Notes">
 
                             <android.support.design.widget.TextInputEditText
                                 android:id="@+id/landmarkNameInput"
@@ -133,8 +137,7 @@
                                 android:id="@+id/landmarkImageSelector"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:adapter="@{vm.landmarkOptionAdapter}"/>
+                                android:layout_gravity="center_vertical" />
 
                         </LinearLayout>
 
@@ -150,22 +153,57 @@
                         <CheckBox
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:checked="@={vm.exclude}" />
+                            android:checked="@={vm.exclude}"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="20dp"
-                            android:text="@{vm.excludeText}" />
+                            android:text="@{vm.excludeText}"
+                            tools:text="Exclude" />
 
                     </LinearLayout>
 
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/subjectFieldsWrapper"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/topWrapper"
+                    android:paddingStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:paddingEnd="16dp"
+                    visibleOrGone="@{vm.showCustomFields}">
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/primarySubjectLabel"
+                        error="@{vm.primaryLabelError}"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@{vm.primaryLabelHint}"
+                        app:errorEnabled="@{vm.primaryLabelErrorEnabled}"
+                        app:errorTextAppearance="@style/errorStyle">
+
+                        <android.support.design.widget.TextInputEditText
+                            android:id="@+id/primarySubjectLabelInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:singleLine="true"
+                            android:inputType="textCapSentences"
+                            android:text="@={vm.primaryLabel}"
+                            android:textSize="18sp" />
+
+                    </android.support.design.widget.TextInputLayout>
+                    
+                    <!-- TODO: Show custom fields in a RecyclerView -->
+                    
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/subjectFieldsWrapper"
                     android:orientation="vertical"
                     android:paddingStart="16dp"
                     android:layout_marginTop="16dp"
@@ -211,7 +249,8 @@
                         android:paddingBottom="4dp"
                         android:paddingStart="8dp"
                         android:paddingEnd="8dp"
-                        android:text="@{vm.gpsDisplay}"/>
+                        android:text="@{vm.gpsDisplay}"
+                        tools:text="37.4217983, -122.084"/>
 
                     <include
                         android:id="@+id/gpsPrecision"
@@ -235,7 +274,8 @@
                         android:paddingTop="12dp"
                         android:text="@{vm.saveButtonText}"
                         android:textColor="@{vm.saveButtonTextColor}"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        tools:text="SAVE AS INCOMPLETE"/>
 
                 </LinearLayout>
 

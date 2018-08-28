@@ -6,9 +6,9 @@ data class MockEnumerationSubject(override val singular: String,
                                   override val plural: String,
                                   override val primaryLabel: String): EnumerationSubject {
     companion object {
-        fun createMockEnumerationSubject(singular: String = "Household",
-                                         plural: String = "Households",
-                                         primaryLabel: String = "Head of Household"): MockEnumerationSubject {
+        fun createMockEnumerationSubject(singular: String = "Person",
+                                         plural: String = "People",
+                                         primaryLabel: String = "First name"): MockEnumerationSubject {
             return MockEnumerationSubject(singular, plural, primaryLabel)
         }
     }

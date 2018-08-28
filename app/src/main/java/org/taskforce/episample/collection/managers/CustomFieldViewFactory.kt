@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import io.reactivex.Single
 import kotlinx.android.synthetic.main.item_custom_dropdown.view.*
 import org.taskforce.episample.collection.viewmodels.*
-import org.taskforce.episample.config.fields.CustomField
+import org.taskforce.episample.core.interfaces.CustomField
 import org.taskforce.episample.databinding.*
 import org.taskforce.episample.db.config.customfield.CustomFieldType
 import org.taskforce.episample.utils.inflater

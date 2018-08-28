@@ -5,11 +5,13 @@ import android.arch.lifecycle.Observer
 import android.location.Location
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.LinearLayout
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
@@ -22,7 +24,10 @@ import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.collection.managers.CollectIconFactory
 import org.taskforce.episample.collection.managers.CollectionItemMarkerManager
+import org.taskforce.episample.collection.managers.generateView
+import org.taskforce.episample.collection.managers.generateViewModel
 import org.taskforce.episample.collection.viewmodels.CollectAddViewModel
+import org.taskforce.episample.collection.viewmodels.CustomDropdownViewModel
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.databinding.FragmentCollectAddBinding
 import org.taskforce.episample.fileImport.models.LandmarkType
@@ -39,7 +44,7 @@ class CollectAddFragment : Fragment() {
     lateinit var locationClient: FusedLocationProviderClient
     lateinit var collectIconFactory: CollectIconFactory
     lateinit var markerManager: CollectionItemMarkerManager
-    
+
     lateinit var collectViewModel: CollectAddViewModel
 
     val landmarkSelectSubject: BehaviorSubject<LandmarkType> = BehaviorSubject.create<LandmarkType>()
@@ -56,13 +61,13 @@ class CollectAddFragment : Fragment() {
     @SuppressLint("MissingPermission")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val mapFragment = SupportMapFragment()
-        
+
         val binding = FragmentCollectAddBinding.inflate(inflater).apply {
             childFragmentManager
                     .beginTransaction()
                     .replace(R.id.collectAddMap, mapFragment)
                     .commit()
-            
+
             mapFragment.getMapAsync {
                 markerManager = CollectionItemMarkerManager(collectIconFactory, it)
 
@@ -113,37 +118,10 @@ class CollectAddFragment : Fragment() {
                 }
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    // TODO get landmark list from db (through VM)
-                    // studyManager.currentStudy!!.config.landmarkTypes[position]
+//                    val landmarkType = collectViewModel.config.landmarkTypes[position]
                     landmarkSelectSubject.onNext(LandmarkType("ANY"))
                 }
             }
-
-            // TODO custom field logic
-            /*
-                            studyManager.currentStudy?.config?.customFields?.forEach {
-                                if (!it.isAutomatic) {
-
-
-                                    it.generateViewModel(requireContext()).apply {
-                                        val view = it.generateView(requireContext(), this, customFieldHolder)
-                                        if (this is CustomDropdownViewModel) {
-                                            this.view = view
-                                        }
-                                        collectViewModel.addCustomFieldViewModel(this)
-                                        customFieldHolder.addView(
-                                                view,
-                                                LinearLayout.LayoutParams(
-                                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                                        LinearLayout.LayoutParams.WRAP_CONTENT
-                                                ))
-                                    }
-
-
-
-                                }
-                            }
-                            */
 
             vm = collectViewModel
 
@@ -154,6 +132,25 @@ class CollectAddFragment : Fragment() {
                 requireActivity().supportFragmentManager.popBackStack()
             })
 
+            collectViewModel.customFields.forEach {
+                if (!it.isAutomatic) {
+
+                    it.generateViewModel(requireContext()).apply {
+                        val view = it.generateView(requireContext(), this, customFieldHolder)
+                        if (this is CustomDropdownViewModel) {
+                            this.view = view
+                        }
+                        collectViewModel.addCustomFieldViewModel(this)
+                        customFieldHolder.addView(
+                                view,
+                                LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT
+                                ))
+                    }
+                }
+            }
+            
             val userSettings = collectViewModel.config.userSettings
             val vm = CollectGpsPrecisionViewModel(userSettings.gpsMinimumPrecision,
                     userSettings.gpsPreferredPrecision,
@@ -174,7 +171,7 @@ class CollectAddFragment : Fragment() {
                 map.addPolyline(breadCrumbPath)
             }
         })
-        
+
         collectViewModel.collectItems.observe(this, Observer { items ->
             mapFragment.getMapAsync {
                 markerManager.addMarkerDiff(items ?: emptyList())

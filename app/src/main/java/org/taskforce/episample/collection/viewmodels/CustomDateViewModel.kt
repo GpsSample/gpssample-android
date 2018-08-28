@@ -1,13 +1,14 @@
 package org.taskforce.episample.collection.viewmodels
 
+import android.arch.lifecycle.MutableLiveData
 import android.databinding.Bindable
 import io.reactivex.Single
-import org.taskforce.episample.config.fields.CustomField
+import org.taskforce.episample.core.interfaces.CustomField
 import org.taskforce.episample.utils.bindDelegate
 import java.util.*
 
 class CustomDateViewModel(customField: CustomField,
-                          val showDatePicker: () -> Single<Date>): AbstractCustomViewModel(customField) {
+                          private val showDatePicker: () -> Single<Date>): AbstractCustomViewModel(customField) {
 
     @get:Bindable
     var hint by bindDelegate(customField.name)
@@ -15,17 +16,19 @@ class CustomDateViewModel(customField: CustomField,
     @get:Bindable
     var input by bindDelegate<String?>(null)
 
-    override var value: Date? = null
-        set(value) {
-            field = value
+    override val value = object: MutableLiveData<Date>() {
+        override fun setValue(value: Date?) {
+            super.setValue(value)
+            
             input = value.toString()
         }
+    }
 
     fun showDatePicker() {
         showDatePicker.invoke().subscribe({
-            value = it
+            value.postValue(it)
         }, {
-            value = null
+            value.postValue(null)
         })
     }
 }

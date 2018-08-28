@@ -1,18 +1,28 @@
 package org.taskforce.episample.collection.viewmodels
 
-import android.databinding.Bindable
-import org.taskforce.episample.config.fields.CustomField
-import org.taskforce.episample.utils.bindDelegate
+import android.arch.lifecycle.MutableLiveData
+import android.databinding.ObservableField
+import org.taskforce.episample.core.interfaces.CustomField
 
 class CustomTextViewModel(customField: CustomField): AbstractCustomViewModel(customField) {
 
-    @get:Bindable
-    var hint by bindDelegate(customField.name)
+    var hint = object : ObservableField<String>("") {
+        override fun get(): String? {
+            var value = customField.name
+            if (customField.isRequired) {
+                value += " *"
+            }
+            return value
+        }
+    }
 
-    @get:Bindable
-    var input by bindDelegate<String?>(null)
+    var input = object : ObservableField<String?>("") {
+        override fun set(newValue: String?) {
+            super.set(newValue)
+            
+            value.postValue(newValue)
+        }
+    }
 
-    override val value: String?
-        get() = input
-
+    override val value = MutableLiveData<String>()
 }

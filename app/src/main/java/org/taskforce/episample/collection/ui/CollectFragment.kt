@@ -61,12 +61,13 @@ class CollectFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMap.O
 
         breadcrumbPath = PolylineOptions().clickable(false)
 
+        mapFragment = SupportMapFragment()
 
         val lastKnownLocationObservable = Observable.create<Pair<LatLng, Float>> { emitter ->
             locationClient.requestLocationUpdates(LocationRequest.create().apply {
                 interval = 30000
-                fastestInterval = 1000
-                priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+                fastestInterval = 5000
+                priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
             }, object : LocationCallback() {
                 override fun onLocationResult(result: LocationResult?) {
                     result?.lastLocation?.let {
@@ -104,8 +105,6 @@ class CollectFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMap.O
                 requireContext().getCompatColor(R.color.colorError),
                 requireContext().getCompatColor(R.color.colorWarning),
                 requireContext().getCompatColor(R.color.gpsAcceptable))
-
-        mapFragment = SupportMapFragment()
         mapFragment.getMapAsync {
             markerManager = CollectionItemMarkerManager(collectIconFactory, it)
 

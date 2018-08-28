@@ -19,6 +19,7 @@ import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.LiveDataTriple
 import org.taskforce.episample.core.interfaces.*
 import org.taskforce.episample.core.mock.MockBreadcrumb
+import java.util.*
 import javax.inject.Inject
 
 class CollectViewModel(application: Application,
@@ -71,18 +72,17 @@ class CollectViewModel(application: Application,
 
             val distance = distanceResult[0]
             if (distance >= breadcrumbAccuracy) {
-                collectManager.addBreadcrumb(MockBreadcrumb(accuracy.toDouble(), location), {
+                collectManager.addBreadcrumb(LiveBreadcrumb(location, accuracy.toDouble(), Date()), {
                     // no-op
                 })
             }
 
             lastKnownLocation = location
         }
-        googleMapSingle.subscribe(
-                {
+        googleMapSingle.subscribe( {
                     googleMap = it
                     lastKnownLocation?.let { location ->
-                        it.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 18.0f))
+                        it.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoomLevel))
                     }
                 },
                 {
@@ -100,9 +100,8 @@ class CollectViewModel(application: Application,
         val landmarks = it.second
         val enumerationSubject = config.enumerationSubject
 
-        "${enumerations?.size ?: 0} ${enumerationSubject?.plural?.capitalize()}, " +
-                "${landmarks?.size
-                        ?: 0} ${languageService.getString(R.string.config_landmarks_title)}"
+        "${enumerations.size} ${enumerationSubject.plural.capitalize()}, " +
+                "${landmarks.size} ${languageService.getString(R.string.config_landmarks_title)}"
     } as MutableLiveData<String>
 
     val householdButtonText = ObservableField<String>("+ ${enumerationSubject.singular}")

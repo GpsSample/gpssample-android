@@ -333,7 +333,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_marginEnd="16dp"
-                            android:checked="@{vm.required}" />
+                            android:checked="@={vm.required}" />
 
                         <TextView
                             android:layout_width="wrap_content"

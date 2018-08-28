@@ -3,7 +3,7 @@ package org.taskforce.episample.collection.viewmodels
 import android.annotation.SuppressLint
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
-import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import android.databinding.ObservableField
@@ -21,9 +21,12 @@ import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.LiveDataTriple
 import org.taskforce.episample.core.interfaces.CollectManager
 import org.taskforce.episample.core.interfaces.Config
-import org.taskforce.episample.core.interfaces.ConfigManager
+import org.taskforce.episample.core.interfaces.LiveCustomFieldValue
 import org.taskforce.episample.core.interfaces.LiveEnumeration
+import org.taskforce.episample.db.config.customfield.CustomFieldType
+import org.taskforce.episample.db.config.customfield.value.*
 import org.taskforce.episample.fileImport.models.LandmarkType
+import java.util.*
 import javax.inject.Inject
 
 class CollectAddViewModel(
@@ -48,7 +51,7 @@ class CollectAddViewModel(
 
     init {
         (application as EpiApplication).collectComponent?.inject(this)
-    } 
+    }
 
     var gpsVm: CollectGpsPrecisionViewModel? = null
 
@@ -57,6 +60,8 @@ class CollectAddViewModel(
     val collectItems = collectManager.getCollectItems()
 
     val landmarkTypes = collectManager.getLandmarkTypes()
+
+    val customFields = config.customFields
 
     init {
         languageService.update = {
@@ -95,15 +100,13 @@ class CollectAddViewModel(
     val notesHint = ObservableField(languageService.getString(R.string.collect_notes_hint))
 
     val notes = MutableLiveData<String>()
-    
-    val showCustomFields = MutableLiveData<Boolean>().apply { value = !isLandmark }
-    
+
     val primaryLabelError = MutableLiveData<String>().apply { value = "" }
-    
+
     val primaryLabelHint = "${config.enumerationSubject.primaryLabel} *"
-    
+
     val primaryLabelErrorEnabled = MutableLiveData<Boolean>().apply { value = false }
-    
+
     val primaryLabel = MutableLiveData<String>().apply { value = "" }
 
     var location = MutableLiveData<Location?>().apply { value = null }
@@ -116,31 +119,37 @@ class CollectAddViewModel(
 
     var landmarkName = MutableLiveData<String>().apply { value = "" }
 
-    // TODO: add the custom fields as a source
-    val enumerationInputs = LiveDataPair(primaryLabel, location)
-    val isEnumerationValid = Transformations.map(enumerationInputs) {
+    private val customFieldMediatorLiveData = MediatorLiveData<Boolean>().apply { value = false }
+    private val enumerationInputs = LiveDataTriple(primaryLabel, location, customFieldMediatorLiveData)
+    private val isEnumerationValid = Transformations.map(enumerationInputs) {
         val primaryLabel = it.first
 
-        !isLandmark && 
-                !primaryLabel.isNullOrBlank() && 
-                isSufficientlyPrecise
+        determineEnumerationValidity(primaryLabel)
+    } as MutableLiveData
+
+    private fun determineEnumerationValidity(primaryLabel: String?): Boolean {
+        return !isLandmark &&
+                !primaryLabel.isNullOrBlank() &&
+                isSufficientlyPrecise &&
+                customFieldViewModels.filter { customVM ->
+                    customVM.customField.isRequired || customVM.customField.isAutomatic
+                }.fold(true) { acc, next ->
+                    when (next) {
+                        is CustomTextViewModel -> acc && next.value.value != null && !next.value.value.isNullOrBlank()
+                        else -> acc && next.value != null
+                    }
+                }
     }
 
-    val landmarkInputs = LiveDataTriple(landmarkName, selectedLandmark, location)
-    val isLandmarkValid = Transformations.map(landmarkInputs) {
+    private val landmarkInputs = LiveDataTriple(landmarkName, selectedLandmark, location)
+    private val isLandmarkValid = Transformations.map(landmarkInputs) {
         val landmarkName = it.first
 
         isLandmark &&
                 isSufficientlyPrecise &&
                 !landmarkName.isNullOrEmpty() &&
-                selectedLandmark.value != null &&
-                customFieldViewModels.filter {
-                    it.customField.isRequired || it.customField.isAutomatic
-                }.fold(true) { acc, next ->
-                    acc && next.value != null
-                }
+                selectedLandmark.value != null
     }
-
 
     val validPair = LiveDataPair(isEnumerationValid, isLandmarkValid)
     val isValidLive = Transformations.map(validPair) {
@@ -154,35 +163,33 @@ class CollectAddViewModel(
     val saveButtonText = Transformations.map(isEnumerationValid) {
         val isEnumerationValid = it
         val subject = config.enumerationSubject
-        
+
         if (isLandmark) {
             languageService.getString(R.string.collect_save_landmark)
         } else {
             if (isEnumerationValid) {
-                languageService.getString(R.string.collect_save_complete, subject?.singular?.toUpperCase() ?: "")
+                languageService.getString(R.string.collect_save_complete, subject.singular.toUpperCase())
             } else {
                 languageService.getString(R.string.collect_save_incomplete)
             }
         }
     }
 
-    val saveButtonTextColor = MutableLiveData<Int>().apply { value = saveButtonDisabledTextColor }
-//            : LiveData<Int> = Transformations.map(isValidLive) {
-//        if (isSufficientlyPrecise) {
-//            return@map saveButtonEnabledTextColor
-//        } else {
-//            return@map saveButtonDisabledTextColor
-//        }
-//    }
+    val saveButtonTextColor = (Transformations.map(isValidLive) {
+        if (isSufficientlyPrecise) {
+            saveButtonEnabledTextColor
+        } else {
+            saveButtonDisabledTextColor
+        }
+    } as MutableLiveData).apply { value = saveButtonDisabledTextColor }
 
-    val saveButtonBackground = MutableLiveData<Int>().apply { value = saveButtonDisabledColor}
-//            : LiveData<Int> = Transformations.map(isValidLive) {
-//        if (isSufficientlyPrecise) {
-//            return@map saveButtonEnabledColor
-//        } else {
-//            return@map saveButtonDisabledColor
-//        }
-//    }
+    val saveButtonBackground = (Transformations.map(isValidLive) {
+        if (isSufficientlyPrecise) {
+            saveButtonEnabledColor
+        } else {
+            saveButtonDisabledColor
+        }
+    } as MutableLiveData).apply { value = saveButtonDisabledColor }
 
     val photoText = ObservableField(languageService.getString(R.string.collect_add_text))
 
@@ -199,36 +206,24 @@ class CollectAddViewModel(
     private val isSufficientlyPrecise
         get() = (location.value?.accuracy ?: 9999.0f < config.userSettings.gpsPreferredPrecision)
 
-//    private val isValid
-//        get() =
-//            if (isLandmark) {
-//                isSufficientlyPrecise && (landmarkName.value?.isNotBlank() ?: false)
-//            } else {
-//                isSufficientlyPrecise &&
-//                        customFieldViewModels.filter {
-//                            it.customField.isRequired || it.customField.isAutomatic
-//                        }.fold(true, { acc, next ->
-//                            acc && next.value != null
-//                        })
-//            }
-
     var googleMap: GoogleMap? = null
 
     init {
+
         mapObservable.subscribe { map ->
             googleMap = map
             @SuppressLint("MissingPermission")
             map.isMyLocationEnabled = true
             map.mapType = GoogleMap.MAP_TYPE_SATELLITE
             location.value?.let { location ->
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 18.0f))
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), mapZoom))
             }
         }
-        
+
         locationObservable.subscribe {
             if (it.accuracy < (location.value?.accuracy ?: 1000.0f)) {
                 if (location.value == null) {
-                    googleMap?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(it.latitude, it.longitude)))
+                    googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(it.latitude, it.longitude), mapZoom))
                 }
                 location.postValue(it)
                 gpsDisplay.set("%.5f ".format(it.latitude) + ", %.5f".format(it.longitude))
@@ -239,6 +234,10 @@ class CollectAddViewModel(
 
     fun addCustomFieldViewModel(viewModel: AbstractCustomViewModel) {
         customFieldViewModels.add(viewModel)
+        customFieldMediatorLiveData.addSource((viewModel.value) as MutableLiveData<*>) {
+            // Triggers the MediatorLiveData with a new value so isEnumerationValid can recalculate
+            customFieldMediatorLiveData.postValue(!(customFieldMediatorLiveData.value ?: false))
+        }
     }
 
     fun saveItem() {
@@ -248,19 +247,49 @@ class CollectAddViewModel(
             location.value?.let { location ->
                 gpsVm?.precision?.get()?.let { gpsPrecision ->
                     // TODO map screen data to LiveEnumeration
-                    collectManager?.addEnumerationItem(LiveEnumeration(null,
+                    val customFields = customFieldViewModels.mapNotNull { customVm ->
+                        val type = when(customVm) {
+                            is CustomNumberViewModel -> CustomFieldType.NUMBER
+                            is CustomTextViewModel -> CustomFieldType.TEXT
+                            is CustomCheckboxViewModel -> CustomFieldType.CHECKBOX
+                            is CustomDropdownViewModel -> CustomFieldType.DROPDOWN
+                            is CustomDateViewModel -> CustomFieldType.DATE
+                            else -> null
+                        }
+
+                        // TODO: If the value isn't required and is empty/null, skip and don't save
+                        val customFieldValue = when(customVm) {
+                            is CustomNumberViewModel -> DoubleValue(customVm.value.value ?: 0.0) // TODO: Use IntValue if the number should be int only
+                            is CustomTextViewModel -> TextValue(customVm.value.value ?: "")
+                            is CustomCheckboxViewModel -> BooleanValue(customVm.value.value ?: false)
+                            is CustomDropdownViewModel -> DropdownValue("TODO")
+                            is CustomDateViewModel -> DateValue(customVm.value.value ?: Date())
+                            else -> null
+                        }
+                        
+                        customFieldValue?.let { 
+                            type?.let {
+                                LiveCustomFieldValue(customFieldValue, type, customVm.customField.id)
+                            }
+                        }
+                    }
+                    collectManager.addEnumerationItem(LiveEnumeration(null,
                             false,
                             exclude.value ?: false,
-                            "Enumeration Title",
-                            null,
+                            primaryLabel.value ?: "",
+                            notes.value,
                             LatLng(location.latitude, location.longitude),
                             gpsPrecision,
                             "Display Date",
-                            listOf())) {
+                            customFields)) {
                         goToNext()
                     }
                 }
             }
         }
+    }
+
+    companion object {
+        val mapZoom = 18.0f
     }
 }

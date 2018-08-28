@@ -110,6 +110,7 @@ class ConfigRepositoryTest {
             assertEquals(gpsPreferredPrecision, resolvedConfigs[0].userSettings.gpsPreferredPrecision)
             assertEquals(isMetricDate, resolvedConfigs[0].displaySettings.isMetricDate)
             assertEquals(is24HourTime, resolvedConfigs[0].displaySettings.is24HourTime)
+            assertEquals(true, resolvedConfigs[0].customFields[0].isRequired)
             val config = configRepository!!.getConfigSync(it)
 
             configRepository?.insertStudy(config, "Study Name", "Study Password") { configId, _ ->

@@ -7,6 +7,7 @@ import com.google.android.gms.maps.model.LatLng
 import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.interfaces.*
 import org.taskforce.episample.core.interfaces.Enumeration
+import org.taskforce.episample.db.config.customfield.CustomFieldType
 import java.util.*
 
 class MockCollectManager : CollectManager {

@@ -1,18 +1,29 @@
 package org.taskforce.episample.collection.viewmodels
 
-import android.databinding.Bindable
-import org.taskforce.episample.config.fields.CustomField
-import org.taskforce.episample.utils.bindDelegate
+import android.arch.lifecycle.MutableLiveData
+import android.databinding.ObservableField
+import org.taskforce.episample.core.interfaces.CustomField
 
 class CustomNumberViewModel(customField: CustomField): AbstractCustomViewModel(customField) {
+    
+    var hint = object : ObservableField<String>("") {
+        override fun get(): String? {
+            var value = customField.name
+            if (customField.isRequired) {
+                value += " *"
+            }
+            return value
+        }
+    }
 
-    @get:Bindable
-    var hint by bindDelegate(customField.name)
+    var input = object: ObservableField<String?>("") {
+        override fun set(newValue: String?) {
+            super.set(newValue)
+            
+            value.postValue(newValue?.toDoubleOrNull())
+        }
+    }
 
-    @get:Bindable
-    var input by bindDelegate<String?>(null)
-
-    override val value: Double?
-        get() = input?.toDoubleOrNull()
+    override val value = MutableLiveData<Double?>()
 
 }

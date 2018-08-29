@@ -47,8 +47,6 @@ class CollectAddFragment : Fragment() {
 
     lateinit var collectViewModel: CollectAddViewModel
 
-    val landmarkSelectSubject: BehaviorSubject<LandmarkType> = BehaviorSubject.create<LandmarkType>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -78,7 +76,6 @@ class CollectAddFragment : Fragment() {
             collectViewModel = CollectAddViewModel(
                     requireActivity().application,
                     LanguageService(languageManager),
-                    landmarkSelectSubject as Observable<LandmarkType>,
                     Single.create<GoogleMap> { single ->
                         mapFragment.getMapAsync {
                             single.onSuccess(it)
@@ -118,8 +115,8 @@ class CollectAddFragment : Fragment() {
                 }
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-//                    val landmarkType = collectViewModel.config.landmarkTypes[position]
-                    landmarkSelectSubject.onNext(LandmarkType("ANY"))
+                    val landmarkType = collectViewModel.config.landmarkTypes[position]
+                    collectViewModel.selectedLandmark.postValue(landmarkType)
                 }
             }
 

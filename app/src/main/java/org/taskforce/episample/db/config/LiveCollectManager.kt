@@ -69,7 +69,7 @@ class LiveCollectManager(val application: Application,
         return getLandmarks
     }
 
-    val collectItemsMediator = LiveDataPair(configRepository.getEnumerations(userSession.studyId), configRepository.getLandmarks(userSession.studyId))
+    val collectItemsMediator = LiveDataPair(configRepository.getEnumerations(userSession.studyId), getLandmarks)
     override fun getCollectItems(): LiveData<List<CollectItem>> {
         return Transformations.map(collectItemsMediator, {
             return@map it.first.map { it.makeLiveEnumeration() } + it.second.map { it as CollectItem }

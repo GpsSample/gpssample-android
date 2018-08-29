@@ -18,7 +18,7 @@ class Study(
         @PrimaryKey()
         val id: String = UUID.randomUUID().toString()) {
 
-    val dateCreatedDisplay
-        get() = DisplaySettings().getFormattedDate(dateCreated, true)
+        val dateCreatedDisplay
+                get() = DisplaySettings().getFormattedDate(dateCreated, true)
 }
 

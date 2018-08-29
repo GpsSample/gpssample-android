@@ -19,20 +19,16 @@ import org.taskforce.episample.collection.ui.CollectGpsPrecisionViewModel
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.LiveDataTriple
-import org.taskforce.episample.core.interfaces.CollectManager
-import org.taskforce.episample.core.interfaces.Config
-import org.taskforce.episample.core.interfaces.LiveCustomFieldValue
-import org.taskforce.episample.core.interfaces.LiveEnumeration
+import org.taskforce.episample.core.interfaces.*
 import org.taskforce.episample.db.config.customfield.CustomFieldType
 import org.taskforce.episample.db.config.customfield.value.*
-import org.taskforce.episample.fileImport.models.LandmarkType
 import java.util.*
 import javax.inject.Inject
+import kotlin.math.log
 
 class CollectAddViewModel(
         application: Application,
         languageService: LanguageService,
-        landmarkObservable: Observable<LandmarkType>,
         mapObservable: Single<GoogleMap>,
         locationObservable: Observable<Location>,
         val isLandmark: Boolean,
@@ -53,6 +49,8 @@ class CollectAddViewModel(
         (application as EpiApplication).collectComponent?.inject(this)
     }
 
+    var landmarkType = config.landmarkTypes.first()
+
     var gpsVm: CollectGpsPrecisionViewModel? = null
 
     val gpsBreadcrumbs = collectManager.getBreadcrumbs()
@@ -70,9 +68,6 @@ class CollectAddViewModel(
             notesHint.set(languageService.getString(R.string.collect_notes_hint))
             photoText.set(languageService.getString(R.string.collect_add_text))
             gpsDisplay.set(languageService.getString(R.string.collect_gps_waiting))
-        }
-        landmarkObservable.subscribe {
-            selectedLandmark.postValue(it)
         }
         locationObservable.subscribe {
             gpsDisplay.set("${it.latitude}, ${it.longitude}")
@@ -146,7 +141,6 @@ class CollectAddViewModel(
         val landmarkName = it.first
 
         isLandmark &&
-                isSufficientlyPrecise &&
                 !landmarkName.isNullOrEmpty() &&
                 selectedLandmark.value != null
     }
@@ -175,8 +169,11 @@ class CollectAddViewModel(
         }
     }
 
+    private val canSaveItem: Boolean
+        get() = isSufficientlyPrecise || isLandmarkValid.value == true
+
     val saveButtonTextColor = (Transformations.map(isValidLive) {
-        if (isSufficientlyPrecise) {
+        if (canSaveItem) {
             saveButtonEnabledTextColor
         } else {
             saveButtonDisabledTextColor
@@ -184,7 +181,7 @@ class CollectAddViewModel(
     } as MutableLiveData).apply { value = saveButtonDisabledTextColor }
 
     val saveButtonBackground = (Transformations.map(isValidLive) {
-        if (isSufficientlyPrecise) {
+        if (canSaveItem) {
             saveButtonEnabledColor
         } else {
             saveButtonDisabledColor
@@ -246,46 +243,69 @@ class CollectAddViewModel(
         if (isValid) {
             location.value?.let { location ->
                 gpsVm?.precision?.get()?.let { gpsPrecision ->
-                    // TODO map screen data to LiveEnumeration
-                    val customFields = customFieldViewModels.mapNotNull { customVm ->
-                        val type = when(customVm) {
-                            is CustomNumberViewModel -> CustomFieldType.NUMBER
-                            is CustomTextViewModel -> CustomFieldType.TEXT
-                            is CustomCheckboxViewModel -> CustomFieldType.CHECKBOX
-                            is CustomDropdownViewModel -> CustomFieldType.DROPDOWN
-                            is CustomDateViewModel -> CustomFieldType.DATE
-                            else -> null
-                        }
-
-                        // TODO: If the value isn't required and is empty/null, skip and don't save
-                        val customFieldValue = when(customVm) {
-                            is CustomNumberViewModel -> DoubleValue(customVm.value.value ?: 0.0) // TODO: Use IntValue if the number should be int only
-                            is CustomTextViewModel -> TextValue(customVm.value.value ?: "")
-                            is CustomCheckboxViewModel -> BooleanValue(customVm.value.value ?: false)
-                            is CustomDropdownViewModel -> DropdownValue("TODO")
-                            is CustomDateViewModel -> DateValue(customVm.value.value ?: Date())
-                            else -> null
-                        }
-                        
-                        customFieldValue?.let { 
-                            type?.let {
-                                LiveCustomFieldValue(customFieldValue, type, customVm.customField.id)
-                            }
-                        }
-                    }
-                    collectManager.addEnumerationItem(LiveEnumeration(null,
-                            false,
-                            exclude.value ?: false,
-                            primaryLabel.value ?: "",
-                            notes.value,
-                            LatLng(location.latitude, location.longitude),
-                            gpsPrecision,
-                            "Display Date",
-                            customFields)) {
-                        goToNext()
+                    if (isLandmark) {
+                        saveLandmark(location, gpsPrecision)
+                    } else {
+                        saveEnumeration(location, gpsPrecision)
                     }
                 }
             }
+        }
+    }
+
+    private fun saveLandmark(location: Location, gpsPrecision: Double) {
+        collectManager.addLandmark(
+                LiveLandmark(
+                        landmarkName.value ?: "",
+                        landmarkType,
+                        notes.value,
+                        landmarkImage.value,
+                        LatLng(location.latitude, location.longitude),
+                        gpsPrecision
+                )) {
+            goToNext()
+        }
+    }
+
+    private fun saveEnumeration(location: Location, gpsPrecision: Double) {
+        // TODO map screen data to LiveEnumeration
+        val customFields = customFieldViewModels.mapNotNull { customVm ->
+            val type = when (customVm) {
+                is CustomNumberViewModel -> CustomFieldType.NUMBER
+                is CustomTextViewModel -> CustomFieldType.TEXT
+                is CustomCheckboxViewModel -> CustomFieldType.CHECKBOX
+                is CustomDropdownViewModel -> CustomFieldType.DROPDOWN
+                is CustomDateViewModel -> CustomFieldType.DATE
+                else -> null
+            }
+
+            // TODO: If the value isn't required and is empty/null, skip and don't save
+            val customFieldValue = when (customVm) {
+                is CustomNumberViewModel -> DoubleValue(customVm.value.value
+                        ?: 0.0) // TODO: Use IntValue if the number should be int only
+                is CustomTextViewModel -> TextValue(customVm.value.value ?: "")
+                is CustomCheckboxViewModel -> BooleanValue(customVm.value.value ?: false)
+                is CustomDropdownViewModel -> DropdownValue("TODO")
+                is CustomDateViewModel -> DateValue(customVm.value.value ?: Date())
+                else -> null
+            }
+
+            customFieldValue?.let {
+                type?.let {
+                    LiveCustomFieldValue(customFieldValue, type, customVm.customField.id)
+                }
+            }
+        }
+        collectManager.addEnumerationItem(LiveEnumeration(null,
+                false,
+                exclude.value ?: false,
+                primaryLabel.value ?: "",
+                notes.value,
+                LatLng(location.latitude, location.longitude),
+                gpsPrecision,
+                "Display Date",
+                customFields)) {
+            goToNext()
         }
     }
 

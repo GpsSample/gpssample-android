@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
+import android.widget.Toast
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
@@ -107,6 +108,7 @@ class CollectAddFragment : Fragment() {
                                 .commit()
                     }, {
                 // TODO: Launch intent to take picture
+                Toast.makeText(requireContext(), "TODO", Toast.LENGTH_SHORT).show()
             }
             )
 

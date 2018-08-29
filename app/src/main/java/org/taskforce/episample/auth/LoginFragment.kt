@@ -1,6 +1,5 @@
 package org.taskforce.episample.auth
 
-import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -9,7 +8,6 @@ import android.widget.ArrayAdapter
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.interfaces.LiveUserSession
-import org.taskforce.episample.core.interfaces.UserSession
 import org.taskforce.episample.databinding.FragmentLoginBinding
 import org.taskforce.episample.db.ConfigRoomDatabase
 import org.taskforce.episample.injection.CollectModule
@@ -24,7 +22,6 @@ class LoginFragment : Fragment() {
     lateinit var languageService: LanguageService
 
     lateinit var loginViewModel: LoginViewModel
-//    var adminPassword: String? = null
 
     lateinit var configId: String
     lateinit var studyId: String

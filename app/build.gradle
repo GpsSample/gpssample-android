@@ -5,6 +5,10 @@ def geoApiPropertiesFile = rootProject.file("geo_api.properties")
 def geoApiProperties = new Properties()
 geoApiProperties.load(new FileInputStream(geoApiPropertiesFile))
 
+def fabricPropertiesFile = rootProject.file("app/fabric.properties")
+def fabricProperties = new Properties()
+fabricProperties.load(new FileInputStream(fabricPropertiesFile))
+
 buildscript {
     repositories {
         maven { url 'https://maven.fabric.io/public' }
@@ -46,7 +50,7 @@ android {
         multiDexEnabled true
 
         buildConfigField "String", "FILE_DIRECTORY_NAME", "\"EpiSample\""
-        manifestPlaceholders = [geoApiKey:geoApiProperties['apiKey']]
+        manifestPlaceholders = [geoApiKey:geoApiProperties['apiKey'], fabricApiKey:fabricProperties['apiKey']]
     }
     buildTypes {
         debug {

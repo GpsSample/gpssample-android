@@ -102,10 +102,7 @@ class CollectAddFragment : Fragment() {
                     requireContext().getCompatColor(R.color.textColorDetails),
                     {
                         requireFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.mainFrame, CollectFragment())
-                                .addToBackStack(CollectAddFragment::class.java.name)
-                                .commit()
+                                .popBackStack()
                     }, {
                 // TODO: Launch intent to take picture
                 Toast.makeText(requireContext(), "TODO", Toast.LENGTH_SHORT).show()
@@ -149,7 +146,7 @@ class CollectAddFragment : Fragment() {
                     }
                 }
             }
-            
+
             val userSettings = collectViewModel.config.userSettings
             val vm = CollectGpsPrecisionViewModel(userSettings.gpsMinimumPrecision,
                     userSettings.gpsPreferredPrecision,

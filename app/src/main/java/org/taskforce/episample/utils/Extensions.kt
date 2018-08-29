@@ -136,14 +136,15 @@ fun org.taskforce.episample.core.interfaces.Breadcrumb.toDBBreadcrumb(collectorN
 }
 
 fun org.taskforce.episample.core.interfaces.Landmark.toDBLandmark(collectorName: String, studyId: String): Landmark {
-    return Landmark(collectorName,
-            location.latitude,
-            location.longitude,
-            note,
-            image,
-            (landmarkType.metadata as? LandmarkTypeMetadata.BuiltInLandmark)?.type,
-            (landmarkType.metadata as? LandmarkTypeMetadata.CustomId)?.id,
+    return Landmark(
+            title = title,
+            lat = location.latitude,
+            lng = location.longitude,
             studyId = studyId,
+            note = note,
+            image = image,
+            builtInLandmark = (landmarkType.metadata as? LandmarkTypeMetadata.BuiltInLandmark)?.type,
+            customLandmarkTypeId = (landmarkType.metadata as? LandmarkTypeMetadata.CustomId)?.id,
             gpsPrecision = gpsPrecision,
             dateCreated = dateCreated)
 }

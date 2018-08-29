@@ -97,8 +97,6 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="config_landmarks_add_error">A landmark must both have a name and a selected icon before it can be saved.</string>
     <string name="config_fields_title">Enumeration Fields</string>
     <string name="config_fields_explanation">First, enter the enumeration subject for your study (default is households).</string>
-    <string name="config_fields_hint">Enumeration Subjects</string>
-    <string name="config_fields_default">Households</string>
     <string name="config_fields_explanation_2">Now, enter the fields for enumerators to populate for each of the %s.</string>
     <string name="config_fields_subject_error">Enumeration Subject must have a value.</string>
     <string name="config_fields_list_title">Fields</string>
@@ -247,7 +245,8 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="collect_add_landmark_title">New Landmark</string>
     <string name="collect_add_item_title">New %s</string>
 
-    <string name="default_subject">household</string>
+    <string name="default_subject">Household</string>
+    <string name="default_subject_plural">Households</string>
     <string name="custom_field_record_id">Record ID</string>
     <string name="server_options">ODK Aggregate</string>
     <string name="not_discoverable">Not discoverable.</string>
@@ -288,5 +287,10 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="photo_options_maximum_compression">Maximum Compression</string>
     <string name="config_all_duplicate_error">There was a problem duplicating your configuration.</string>
     <string name="config_all_delete_error">There was a problem deleting your configuration.</string>
+    <string name="config_subject_hint">Subject (singular)</string>
+    <string name="config_subject_plural_hint">Subject (plural)</string>
+    <string name="config_primary_label_hint">Primary Label Text</string>
+    <string name="config_primary_label_error">Enumeration label must have a value.</string>
+    <string name="default_primary_label">Head of Household</string>
 
 </resources>

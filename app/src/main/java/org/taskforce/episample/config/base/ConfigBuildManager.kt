@@ -13,6 +13,7 @@ import org.taskforce.episample.config.sampling.SamplingMethod
 import org.taskforce.episample.config.settings.admin.AdminSettings
 import org.taskforce.episample.config.settings.server.ServerSettings
 import org.taskforce.episample.config.settings.user.UserSettings
+import org.taskforce.episample.core.interfaces.EnumerationSubject
 import org.taskforce.episample.db.config.customfield.CustomFieldType
 import org.taskforce.episample.fileImport.models.LandmarkType
 import java.io.Serializable
@@ -83,8 +84,8 @@ class ConfigBuildManager(val config: Config = Config(Date())):
         config.userSettings = userSettings
     }
 
-    fun setEnumerationSubject(subject: String) {
-        config.enumerationSubject = subject
+    fun setEnumerationSubject(enumerationSubject: EnumerationSubject) {
+        config.enumerationSubject = enumerationSubject
     }
 
     fun setLandmarkTypes(landmarkTypes: List<LandmarkType>) {

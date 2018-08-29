@@ -9,6 +9,7 @@ import org.taskforce.episample.config.settings.admin.AdminSettings
 import org.taskforce.episample.config.settings.display.DisplaySettings
 import org.taskforce.episample.config.settings.server.ServerSettings
 import org.taskforce.episample.config.settings.user.UserSettings
+import org.taskforce.episample.core.interfaces.EnumerationSubject
 import org.taskforce.episample.fileImport.models.LandmarkType
 import org.taskforce.episample.utils.humanReadableBytes
 import java.io.ByteArrayOutputStream
@@ -36,7 +37,7 @@ class Config(
     var customLanguages = listOf<CustomLanguage>()
     var customFields = listOf<CustomField>()
     var adminSettings: AdminSettings? = null
-    var enumerationSubject: String? = null
+    var enumerationSubject: EnumerationSubject? = null
 
     val size: String
         get() {

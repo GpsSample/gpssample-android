@@ -100,7 +100,8 @@ class ConfigRepository(application: Application, injectedDatabase: ConfigRoomDat
             AdminSettings(it.password, insertConfig.id)
         }
         val insertEnumerationSubject = config.enumerationSubject?.let {
-            EnumerationSubject(it, "$it + PLURAL", "$it + LABEL", insertConfig.id)
+            EnumerationSubject(it.singular, it.plural, it.primaryLabel, insertConfig.id)
+
         }
 
         val insertCustomFields = config.customFields.map {

@@ -287,6 +287,8 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="photo_options_maximum_compression">Maximum Compression</string>
     <string name="config_all_duplicate_error">There was a problem duplicating your configuration.</string>
     <string name="config_all_delete_error">There was a problem deleting your configuration.</string>
+    <string name="navigation_overview_title_var">%1$s %2$s to Survey</string>
+    <string name="start_route">Start Route</string>
     <string name="config_subject_hint">Subject (singular)</string>
     <string name="config_subject_plural_hint">Subject (plural)</string>
     <string name="config_primary_label_hint">Primary Label Text</string>

@@ -14,6 +14,7 @@ import org.taskforce.episample.collection.ui.CollectFragment
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.interfaces.CollectManager
 import org.taskforce.episample.databinding.FragmentMainBinding
+import org.taskforce.episample.navigation.ui.NavigationFragment
 import org.taskforce.episample.sync.managers.SyncManager
 import org.taskforce.episample.toolbar.managers.LanguageManager
 import org.taskforce.episample.toolbar.viewmodels.ToolbarViewModel
@@ -45,13 +46,11 @@ class MainFragment : Fragment() {
                             .commit()
                 },
                 navigateOnClick = {
-                    // TODO open navigate
-                    Toast.makeText(requireContext(), "TODO", Toast.LENGTH_SHORT).show()
-//                    requireFragmentManager()
-//                            .beginTransaction()
-//                            .replace(R.id.mainFrame, NavigationFragment())
-//                            .addToBackStack(NavigationFragment::class.java.name)
-//                            .commit()
+                    requireFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.mainFrame, NavigationFragment())
+                            .addToBackStack(NavigationFragment::class.java.name)
+                            .commit()
                 },
                 syncOnClick = {
                     // TODO open sync

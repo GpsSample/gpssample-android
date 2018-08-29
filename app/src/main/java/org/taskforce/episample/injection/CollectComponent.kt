@@ -5,6 +5,7 @@ import org.taskforce.episample.auth.LoginViewModel
 import org.taskforce.episample.collection.viewmodels.CollectAddViewModel
 import org.taskforce.episample.collection.viewmodels.CollectViewModel
 import org.taskforce.episample.main.MainViewModel
+import org.taskforce.episample.navigation.ui.NavigationViewModel
 
 @CollectScope
 @Subcomponent(modules = [CollectModule::class])
@@ -13,4 +14,5 @@ interface CollectComponent {
     fun inject(loginViewModel: LoginViewModel)
     fun inject(mainViewModel: MainViewModel)
     fun inject(collectAddViewModel: CollectAddViewModel)
+    fun inject(navigationViewModel: NavigationViewModel)
 }

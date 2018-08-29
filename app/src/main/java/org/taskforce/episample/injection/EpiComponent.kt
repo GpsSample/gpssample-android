@@ -25,6 +25,7 @@ import org.taskforce.episample.config.study.StudyCreateFragment
 import org.taskforce.episample.config.survey.SurveyExportFragment
 import org.taskforce.episample.config.transfer.TransferDownloadDialogFragment
 import org.taskforce.episample.main.MainFragment
+import org.taskforce.episample.navigation.ui.NavigationFragment
 import org.taskforce.episample.permissions.ui.PermissionsFragment
 import org.taskforce.episample.splash.SplashActivity
 
@@ -62,4 +63,5 @@ interface EpiComponent {
     fun inject(geographyDialogFragment: GeographyDialogFragment)
     fun inject(geographyFragment: GeographyFragment)
     fun inject(samplingSubsetFragment: SamplingSubsetFragment)
+    fun inject(navigationFragment: NavigationFragment)
 }

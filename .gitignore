@@ -8,5 +8,8 @@
 /build
 /captures
 .externalNativeBuild
-fabric.properties
+app/fabric.properties
 geo_api.properties
+app/release.keystore
+keystore.properties
+app/triple-key.json

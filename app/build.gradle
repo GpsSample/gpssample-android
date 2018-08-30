@@ -1,4 +1,4 @@
-def rawBuildNumber = System.getenv("BITRISE_BUILD_NUMBER") ?: "0"
+def rawBuildNumber = System.getenv("BITRISE_BUILD_NUMBER") ?: "1"
 def buildNumber = Integer.parseInt(rawBuildNumber)
 
 def geoApiPropertiesFile = rootProject.file("geo_api.properties")
@@ -24,6 +24,7 @@ repositories {
 }
 
 apply plugin: 'com.android.application'
+
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
@@ -69,7 +70,6 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "com.android.support:multidex:1.0.3"
     implementation "com.android.support:appcompat-v7:$rootProject.ext.androidSupportLibraryVersion"
     implementation "com.android.support:support-v4:$rootProject.ext.androidSupportLibraryVersion"
     implementation "com.android.support:cardview-v7:$rootProject.ext.androidSupportLibraryVersion"
@@ -96,7 +96,9 @@ dependencies {
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
     kapt "android.arch.persistence.room:compiler:1.1.1"
     testImplementation 'junit:junit:4.12'
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'
     implementation "com.android.support:support-annotations:$rootProject.ext.androidSupportLibraryVersion"
     androidTestImplementation "com.android.support:recyclerview-v7:$rootProject.ext.androidSupportLibraryVersion"
     androidTestImplementation "com.android.support:support-v4:$rootProject.ext.androidSupportLibraryVersion"
@@ -113,5 +115,5 @@ dependencies {
     implementation "com.fasterxml.jackson.core:jackson-core:2.9.6"
     implementation "com.fasterxml.jackson.core:jackson-databind:2.9.6"
     implementation "com.fasterxml.jackson.core:jackson-annotations:2.9.6"
-    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 }

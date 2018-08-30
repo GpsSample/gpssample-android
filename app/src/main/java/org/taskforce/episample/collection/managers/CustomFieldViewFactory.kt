@@ -1,9 +1,13 @@
 package org.taskforce.episample.collection.managers
 
 import android.content.Context
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.ViewGroup
+import android.widget.EditText
 import io.reactivex.Single
 import kotlinx.android.synthetic.main.item_custom_dropdown.view.*
+import org.taskforce.episample.R
 import org.taskforce.episample.collection.viewmodels.*
 import org.taskforce.episample.core.interfaces.CustomField
 import org.taskforce.episample.databinding.*
@@ -32,9 +36,34 @@ class CustomFieldViewFactory {
                     }.root
                 }
                 CustomFieldType.NUMBER -> {
-                    ItemCustomNumberBinding.inflate(context.inflater).apply {
-                        vm = viewModel as CustomNumberViewModel
+                    val numberViewModel = viewModel as CustomNumberViewModel
+                    val view = ItemCustomNumberBinding.inflate(context.inflater).apply {
+                        vm = numberViewModel
                     }.root
+                    
+                    val editText = view.findViewById<EditText>(R.id.input)
+
+                    val textChangeListener = object : TextWatcher {
+                        var isInteger = false
+                        override fun afterTextChanged(input: Editable?) {
+                            input?.let {
+                                if (numberViewModel.isInteger && input.contains(".")) {
+                                    val noDecimal = input.toString().replace(".", "")
+                                    input.clear()
+                                    input.append(noDecimal)
+                                }
+                            }
+                        }
+
+                        override fun beforeTextChanged(input: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                        override fun onTextChanged(input: CharSequence?, start: Int, before: Int, count: Int) {}
+
+                    }
+                    textChangeListener.isInteger = numberViewModel.isInteger
+                    editText.addTextChangedListener(textChangeListener)
+                    
+                    view
                 }
                 CustomFieldType.TEXT -> {
                     ItemCustomTextBinding.inflate(context.inflater).apply {

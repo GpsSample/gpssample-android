@@ -63,11 +63,12 @@ class CustomDropdownViewModel(
             } else {
                 textView.setTextColor(Color.BLACK)
             }
+            value.postValue(null)
             return view
         }
     }
 
-    override val value = object : MutableLiveData<CustomDropdown>() {
+    override val value: MutableLiveData<CustomDropdown> = object : MutableLiveData<CustomDropdown>() {
         override fun getValue() = view?.let {
             provideSelectedItem.invoke(adapter, it)
         }

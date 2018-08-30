@@ -131,6 +131,10 @@ class CollectAddViewModel(
                 }.fold(true) { acc, next ->
                     when (next) {
                         is CustomTextViewModel -> acc && next.value.value != null && !next.value.value.isNullOrBlank()
+                        is CustomDropdownViewModel -> acc && next.value.value != null
+                        is CustomNumberViewModel -> acc && next.value.value != null && !next.value.value.isNullOrBlank()
+                        is CustomDateViewModel -> acc && next.value.value != null
+                        is CustomCheckboxViewModel -> acc && next.value.value != null
                         else -> acc && next.value != null
                     }
                 }
@@ -206,7 +210,6 @@ class CollectAddViewModel(
     var googleMap: GoogleMap? = null
 
     init {
-
         mapObservable.subscribe { map ->
             googleMap = map
             @SuppressLint("MissingPermission")
@@ -280,8 +283,14 @@ class CollectAddViewModel(
             }
 
             val customFieldValue = when (customVm) {
-                is CustomNumberViewModel -> DoubleValue(customVm.value.value
-                        ?: 0.0) // TODO: Use IntValue if the number should be int only
+                is CustomNumberViewModel -> {
+                    customVm.value.value?.let {
+                        when {
+                            customVm.isInteger -> IntValue(it.toInt())
+                            else -> DoubleValue(it.toDouble())
+                        }
+                    }
+                }
                 is CustomTextViewModel -> customVm.value.value?.let { TextValue(it) }
                 is CustomCheckboxViewModel -> customVm.value.value?.let { BooleanValue(it) }
                 is CustomDropdownViewModel -> customVm.value.value?.key?.let { DropdownValue(it) }

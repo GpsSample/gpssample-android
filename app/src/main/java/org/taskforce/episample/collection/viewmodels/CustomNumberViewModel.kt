@@ -3,6 +3,7 @@ package org.taskforce.episample.collection.viewmodels
 import android.arch.lifecycle.MutableLiveData
 import android.databinding.ObservableField
 import org.taskforce.episample.core.interfaces.CustomField
+import org.taskforce.episample.db.config.customfield.metadata.NumberMetadata
 
 class CustomNumberViewModel(customField: CustomField): AbstractCustomViewModel(customField) {
     
@@ -20,10 +21,12 @@ class CustomNumberViewModel(customField: CustomField): AbstractCustomViewModel(c
         override fun set(newValue: String?) {
             super.set(newValue)
             
-            value.postValue(newValue?.toDoubleOrNull())
+            value.postValue(newValue)
         }
     }
+    
+    var isInteger = (customField.metadata as NumberMetadata).isIntegerOnly
 
-    override val value = MutableLiveData<Double?>()
+    override val value = MutableLiveData<String?>()
 
 }

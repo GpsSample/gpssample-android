@@ -8,6 +8,7 @@ import org.taskforce.episample.collection.viewmodels.*
 import org.taskforce.episample.core.interfaces.CustomField
 import org.taskforce.episample.databinding.*
 import org.taskforce.episample.db.config.customfield.CustomFieldType
+import org.taskforce.episample.db.config.customfield.metadata.DropdownMetadata
 import org.taskforce.episample.utils.inflater
 import java.util.*
 
@@ -47,19 +48,22 @@ class CustomFieldViewFactory {
                 CustomFieldType.TEXT -> CustomTextViewModel(customField)
                 CustomFieldType.DROPDOWN -> {
                     if (context == null) {
-                            throw IllegalArgumentException("CustomDropdownViewModel requires a context, " +
-                                    "but context argument is null.")
-                        }
-                        else {
-                            CustomDropdownViewModel(
-                                    customField,
-                                    context,
-                                    { adapter, view ->
-                                        adapter.getItem(view.dropdown.selectedItemPosition)
-                                    }
-                            )
+                        throw IllegalArgumentException("CustomDropdownViewModel requires a context, " +
+                                "but context argument is null.")
+                    } else {
+                        CustomDropdownViewModel(
+                                customField,
+                                context
+                        ) { adapter, view ->
+                            val index = view.dropdown.selectedItemPosition
+                            when (index) {
+                                0 -> null
+                                else -> (customField.metadata as DropdownMetadata).items[index - 1]
+                            }
+
                         }
                     }
+                }
                 CustomFieldType.DATE -> CustomDateViewModel(customField, {
                     Single.just(Date())
                 })

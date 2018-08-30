@@ -279,14 +279,13 @@ class CollectAddViewModel(
                 else -> null
             }
 
-            // TODO: If the value isn't required and is empty/null, skip and don't save
             val customFieldValue = when (customVm) {
                 is CustomNumberViewModel -> DoubleValue(customVm.value.value
                         ?: 0.0) // TODO: Use IntValue if the number should be int only
-                is CustomTextViewModel -> TextValue(customVm.value.value ?: "")
-                is CustomCheckboxViewModel -> BooleanValue(customVm.value.value ?: false)
-                is CustomDropdownViewModel -> DropdownValue("TODO")
-                is CustomDateViewModel -> DateValue(customVm.value.value ?: Date())
+                is CustomTextViewModel -> customVm.value.value?.let { TextValue(it) }
+                is CustomCheckboxViewModel -> customVm.value.value?.let { BooleanValue(it) }
+                is CustomDropdownViewModel -> customVm.value.value?.key?.let { DropdownValue(it) }
+                is CustomDateViewModel -> customVm.value.value?.let { DateValue(it) }
                 else -> null
             }
 
@@ -297,7 +296,7 @@ class CollectAddViewModel(
             }
         }
         collectManager.addEnumerationItem(LiveEnumeration(null,
-                false,
+                false, // TODO
                 exclude.value ?: false,
                 primaryLabel.value ?: "",
                 notes.value,

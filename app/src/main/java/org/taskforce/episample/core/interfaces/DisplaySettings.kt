@@ -13,6 +13,6 @@ interface DisplaySettings {
     fun getTimeFormat(): String = if (is24HourTime) {
         "kk:mm"
     } else {
-        "KK:mm"
+        "K:mm a"
     }
 }

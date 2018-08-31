@@ -15,7 +15,9 @@ import org.taskforce.episample.config.settings.admin.AdminSettings
 import org.taskforce.episample.config.settings.display.DisplaySettings
 import org.taskforce.episample.config.settings.user.UserSettings
 import org.taskforce.episample.core.interfaces.LiveCustomFieldValue
+import org.taskforce.episample.core.interfaces.LiveEnumerationSubject
 import org.taskforce.episample.db.collect.Enumeration
+import org.taskforce.episample.db.config.EnumerationSubject
 import org.taskforce.episample.db.config.customfield.CustomFieldType
 import org.taskforce.episample.db.config.customfield.value.IntValue
 import org.taskforce.episample.db.utils.CommonSetup
@@ -48,12 +50,14 @@ class ConfigRepositoryTest {
 
         val configName = "Config 1"
         val enumerationSingular = "Person"
+        val enumerationPlural = "People"
+        val enumerationLabel = "Name of Person"
         val adminPassword = "anypassword"
         val gpsMinimumPrecision = 40.0
         val gpsPreferredPrecision = 20.0
         val configBuilder = org.taskforce.episample.config.base.Config(name = configName)
         configBuilder.adminSettings = AdminSettings(adminPassword)
-        configBuilder.enumerationSubject = enumerationSingular
+        configBuilder.enumerationSubject = LiveEnumerationSubject(enumerationSingular, enumerationPlural, enumerationLabel)
         configBuilder.userSettings = UserSettings(gpsMinimumPrecision, gpsPreferredPrecision,
                 false, null, false, false, null, false, false, null)
 
@@ -63,6 +67,8 @@ class ConfigRepositoryTest {
             assertEquals(configName, resolvedConfigs[0].name)
             assertEquals(adminPassword, resolvedConfigs[0].adminSettings.password)
             assertEquals(enumerationSingular, resolvedConfigs[0].enumerationSubject.singular)
+            assertEquals(enumerationPlural, resolvedConfigs[0].enumerationSubject.plural)
+            assertEquals(enumerationLabel, resolvedConfigs[0].enumerationSubject.primaryLabel)
             assertEquals(gpsMinimumPrecision, resolvedConfigs[0].userSettings.gpsMinimumPrecision)
             assertEquals(gpsPreferredPrecision, resolvedConfigs[0].userSettings.gpsPreferredPrecision)
 
@@ -83,6 +89,8 @@ class ConfigRepositoryTest {
 
         val configName = "Config 1"
         val enumerationSingular = "Person"
+        val enumerationPlural = "People"
+        val enumerationLabel = "Name of Person"
         val adminPassword = "anypassword"
         val gpsMinimumPrecision = 40.0
         val gpsPreferredPrecision = 20.0
@@ -91,7 +99,7 @@ class ConfigRepositoryTest {
 
         val configBuilder = org.taskforce.episample.config.base.Config(name = configName)
         configBuilder.adminSettings = AdminSettings(adminPassword)
-        configBuilder.enumerationSubject = enumerationSingular
+        configBuilder.enumerationSubject = LiveEnumerationSubject(enumerationSingular, enumerationPlural, enumerationLabel)
         configBuilder.customFields = listOf(
                 CustomField(true, true, true, true, true, "Custom Number", CustomFieldType.NUMBER,
                         mapOf(CustomFieldTypeConstants.INTEGER_ONLY to true))
@@ -106,6 +114,9 @@ class ConfigRepositoryTest {
             assertEquals(configName, resolvedConfigs[0].name)
             assertEquals(adminPassword, resolvedConfigs[0].adminSettings.password)
             assertEquals(enumerationSingular, resolvedConfigs[0].enumerationSubject.singular)
+            assertEquals(enumerationSingular, resolvedConfigs[0].enumerationSubject.singular)
+            assertEquals(enumerationPlural, resolvedConfigs[0].enumerationSubject.plural)
+            assertEquals(enumerationLabel, resolvedConfigs[0].enumerationSubject.primaryLabel)
             assertEquals(gpsMinimumPrecision, resolvedConfigs[0].userSettings.gpsMinimumPrecision)
             assertEquals(gpsPreferredPrecision, resolvedConfigs[0].userSettings.gpsPreferredPrecision)
             assertEquals(isMetricDate, resolvedConfigs[0].displaySettings.isMetricDate)
@@ -121,6 +132,10 @@ class ConfigRepositoryTest {
                 assertEquals(configName, resolvedConfig.name)
                 assertEquals(adminPassword, resolvedConfig.adminSettings.password)
                 assertEquals(enumerationSingular, resolvedConfig.enumerationSubject.singular)
+                assertEquals(enumerationSingular, resolvedConfig.enumerationSubject.singular)
+                assertEquals(enumerationPlural, resolvedConfig.enumerationSubject.plural)
+                assertEquals(enumerationLabel, resolvedConfig.enumerationSubject.primaryLabel)
+
                 assertEquals(gpsMinimumPrecision, resolvedConfig.userSettings.gpsMinimumPrecision)
                 assertEquals(gpsPreferredPrecision, resolvedConfig.userSettings.gpsPreferredPrecision)
                 assertEquals(isMetricDate, resolvedConfig.displaySettings.isMetricDate)

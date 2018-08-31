@@ -46,7 +46,7 @@ android {
         targetSdkVersion 27
         versionCode buildNumber
         versionName "2.0"
-        testInstrumentationRunner "org.taskforce.episample.mock.MockTestRunner"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
 

@@ -4,6 +4,7 @@ import junit.framework.Assert
 import org.taskforce.episample.config.base.Config
 import org.taskforce.episample.config.fields.CustomFieldTypeConstants
 import org.taskforce.episample.config.settings.admin.AdminSettings
+import org.taskforce.episample.core.interfaces.LiveEnumerationSubject
 import org.taskforce.episample.db.ConfigRepository
 import org.taskforce.episample.db.collect.Enumeration
 import org.taskforce.episample.db.config.*
@@ -54,6 +55,8 @@ class CommonSetup {
         fun setupConfigAndStudy(configRepository: ConfigRepository,
                                 configName: String = "Config 1",
                                 enumerationSingular: String = "Person",
+                                enumerationPlural: String = "People",
+                                enumerationLabel: String = "Name of Person",
                                 adminPassword: String = "anypassword",
                                 customFields: List<org.taskforce.episample.config.fields.CustomField> = listOf(org.taskforce.episample.config.fields.CustomField(true, true, true, true, true, "Custom Number", CustomFieldType.NUMBER,
                                         mapOf(CustomFieldTypeConstants.INTEGER_ONLY to true))),
@@ -65,7 +68,7 @@ class CommonSetup {
                                 callback: (configId: String, studyId: String) -> Unit) {
             val configBuilder = org.taskforce.episample.config.base.Config(name = configName)
             configBuilder.adminSettings = AdminSettings(adminPassword)
-            configBuilder.enumerationSubject = enumerationSingular
+            configBuilder.enumerationSubject = LiveEnumerationSubject(enumerationSingular, enumerationPlural, enumerationLabel)
             configBuilder.customFields = customFields
             configBuilder.userSettings = org.taskforce.episample.config.settings.user.UserSettings(gpsMinimumPrecision, gpsPreferredPrecision,
                     false, null, false, false, null, false, false, null)

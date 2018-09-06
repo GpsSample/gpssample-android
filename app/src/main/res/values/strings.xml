@@ -294,5 +294,6 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="config_primary_label_hint">Primary Label Text</string>
     <string name="config_primary_label_error">Enumeration label must have a value.</string>
     <string name="default_primary_label">Head of Household</string>
+    <string name="navigation_plan">Navigation Plan</string>
 
 </resources>

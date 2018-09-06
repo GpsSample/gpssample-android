@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="vm"
+            type="org.taskforce.episample.navigation.ui.NavigationLanguageItemViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:onClick="@{() -> vm.onClick.invoke()}">
+
+        <ImageView
+            android:id="@+id/languageSelected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/icon_checkmark"
+            visible="@{vm.isChecked}" />
+
+        <TextView
+            android:id="@+id/languageText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/languageSelected"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="16dp"
+            android:lineSpacingExtra="8sp"
+            android:textSize="16sp"
+            android:text="@{vm.name}"/>
+
+    </RelativeLayout>
+
+</layout>

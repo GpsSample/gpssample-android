@@ -1,15 +1,18 @@
-package org.taskforce.episample.config.language
+package org.taskforce.episample.core.language
 
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
 import org.taskforce.episample.R
+import org.taskforce.episample.core.interfaces.BuiltInLanguage
+import org.taskforce.episample.core.interfaces.CustomLanguage
+import org.taskforce.episample.core.interfaces.LiveBuiltInLanguage
 import java.util.*
 
 class LanguageImporter(private val applicationContext: Context) {
 
-    val defaultLanguage: CustomLanguage
+    private val defaultLanguage: CustomLanguage
 
     init {
         defaultLanguage = generateLanguageFromResource(applicationContext.resources)
@@ -20,11 +23,10 @@ class LanguageImporter(private val applicationContext: Context) {
                 applicationContext.createConfigurationContext(Configuration(applicationContext.resources.configuration)
                         .apply { setLocale(it) }).resources
             }.map {
-                generateLanguageFromResource(it)
-                ValidatedCustomLanguage.build(defaultLanguage, generateLanguageFromResource(it))
+                return@map generateLanguageFromResource(it)
             }
 
-    private fun generateLanguageFromResource(res: Resources): CustomLanguage {
+    private fun generateLanguageFromResource(res: Resources): BuiltInLanguage {
         val id: String
         val name: String
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -34,7 +36,7 @@ class LanguageImporter(private val applicationContext: Context) {
             id = res.configuration.locale.isO3Language
             name = res.configuration.locale.getDisplayLanguage(res.configuration.locale).capitalize()
         }
-        return CustomLanguage(
+        return LiveBuiltInLanguage(
                 id,
                 name,
                 R.string::class.java.fields.map {
@@ -42,25 +44,5 @@ class LanguageImporter(private val applicationContext: Context) {
                             res.getString(it.getInt(null))
                 }.toMap()
         )
-    }
-}
-
-data class ValidatedCustomLanguage(val customLanguage: CustomLanguage,
-                                   val isValid: Boolean,
-                                   val missingCount: Int) {
-    companion object {
-        fun build(validationLanguage: CustomLanguage, customLanguage: CustomLanguage): ValidatedCustomLanguage {
-            val countMissing = countMissing(validationLanguage, customLanguage)
-            return ValidatedCustomLanguage(customLanguage, countMissing == 0, countMissing)
-        }
-
-        private fun countMissing(validationLanguage: CustomLanguage, language: CustomLanguage) =
-                validationLanguage.strings.map {
-                    if (!language.strings.containsKey(it.key)) {
-                        1
-                    } else {
-                        0
-                    }
-                }.reduce { acc, i -> acc + i }
     }
 }

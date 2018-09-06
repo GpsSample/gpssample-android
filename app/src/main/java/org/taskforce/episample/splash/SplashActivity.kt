@@ -11,8 +11,6 @@ import org.taskforce.episample.BuildConfig
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.auth.LoginActivity
 import org.taskforce.episample.config.base.ConfigActivity
-import org.taskforce.episample.db.ConfigRoomDatabase
-import org.taskforce.episample.injection.CollectModule
 import org.taskforce.episample.permissions.managers.PermissionManager
 import org.taskforce.episample.permissions.ui.PermissionsActivity
 import javax.inject.Inject

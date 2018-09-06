@@ -3,10 +3,9 @@ package org.taskforce.episample.injection
 import android.app.Application
 import dagger.Module
 import dagger.Provides
-import org.taskforce.episample.core.interfaces.CollectManager
-import org.taskforce.episample.core.interfaces.Config
-import org.taskforce.episample.core.interfaces.ConfigManager
-import org.taskforce.episample.core.interfaces.UserSession
+import org.taskforce.episample.core.interfaces.*
+import org.taskforce.episample.core.language.LanguageService
+import org.taskforce.episample.core.language.LiveLanguageService
 import org.taskforce.episample.db.ConfigRepository
 import org.taskforce.episample.db.ConfigRoomDatabase
 import org.taskforce.episample.db.config.LiveCollectManager
@@ -32,4 +31,11 @@ class CollectModule(val application: Application,
 
     @Provides
     fun providesConfig(): Config = config
+
+    // TODO use config custom languages when providing language service
+    @Provides
+    fun providesLanguageService(): LanguageService = LiveLanguageService(application, listOf())
+
+    @Provides
+    fun providesLocationService(): LocationService = LiveLocationService(application)
 }

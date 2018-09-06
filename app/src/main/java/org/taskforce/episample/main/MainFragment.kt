@@ -14,6 +14,7 @@ import org.taskforce.episample.collection.ui.CollectFragment
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.interfaces.CollectManager
 import org.taskforce.episample.databinding.FragmentMainBinding
+import org.taskforce.episample.navigation.ui.NavigationActivity
 import org.taskforce.episample.navigation.ui.NavigationFragment
 import org.taskforce.episample.sync.managers.SyncManager
 import org.taskforce.episample.toolbar.managers.LanguageManager
@@ -46,11 +47,7 @@ class MainFragment : Fragment() {
                             .commit()
                 },
                 navigateOnClick = {
-                    requireFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.mainFrame, NavigationFragment())
-                            .addToBackStack(NavigationFragment::class.java.name)
-                            .commit()
+                    NavigationActivity.startActivity(requireContext())
                 },
                 syncOnClick = {
                     // TODO open sync

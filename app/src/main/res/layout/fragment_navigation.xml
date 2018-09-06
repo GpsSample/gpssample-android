@@ -8,7 +8,7 @@
 
         <variable
             name="toolbarVm"
-            type="org.taskforce.episample.toolbar.viewmodels.ToolbarViewModel" />
+            type="org.taskforce.episample.navigation.ui.NavigationToolbarViewModel" />
 
         <variable
             name="vm"
@@ -112,7 +112,7 @@
         </android.support.design.widget.CoordinatorLayout>
         <include
             android:id="@+id/toolbar"
-            layout="@layout/app_toolbar"
+            layout="@layout/app_navigation_toolbar"
             bind:layout_constraintEnd_toEndOf="parent"
             bind:layout_constraintStart_toStartOf="parent"
             bind:layout_constraintTop_toTopOf="parent"

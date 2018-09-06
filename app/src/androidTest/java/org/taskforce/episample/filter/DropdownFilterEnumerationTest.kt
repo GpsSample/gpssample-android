@@ -10,7 +10,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.taskforce.episample.db.ConfigRoomDatabase
 import org.taskforce.episample.db.collect.ResolvedEnumerationDao
-import org.taskforce.episample.db.config.*
+import org.taskforce.episample.db.config.ConfigDao
+import org.taskforce.episample.db.config.ResolvedConfigDao
+import org.taskforce.episample.db.config.Study
+import org.taskforce.episample.db.config.StudyDao
 import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.customfield.CustomFieldDao
 import org.taskforce.episample.db.config.customfield.CustomFieldType
@@ -112,7 +115,7 @@ class DropdownFilterEnumerationTest {
         val filterLessThan = Filter(listOf(DropdownRuleFactory.makeRule(DropdownRuleFactory.DropdownRules.IS_EQUAL_TO, customField, filterValue.key)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filterLessThan.filter(it)
+            filterLessThan.filterAny(it)
         }
 
         Assert.assertEquals(2, filteredEnumerations?.size)
@@ -129,7 +132,7 @@ class DropdownFilterEnumerationTest {
         val filterLessThan = Filter(listOf(DropdownRuleFactory.makeRule(DropdownRuleFactory.DropdownRules.IS_NOT_EQUAL_TO, customField, filterValue.key)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filterLessThan.filter(it)
+            filterLessThan.filterAny(it)
         }
 
         Assert.assertEquals(8, filteredEnumerations?.size)

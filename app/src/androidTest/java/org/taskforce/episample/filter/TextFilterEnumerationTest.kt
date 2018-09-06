@@ -107,7 +107,7 @@ class TextFilterEnumerationTest {
         val filter = Filter(listOf(TextRuleFactory.makeRule(TextRuleFactory.TextRules.IS_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filter.filter(it)
+            filter.filterAny(it)
         }
 
         Assert.assertEquals(1, filteredEnumerations?.size)
@@ -124,7 +124,7 @@ class TextFilterEnumerationTest {
         val filter = Filter(listOf(TextRuleFactory.makeRule(TextRuleFactory.TextRules.IS_NOT_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filter.filter(it)
+            filter.filterAny(it)
         }
 
         Assert.assertEquals(9, filteredEnumerations?.size)

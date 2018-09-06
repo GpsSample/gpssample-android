@@ -10,7 +10,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.taskforce.episample.db.ConfigRoomDatabase
 import org.taskforce.episample.db.collect.ResolvedEnumerationDao
-import org.taskforce.episample.db.config.*
+import org.taskforce.episample.db.config.ConfigDao
+import org.taskforce.episample.db.config.ResolvedConfigDao
+import org.taskforce.episample.db.config.Study
+import org.taskforce.episample.db.config.StudyDao
 import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.customfield.CustomFieldDao
 import org.taskforce.episample.db.config.customfield.CustomFieldType
@@ -92,7 +95,7 @@ class BooleanFilterEnumerationTest {
         where the custom field value which has been added is a boolean taking the values [1..10] % 2 == 1 (IE is the current index odd) have been added
 
         So for example, the test filterEqualTo is attempting to filter the results which are equal to false
-        So we would expect 5 enumations with the value of all of them being false
+        So we would expect 5 enumerations with the value of all of them being false
 
         And so on and so forth.
      */
@@ -104,7 +107,7 @@ class BooleanFilterEnumerationTest {
         val filterLessThan = Filter(listOf(BooleanRuleFactory.makeRule(BooleanRuleFactory.BooleanRules.IS_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filterLessThan.filter(it)
+            filterLessThan.filterAny(it)
         }
 
         Assert.assertEquals(5, filteredEnumerations?.size)
@@ -121,7 +124,7 @@ class BooleanFilterEnumerationTest {
         val filterLessThan = Filter(listOf(BooleanRuleFactory.makeRule(BooleanRuleFactory.BooleanRules.IS_NOT_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filterLessThan.filter(it)
+            filterLessThan.filterAny(it)
         }
 
         Assert.assertEquals(5, filteredEnumerations?.size)

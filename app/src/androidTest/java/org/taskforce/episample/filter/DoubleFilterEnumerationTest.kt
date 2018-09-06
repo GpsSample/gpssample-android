@@ -111,7 +111,7 @@ class DoubleFilterEnumerationTest {
         val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.DoubleRules.LESS_THAN, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filterLessThan.filter(it)
+            filterLessThan.filterAny(it)
         }
 
         Assert.assertEquals(4, filteredEnumerations?.size)
@@ -128,7 +128,7 @@ class DoubleFilterEnumerationTest {
         val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.DoubleRules.LESS_THAN_OR_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filterLessThan.filter(it)
+            filterLessThan.filterAny(it)
         }
 
         Assert.assertEquals(5, filteredEnumerations?.size)
@@ -145,7 +145,7 @@ class DoubleFilterEnumerationTest {
         val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.DoubleRules.GREATER_THAN, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filterLessThan.filter(it)
+            filterLessThan.filterAny(it)
         }
 
         Assert.assertEquals(5, filteredEnumerations?.size)
@@ -162,7 +162,7 @@ class DoubleFilterEnumerationTest {
         val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.DoubleRules.GREATER_THAN_OR_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filterLessThan.filter(it)
+            filterLessThan.filterAny(it)
         }
 
         Assert.assertEquals(6, filteredEnumerations?.size)
@@ -179,7 +179,7 @@ class DoubleFilterEnumerationTest {
         val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.DoubleRules.IS_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filterLessThan.filter(it)
+            filterLessThan.filterAny(it)
         }
 
         Assert.assertEquals(1, filteredEnumerations?.size)
@@ -196,7 +196,7 @@ class DoubleFilterEnumerationTest {
         val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.DoubleRules.IS_NOT_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filterLessThan.filter(it)
+            filterLessThan.filterAny(it)
         }
 
         Assert.assertEquals(9, filteredEnumerations?.size)

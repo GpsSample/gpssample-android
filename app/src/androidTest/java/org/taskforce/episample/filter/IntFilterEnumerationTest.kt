@@ -10,7 +10,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.taskforce.episample.db.ConfigRoomDatabase
 import org.taskforce.episample.db.collect.ResolvedEnumerationDao
-import org.taskforce.episample.db.config.*
+import org.taskforce.episample.db.config.ConfigDao
+import org.taskforce.episample.db.config.ResolvedConfigDao
+import org.taskforce.episample.db.config.Study
+import org.taskforce.episample.db.config.StudyDao
 import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.customfield.CustomFieldDao
 import org.taskforce.episample.db.config.customfield.CustomFieldType
@@ -109,7 +112,7 @@ class IntFilterEnumerationTest {
         val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.IntRules.LESS_THAN, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filterLessThan.filter(it)
+            filterLessThan.filterAny(it)
         }
 
         Assert.assertEquals(4, filteredEnumerations?.size)
@@ -128,7 +131,7 @@ class IntFilterEnumerationTest {
         val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.IntRules.LESS_THAN_OR_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filterLessThan.filter(it)
+            filterLessThan.filterAny(it)
         }
 
         Assert.assertEquals(5, filteredEnumerations?.size)
@@ -147,7 +150,7 @@ class IntFilterEnumerationTest {
         val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.IntRules.GREATER_THAN, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filterLessThan.filter(it)
+            filterLessThan.filterAny(it)
         }
 
         Assert.assertEquals(5, filteredEnumerations?.size)
@@ -166,7 +169,7 @@ class IntFilterEnumerationTest {
         val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.IntRules.GREATER_THAN_OR_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filterLessThan.filter(it)
+            filterLessThan.filterAny(it)
         }
 
         Assert.assertEquals(6, filteredEnumerations?.size)
@@ -185,7 +188,7 @@ class IntFilterEnumerationTest {
         val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.IntRules.IS_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filterLessThan.filter(it)
+            filterLessThan.filterAny(it)
         }
 
         Assert.assertEquals(1, filteredEnumerations?.size)
@@ -204,7 +207,7 @@ class IntFilterEnumerationTest {
         val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.IntRules.IS_NOT_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filterLessThan.filter(it)
+            filterLessThan.filterAny(it)
         }
 
         Assert.assertEquals(9, filteredEnumerations?.size)

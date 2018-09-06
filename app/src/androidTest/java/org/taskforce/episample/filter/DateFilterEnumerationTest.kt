@@ -109,7 +109,7 @@ class DateFilterEnumerationTest {
         val filterLessThan = Filter(listOf(DateRuleFactory.makeRule(DateRuleFactory.DateRules.LESS_THAN, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filterLessThan.filter(it)
+            filterLessThan.filterAny(it)
         }
 
         Assert.assertEquals(4, filteredEnumerations?.size)
@@ -126,7 +126,7 @@ class DateFilterEnumerationTest {
         val filterLessThan = Filter(listOf(DateRuleFactory.makeRule(DateRuleFactory.DateRules.LESS_THAN_OR_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filterLessThan.filter(it)
+            filterLessThan.filterAny(it)
         }
 
         Assert.assertEquals(5, filteredEnumerations?.size)
@@ -143,7 +143,7 @@ class DateFilterEnumerationTest {
         val filterLessThan = Filter(listOf(DateRuleFactory.makeRule(DateRuleFactory.DateRules.GREATER_THAN, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filterLessThan.filter(it)
+            filterLessThan.filterAny(it)
         }
 
         Assert.assertEquals(5, filteredEnumerations?.size)
@@ -160,7 +160,7 @@ class DateFilterEnumerationTest {
         val filterLessThan = Filter(listOf(DateRuleFactory.makeRule(DateRuleFactory.DateRules.GREATER_THAN_OR_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filterLessThan.filter(it)
+            filterLessThan.filterAny(it)
         }
 
         Assert.assertEquals(6, filteredEnumerations?.size)
@@ -177,7 +177,7 @@ class DateFilterEnumerationTest {
         val filterLessThan = Filter(listOf(DateRuleFactory.makeRule(DateRuleFactory.DateRules.IS_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filterLessThan.filter(it)
+            filterLessThan.filterAny(it)
         }
 
         Assert.assertEquals(1, filteredEnumerations?.size)
@@ -194,7 +194,7 @@ class DateFilterEnumerationTest {
         val filterLessThan = Filter(listOf(DateRuleFactory.makeRule(DateRuleFactory.DateRules.IS_NOT_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
-            filterLessThan.filter(it)
+            filterLessThan.filterAny(it)
         }
 
         Assert.assertEquals(9, filteredEnumerations?.size)

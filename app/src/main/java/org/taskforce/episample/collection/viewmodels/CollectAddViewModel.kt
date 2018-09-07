@@ -2,12 +2,10 @@ package org.taskforce.episample.collection.viewmodels
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
-import android.arch.lifecycle.MediatorLiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Transformations
+import android.arch.lifecycle.*
 import android.databinding.ObservableField
 import android.location.Location
+import android.os.CountDownTimer
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
@@ -20,11 +18,8 @@ import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.LiveDataTriple
 import org.taskforce.episample.core.interfaces.*
-import org.taskforce.episample.db.config.customfield.CustomFieldType
 import org.taskforce.episample.db.config.customfield.value.*
-import java.util.*
 import javax.inject.Inject
-import kotlin.math.log
 
 class CollectAddViewModel(
         application: Application,
@@ -115,17 +110,17 @@ class CollectAddViewModel(
     var landmarkName = MutableLiveData<String>().apply { value = "" }
 
     private val customFieldMediatorLiveData = MediatorLiveData<Boolean>().apply { value = false }
+
     private val enumerationInputs = LiveDataTriple(primaryLabel, location, customFieldMediatorLiveData)
     private val isEnumerationValid = Transformations.map(enumerationInputs) {
         val primaryLabel = it.first
 
         determineEnumerationValidity(primaryLabel)
     } as MutableLiveData
-
     private fun determineEnumerationValidity(primaryLabel: String?): Boolean {
         return !isLandmark &&
                 !primaryLabel.isNullOrBlank() &&
-                isSufficientlyPrecise &&
+                (isSufficientlyPrecise || isUsingClonedGps) &&
                 customFieldViewModels.filter { customVM ->
                     customVM.customField.isRequired || customVM.customField.isAutomatic
                 }.fold(true) { acc, next ->
@@ -141,6 +136,7 @@ class CollectAddViewModel(
     }
 
     private val landmarkInputs = LiveDataTriple(landmarkName, selectedLandmark, location)
+
     private val isLandmarkValid = Transformations.map(landmarkInputs) {
         val landmarkName = it.first
 
@@ -148,44 +144,118 @@ class CollectAddViewModel(
                 !landmarkName.isNullOrEmpty() &&
                 selectedLandmark.value != null
     }
-
     val validPair = LiveDataPair(isEnumerationValid, isLandmarkValid)
+
     val isValidLive = Transformations.map(validPair) {
         val validEnumeration = it.first ?: false
         val validLandmark = it.second ?: false
 
         validEnumeration || validLandmark
     }
+    val poorGpsError = MutableLiveData<String>().apply { value = languageService.getString(R.string.collect_poor_gps) }
 
-    // TODO: If not sufficiently precise, start a countdown that disables the button
-    val saveButtonText = Transformations.map(isEnumerationValid) {
+    val showPoorGps = Transformations.map(isValidLive) {
+        if (isLandmark) {
+            false
+        } else {
+            !isSufficientlyPrecise && !isUsingClonedGps
+        }
+    }
+
+    var isUsingClonedGps = false // TODO Add the "reuse" button to the screen and have it control this value
+
+    var countdownText = languageService.getString(R.string.collect_save_incomplete)
+
+    val saveEnumerationButtonText: MutableLiveData<String> = (Transformations.map(isEnumerationValid) {
         val isEnumerationValid = it
         val subject = config.enumerationSubject
+        
+        val isCountdownNew = !countdown.isRunning && !countdownDone // Not running and not done means it hasn't been started yet
 
-        if (isLandmark) {
-            languageService.getString(R.string.collect_save_landmark)
-        } else {
-            if (isEnumerationValid) {
-                languageService.getString(R.string.collect_save_complete, subject.singular.toUpperCase())
-            } else {
+        if (isEnumerationValid) { // Completely valid. GPS is within preferred precision, all required fields filled in
+            cancelCountdown()
+            languageService.getString(R.string.collect_save_complete, subject.singular.toUpperCase())
+        } else if (!isSufficientlyPrecise && !isUsingClonedGps) {
+            if (isCountdownNew) { // Countdown hasn't started yet
+                startCountdown()
+                countdownText
+            } else if (countdown.isRunning) {
+                countdownText
+            } else {// Countdown finished
                 languageService.getString(R.string.collect_save_incomplete)
+            }
+        } else {
+            languageService.getString(R.string.collect_save_incomplete)
+        }
+    } as MutableLiveData<String>).apply { value = "" }
+    
+    val saveLandmarkButtonText = MutableLiveData<String>().apply { value = languageService.getString(R.string.collect_save_landmark) }
+
+    var countdownDone = false
+
+    private fun startCountdown() {
+        countdown.isRunning = true
+        countdown.start()
+    }
+
+    private fun cancelCountdown() {
+        countdown.cancel()
+        countdownDone = true
+    }
+    private val countdown = object: CountDownTimer(countdownLength, countdownTick) {
+        var isRunning = false
+        
+        override fun onFinish() {
+            isRunning = false
+            if (!isSufficientlyPrecise) {
+                countdownDone = true
+                customFieldMediatorLiveData.postValue(customFieldMediatorLiveData.value)
+                countdownText = languageService.getString(R.string.collect_save_incomplete)
+            }
+        }
+
+        override fun onTick(timeRemaining: Long) {
+            isRunning = true
+            if (!isSufficientlyPrecise) {
+                val sec = (timeRemaining / 1000) % 60
+                val min = ((timeRemaining / 1000) / 60) % 60
+                val timeRemainingFormatted = String.format("%2d:%02d", min, sec)
+                val timeRemainingText = languageService.getString(R.string.collect_save_countdown, timeRemainingFormatted)
+                countdownText = timeRemainingText
+                saveEnumerationButtonText.postValue(countdownText)
             }
         }
     }
 
     private val canSaveItem: Boolean
-        get() = isSufficientlyPrecise || isLandmarkValid.value == true
+        get() = (isSufficientlyPrecise || countdownDone) || (isLandmarkValid.value == true && !landmarkName.value.isNullOrBlank())
 
-    val saveButtonTextColor = (Transformations.map(isValidLive) {
+    val saveEnumerationButtonTextColor = (Transformations.map(isEnumerationValid) {
         if (canSaveItem) {
             saveButtonEnabledTextColor
         } else {
             saveButtonDisabledTextColor
         }
     } as MutableLiveData).apply { value = saveButtonDisabledTextColor }
+    
+    val saveLandmarkButtonTextColor = (Transformations.map(isLandmarkValid) { landmarkValid ->
+        if (landmarkValid) {
+            saveButtonEnabledTextColor
+        } else {
+            saveButtonDisabledTextColor
+        }
+    } as MutableLiveData).apply { value = saveButtonDisabledTextColor }
 
-    val saveButtonBackground = (Transformations.map(isValidLive) {
+    val saveEnumerationButtonBackground = (Transformations.map(isEnumerationValid) {
         if (canSaveItem) {
+            saveButtonEnabledColor
+        } else {
+            saveButtonDisabledColor
+        }
+    } as MutableLiveData).apply { value = saveButtonDisabledColor }
+    
+    val saveLandmarkButtonBackground = (Transformations.map(isLandmarkValid) {
+        if (it) {
             saveButtonEnabledColor
         } else {
             saveButtonDisabledColor
@@ -241,9 +311,7 @@ class CollectAddViewModel(
     }
 
     fun saveItem() {
-        // TODO bind is valid to button's enabled state
-        val isValid = true
-        if (isValid) {
+        if (canSaveItem) {
             location.value?.let { location ->
                 gpsVm?.precision?.get()?.let { gpsPrecision ->
                     if (isLandmark) {
@@ -271,16 +339,8 @@ class CollectAddViewModel(
     }
 
     private fun saveEnumeration(location: Location, gpsPrecision: Double) {
-        // TODO map screen data to LiveEnumeration
         val customFields = customFieldViewModels.mapNotNull { customVm ->
-            val type = when (customVm) {
-                is CustomNumberViewModel -> CustomFieldType.NUMBER
-                is CustomTextViewModel -> CustomFieldType.TEXT
-                is CustomCheckboxViewModel -> CustomFieldType.CHECKBOX
-                is CustomDropdownViewModel -> CustomFieldType.DROPDOWN
-                is CustomDateViewModel -> CustomFieldType.DATE
-                else -> null
-            }
+            val type = customVm.customField.type
 
             val customFieldValue = when (customVm) {
                 is CustomNumberViewModel -> {
@@ -299,13 +359,12 @@ class CollectAddViewModel(
             }
 
             customFieldValue?.let {
-                type?.let {
-                    LiveCustomFieldValue(customFieldValue, type, customVm.customField.id)
-                }
+                LiveCustomFieldValue(customFieldValue, type, customVm.customField.id)
             }
         }
+        val isIncomplete = !(isEnumerationValid.value ?: false)
         collectManager.addEnumerationItem(LiveEnumeration(null,
-                false, // TODO
+                isIncomplete,
                 exclude.value ?: false,
                 primaryLabel.value ?: "",
                 notes.value,
@@ -319,5 +378,7 @@ class CollectAddViewModel(
 
     companion object {
         val mapZoom = 18.0f
+        const val countdownLength: Long = 300000 // 5 minutes in milliseconds
+        const val countdownTick: Long = 1000
     }
 }

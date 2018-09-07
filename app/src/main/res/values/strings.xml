@@ -244,6 +244,8 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="collect_landmark_name_hint">Landmark Name</string>
     <string name="collect_add_landmark_title">New Landmark</string>
     <string name="collect_add_item_title">New %s</string>
+    <string name="collect_poor_gps">Searching for GPS location. Try moving a few meters away for a better signal.</string>
+    <string name="collect_save_countdown">SAVE AVAILABLE IN %s</string>
 
     <string name="default_subject">Household</string>
     <string name="default_subject_plural">Households</string>

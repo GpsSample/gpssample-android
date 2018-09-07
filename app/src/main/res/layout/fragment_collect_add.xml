@@ -30,13 +30,16 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:gravity="center">
 
+                <!-- Map -->
                 <FrameLayout
                     android:id="@+id/collectAddMap"
                     android:layout_width="match_parent"
                     android:layout_height="200dp" />
 
+                <!-- Image card -->
                 <android.support.v7.widget.CardView
                     android:id="@+id/photoWrapper"
                     visibleOrGone="@{vm.showPhotoCard}"
@@ -85,12 +88,14 @@
 
                 </android.support.v7.widget.CardView>
 
+                <!-- Landmark fields -->
                 <LinearLayout
+                    visibleOrGone="@{vm.isLandmark}"
+                    android:id="@+id/landmarkSection"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:orientation="vertical"
-                    android:id="@+id/topWrapper"
                     android:layout_below="@id/photoWrapper">
 
                     <LinearLayout
@@ -143,6 +148,20 @@
 
                     </LinearLayout>
 
+                </LinearLayout>
+
+                <!-- Enumeration fields -->
+                <LinearLayout
+                    visibleOrGone="@{!vm.isLandmark}"
+                    android:id="@+id/enumerationSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmarkSection"
+                    android:orientation="vertical"
+                    android:paddingStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:paddingEnd="16dp">
+
                     <LinearLayout
                         android:id="@+id/excludeWrapper"
                         visibleOrGone="@{vm.showExclude}"
@@ -163,17 +182,6 @@
                             tools:text="Exclude" />
 
                     </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/topWrapper"
-                    android:orientation="vertical"
-                    android:paddingStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:paddingEnd="16dp">
 
                     <android.support.design.widget.TextInputLayout
                         android:id="@+id/primarySubjectLabel"
@@ -203,12 +211,24 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical" />
 
+                </LinearLayout>
+
+                <!-- Common items -->
+                <LinearLayout
+                    android:id="@+id/collectCommonSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/enumerationSection"
+                    android:paddingEnd="16dp"
+                    android:paddingStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:orientation="vertical">
+
                     <android.support.design.widget.TextInputLayout
                         android:id="@+id/notesWrapper"
                         error="@{vm.notesError}"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
                         android:hint="@{vm.notesHint}"
                         app:errorEnabled="@{vm.notesErrorEnabled}"
                         app:errorTextAppearance="@style/errorStyle">
@@ -231,6 +251,7 @@
                         android:background="@color/textColorDisabled"
                         android:textColor="@color/textColorInverse"
                         android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="16dp"
                         android:layout_marginBottom="12dp"
                         android:paddingTop="4dp"
                         android:paddingBottom="4dp"
@@ -247,23 +268,64 @@
                         android:layout_gravity="center_horizontal"
                         app:vm="@{vm.gpsVm}" />
 
+                    <TextView
+                        visibleOrGone="@{vm.showPoorGps}"
+                        android:id="@+id/collectAddPoorGps"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:textColor="@color/colorError"
+                        android:text="@{vm.poorGpsError}"
+                        android:textSize="16sp"
+                        android:gravity="center"
+                        tools:text="Searching for GPS location. Try moving a few meters away for a better signal."/>
+                    
+                </LinearLayout>
+                
+                <LinearLayout
+                    android:id="@+id/collectAddButtonsSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/collectCommonSection"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingStart="16dp"
+                    android:orientation="vertical">
+                    
                     <Button
+                        visibleOrGone="@{!vm.isLandmark}"
+                        android:id="@+id/collectAddSaveEnumeration"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:background="@{vm.saveButtonBackground}"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginBottom="16dp"
+                        android:background="@{vm.saveEnumerationButtonBackground}"
                         android:paddingBottom="12dp"
                         android:paddingEnd="36dp"
                         android:paddingStart="36dp"
                         android:onClick="@{() -> vm.saveItem()}"
                         android:paddingTop="12dp"
-                        android:text="@{vm.saveButtonText}"
-                        android:textColor="@{vm.saveButtonTextColor}"
+                        android:text="@{vm.saveEnumerationButtonText}"
+                        android:textColor="@{vm.saveEnumerationButtonTextColor}"
                         android:textStyle="bold"
                         tools:text="SAVE AS INCOMPLETE"/>
 
+                    <Button
+                        visibleOrGone="@{vm.isLandmark}"
+                        android:id="@+id/collectAddSaveLandmark"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:background="@{vm.saveLandmarkButtonBackground}"
+                        android:paddingBottom="12dp"
+                        android:paddingEnd="36dp"
+                        android:paddingStart="36dp"
+                        android:onClick="@{() -> vm.saveItem()}"
+                        android:paddingTop="12dp"
+                        android:text="@{vm.saveLandmarkButtonText}"
+                        android:textColor="@{vm.saveLandmarkButtonTextColor}"
+                        android:textStyle="bold"
+                        tools:text="SAVE AS INCOMPLETE"/>
                 </LinearLayout>
 
             </RelativeLayout>

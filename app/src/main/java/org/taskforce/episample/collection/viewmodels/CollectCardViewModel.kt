@@ -88,7 +88,9 @@ class CollectCardViewModel(userSettings: UserSettings?,
 
     @get:Bindable
     val showIncompleteAndNotes = object: ObservableField<Boolean>(itemData) {
-        override fun get(): Boolean? = (itemData.get() as? Enumeration)?.isIncomplete ?: false || !itemData.get()?.note.isNullOrEmpty()
+        override fun get(): Boolean? = (itemData.get() as? Enumeration)?.isIncomplete ?: false || 
+                !itemData.get()?.note.isNullOrEmpty() ||
+                (itemData.get() as? Enumeration)?.isExcluded ?: false
     }
 
 

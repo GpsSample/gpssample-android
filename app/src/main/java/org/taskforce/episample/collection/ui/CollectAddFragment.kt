@@ -2,10 +2,12 @@ package org.taskforce.episample.collection.ui
 
 import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
+import android.content.Context
 import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,13 +15,11 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.Toast
-import com.google.android.gms.location.*
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.PolylineOptions
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.fragment_collect_add.*
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
@@ -31,7 +31,6 @@ import org.taskforce.episample.collection.viewmodels.CollectAddViewModel
 import org.taskforce.episample.collection.viewmodels.CustomDropdownViewModel
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.databinding.FragmentCollectAddBinding
-import org.taskforce.episample.fileImport.models.LandmarkType
 import org.taskforce.episample.toolbar.managers.LanguageManager
 import org.taskforce.episample.toolbar.viewmodels.ToolbarViewModel
 import org.taskforce.episample.utils.getCompatColor
@@ -42,7 +41,7 @@ class CollectAddFragment : Fragment() {
     @Inject
     lateinit var languageManager: LanguageManager
 
-    lateinit var locationClient: FusedLocationProviderClient
+    lateinit var locationManager: LocationManager
     lateinit var collectIconFactory: CollectIconFactory
     lateinit var markerManager: CollectionItemMarkerManager
 
@@ -53,7 +52,7 @@ class CollectAddFragment : Fragment() {
 
         (requireActivity().application as EpiApplication).component.inject(this)
 
-        locationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+        locationManager = activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         collectIconFactory = CollectIconFactory(requireContext().resources)
     }
 
@@ -83,17 +82,23 @@ class CollectAddFragment : Fragment() {
                         }
                     },
                     Observable.create<Location> { emitter ->
-                        locationClient.requestLocationUpdates(LocationRequest.create().apply {
-                            interval = 5000
-                            fastestInterval = 1000
-                            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-                        }, object : LocationCallback() {
-                            override fun onLocationResult(result: LocationResult?) {
-                                result?.lastLocation?.let {
-                                    emitter.onNext(it)
-                                }
+                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, object : LocationListener {
+                            override fun onLocationChanged(location: Location) {
+                                emitter.onNext(location)
                             }
-                        }, null)
+
+                            override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+                                //NOP
+                            }
+
+                            override fun onProviderEnabled(provider: String?) {
+                                //NOP
+                            }
+
+                            override fun onProviderDisabled(provider: String?) {
+                                //NOP
+                            }
+                        })
                     },
                     arguments?.getBoolean(IS_LANDMARK) == true,
                     requireContext().getCompatColor(R.color.colorAccent),

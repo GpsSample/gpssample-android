@@ -64,3 +64,15 @@
 -keepclassmembers class org.taskforce.episample.BR {
     <fields>;
 }
+
+-dontwarn kotlin.reflect.jvm.internal.**
+-keep class kotlin.reflect.jvm.internal.** { *; }
+
+-keep class kotlin.Metadata { *; }
+
+-keep class org.taskforce.episample.db.config.customfield.value.** { *; }
+-keep class org.taskforce.episample.db.config.customfield.metadata.DropdownMetadata { *; }
+-keep class org.taskforce.episample.db.config.customfield.metadata.CustomDropdown { *; }
+-keep class org.taskforce.episample.core.interfaces.CustomDropdown { *; }
+
+-dontobfuscate

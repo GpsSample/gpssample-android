@@ -1,3 +1,7 @@
 package org.taskforce.episample.db.config.customfield.value
 
-class BooleanValue(val boolValue: Boolean): CustomFieldValueType
+import com.fasterxml.jackson.annotation.JsonValue
+
+data class BooleanValue(
+        @JsonValue
+        val boolValue: Boolean) : CustomFieldValueType

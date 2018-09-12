@@ -95,7 +95,7 @@ class CustomFieldsViewModel(
         // set initial text field values after error observablefields are declared
         subject.set(languageService.getString(R.string.default_subject))
         pluralSubject.set(languageService.getString(R.string.default_subject_plural))
-        primaryLabel.set(languageService.getString(R.string.config_primary_label_hint))
+        primaryLabel.set(languageService.getString(R.string.config_primary_label_default_value))
     }
 
     val fieldHeader = ObservableField(languageService.getString(R.string.config_fields_list_title))

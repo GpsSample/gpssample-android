@@ -4,10 +4,12 @@ import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.Transformations
 import io.reactivex.Observable
 import org.taskforce.episample.R
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.config.transfer.TransferManager
+import org.taskforce.episample.core.language.LiveLanguageService
 import org.taskforce.episample.db.ConfigRepository
 import org.taskforce.episample.db.config.Config
 
@@ -28,8 +30,11 @@ class ConfigAllViewModel(
 
     val networkAddress = MutableLiveData<String>()
 
-    // TODO move formatting string here if we can get languageManager back without a leak
-    val configCount = MutableLiveData<String>()
+    val title= languageService.getString(R.string.configs)
+    val transferExplanation = languageService.getString(R.string.config_all_transfer_explanation)
+    val configCountText = Transformations.map(availableConfigs) {
+        languageService.getString(R.string.config_count, it.size.toString())
+    }
 
     val menuObservable =
             Observable.just(listOf(

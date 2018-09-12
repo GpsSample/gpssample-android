@@ -1,36 +1,70 @@
 package org.taskforce.episample.auth
 
-import android.databinding.BaseObservable
-import android.databinding.Bindable
-import org.taskforce.episample.utils.bindDelegate
+import android.app.Application
+import android.arch.lifecycle.*
+import org.taskforce.episample.R
+import org.taskforce.episample.core.LiveDataPair
+import org.taskforce.episample.db.ConfigRepository
 
 class LoginAdminDialogViewModel(
-        private val password: String,
+        application: Application,
+        configId: String,
         val title: String,
         val hint: String,
         val cancel: String,
         val done: String,
-        val error: String,
+        private val errorSource: String,
         val onCancel: () -> Unit,
-        val onDone: () -> Unit) : BaseObservable() {
+        val onDone: () -> Unit) : AndroidViewModel(application) {
 
-    @get:Bindable
-    var errorEnabled by bindDelegate(false)
+    val configRepository = ConfigRepository(application)
+    val password: LiveData<String> = Transformations.map(configRepository.getResolvedConfig(configId)) {
+        it.adminSettings.password
+    }
 
-    @get:Bindable
-    var input by bindDelegate<String?>(null)
+    val errorEnabled = true
+    val error = MutableLiveData<String?>()
+    val input = MutableLiveData<String>()
+
+    val doneEnabled: LiveData<Boolean> = (Transformations.map(LiveDataPair(password, input)) { (_, formValue) ->
+        formValue.isNotBlank()
+    } as MutableLiveData).apply { value = false }
+
+    val doneTextColor: LiveData<Int> = (Transformations.map(doneEnabled) {
+        if (it) {
+            R.color.colorAccent
+        } else {
+            R.color.textColorDisabled
+        }
+    } as MutableLiveData).apply { value = R.color.textColorDisabled }
+
+    private val inputObserver: Observer<String> = Observer {
+        error.postValue(null)
+    }
+
+    init {
+        input.observeForever(inputObserver)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        input.removeObserver(inputObserver)
+    }
 
     fun cancel() {
         onCancel()
     }
 
     fun done() {
-        if (password == input) {
-            onDone()
-            cancel()
-        }
-        else {
-            errorEnabled = true
+        password.value?.let { password ->
+            input.value?.let { input ->
+                if (password == input) {
+                    onDone()
+                    cancel()
+                } else {
+                    error.postValue(errorSource)
+                }
+            }
         }
     }
 }

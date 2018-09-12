@@ -73,7 +73,8 @@
                 android:onClick="@{() -> vm.done()}"
                 android:padding="16dp"
                 android:text="@{vm.done}"
-                android:textColor="@color/colorAccent"
+                android:enabled="@{vm.doneEnabled}"
+                android:textColor="@{context.getColor(vm.doneTextColor)}"
                 android:textSize="16sp"
                 tools:text="SIGN IN"/>
 

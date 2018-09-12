@@ -80,7 +80,6 @@ class ConfigAllFragment : Fragment() {
         val binding = DataBindingUtil.inflate<FragmentConfigAllBinding>(inflater,
                 R.layout.fragment_config_all, container, false)
 
-        binding.languageService = languageService
         binding.vm = viewModel
         binding.setLifecycleOwner(this)
 

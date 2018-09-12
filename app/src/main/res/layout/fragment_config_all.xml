@@ -7,10 +7,6 @@
         <import type="org.taskforce.episample.R" />
 
         <variable
-            name="languageService"
-            type="org.taskforce.episample.config.language.LanguageService" />
-
-        <variable
             name="toolbarVm"
             type="org.taskforce.episample.toolbar.viewmodels.ToolbarViewModel" />
 
@@ -41,8 +37,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
-                    app:titleText="@{languageService.getString(R.string.configs)}"
-                    app:explanationText="@{languageService.getString(R.string.config_count, vm.configCount)}"/>
+                    app:titleText="@{vm.title}"
+                    app:explanationText="@{vm.configCountText}"/>
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/fragment_config_all_recyclerView"
@@ -57,7 +53,7 @@
                     android:layout_marginEnd="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
-                    android:text="@{languageService.getString(R.string.config_all_transfer_explanation)}"
+                    android:text="@{vm.transferExplanation}"
                     android:textColor="@color/textColorDetails" />
 
                 <TextView

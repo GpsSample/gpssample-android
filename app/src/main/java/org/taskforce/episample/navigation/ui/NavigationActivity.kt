@@ -4,17 +4,17 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
+import android.support.v7.app.AppCompatActivity
 import org.taskforce.episample.R
 
-class NavigationActivity: FragmentActivity() {
-
+class NavigationActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigation)
         supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.contentFrame, NavigationFragment.newInstance())
+                .replace(R.id.contentFrame, NavigationPlanFragment.newInstance())
                 .commit()
     }
 

@@ -18,4 +18,5 @@ class LiveEnumeration(override val image: String?,
                       override val gpsPrecision: Double,
                       override val displayDate: String,
                       override val customFieldValues: List<CustomFieldValue>,
+                      override val id: String?,
                       override val dateCreated: Date = Date()) : Enumeration

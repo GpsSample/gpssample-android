@@ -332,7 +332,8 @@ class CollectAddViewModel(
                         notes.value,
                         landmarkImage.value,
                         LatLng(location.latitude, location.longitude),
-                        gpsPrecision
+                        gpsPrecision,
+                        id = null
                 )) {
             goToNext()
         }
@@ -371,7 +372,8 @@ class CollectAddViewModel(
                 LatLng(location.latitude, location.longitude),
                 gpsPrecision,
                 "Display Date",
-                customFields)) {
+                customFields,
+                id = null)) {
             goToNext()
         }
     }

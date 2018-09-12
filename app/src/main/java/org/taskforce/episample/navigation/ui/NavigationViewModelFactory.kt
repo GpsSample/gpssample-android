@@ -4,11 +4,8 @@ import android.app.Application
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 
-class NavigationViewModelFactory(private val application: Application,
-                                 private val addLandmark: () -> Unit) : ViewModelProvider.NewInstanceFactory() {
-
+class NavigationViewModelFactory(private val application: Application) : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return NavigationViewModel(application,
-                addLandmark) as T
+        return NavigationViewModel(application) as T
     }
 }

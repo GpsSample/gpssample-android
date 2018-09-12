@@ -14,4 +14,5 @@ class LiveLandmark(override val title: String,
                    override val image: String?,
                    override val location: LatLng,
                    override val gpsPrecision: Double,
+                   override val id: String?,
                    override val dateCreated: Date = Date()) : Landmark

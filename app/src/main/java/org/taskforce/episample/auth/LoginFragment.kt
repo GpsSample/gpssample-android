@@ -85,8 +85,8 @@ class LoginFragment : Fragment() {
     }
 
     companion object {
-        private const val ARG_CONFIG_ID = "ARG_CONFIG_ID"
-        private const val ARG_STUDY_ID = "ARG_STUDY_ID"
+        private const val ARG_CONFIG_ID = "EXTRA_CONFIG_ID"
+        private const val ARG_STUDY_ID = "EXTRA_STUDY_ID"
 
         fun newInstance(configId: String, studyId: String): Fragment {
             val fragment = LoginFragment()

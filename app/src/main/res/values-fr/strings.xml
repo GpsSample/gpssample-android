@@ -15,4 +15,7 @@
     <string name="alert_permission_action">AUTORISE TOUT</string>
     <string name="config_name_title">Nommez Cette Configuration</string>
     <string name="config_name_hint">Nom de Configuration</string>
+    <string name="navigation_plan">NAvigationeee Planis Gratis is the Besteast</string>
+    <string name="navigation_overview_title_var">%1$s %2$s to Souerrvey</string>
+
 </resources>

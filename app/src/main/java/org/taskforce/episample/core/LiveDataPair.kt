@@ -6,24 +6,26 @@ import android.arch.lifecycle.MediatorLiveData
 class LiveDataPair<A, B>(liveA: LiveData<A>,
                          liveB: LiveData<B>) : MediatorLiveData<Pair<A, B>>() {
 
-    var a: A? = null
-    var b: B? = null
+    private var hasA: Boolean = false
+    private var hasB: Boolean = false
 
-    private fun merge() {
-        a?.let { unwrappedA ->
-            b?.let { unwrappedB ->
-                postValue(Pair(unwrappedA, unwrappedB))
+    private val merge = {
+        if (hasA && hasB) {
+            liveA.value?.let { unwrappedA ->
+                liveB.value?.let { unwrappedB ->
+                    postValue(Pair(unwrappedA, unwrappedB))
+                }
             }
         }
     }
 
     init {
         addSource(liveA) {
-            a = it
+            hasA = true
             merge()
         }
         addSource(liveB) {
-            b = it
+            hasB = true
             merge()
         }
     }

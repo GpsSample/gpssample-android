@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.navigation.ui.NavigationCardViewModel" />
+    </data>
+
+    <android.support.v7.widget.CardView
+        visibleOrGone="@{vm.visibility}"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/collectItemLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/collectCardTitle"
+            app:layout_constraintTop_toBottomOf="@+id/collectCardTitle">
+
+            <TextView
+                android:id="@+id/cardStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@{vm.navigationStatus}"
+                android:textColor="@color/textColorDetails"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/collectCardTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="AWAITING SURVEY" />
+
+            <TextView
+                android:id="@+id/collectCardTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="16dp"
+                android:text="@{vm.title}"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toStartOf="@+id/collectCardImage"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cardStatus"
+                app:layout_constraintTop_toTopOf="@id/collectCardImage"
+                tools:text="Mastprem Duhan" />
+
+            <TextView
+                android:id="@+id/collectCardDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@{vm.distance}"
+                android:textColor="@color/textColorDetails"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toTopOf="@+id/detailsText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/collectCardTitle"
+                tools:text="0.2 km away" />
+
+            <include
+                android:id="@+id/collectCardGpsPrecision"
+                layout="@layout/app_gps_precision"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:vm="@{vm.gpsPrecisionVm}" />
+
+            <ImageView
+                android:id="@+id/collectCardImage"
+                imageUrl="@{vm.imageUrl}"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/collectCardGpsPrecision"
+                tools:src="@mipmap/ic_launcher" />
+
+            <TextView
+                android:id="@+id/detailsText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="16dp"
+                android:gravity="left"
+                android:text="@{vm.detailsText}"
+                app:layout_constraintBottom_toBottomOf="@+id/collectCardImage"
+                app:layout_constraintEnd_toStartOf="@+id/collectCardImage"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/collectCardDistance"
+                tools:text="Details Text" />
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/buttonLayout"
+                visibleOrGone="@{vm.buttonLayoutVisibility}"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/collectCardImage">
+
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/button2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:background="@color/colorPrimary"
+                    android:onClick="@{vm::primaryButtonAction}"
+                    android:text="@{vm.primaryButtonText}"
+                    android:textColor="@color/textColorInverse"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toStartOf="@+id/button3"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="LAUNCH SURVEY" />
+
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/button3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@color/colorPrimary"
+                    android:gravity="center"
+                    android:onClick="@{vm::secondaryButtonAction}"
+                    android:text="@{vm.secondaryButtonText}"
+                    android:textColor="@color/textColorInverse"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/button2"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="SKIP" />
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.Barrier
+                android:id="@+id/barrier2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="buttonLayout,collectCardImage" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v7.widget.CardView>
+
+</layout>

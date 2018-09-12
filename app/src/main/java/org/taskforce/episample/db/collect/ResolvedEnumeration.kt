@@ -33,7 +33,7 @@ class ResolvedEnumeration(
     lateinit var customFieldValues: List<CustomFieldValue>
 
     fun makeLiveEnumeration(): Enumeration = LiveEnumeration(image,
-            isIncomplete, isExcluded, title, note, LatLng(lat, lng), gpsPrecision, "TODO", customFieldValues.map { it as org.taskforce.episample.core.interfaces.CustomFieldValue }, dateCreated)
+            isIncomplete, isExcluded, title, note, LatLng(lat, lng), gpsPrecision, "TODO", customFieldValues.map { it as org.taskforce.episample.core.interfaces.CustomFieldValue }, id, dateCreated)
 }
 
 @Dao

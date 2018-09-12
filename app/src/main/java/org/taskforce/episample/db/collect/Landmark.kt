@@ -44,6 +44,6 @@ class Landmark(
     ?: customLandmarkTypeId?.let { return@let LandmarkTypeMetadata.CustomId(it) }
     ?: throw IllegalStateException()
 
-    fun makeLiveLandmark(landmarkType: LandmarkType): LiveLandmark = LiveLandmark(title, landmarkType, note, image, LatLng(lat, lng), gpsPrecision, dateCreated)
+    fun makeLiveLandmark(landmarkType: LandmarkType): LiveLandmark = LiveLandmark(title, landmarkType, note, image, LatLng(lat, lng), gpsPrecision, id, dateCreated)
 
 }

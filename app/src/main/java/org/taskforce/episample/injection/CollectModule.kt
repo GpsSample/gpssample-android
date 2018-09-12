@@ -17,11 +17,16 @@ class CollectModule(val application: Application,
                     val userSession: UserSession,
                     val config: Config) {
 
+    private val mockNavigationManagerInstance = MockNavigationManager()
+
     @Provides
     fun providesUserSession(): UserSession = userSession
 
     @Provides
     fun providesCollectManager(configManager: ConfigManager, configRepository: ConfigRepository): CollectManager = LiveCollectManager(application, configManager, configRepository, userSession)
+
+    @Provides
+    fun providesNavigationManager(): NavigationManager = mockNavigationManagerInstance
 
     @Provides
     fun providesConfigManager(configRepository: ConfigRepository): ConfigManager = LiveConfigManager(configRepository, config.id)
@@ -34,7 +39,7 @@ class CollectModule(val application: Application,
 
     // TODO use config custom languages when providing language service
     @Provides
-    fun providesLanguageService(): LanguageService = LiveLanguageService(application, listOf())
+    fun providesLanguageService(): LanguageService = LiveLanguageService(application, config.enumerationSubject, listOf())
 
     @Provides
     fun providesLocationService(): LocationService = LiveLocationService(application)

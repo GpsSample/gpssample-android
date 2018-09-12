@@ -77,7 +77,7 @@ class StudyCreateFragment : Fragment() {
 
     companion object {
         const val HELP_TARGET = "#studyCreate"
-        private const val ARG_CONFIG_ID = "ARG_CONFIG_ID"
+        private const val ARG_CONFIG_ID = "EXTRA_CONFIG_ID"
 
         fun newInstance(configId: String): Fragment {
             val fragment = StudyCreateFragment()

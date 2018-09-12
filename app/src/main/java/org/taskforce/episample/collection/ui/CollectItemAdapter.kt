@@ -28,7 +28,7 @@ class CollectItemAdapter(
     override fun onBindViewHolder(holder: CollectItemViewHolder, position: Int) {
         holder.bind(CollectItemViewModel(
                 data[position],
-                collectIconFactory.getIconUriFromCollectItem(data[position]),
+                collectIconFactory.getIconUri(data[position]),
                 incompleteText, 
                 displaySettings))
     }

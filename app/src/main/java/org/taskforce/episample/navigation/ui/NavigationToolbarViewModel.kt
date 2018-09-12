@@ -15,9 +15,7 @@ import javax.inject.Inject
 
 class NavigationToolbarViewModel(
         application: Application,
-        titleResId: Int,
-        var HELP_TARGET: String,
-        var backAction: (() -> Unit)? = null) : AndroidViewModel(application) {
+        titleResId: Int) : AndroidViewModel(application) {
 
     @Inject
     lateinit var languageService: LanguageService
@@ -26,8 +24,6 @@ class NavigationToolbarViewModel(
         (application as EpiApplication).collectComponent?.inject(this)
     }
 
-    val backVisibility = backAction != null
-    val titleVisibility = true
     var languageSelectVisibility = MutableLiveData<Boolean>().apply { value = false }
 
     var title = languageService.getString(titleResId)
@@ -45,14 +41,6 @@ class NavigationToolbarViewModel(
                 languageService.updateCurrentLanguage(it)
                 languageSelectVisibility.postValue(false)
             })
-
-    fun openHelp() {
-        HelpManager().openHelp(HELP_TARGET)
-    }
-
-    fun showLanguages() {
-        languageSelectVisibility.postValue(true)
-    }
 }
 
 class LanguageAdapter(

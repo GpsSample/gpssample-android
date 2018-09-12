@@ -19,4 +19,5 @@
     <color name="gpsAcceptable">#88b374</color>
     <color name="incomplete">#fd6c6c</color>
     <color name="excluded">#9e9e9e</color>
+    <color name="grayCircle">#ebebeb</color>
 </resources>

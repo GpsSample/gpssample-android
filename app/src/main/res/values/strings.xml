@@ -297,5 +297,26 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="config_primary_label_error">Enumeration label must have a value.</string>
     <string name="default_primary_label">Head of Household</string>
     <string name="navigation_plan">Navigation Plan</string>
+    <string name="language">Language</string>
+    <string name="navigation_card_landmark_title">Landmark - %s</string>
+    <string name="awaiting_survey">Awaiting Survey</string>
+    <string name="survey_status_awaiting">Awaiting Survey</string>
+    <string name="survey_status_complete">Complete</string>
+    <string name="survey_status_problem">Problem</string>
+    <string name="survey_status_skipped">Skipped</string>
+    <string name="navigation_problem_count_var">%d %s with Problems</string>
+    <string name="navigation_skipped_count_var">%d %s Skipped</string>
+    <string name="navigation_items_to_survey_var">%d %s to Survey</string>
+    <string name="navigation_items_remaining_var">%d %s Remaining to Survey</string>
+    <string name="assignment_complete">Assignment Complete</string>
+    <string name="navigation_items_surveyed_var">%d %s Surveyed</string>
+    <string name="go_to_sync">Go to Sync</string>
+    <string name="launch_survey">Launch Survey</string>
+    <string name="skip">Skip</string>
+    <string name="submit">SUBMIT</string>
+    <string name="go_back">GO BACK</string>
+    <string name="dialog_skip_reason_title">Report Reason for Skipping</string>
+    <string name="dialog_skip_reason_hint">Describe reason for skipping</string>
+    <string name="odk_collect_not_installed">Please install ODK Collect before trying to launch survey.</string>
 
 </resources>

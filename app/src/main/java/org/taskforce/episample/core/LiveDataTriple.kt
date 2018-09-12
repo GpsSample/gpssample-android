@@ -5,16 +5,35 @@ import android.arch.lifecycle.MediatorLiveData
 
 class LiveDataTriple<A, B, C>(liveA: LiveData<A>,
                               liveB: LiveData<B>,
-                              liveC: LiveData<C>): MediatorLiveData<Triple<A?, B?, C?>>() {
+                              liveC: LiveData<C>): MediatorLiveData<Triple<A, B, C>>() {
+    private var hasA: Boolean = false
+    private var hasB: Boolean = false
+    private var hasC: Boolean = false
+
+    private val merge = {
+        if (hasA && hasB && hasC) {
+            liveA.value?.let { unwrappedA ->
+                liveB.value?.let { unwrappedB ->
+                    liveC.value?.let { unwrappedC ->
+                        postValue(Triple(unwrappedA, unwrappedB, unwrappedC))
+                    }
+                }
+            }
+        }
+    }
+
     init {
         addSource(liveA) {
-            value = Triple(it, liveB.value, liveC.value)
+            hasA = true
+            merge()
         }
         addSource(liveB) {
-            value = Triple(liveA.value, it, liveC.value)
+            hasB = true
+            merge()
         }
         addSource(liveC) {
-            value = Triple(liveA.value, liveB.value, it)
+            hasC = true
+            merge()
         }
     }
 }

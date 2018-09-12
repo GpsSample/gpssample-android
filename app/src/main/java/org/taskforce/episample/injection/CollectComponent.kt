@@ -4,9 +4,9 @@ import dagger.Subcomponent
 import org.taskforce.episample.auth.LoginViewModel
 import org.taskforce.episample.collection.viewmodels.CollectAddViewModel
 import org.taskforce.episample.collection.viewmodels.CollectViewModel
+import org.taskforce.episample.core.ui.dialogs.TextInputDialogViewModel
 import org.taskforce.episample.main.MainViewModel
-import org.taskforce.episample.navigation.ui.NavigationToolbarViewModel
-import org.taskforce.episample.navigation.ui.NavigationViewModel
+import org.taskforce.episample.navigation.ui.*
 
 @CollectScope
 @Subcomponent(modules = [CollectModule::class])
@@ -15,6 +15,10 @@ interface CollectComponent {
     fun inject(loginViewModel: LoginViewModel)
     fun inject(mainViewModel: MainViewModel)
     fun inject(collectAddViewModel: CollectAddViewModel)
-    fun inject(navigationViewModel: NavigationViewModel)
+    fun inject(navigationPlanViewModel: NavigationPlanViewModel)
     fun inject(navigationToolbarViewModel: NavigationToolbarViewModel)
+    fun inject(navigationPlanCardViewModel: NavigationPlanCardViewModel)
+    fun inject(liveNavigationCardViewModel: LiveNavigationCardViewModel)
+    fun inject(navigationViewModel: NavigationViewModel)
+    fun inject(textInputDialogViewModel: TextInputDialogViewModel)
 }

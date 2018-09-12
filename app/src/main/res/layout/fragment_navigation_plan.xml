@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="toolbarVm"
+            type="org.taskforce.episample.navigation.ui.NavigationToolbarViewModel" />
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.navigation.ui.NavigationPlanViewModel" />
+
+        <variable
+            name="cardVm"
+            type="org.taskforce.episample.navigation.ui.NavigationCardViewModel" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/collectionMap"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="56dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <include
+            layout="@layout/app_navigation_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toolbar"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="64dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:vm="@{cardVm}" />
+
+        <android.support.design.widget.CoordinatorLayout
+            android:id="@+id/collectionSheet"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="56dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/defaultBackground"
+                android:elevation="8dp"
+                android:orientation="vertical"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"
+                android:paddingTop="12dp"
+                app:behavior_hideable="false"
+                app:behavior_peekHeight="160dp"
+                app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="16dp"
+                    android:src="@drawable/bottom_sheet_hook" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{vm.navigationTitle}"
+                    android:textSize="20sp"
+                    tools:text="5 Places Added" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autoSizeTextType="uniform"
+                    android:lines="2"
+                    android:text="@{vm.navigationDetails}"
+                    android:textSize="14sp"
+                    tools:text="5 Places Skipped, 0.2km to go" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="16dp">
+
+                    <android.support.v7.widget.AppCompatButton
+                        android:id="@+id/goToSync"
+                        visibleOrGone="@{vm.goToSyncVisibility}"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:background="@color/colorPrimary"
+                        android:onClick="@{vm::goToSync}"
+                        android:text="@{vm.goToSyncText}"
+                        android:textColor="@color/textColorInverse"
+                        android:textSize="14sp"
+                        tools:text="Start Route" />
+
+                    <android.support.v7.widget.AppCompatButton
+                        android:id="@+id/collectAddSubject"
+                        enabled="@{vm.startRouteEnabled}"
+                        visibleOrGone="@{vm.startRouteVisibility}"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:background="@color/colorPrimary"
+                        android:onClick="@{vm::startRoute}"
+                        android:text="@{vm.startRouteText}"
+                        android:textColor="@color/textColorInverse"
+                        android:textSize="14sp"
+                        tools:text="Start Route" />
+
+                    <android.support.v7.widget.AppCompatButton
+                        android:id="@+id/collectAddLandmark"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/colorPrimary"
+                        android:onClick="@{vm::addLandmark}"
+                        android:text="@{vm.landmarkButtonText}"
+                        android:textColor="@color/textColorInverse"
+                        android:textSize="14sp"
+                        tools:text="+ Landmark" />
+
+                </LinearLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/collectList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="true"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+
+            </LinearLayout>
+
+        </android.support.design.widget.CoordinatorLayout>
+
+        <include
+            android:id="@+id/toolbar_layout"
+            layout="@layout/app_navigation_toolbar"
+            bind:layout_constraintEnd_toEndOf="parent"
+            bind:layout_constraintStart_toStartOf="parent"
+            bind:layout_constraintTop_toTopOf="parent"
+            bind:vm="@{toolbarVm}"
+            tools:visible="true" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

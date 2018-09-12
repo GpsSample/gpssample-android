@@ -11,6 +11,7 @@ data class MockLandmark(override val title: String,
                         override val gpsPrecision: Double,
                         override val image: String?,
                         override val note: String?,
+                        override val id: String?,
                         override val dateCreated: Date = Date()): Landmark {
     companion object {
         fun createMockLandmark(title: String,
@@ -20,7 +21,7 @@ data class MockLandmark(override val title: String,
                                image: String? = null,
                                note: String? = null,
                                dateCreated: Date = Date()): MockLandmark {
-            return MockLandmark(title, landmarkType, location, gpsPrecision, image, note, dateCreated)
+            return MockLandmark(title, landmarkType, location, gpsPrecision, image, note, UUID.randomUUID().toString(), dateCreated = dateCreated)
         }
     }
 }

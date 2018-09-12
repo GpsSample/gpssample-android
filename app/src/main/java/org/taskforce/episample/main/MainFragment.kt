@@ -7,15 +7,12 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
-import kotlinx.android.synthetic.main.fragment_main.*
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.collection.ui.CollectFragment
 import org.taskforce.episample.config.language.LanguageService
-import org.taskforce.episample.core.interfaces.CollectManager
 import org.taskforce.episample.databinding.FragmentMainBinding
 import org.taskforce.episample.navigation.ui.NavigationActivity
-import org.taskforce.episample.navigation.ui.NavigationFragment
 import org.taskforce.episample.sync.managers.SyncManager
 import org.taskforce.episample.toolbar.managers.LanguageManager
 import org.taskforce.episample.toolbar.viewmodels.ToolbarViewModel

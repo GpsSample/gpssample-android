@@ -12,6 +12,7 @@ data class MockEnumeration(override val title: String?,
                            override val isExcluded: Boolean,
                            override val image: String?,
                            override val note: String?,
+                           override val id: String?,
                            override val dateCreated: Date = Date()): Enumeration {
 
     override val customFieldValues: List<CustomFieldValue> = listOf()
@@ -27,7 +28,7 @@ data class MockEnumeration(override val title: String?,
                                   image: String? = null,
                                   note: String? = null,
                                   dateCreated: Date = Date()): MockEnumeration {
-            return MockEnumeration(title, location, gpsPrecision, isIncomplete, excluded, image, note, dateCreated)
+            return MockEnumeration(title, location, gpsPrecision, isIncomplete, excluded, image, note, id = null, dateCreated = dateCreated)
         }
     }
 }

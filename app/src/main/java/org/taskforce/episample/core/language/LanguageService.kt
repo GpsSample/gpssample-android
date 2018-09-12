@@ -1,6 +1,9 @@
 package org.taskforce.episample.core.language
 
-import android.arch.lifecycle.*
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.Transformations
 import android.content.Context
 import android.content.res.Resources
 import org.taskforce.episample.core.interfaces.CustomLanguage
@@ -21,6 +24,7 @@ interface LanguageService {
     fun getQuantityString(id: Int, quantity: Int): LiveData<String>
     fun getAvailableLanguages(): List<LanguageDescription>
 }
+
 
 class LiveLanguageService(applicationContext: Context, override val enumerationSubject: EnumerationSubject, private val customLanguages: List<CustomLanguage>) : LanguageService {
     val resources: Resources = applicationContext.resources
@@ -93,11 +97,11 @@ class LiveLanguageService(applicationContext: Context, override val enumerationS
     private val liveDataMap = mutableMapOf<LanguageServiceString, MutableLiveData<String>>()
     private val liveQuantityDataMap = mutableMapOf<LanguageServiceQuantityString, MutableLiveData<String>>()
     private val currentLanguageObserver: Observer<CustomLanguage> = Observer { language ->
-        liveDataMap.forEach { serviceString, liveData ->
-            liveData.postValue(resolveString(serviceString, language))
+        liveDataMap.keys.forEach {
+            liveDataMap[it]?.postValue(resolveString(it, language))
         }
-        liveQuantityDataMap.forEach { serviceString, liveData ->
-            liveData.postValue(resolveString(serviceString, enumerationSubject, language))
+        liveQuantityDataMap.keys.forEach {
+            liveQuantityDataMap[it]?.postValue(resolveString(it, enumerationSubject, language))
         }
     }
 

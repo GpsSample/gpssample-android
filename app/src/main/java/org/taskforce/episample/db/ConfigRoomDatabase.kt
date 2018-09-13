@@ -7,14 +7,16 @@ import android.arch.persistence.room.RoomDatabase
 import android.content.Context
 import android.os.AsyncTask
 import org.taskforce.episample.db.collect.*
-import org.taskforce.episample.db.collect.Enumeration
 import org.taskforce.episample.db.config.*
 import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.customfield.CustomFieldDao
 import org.taskforce.episample.db.config.customfield.CustomFieldValue
 import org.taskforce.episample.db.config.landmark.CustomLandmarkType
+import org.taskforce.episample.db.filter.RuleDao
+import org.taskforce.episample.db.filter.RuleRecord
+import org.taskforce.episample.db.filter.RuleSet
 
-@Database(version = 23,
+@Database(version = 24,
         entities = [
             AdminSettings::class,
             Config::class,
@@ -24,8 +26,10 @@ import org.taskforce.episample.db.config.landmark.CustomLandmarkType
             DisplaySettings::class,
             Enumeration::class,
             EnumerationSubject::class,
-            Landmark::class,
             GpsBreadcrumb::class,
+            Landmark::class,
+            RuleSet::class,
+            RuleRecord::class,
             Study::class,
             UserSettings::class
         ])
@@ -39,6 +43,7 @@ abstract class ConfigRoomDatabase : RoomDatabase() {
     abstract fun resolvedStudyDao(): ResolvedStudyDao
     abstract fun customFieldDao(): CustomFieldDao
     abstract fun resolvedEnumerationDao(): ResolvedEnumerationDao
+    abstract fun ruleDao(): RuleDao
 
     private class PopulateDbAsync(db: ConfigRoomDatabase) : AsyncTask<Void, Void, Void>() {
 

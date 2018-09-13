@@ -4,6 +4,7 @@ import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.customfield.CustomFieldValue
 import org.taskforce.episample.db.config.customfield.value.DateValue
 import org.taskforce.episample.db.filter.Rule
+import org.taskforce.episample.db.filter.RuleRecord
 import java.util.*
 
 
@@ -17,8 +18,12 @@ abstract class DateRule(forField: CustomField, val rightHandSide: DateValue) : R
     protected abstract fun operation(value: Date): Boolean
 }
 
-class DateComparisonRule(private val op: (Date, Date) -> Boolean, forField: CustomField, rightHandSide: DateValue) : DateRule(forField, rightHandSide) {
+class DateComparisonRule(private val type: DateRuleFactory.Rules, forField: CustomField, rightHandSide: DateValue) : DateRule(forField, rightHandSide) {
     override fun operation(value: Date): Boolean {
-        return op.invoke(value, rightHandSide.dateValue)
+        return type.comparator.invoke(value, rightHandSide.dateValue)
+    }
+
+    override fun toRecord(ruleSetId: String): RuleRecord {
+        return RuleRecord(ruleSetId, forField.id, DateRuleFactory::class.qualifiedName!!, type.name, rightHandSide.dateValue.time.toString())
     }
 }

@@ -4,6 +4,7 @@ import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.customfield.CustomFieldValue
 import org.taskforce.episample.db.config.customfield.value.BooleanValue
 import org.taskforce.episample.db.filter.Rule
+import org.taskforce.episample.db.filter.RuleRecord
 
 
 abstract class BooleanRule(forField: CustomField, val rightHandSide: BooleanValue) : Rule(forField) {
@@ -16,8 +17,12 @@ abstract class BooleanRule(forField: CustomField, val rightHandSide: BooleanValu
     protected abstract fun operation(value: Boolean): Boolean
 }
 
-class BooleanComparisonRule(private val op: (Boolean, Boolean) -> Boolean, forField: CustomField, rightHandSide: BooleanValue) : BooleanRule(forField, rightHandSide) {
+class BooleanComparisonRule(private val type: BooleanRuleFactory.Rules, forField: CustomField, rightHandSide: BooleanValue) : BooleanRule(forField, rightHandSide) {
     override fun operation(value: Boolean): Boolean {
-        return op.invoke(value, rightHandSide.boolValue)
+        return type.comparator.invoke(value, rightHandSide.boolValue)
+    }
+
+    override fun toRecord(ruleSetId: String): RuleRecord {
+        return RuleRecord(ruleSetId, forField.id, BooleanRuleFactory::class.qualifiedName!!, type.name, rightHandSide.boolValue.toString())
     }
 }

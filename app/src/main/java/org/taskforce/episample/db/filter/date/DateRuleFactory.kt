@@ -8,7 +8,7 @@ import java.util.*
 
 
 class DateRuleFactory {
-    enum class DateRules(val displayName: String, val comparator: (Date, Date) -> Boolean) {
+    enum class Rules(val displayName: String, val comparator: (Date, Date) -> Boolean) {
         LESS_THAN("<", { lhs: Date, rhs: Date -> lhs < rhs }),
         LESS_THAN_OR_EQUAL_TO("≤", { lhs: Date, rhs: Date -> lhs <= rhs }),
         GREATER_THAN(">", { lhs: Date, rhs: Date -> lhs > rhs }),
@@ -17,9 +17,9 @@ class DateRuleFactory {
         IS_NOT_EQUAL_TO("≠", { lhs: Date, rhs: Date -> lhs != rhs });
     }
 
-    companion object: RuleMaker<DateRules, Date> {
-        override fun makeRule(ruleType: DateRules, forField: CustomField, value: Date): Rule {
-            return DateComparisonRule(ruleType.comparator, forField, DateValue(value))
+    companion object: RuleMaker<Rules, Date> {
+        override fun makeRule(ruleType: Rules, forField: CustomField, value: Date): Rule {
+            return DateComparisonRule(ruleType, forField, DateValue(value))
         }
     }
 }

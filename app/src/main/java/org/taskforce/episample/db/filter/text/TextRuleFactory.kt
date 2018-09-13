@@ -7,14 +7,14 @@ import org.taskforce.episample.db.filter.RuleMaker
 
 
 class TextRuleFactory {
-    enum class TextRules(val displayName: String, val comparator: (String, String) -> Boolean) {
+    enum class Rules(val displayName: String, val comparator: (String, String) -> Boolean) {
         IS_EQUAL_TO("=", { lhs: String, rhs: String -> lhs == rhs }),
         IS_NOT_EQUAL_TO("≠", { lhs: String, rhs: String -> lhs != rhs });
     }
 
-    companion object: RuleMaker<TextRules, String> {
-        override fun makeRule(ruleType: TextRules, forField: CustomField, value: String): Rule {
-            return TextComparisonRule(ruleType.comparator, forField, TextValue(value))
+    companion object: RuleMaker<Rules, String> {
+        override fun makeRule(ruleType: Rules, forField: CustomField, value: String): Rule {
+            return TextComparisonRule(ruleType, forField, TextValue(value))
         }
     }
 }

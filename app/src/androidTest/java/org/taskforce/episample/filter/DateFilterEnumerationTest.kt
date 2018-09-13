@@ -106,7 +106,7 @@ class DateFilterEnumerationTest {
     fun filterLessThan() {
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(DateRuleFactory.makeRule(DateRuleFactory.DateRules.LESS_THAN, customField, filterValue)))
+        val filterLessThan = Filter(listOf(DateRuleFactory.makeRule(DateRuleFactory.Rules.LESS_THAN, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filterAny(it)
@@ -123,7 +123,7 @@ class DateFilterEnumerationTest {
     fun filterLessThanEqualTo() {
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(DateRuleFactory.makeRule(DateRuleFactory.DateRules.LESS_THAN_OR_EQUAL_TO, customField, filterValue)))
+        val filterLessThan = Filter(listOf(DateRuleFactory.makeRule(DateRuleFactory.Rules.LESS_THAN_OR_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filterAny(it)
@@ -140,7 +140,7 @@ class DateFilterEnumerationTest {
     fun filterGreaterThan() {
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(DateRuleFactory.makeRule(DateRuleFactory.DateRules.GREATER_THAN, customField, filterValue)))
+        val filterLessThan = Filter(listOf(DateRuleFactory.makeRule(DateRuleFactory.Rules.GREATER_THAN, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filterAny(it)
@@ -157,7 +157,7 @@ class DateFilterEnumerationTest {
     fun filterGreaterThanEqualTo() {
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(DateRuleFactory.makeRule(DateRuleFactory.DateRules.GREATER_THAN_OR_EQUAL_TO, customField, filterValue)))
+        val filterLessThan = Filter(listOf(DateRuleFactory.makeRule(DateRuleFactory.Rules.GREATER_THAN_OR_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filterAny(it)
@@ -174,7 +174,7 @@ class DateFilterEnumerationTest {
     fun filterEqualTo() {
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(DateRuleFactory.makeRule(DateRuleFactory.DateRules.IS_EQUAL_TO, customField, filterValue)))
+        val filterLessThan = Filter(listOf(DateRuleFactory.makeRule(DateRuleFactory.Rules.IS_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filterAny(it)
@@ -191,7 +191,7 @@ class DateFilterEnumerationTest {
     fun filterNotEqualTo() {
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(DateRuleFactory.makeRule(DateRuleFactory.DateRules.IS_NOT_EQUAL_TO, customField, filterValue)))
+        val filterLessThan = Filter(listOf(DateRuleFactory.makeRule(DateRuleFactory.Rules.IS_NOT_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filterAny(it)

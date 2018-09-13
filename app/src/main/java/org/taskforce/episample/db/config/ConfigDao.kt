@@ -2,10 +2,10 @@ package org.taskforce.episample.db.config
 
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
-import org.taskforce.episample.core.interfaces.LandmarkType
 import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.customfield.CustomFieldDao
 import org.taskforce.episample.db.config.landmark.CustomLandmarkType
+import org.taskforce.episample.db.filter.RuleSet
 import java.util.*
 
 @Dao
@@ -67,6 +67,12 @@ abstract class ConfigDao : CustomFieldDao {
 
     @Query("SELECT * FROM custom_landmark_type_table WHERE config_id LIKE :configId")
     abstract fun getLandmarkTypesByConfigSync(configId: String): List<CustomLandmarkType>
+
+    @Query("SELECT * FROM rule_set_table WHERE config_id LIKE :configId")
+    abstract fun getRuleSetsByConfigSync(configId: String): List<RuleSet>
+
+    @Insert
+    abstract fun insert(ruleSet: RuleSet)
 
     @Transaction
     open fun insert(config: Config,
@@ -133,5 +139,4 @@ abstract class ConfigDao : CustomFieldDao {
 
         return insertConfig.id
     }
-
 }

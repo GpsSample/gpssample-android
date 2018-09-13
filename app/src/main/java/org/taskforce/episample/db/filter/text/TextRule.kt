@@ -4,6 +4,7 @@ import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.customfield.CustomFieldValue
 import org.taskforce.episample.db.config.customfield.value.TextValue
 import org.taskforce.episample.db.filter.Rule
+import org.taskforce.episample.db.filter.RuleRecord
 
 
 abstract class TextRule(forField: CustomField, val rightHandSide: TextValue) : Rule(forField) {
@@ -16,8 +17,12 @@ abstract class TextRule(forField: CustomField, val rightHandSide: TextValue) : R
     protected abstract fun operation(value: String): Boolean
 }
 
-class TextComparisonRule(private val op: (String, String) -> Boolean, forField: CustomField, rightHandSide: TextValue) : TextRule(forField, rightHandSide) {
+class TextComparisonRule(private val type: TextRuleFactory.Rules, forField: CustomField, rightHandSide: TextValue) : TextRule(forField, rightHandSide) {
     override fun operation(value: String): Boolean {
-        return op.invoke(value, rightHandSide.text)
+        return type.comparator.invoke(value, rightHandSide.text)
+    }
+
+    override fun toRecord(ruleSetId: String): RuleRecord {
+        return RuleRecord(ruleSetId, forField.id, TextRuleFactory::class.qualifiedName!!, type.name, rightHandSide.text)
     }
 }

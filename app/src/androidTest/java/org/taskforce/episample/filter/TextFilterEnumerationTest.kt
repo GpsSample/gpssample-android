@@ -104,7 +104,7 @@ class TextFilterEnumerationTest {
     fun filterEqualTo() {
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filter = Filter(listOf(TextRuleFactory.makeRule(TextRuleFactory.TextRules.IS_EQUAL_TO, customField, filterValue)))
+        val filter = Filter(listOf(TextRuleFactory.makeRule(TextRuleFactory.Rules.IS_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filter.filterAny(it)
@@ -121,7 +121,7 @@ class TextFilterEnumerationTest {
     fun filterNotEqualTo() {
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filter = Filter(listOf(TextRuleFactory.makeRule(TextRuleFactory.TextRules.IS_NOT_EQUAL_TO, customField, filterValue)))
+        val filter = Filter(listOf(TextRuleFactory.makeRule(TextRuleFactory.Rules.IS_NOT_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filter.filterAny(it)

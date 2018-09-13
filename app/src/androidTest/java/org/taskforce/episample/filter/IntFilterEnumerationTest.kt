@@ -109,7 +109,7 @@ class IntFilterEnumerationTest {
 
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.IntRules.LESS_THAN, customField, filterValue)))
+        val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.Rules.LESS_THAN, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filterAny(it)
@@ -128,7 +128,7 @@ class IntFilterEnumerationTest {
 
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.IntRules.LESS_THAN_OR_EQUAL_TO, customField, filterValue)))
+        val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.Rules.LESS_THAN_OR_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filterAny(it)
@@ -147,7 +147,7 @@ class IntFilterEnumerationTest {
 
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.IntRules.GREATER_THAN, customField, filterValue)))
+        val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.Rules.GREATER_THAN, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filterAny(it)
@@ -166,7 +166,7 @@ class IntFilterEnumerationTest {
 
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.IntRules.GREATER_THAN_OR_EQUAL_TO, customField, filterValue)))
+        val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.Rules.GREATER_THAN_OR_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filterAny(it)
@@ -185,7 +185,7 @@ class IntFilterEnumerationTest {
 
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.IntRules.IS_EQUAL_TO, customField, filterValue)))
+        val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.Rules.IS_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filterAny(it)
@@ -204,7 +204,7 @@ class IntFilterEnumerationTest {
 
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.IntRules.IS_NOT_EQUAL_TO, customField, filterValue)))
+        val filterLessThan = Filter(listOf(IntRuleFactory.makeRule(IntRuleFactory.Rules.IS_NOT_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filterAny(it)

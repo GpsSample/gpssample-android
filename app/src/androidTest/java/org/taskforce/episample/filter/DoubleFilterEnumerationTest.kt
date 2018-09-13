@@ -108,7 +108,7 @@ class DoubleFilterEnumerationTest {
     fun filterLessThan() {
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.DoubleRules.LESS_THAN, customField, filterValue)))
+        val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.Rules.LESS_THAN, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filterAny(it)
@@ -125,7 +125,7 @@ class DoubleFilterEnumerationTest {
     fun filterLessThanEqualTo() {
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.DoubleRules.LESS_THAN_OR_EQUAL_TO, customField, filterValue)))
+        val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.Rules.LESS_THAN_OR_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filterAny(it)
@@ -142,7 +142,7 @@ class DoubleFilterEnumerationTest {
     fun filterGreaterThan() {
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.DoubleRules.GREATER_THAN, customField, filterValue)))
+        val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.Rules.GREATER_THAN, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filterAny(it)
@@ -159,7 +159,7 @@ class DoubleFilterEnumerationTest {
     fun filterGreaterThanEqualTo() {
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.DoubleRules.GREATER_THAN_OR_EQUAL_TO, customField, filterValue)))
+        val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.Rules.GREATER_THAN_OR_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filterAny(it)
@@ -176,7 +176,7 @@ class DoubleFilterEnumerationTest {
     fun filterEqualTo() {
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.DoubleRules.IS_EQUAL_TO, customField, filterValue)))
+        val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.Rules.IS_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filterAny(it)
@@ -193,7 +193,7 @@ class DoubleFilterEnumerationTest {
     fun filterNotEqualTo() {
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.DoubleRules.IS_NOT_EQUAL_TO, customField, filterValue)))
+        val filterLessThan = Filter(listOf(DoubleRuleFactory.makeRule(DoubleRuleFactory.Rules.IS_NOT_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filterAny(it)

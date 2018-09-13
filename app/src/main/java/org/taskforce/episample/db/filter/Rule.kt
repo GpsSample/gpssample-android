@@ -5,4 +5,5 @@ import org.taskforce.episample.db.config.customfield.CustomFieldValue
 
 abstract class Rule(val forField: CustomField) {
     abstract fun applyOperation(leftHandSide: CustomFieldValue): Boolean
+    abstract fun toRecord(ruleSetId: String): RuleRecord
 }

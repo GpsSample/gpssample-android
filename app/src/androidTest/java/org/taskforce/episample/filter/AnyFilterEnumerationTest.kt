@@ -126,8 +126,8 @@ class AnyFilterEnumerationTest {
 
         val filter = Filter(
                 listOf(
-                        BooleanRuleFactory.makeRule(BooleanRuleFactory.BooleanRules.IS_EQUAL_TO, checkboxField, filterOddNumberValue),
-                        TextRuleFactory.makeRule(TextRuleFactory.TextRules.IS_EQUAL_TO, textField, textFieldValue)
+                        BooleanRuleFactory.makeRule(BooleanRuleFactory.Rules.IS_EQUAL_TO, checkboxField, filterOddNumberValue),
+                        TextRuleFactory.makeRule(TextRuleFactory.Rules.IS_EQUAL_TO, textField, textFieldValue)
                 )
         )
 
@@ -155,8 +155,8 @@ class AnyFilterEnumerationTest {
 
         val filter = Filter(
                 listOf(
-                        BooleanRuleFactory.makeRule(BooleanRuleFactory.BooleanRules.IS_EQUAL_TO, checkboxField, filterOddNumberValue),
-                        TextRuleFactory.makeRule(TextRuleFactory.TextRules.IS_EQUAL_TO, textField, textFieldValue)
+                        BooleanRuleFactory.makeRule(BooleanRuleFactory.Rules.IS_EQUAL_TO, checkboxField, filterOddNumberValue),
+                        TextRuleFactory.makeRule(TextRuleFactory.Rules.IS_EQUAL_TO, textField, textFieldValue)
                 )
         )
 

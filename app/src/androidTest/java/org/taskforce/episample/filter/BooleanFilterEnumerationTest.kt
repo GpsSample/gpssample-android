@@ -104,7 +104,7 @@ class BooleanFilterEnumerationTest {
     fun filterEqualTo() {
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(BooleanRuleFactory.makeRule(BooleanRuleFactory.BooleanRules.IS_EQUAL_TO, customField, filterValue)))
+        val filterLessThan = Filter(listOf(BooleanRuleFactory.makeRule(BooleanRuleFactory.Rules.IS_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filterAny(it)
@@ -121,7 +121,7 @@ class BooleanFilterEnumerationTest {
     fun filterNotEqualTo() {
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(BooleanRuleFactory.makeRule(BooleanRuleFactory.BooleanRules.IS_NOT_EQUAL_TO, customField, filterValue)))
+        val filterLessThan = Filter(listOf(BooleanRuleFactory.makeRule(BooleanRuleFactory.Rules.IS_NOT_EQUAL_TO, customField, filterValue)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filterAny(it)

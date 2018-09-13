@@ -112,7 +112,7 @@ class DropdownFilterEnumerationTest {
     fun filterEqualTo() {
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(DropdownRuleFactory.makeRule(DropdownRuleFactory.DropdownRules.IS_EQUAL_TO, customField, filterValue.key)))
+        val filterLessThan = Filter(listOf(DropdownRuleFactory.makeRule(DropdownRuleFactory.Rules.IS_EQUAL_TO, customField, filterValue.key)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filterAny(it)
@@ -129,7 +129,7 @@ class DropdownFilterEnumerationTest {
     fun filterNotEqualTo() {
         val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
 
-        val filterLessThan = Filter(listOf(DropdownRuleFactory.makeRule(DropdownRuleFactory.DropdownRules.IS_NOT_EQUAL_TO, customField, filterValue.key)))
+        val filterLessThan = Filter(listOf(DropdownRuleFactory.makeRule(DropdownRuleFactory.Rules.IS_NOT_EQUAL_TO, customField, filterValue.key)))
 
         val filteredEnumerations = resolvedEnumerations?.let {
             filterLessThan.filterAny(it)

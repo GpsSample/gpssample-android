@@ -172,58 +172,13 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="20dp"
-                                android:checked="@={vm.yearInput}" />
+                                android:checked="@={vm.dateInput}" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@{vm.year}"
+                                android:text="@{vm.date}"
                                 android:textSize="16sp" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1">
-
-                            <CheckBox
-                                android:id="@+id/day"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:checked="@={vm.dayInput}"
-                                android:textSize="16sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@{vm.day}" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1">
-
-                            <CheckBox
-                                android:id="@+id/month"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="20dp"
-                                android:checked="@={vm.monthInput}"
-                                android:textSize="16sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@{vm.month}" />
 
                         </LinearLayout>
 
@@ -245,6 +200,7 @@
                                 android:text="@{vm.time}" />
 
                         </LinearLayout>
+
                     </LinearLayout>
 
                     <LinearLayout
@@ -258,7 +214,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_marginEnd="20dp"
-                            android:checked="@={vm.defaultInput}" />
+                            android:checked="@={vm.useDefaultTimeInput}" />
 
                         <TextView
                             android:layout_width="wrap_content"

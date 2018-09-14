@@ -89,7 +89,8 @@ class LiveCollectManagerTest {
                 "Note",
                 null,
                 LatLng(121.0, 14.0),
-                23.2
+                23.2,
+                id = null
         ), {
             var landmarks = collectManager!!.getLandmarks().blockingObserve()
             assertEquals(1, landmarks?.size)
@@ -114,7 +115,7 @@ class LiveCollectManagerTest {
         }
 
         collectManager!!.addEnumerationItem(LiveEnumeration(null, false, false, "title", "note", LatLng(20.1, 20.2), 25.6,
-                "TODO", customFieldValues = customFieldsValues)) {
+                "TODO", customFieldValues = customFieldsValues, id = null)) {
 
             val enumerations = collectManager!!.getEnumerations().blockingObserve()
             assertEquals(1, enumerations?.size)

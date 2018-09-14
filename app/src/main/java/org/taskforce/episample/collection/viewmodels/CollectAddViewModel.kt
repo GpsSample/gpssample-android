@@ -19,6 +19,7 @@ import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.LiveDataTriple
 import org.taskforce.episample.core.interfaces.*
 import org.taskforce.episample.db.config.customfield.value.*
+import java.util.*
 import javax.inject.Inject
 
 class CollectAddViewModel(
@@ -375,6 +376,14 @@ class CollectAddViewModel(
                 customFields,
                 id = null)) {
             goToNext()
+        }
+    }
+
+    fun updateDateField(customFieldId: String, date: Date) {
+        customFieldViewModels.firstOrNull {
+            it.customField.id == customFieldId
+        }?.let {
+            (it as CustomDateViewModel).value.postValue(date)
         }
     }
 

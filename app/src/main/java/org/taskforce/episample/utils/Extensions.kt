@@ -19,6 +19,7 @@ import org.taskforce.episample.core.interfaces.LandmarkTypeMetadata
 import org.taskforce.episample.db.collect.Enumeration
 import org.taskforce.episample.db.collect.GpsBreadcrumb
 import org.taskforce.episample.db.collect.Landmark
+import org.taskforce.episample.db.config.customfield.CustomDateType
 import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.customfield.CustomFieldType
 import org.taskforce.episample.db.config.customfield.metadata.*
@@ -83,10 +84,7 @@ fun org.taskforce.episample.config.fields.CustomField.makeDBConfig(configId: Str
             metadata = NumberMetadata(isIntegerOnly = properties[CustomFieldTypeConstants.INTEGER_ONLY] as Boolean)
         }
         CustomFieldType.DATE -> {
-            metadata = DateMetadata(showYear = properties[CustomFieldTypeConstants.YEAR] as Boolean,
-                    showMonth = properties[CustomFieldTypeConstants.MONTH] as Boolean,
-                    showDay = properties[CustomFieldTypeConstants.DAY] as Boolean,
-                    showTime = properties[CustomFieldTypeConstants.TIME] as Boolean)
+            metadata = DateMetadata(properties[CustomFieldTypeConstants.DATE] as CustomDateType, properties[CustomFieldTypeConstants.USE_CURRENT_TIME] as Boolean)
         }
         CustomFieldType.DROPDOWN -> {
             val dropdownSource = properties[CustomFieldTypeConstants.DROPDOWN_ITEMS] as List<CustomDropdown>

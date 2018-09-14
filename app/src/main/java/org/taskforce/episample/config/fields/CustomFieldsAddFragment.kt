@@ -39,7 +39,7 @@ class CustomFieldsAddFragment : Fragment(), CustomFieldTypeProvider {
 
     lateinit var configBuildViewModel: ConfigBuildViewModel
 
-    private val customFieldsSource = CustomFieldType.values().filter { it != CustomFieldType.DATE }
+    private val customFieldsSource = CustomFieldType.values()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +50,6 @@ class CustomFieldsAddFragment : Fragment(), CustomFieldTypeProvider {
 
         fieldTypeAdapter = ArrayAdapter<String>(context, android.R.layout.simple_spinner_item).apply {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            // TODO put date back in
             addAll(customFieldsSource.map {
                 it.name.toLowerCase().capitalize()
             })

@@ -2,6 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+
         <variable
             name="vm"
             type="org.taskforce.episample.collection.viewmodels.CustomDateViewModel" />
@@ -14,20 +15,21 @@
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/custom_field_spacing"
             android:layout_marginBottom="@dimen/custom_field_spacing"
-            android:hint="@{vm.hint}"
-            android:onClick="@{() -> vm.showDatePicker()}">
+            android:layout_marginTop="@dimen/custom_field_spacing"
+            android:focusableInTouchMode="false"
+            android:hint="@{vm.hint}">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:singleLine="true"
+                android:focusable="false"
                 android:inputType="datetime"
+                android:onClick="@{vm::showDatePicker}"
+                android:singleLine="true"
                 android:text="@{vm.input}"
-                android:textSize="14sp"
-                android:clickable="false"/>
+                android:textSize="14sp" />
 
         </android.support.design.widget.TextInputLayout>
 

@@ -11,6 +11,8 @@
         <item name="colorControlNormal">@color/colorAccent</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:timePickerDialogTheme">@style/PickerDialogCustom</item>
+        <item name="android:datePickerDialogTheme">@style/PickerDialogCustom</item>
     </style>
 
     <style name="errorStyle" parent="@android:style/TextAppearance">
@@ -19,6 +21,15 @@
 
     <style name="disabledStyle" parent="@android:style/TextAppearance">
         <item name="android:textColor">@color/textColorDisabled</item>
+    </style>
+
+
+    <style name="PickerDialogCustom" parent="AlertDialogCustom">
+        <item name="android:datePickerMode">spinner</item>
+    </style>
+
+    <style name="AlertDialogCustom" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:datePickerStyle">@style/PickerDialogCustom</item>
     </style>
 
 </resources>

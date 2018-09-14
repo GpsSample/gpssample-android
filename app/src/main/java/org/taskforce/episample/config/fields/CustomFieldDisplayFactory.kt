@@ -2,6 +2,7 @@ package org.taskforce.episample.config.fields
 
 import org.taskforce.episample.R
 import org.taskforce.episample.config.language.LanguageService
+import org.taskforce.episample.db.config.customfield.CustomDateType
 import org.taskforce.episample.db.config.customfield.CustomFieldType
 
 class CustomFieldDisplayFactory(private val languageService: LanguageService) {
@@ -16,9 +17,7 @@ class CustomFieldDisplayFactory(private val languageService: LanguageService) {
     fun buildDescription(customField: CustomField) =
             when (customField.type) {
                 CustomFieldType.CHECKBOX -> languageService.getString(R.string.custom_checkbox)
-                CustomFieldType.DATE -> {
-                    "${languageService.getString(R.string.custom_date)} (${generateDateDescription(customField)})"
-                }
+                CustomFieldType.DATE -> generateDateDescription(customField)
                 CustomFieldType.DROPDOWN -> {
                     val dropdownDescriptor =
                             if (customField.properties[CustomFieldTypeConstants.DROPDOWN_ITEMS] is List<*>) {
@@ -44,19 +43,10 @@ class CustomFieldDisplayFactory(private val languageService: LanguageService) {
             }.removeSuffix(", ")
 
     private fun generateDateDescription(customField: CustomField): String {
-        var generatedDescription = ""
-        if (customField.properties[CustomFieldTypeConstants.YEAR] as Boolean? == true) {
-            generatedDescription += "${languageService.getString(R.string.config_fields_add_date_year)}, "
+        return when (customField.properties[CustomFieldTypeConstants.DATE] as CustomDateType) {
+            CustomDateType.DATE -> languageService.getString(R.string.config_fields_add_date_date)
+            CustomDateType.TIME -> languageService.getString(R.string.config_fields_add_date_date_time)
+            CustomDateType.DATE_TIME -> languageService.getString(R.string.config_fields_add_date_time)
         }
-        if (customField.properties[CustomFieldTypeConstants.MONTH] as Boolean? == true) {
-            generatedDescription += "${languageService.getString(R.string.config_fields_add_date_month)}, "
-        }
-        if (customField.properties[CustomFieldTypeConstants.DAY] as Boolean? == true) {
-            generatedDescription += "${languageService.getString(R.string.config_fields_add_date_day)}, "
-        }
-        if (customField.properties[CustomFieldTypeConstants.TIME] as Boolean? == true) {
-            generatedDescription += "${languageService.getString(R.string.config_fields_add_date_time)}, "
-        }
-        return generatedDescription.removeSuffix(", ")
     }
 }

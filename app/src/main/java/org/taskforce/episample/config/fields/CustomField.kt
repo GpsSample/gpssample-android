@@ -19,18 +19,16 @@ data class CustomField(
 class CustomFieldDataItem(val type: CustomFieldType,
                           val isPrimary: Boolean,
                           var data: Any,
-                          val id: String = UUID.randomUUID().toString()): Serializable
+                          val id: String = UUID.randomUUID().toString()) : Serializable
 
 class CustomDropdown(val value: String?,
-                          val key: String = UUID.randomUUID().toString()): Serializable
+                     val key: String = UUID.randomUUID().toString()) : Serializable
 
 class CustomFieldTypeConstants {
     companion object {
         const val INTEGER_ONLY = "INTEGER_ONLY_KEY"
         const val DROPDOWN_ITEMS = "DROPDOWN_ITEMS"
-        const val YEAR = "YEAR_KEY"
-        const val MONTH = "MONTH_KEY"
-        const val DAY = "DAY_KEY"
-        const val TIME = "TIME_KEY"
+        const val DATE = "DATE_KEY"
+        const val USE_CURRENT_TIME = "USE_CURRENT_TIME_KEY"
     }
 }

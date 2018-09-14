@@ -7,6 +7,7 @@ import io.reactivex.Observable
 import org.taskforce.episample.R
 import org.taskforce.episample.config.base.ConfigBuildManager
 import org.taskforce.episample.config.language.LanguageService
+import org.taskforce.episample.db.config.customfield.CustomDateType
 import org.taskforce.episample.db.config.customfield.CustomFieldType
 import org.taskforce.episample.utils.bindDelegate
 
@@ -30,9 +31,7 @@ class CustomFieldsAddViewModel(
             requiredText = languageService.getString(R.string.config_fields_add_required)
             integerOnlyText = languageService.getString(R.string.config_fields_add_integer_only)
             dateExplanation = languageService.getString(R.string.config_fields_add_date_explanation)
-            year = languageService.getString(R.string.config_fields_add_date_year)
-            month = languageService.getString(R.string.config_fields_add_date_month)
-            day = languageService.getString(R.string.config_fields_add_date_day)
+            date = languageService.getString(R.string.config_fields_add_date_date)
             time = languageService.getString(R.string.config_fields_add_date_time)
             defaultTimeText = languageService.getString(R.string.config_fields_add_default_time_text)
         }
@@ -90,31 +89,15 @@ class CustomFieldsAddViewModel(
     var dateExplanation by bindDelegate(languageService.getString(R.string.config_fields_add_date_explanation))
 
     @get:Bindable
-    var year by bindDelegate(languageService.getString(R.string.config_fields_add_date_year))
+    var date by bindDelegate(languageService.getString(R.string.config_fields_add_date_date))
 
     @get:Bindable
-    var yearInput: Boolean by bindDelegate(false, { _, _ ->
+    var dateInput: Boolean by bindDelegate(false, { _, _ ->
         checkSaveAvailable()
     })
 
     @get:Bindable
-    var month by bindDelegate(languageService.getString(R.string.config_fields_add_date_month))
-
-    @get:Bindable
-    var monthInput: Boolean by bindDelegate(false, { _, _ ->
-        checkSaveAvailable()
-    })
-
-    @get:Bindable
-    var day by bindDelegate(languageService.getString(R.string.config_fields_add_date_day))
-
-    @get:Bindable
-    var dayInput: Boolean by bindDelegate(false, { _, _ ->
-        checkSaveAvailable()
-    })
-
-    @get:Bindable
-    var time by bindDelegate(languageService.getString(R.string.config_fields_add_date_time))
+    var time by bindDelegate(languageService.getString(R.string.config_fields_add_date_date_time))
 
     @get:Bindable
     var timeInput: Boolean by bindDelegate(false, { _, _ ->
@@ -125,7 +108,7 @@ class CustomFieldsAddViewModel(
     var defaultTimeText by bindDelegate(languageService.getString(R.string.config_fields_add_default_time_text))
 
     @get:Bindable
-    var defaultInput by bindDelegate(false)
+    var useDefaultTimeInput by bindDelegate(false)
 
     @get:Bindable
     var fieldName: String? by bindDelegate<String?>(null, { _, _ ->
@@ -148,17 +131,32 @@ class CustomFieldsAddViewModel(
     })
 
     private val isDate: Boolean
-        get() = yearInput || monthInput || dayInput || timeInput
+        get() = dateInput || timeInput
+
+    private val datePropertyInput: CustomDateType?
+        get() {
+            return if (dateInput && timeInput) {
+                CustomDateType.DATE_TIME
+            } else if (dateInput) {
+                CustomDateType.DATE
+            } else {
+                CustomDateType.TIME
+            }
+            return null
+        }
 
     private val properties: Map<String, Any>
-        get() = mapOf(
-                CustomFieldTypeConstants.YEAR to yearInput,
-                CustomFieldTypeConstants.MONTH to monthInput,
-                CustomFieldTypeConstants.DAY to dayInput,
-                CustomFieldTypeConstants.TIME to timeInput,
-                CustomFieldTypeConstants.INTEGER_ONLY to integerOnly,
-                CustomFieldTypeConstants.DROPDOWN_ITEMS to dropdownAdapter.dropdownItems
-        )
+        get() {
+            val map = mutableMapOf(
+                    CustomFieldTypeConstants.USE_CURRENT_TIME to useDefaultTimeInput,
+                    CustomFieldTypeConstants.INTEGER_ONLY to integerOnly,
+                    CustomFieldTypeConstants.DROPDOWN_ITEMS to dropdownAdapter.dropdownItems
+            )
+            datePropertyInput?.let {
+                map[CustomFieldTypeConstants.DATE] = it
+            }
+            return map
+        }
 
     private fun checkSaveAvailable() {
         saveEnabled = fieldName?.isNotBlank() == true && when (customFieldType) {

@@ -1,20 +1,26 @@
 package org.taskforce.episample.collection.ui
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.AlertDialog
+import android.app.Dialog
+import android.app.TimePickerDialog
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.Intent
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
+import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.LinearLayout
-import android.widget.Toast
+import android.widget.*
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.PolylineOptions
@@ -28,12 +34,19 @@ import org.taskforce.episample.collection.managers.CollectionItemMarkerManager
 import org.taskforce.episample.collection.managers.generateView
 import org.taskforce.episample.collection.managers.generateViewModel
 import org.taskforce.episample.collection.viewmodels.CollectAddViewModel
+import org.taskforce.episample.collection.viewmodels.CollectAddViewModelFactory
 import org.taskforce.episample.collection.viewmodels.CustomDropdownViewModel
 import org.taskforce.episample.config.language.LanguageService
+import org.taskforce.episample.core.interfaces.CustomField
+import org.taskforce.episample.core.ui.dialogs.DatePickerFragment
+import org.taskforce.episample.core.ui.dialogs.TimePickerFragment
 import org.taskforce.episample.databinding.FragmentCollectAddBinding
+import org.taskforce.episample.db.config.customfield.CustomDateType
+import org.taskforce.episample.db.config.customfield.metadata.DateMetadata
 import org.taskforce.episample.toolbar.managers.LanguageManager
 import org.taskforce.episample.toolbar.viewmodels.ToolbarViewModel
 import org.taskforce.episample.utils.getCompatColor
+import java.util.*
 import javax.inject.Inject
 
 class CollectAddFragment : Fragment() {
@@ -73,7 +86,7 @@ class CollectAddFragment : Fragment() {
                 it.mapType = GoogleMap.MAP_TYPE_SATELLITE
             }
 
-            collectViewModel = CollectAddViewModel(
+            collectViewModel = ViewModelProviders.of(this@CollectAddFragment, CollectAddViewModelFactory(
                     requireActivity().application,
                     LanguageService(languageManager),
                     Single.create<GoogleMap> { single ->
@@ -112,7 +125,7 @@ class CollectAddFragment : Fragment() {
                 // TODO: Launch intent to take picture
                 Toast.makeText(requireContext(), "TODO", Toast.LENGTH_SHORT).show()
             }
-            )
+            )).get(CollectAddViewModel::class.java)
 
             landmarkImageSelector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -135,9 +148,12 @@ class CollectAddFragment : Fragment() {
 
             collectViewModel.customFields.forEach {
                 if (!it.isAutomatic) {
-
-                    it.generateViewModel(requireContext()).apply {
-                        val view = it.generateView(requireContext(), this, customFieldHolder)
+                    it.generateViewModel(collectViewModel.config.displaySettings,
+                            {
+                                showDatePicker(it)
+                            },
+                            requireContext()).apply {
+                        val view = it.generateView(root, requireContext(), this, customFieldHolder)
                         if (this is CustomDropdownViewModel) {
                             this.view = view
                         }
@@ -199,8 +215,71 @@ class CollectAddFragment : Fragment() {
         return binding.root
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode != Activity.RESULT_OK || data == null) {
+            return
+        }
+
+        when (requestCode) {
+            GET_DATE_CODE -> {
+                val customFieldId = data.getStringExtra(DatePickerFragment.EXTRA_CUSTOM_FIELD_ID)
+                val year = data.getIntExtra(DatePickerFragment.EXTRA_YEAR, 0)
+                val month = data.getIntExtra(DatePickerFragment.EXTRA_MONTH, 1) + 1
+                val day = data.getIntExtra(DatePickerFragment.EXTRA_DAY_OF_MONTH, 0)
+                val showTimeNext = data.getBooleanExtra(DatePickerFragment.EXTRA_SHOW_TIME_PICKER_AFTER, false)
+
+                val cal = Calendar.getInstance()
+                cal.set(year, month, day)
+
+                if (showTimeNext) {
+                    showTimePickerDialog(customFieldId, cal.time)
+                } else {
+                    collectViewModel.updateDateField(customFieldId, cal.time)
+                }
+            }
+            GET_TIME_CODE -> {
+                val customFieldId = data.getStringExtra(TimePickerFragment.EXTRA_CUSTOM_FIELD_ID)
+                val chosenDateLong = data.getLongExtra(TimePickerFragment.EXTRA_CHOSEN_DATE, 0)
+                val hour = data.getIntExtra(TimePickerFragment.EXTRA_HOUR, 0)
+                val minute = data.getIntExtra(TimePickerFragment.EXTRA_MINUTE, 0)
+                val date = Date(chosenDateLong)
+
+                val cal = Calendar.getInstance()
+                cal.time = date
+                cal.set(Calendar.HOUR_OF_DAY, hour)
+                cal.set(Calendar.MINUTE, minute)
+
+                collectViewModel.updateDateField(customFieldId, cal.time)
+            }
+        }
+    }
+
+    private fun showDatePicker(customField: CustomField) {
+        (customField.metadata as? DateMetadata)?.let { dateMetadata ->
+            when (dateMetadata.dateType) {
+                CustomDateType.DATE -> showDatePickerDialog(customField, false)
+                CustomDateType.TIME -> showTimePickerDialog(customField.id)
+                CustomDateType.DATE_TIME -> showDatePickerDialog(customField, true)
+            }
+        }
+    }
+
+    private fun showDatePickerDialog(customField: CustomField, showTimePickerAfter: Boolean = false) {
+        val newFragment = DatePickerFragment.newInstance(customField.id, showTimePickerAfter)
+        newFragment.setTargetFragment(this, GET_DATE_CODE)
+        newFragment.show(fragmentManager, "datePicker")
+    }
+
+    private fun showTimePickerDialog(customFieldId: String, chosenDate: Date? = null) {
+        val newFragment = TimePickerFragment.newInstance(customFieldId, chosenDate)
+        newFragment.setTargetFragment(this, GET_TIME_CODE)
+        newFragment.show(fragmentManager, "timePicker")
+    }
+
     companion object {
         const val IS_LANDMARK = "isLandmark"
         const val HELP_TARGET = "#collectAdd"
+        const val GET_TIME_CODE = 1
+        const val GET_DATE_CODE = 2
     }
 }

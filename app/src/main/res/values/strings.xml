@@ -115,10 +115,9 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="config_fields_add_required">Required</string>
     <string name="config_fields_add_integer_only">Integer Only</string>
     <string name="config_fields_add_date_explanation">Date and time formats will be specified later in configuration.</string>
-    <string name="config_fields_add_date_year">Year</string>
-    <string name="config_fields_add_date_month">Month</string>
-    <string name="config_fields_add_date_day">Day</string>
-    <string name="config_fields_add_date_time">Time</string>
+    <string name="config_fields_add_date_date">Date</string>
+    <string name="config_fields_add_date_time">Date with Time</string>
+    <string name="config_fields_add_date_date_time">Time</string>
     <string name="config_fields_add_default_time_text">Default to current date and time</string>
     <string name="config_display_title">Display Preferences</string>
     <string name="config_display_explanation">Enter default display information.</string>

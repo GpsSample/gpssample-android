@@ -96,9 +96,6 @@ dependencies {
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
     kapt "android.arch.persistence.room:compiler:1.1.1"
     testImplementation 'junit:junit:4.12'
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
-    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
-    debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'
     implementation "com.android.support:support-annotations:$rootProject.ext.androidSupportLibraryVersion"
     androidTestImplementation "com.android.support:recyclerview-v7:$rootProject.ext.androidSupportLibraryVersion"
     androidTestImplementation "com.android.support:support-v4:$rootProject.ext.androidSupportLibraryVersion"

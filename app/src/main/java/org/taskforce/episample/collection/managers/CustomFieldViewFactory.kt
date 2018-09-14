@@ -1,8 +1,11 @@
 package org.taskforce.episample.collection.managers
 
+import android.arch.lifecycle.LifecycleOwner
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
+import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import io.reactivex.Single
@@ -10,15 +13,17 @@ import kotlinx.android.synthetic.main.item_custom_dropdown.view.*
 import org.taskforce.episample.R
 import org.taskforce.episample.collection.viewmodels.*
 import org.taskforce.episample.core.interfaces.CustomField
+import org.taskforce.episample.core.interfaces.DisplaySettings
 import org.taskforce.episample.databinding.*
 import org.taskforce.episample.db.config.customfield.CustomFieldType
+import org.taskforce.episample.db.config.customfield.metadata.DateMetadata
 import org.taskforce.episample.db.config.customfield.metadata.DropdownMetadata
 import org.taskforce.episample.utils.inflater
 import java.util.*
 
 class CustomFieldViewFactory {
 
-    fun generateView(customField: CustomField, viewModel: AbstractCustomViewModel, context: Context, parent: ViewGroup? = null) =
+    fun generateView(rootView: View, customField: CustomField, viewModel: AbstractCustomViewModel, context: Context, parent: ViewGroup? = null) =
             when (customField.type) {
                 CustomFieldType.CHECKBOX -> {
                     ItemCustomCheckboxBinding.inflate(context.inflater).apply {
@@ -31,9 +36,9 @@ class CustomFieldViewFactory {
                     }.root
                 }
                 CustomFieldType.DROPDOWN -> {
-                    ItemCustomDropdownBinding.inflate(context.inflater).apply {
-                        vm = viewModel as CustomDropdownViewModel
-                    }.root
+                    val binding = ItemCustomDropdownBinding.bind(rootView)
+                    binding.vm = viewModel as CustomDropdownViewModel
+                    binding.root
                 }
                 CustomFieldType.NUMBER -> {
                     val numberViewModel = viewModel as CustomNumberViewModel
@@ -72,7 +77,7 @@ class CustomFieldViewFactory {
                 }
             }
 
-    fun generateViewModel(customField: CustomField, context: Context? = null): AbstractCustomViewModel =
+    fun generateViewModel(customField: CustomField, displaySettings: DisplaySettings, showDatePicker: (CustomField) -> Unit, context: Context? = null): AbstractCustomViewModel =
             when (customField.type) {
                 CustomFieldType.TEXT -> CustomTextViewModel(customField)
                 CustomFieldType.DROPDOWN -> {
@@ -83,7 +88,7 @@ class CustomFieldViewFactory {
                         CustomDropdownViewModel(
                                 customField,
                                 context
-                        ) { adapter, view ->
+                        ) { _, view ->
                             val index = view.dropdown.selectedItemPosition
                             when (index) {
                                 0 -> null
@@ -93,16 +98,20 @@ class CustomFieldViewFactory {
                         }
                     }
                 }
-                CustomFieldType.DATE -> CustomDateViewModel(customField, {
-                    Single.just(Date())
-                })
+                CustomFieldType.DATE -> {
+                    val dateVm = CustomDateViewModel(customField, displaySettings, showDatePicker)
+                    if ((customField.metadata as? DateMetadata)?.useCurrentTime == true) {
+                        dateVm.value.postValue(Date())
+                    }
+                    dateVm
+                }
                 CustomFieldType.CHECKBOX -> CustomCheckboxViewModel(customField)
                 CustomFieldType.NUMBER -> CustomNumberViewModel(customField)
             }
 }
 
-fun CustomField.generateView(context: Context, vm: AbstractCustomViewModel, parent: ViewGroup? = null) =
-        CustomFieldViewFactory().generateView(this, vm, context, parent)
+fun CustomField.generateView(rootView: View, context: Context, vm: AbstractCustomViewModel, parent: ViewGroup? = null) =
+        CustomFieldViewFactory().generateView(rootView, this, vm, context, parent)
 
-fun CustomField.generateViewModel(context: Context? = null) =
-        CustomFieldViewFactory().generateViewModel(this, context)
+fun CustomField.generateViewModel(displaySettings: DisplaySettings, showDatePicker: (CustomField) -> Unit, context: Context? = null) =
+        CustomFieldViewFactory().generateViewModel(this, displaySettings, showDatePicker, context)

@@ -15,6 +15,7 @@ import org.taskforce.episample.db.ConfigRoomDatabase
 import org.taskforce.episample.db.collect.GpsBreakcrumbDao
 import org.taskforce.episample.db.collect.ResolvedEnumerationDao
 import org.taskforce.episample.db.config.*
+import org.taskforce.episample.db.config.customfield.CustomDateType
 import org.taskforce.episample.db.config.customfield.CustomFieldDao
 import org.taskforce.episample.db.config.customfield.CustomFieldType
 import org.taskforce.episample.db.config.customfield.CustomFieldValue
@@ -199,7 +200,7 @@ class SimpleEntityReadWriteTest {
         val config = Config("Config 1")
         configDao?.insert(config)
 
-        val dateMetadata = DateMetadata(true, false, true, false)
+        val dateMetadata = DateMetadata(CustomDateType.DATE, true)
         val insertField = CommonSetup.makeCustomField("name",
                 CustomFieldType.DATE,
                 dateMetadata,
@@ -369,7 +370,7 @@ class SimpleEntityReadWriteTest {
 
         val insertField = CommonSetup.makeCustomField("name",
                 CustomFieldType.DATE,
-                DateMetadata(true, false, true, false),
+                DateMetadata(CustomDateType.DATE, true),
                 configId
         )
 
@@ -499,10 +500,8 @@ class SimpleEntityReadWriteTest {
     fun addCustomDateField() {
         val configId = UUID.randomUUID().toString()
 
-        val expectedYear = true
-        val expectedMonth = true
-        val expectedDay = false
-        val expectedTime = false
+        val expectedCustomDateType = CustomDateType.DATE_TIME
+        val expectedUseCurrentTime = true
 
         val expectedFieldValues = addCustomField(
                 configDao!!,
@@ -510,20 +509,16 @@ class SimpleEntityReadWriteTest {
                 type = CustomFieldType.DATE,
                 metadata = NumberMetadata(isIntegerOnly = false),
                 properties = mapOf(
-                        CustomFieldTypeConstants.YEAR to expectedYear,
-                        CustomFieldTypeConstants.MONTH to expectedMonth,
-                        CustomFieldTypeConstants.DAY to expectedDay,
-                        CustomFieldTypeConstants.TIME to expectedTime
+                        CustomFieldTypeConstants.DATE to expectedCustomDateType,
+                        CustomFieldTypeConstants.USE_CURRENT_TIME to expectedUseCurrentTime
                 )
         )
 
         val resolvedConfig = resolvedConfigDao!!.getConfigSync(configId)
         val actualField = resolvedConfig.first().customFields.first()
         val metadata = actualField.metadata as DateMetadata
-        assertEquals(expectedYear, metadata.showYear)
-        assertEquals(expectedMonth, metadata.showMonth)
-        assertEquals(expectedDay, metadata.showDay)
-        assertEquals(expectedTime, metadata.showTime)
+        assertEquals(expectedCustomDateType, metadata.dateType)
+        assertEquals(expectedUseCurrentTime, metadata.useCurrentTime)
         assertEquals(expectedFieldValues.configId, actualField.configId)
     }
 

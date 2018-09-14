@@ -1,7 +1,6 @@
 package org.taskforce.episample
 
 import android.app.Application
-import com.squareup.leakcanary.LeakCanary
 import dagger.Component
 import org.taskforce.episample.injection.*
 import javax.inject.Singleton
@@ -18,15 +17,11 @@ open class EpiApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        if (!LeakCanary.isInAnalyzerProcess(this)) {
-            LeakCanary.install(this)
-
-            component = DaggerEpiApplication_AppComponent.builder()
-                    .epiModule(EpiModule(applicationContext))
-                    .configStorageModule(ConfigStorageModule())
-                    .studyStorageModule(StudyStorageModule())
-                    .build()
-        }
+        component = DaggerEpiApplication_AppComponent.builder()
+                .epiModule(EpiModule(applicationContext))
+                .configStorageModule(ConfigStorageModule())
+                .studyStorageModule(StudyStorageModule())
+                .build()
     }
 
     fun createCollectComponent(collectModule: CollectModule): CollectComponent {

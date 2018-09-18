@@ -5,6 +5,7 @@ import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
+import android.support.v4.content.ContextCompat
 import android.text.SpannableStringBuilder
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R

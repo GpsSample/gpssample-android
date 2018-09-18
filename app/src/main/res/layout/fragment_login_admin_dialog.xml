@@ -74,7 +74,7 @@
                 android:padding="16dp"
                 android:text="@{vm.done}"
                 android:enabled="@{vm.doneEnabled}"
-                android:textColor="@{context.getColor(vm.doneTextColor)}"
+                android:textColor="@{vm.doneTextColor}"
                 android:textSize="16sp"
                 tools:text="SIGN IN"/>
 

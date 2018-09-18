@@ -2,6 +2,7 @@ package org.taskforce.episample.db
 
 import android.app.Application
 import android.arch.persistence.room.Room
+import android.os.Bundle
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import junit.framework.Assert.assertEquals
@@ -16,6 +17,7 @@ import org.taskforce.episample.config.settings.display.DisplaySettings
 import org.taskforce.episample.config.settings.user.UserSettings
 import org.taskforce.episample.core.interfaces.LiveCustomFieldValue
 import org.taskforce.episample.core.interfaces.LiveEnumerationSubject
+import org.taskforce.episample.core.navigation.SurveyStatus
 import org.taskforce.episample.db.collect.Enumeration
 import org.taskforce.episample.db.config.EnumerationSubject
 import org.taskforce.episample.db.config.customfield.CustomFieldType

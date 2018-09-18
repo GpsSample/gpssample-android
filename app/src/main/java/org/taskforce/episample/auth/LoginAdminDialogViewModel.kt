@@ -2,6 +2,7 @@ package org.taskforce.episample.auth
 
 import android.app.Application
 import android.arch.lifecycle.*
+import android.support.v4.content.ContextCompat
 import org.taskforce.episample.R
 import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.db.ConfigRepository
@@ -32,11 +33,11 @@ class LoginAdminDialogViewModel(
 
     val doneTextColor: LiveData<Int> = (Transformations.map(doneEnabled) {
         if (it) {
-            R.color.colorAccent
+            ContextCompat.getColor(getApplication(), R.color.colorAccent)
         } else {
-            R.color.textColorDisabled
+            ContextCompat.getColor(getApplication(), R.color.textColorDisabled)
         }
-    } as MutableLiveData).apply { value = R.color.textColorDisabled }
+    } as MutableLiveData).apply { value = ContextCompat.getColor(getApplication(), R.color.textColorDisabled) }
 
     private val inputObserver: Observer<String> = Observer {
         error.postValue(null)

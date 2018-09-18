@@ -8,6 +8,7 @@ import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import org.taskforce.episample.R
 import org.taskforce.episample.databinding.FragmentTextInputDialogBinding
 import org.taskforce.episample.toolbar.managers.LanguageManager
@@ -15,6 +16,7 @@ import org.taskforce.episample.toolbar.managers.LanguageManager
 class TextInputDialogFragment : DialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        dialog.window.requestFeature(Window.FEATURE_NO_TITLE)
         val binding = DataBindingUtil.inflate<FragmentTextInputDialogBinding>(inflater, R.layout.fragment_text_input_dialog, container, false)
 
         val titleResId = arguments!!.getInt(ARG_TITLE_RES_ID, LanguageManager.undefinedStringResourceId)
@@ -34,7 +36,7 @@ class TextInputDialogFragment : DialogFragment() {
 
     fun submit(textInput: String) {
         val data = Intent()
-        data.putExtra(EXTRA_TEXT_INPUT_ID, textInput)
+        data.putExtra(EXTRA_TEXT_INPUT, textInput)
         targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, data)
         dismiss()
     }
@@ -45,11 +47,10 @@ class TextInputDialogFragment : DialogFragment() {
 
     companion object {
         const val TAG = "TextInputDialogFragment"
-        const val EXTRA_TEXT_INPUT_ID = "EXTRA_TEXT_INPUT_ID"
+        const val EXTRA_TEXT_INPUT = "EXTRA_TEXT_INPUT"
 
         private const val ARG_TITLE_RES_ID = "ARG_TITLE_RES_ID"
         private const val ARG_HINT_RES_ID = "ARG_HINT_RES_ID"
-
 
 
         fun newInstance(titleResId: Int, hintResId: Int): TextInputDialogFragment {

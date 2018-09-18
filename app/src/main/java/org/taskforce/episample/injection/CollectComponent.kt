@@ -21,4 +21,5 @@ interface CollectComponent {
     fun inject(liveNavigationCardViewModel: LiveNavigationCardViewModel)
     fun inject(navigationViewModel: NavigationViewModel)
     fun inject(textInputDialogViewModel: TextInputDialogViewModel)
+    fun inject(surveyStatusViewModel: SurveyStatusViewModel)
 }

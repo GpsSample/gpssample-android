@@ -3,12 +3,10 @@ package org.taskforce.episample.core.ui.dialogs
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
-import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
-import android.util.Log
 import android.widget.TimePicker
 import org.taskforce.episample.R
 import java.util.*

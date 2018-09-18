@@ -321,5 +321,9 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="dialog_skip_reason_title">Report Reason for Skipping</string>
     <string name="dialog_skip_reason_hint">Describe reason for skipping</string>
     <string name="odk_collect_not_installed">Please install ODK Collect before trying to launch survey.</string>
+    <string name="survey_status_title_var">%s Status</string>
+    <string name="survey_status_row_complete">Survey Complete</string>
+    <string name="survey_status_row_skip">Skip Until Later</string>
+    <string name="survey_status_row_problem">Problem</string>
 
 </resources>

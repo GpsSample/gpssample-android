@@ -1,8 +1,10 @@
 package org.taskforce.episample
 
+import android.os.Bundle
 import junit.framework.Assert.assertEquals
 import org.junit.Test
 import org.taskforce.episample.config.fields.CustomFieldTypeConstants
+import org.taskforce.episample.core.navigation.SurveyStatus
 import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.customfield.CustomFieldType
 import org.taskforce.episample.db.config.customfield.metadata.NumberMetadata
@@ -10,6 +12,7 @@ import org.taskforce.episample.utils.makeDBConfig
 import java.util.*
 
 class CustomFieldTest {
+
     @Test
     fun customFieldConversion() {
         val configId = UUID.randomUUID().toString()

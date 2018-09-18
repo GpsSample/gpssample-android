@@ -7,6 +7,7 @@ import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.config.base.ConfigActivity
@@ -30,6 +31,7 @@ class LoginAdminDialogFragment : DialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        dialog.window.requestFeature(Window.FEATURE_NO_TITLE)
         val binding = DataBindingUtil.inflate<FragmentLoginAdminDialogBinding>(inflater, R.layout.fragment_login_admin_dialog, container, false)
 
         binding.vm = ViewModelProviders.of(this, LoginAdminDialogViewModelFactory(

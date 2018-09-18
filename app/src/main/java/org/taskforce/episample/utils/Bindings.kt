@@ -59,3 +59,8 @@ fun ImageView.loadImage(imageUrl: String?, placeholder: Drawable?) {
 fun ImageView.loadImage(resource: Int) {
     setImageResource(resource)
 }
+
+@BindingAdapter("android:typeface")
+fun TextView.setTypeface(resource: Int) {
+    setTypeface(null, resource)
+}

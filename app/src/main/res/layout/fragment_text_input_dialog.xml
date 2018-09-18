@@ -12,27 +12,27 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
+        android:minWidth="@dimen/dialog_min_width"
         android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/title"
+            tools="Report Reason for Skipping"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="24dp"
             android:text="@{vm.title}"
-            app:layout_constraintBottom_toTopOf="@+id/inputWrapper"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools="Report Reason for Skipping"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/inputWrapper"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:hint="@{vm.hint}"
@@ -57,7 +57,9 @@
             android:id="@+id/submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginTop="16dp"
             android:enabled="@{vm.submitEnabled}"
             android:onClick="@{vm::submit}"
             android:paddingBottom="9dp"
@@ -65,8 +67,9 @@
             android:paddingRight="12dp"
             android:paddingTop="12dp"
             android:text="@{vm.okButtonText}"
-            android:textColor="@{context.getColor(vm.submitTextColor)}"
+            android:textColor="@{vm.submitTextColor}"
             android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/inputWrapper"
             tools:text="@string/submit" />

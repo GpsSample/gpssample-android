@@ -5,12 +5,16 @@ import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.*
+import android.widget.Toast
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -25,13 +29,10 @@ import org.taskforce.episample.collection.managers.CollectIconFactory
 import org.taskforce.episample.collection.managers.CollectionItemMarkerManager
 import org.taskforce.episample.collection.viewmodels.CollectViewModel
 import org.taskforce.episample.core.interfaces.CollectItem
+import org.taskforce.episample.core.navigation.SurveyStatus
 import org.taskforce.episample.core.ui.dialogs.TextInputDialogFragment
 import org.taskforce.episample.databinding.FragmentNavigationBinding
 import org.taskforce.episample.utils.getCompatColor
-import android.content.Intent
-import android.net.Uri
-import android.util.Log
-import android.widget.Toast
 
 
 class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener {
@@ -53,7 +54,6 @@ class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMa
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (requireActivity().application as EpiApplication).component.inject(this)
-
 
         locationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         collectIconFactory = CollectIconFactory(requireContext().resources)
@@ -222,29 +222,53 @@ class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMa
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        // Check which request we're responding to
-        if (requestCode == GET_SKIP_REASON_CODE) {
-            // Make sure the request was successful
-            if (resultCode == Activity.RESULT_OK) {
-                val skipReason = data?.getStringExtra(TextInputDialogFragment.EXTRA_TEXT_INPUT_ID)
+        if (resultCode != Activity.RESULT_OK) {
+            return
+        }
+
+        when (requestCode) {
+            GET_SKIP_REASON_CODE -> {
+                val skipReason = data?.getStringExtra(TextInputDialogFragment.EXTRA_TEXT_INPUT)
                 skipReason?.let { skipReason ->
                     navigationViewModel.nextNavigationItem.value?.id?.let { nextItem ->
-                        navigationViewModel.navigationManager.skipNavigationItem(nextItem, skipReason)
+                        navigationViewModel.navigationManager.updateSurveyStatus(nextItem, SurveyStatus.Skipped(skipReason))
                     }
                 }
             }
-        } else if (requestCode == PICK_FORM_REASON_CODE) {
-            // Make sure the request was successful
-            if (resultCode == RESULT_OK) {
-                // The Intent's data URI identifies which form was selected.
+            PICK_FORM_REASON_CODE -> {
                 val formUri = data?.data
                 formUri?.let {
                     val intent = Intent(Intent.ACTION_EDIT)
                     intent.data = it
                     startActivity(intent)
+                    navigationViewModel.launchedSurvey = true
+                }
+            }
+            GET_SURVEY_STATUS_REASON_CODE -> {
+                val surveyStatus = data?.getParcelableExtra<SurveyStatus>(SurveyStatusDialogFragment.EXTRA_SURVEY_STATUS)
+                surveyStatus?.let { surveyStatus ->
+                    navigationViewModel.nextNavigationItem?.value?.id?.let {
+                        navigationViewModel.navigationManager.updateSurveyStatus(it, surveyStatus)
+                    }
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (navigationViewModel.launchedSurvey) {
+            navigationViewModel.nextNavigationItem.value?.let { navItem ->
+                navItem.id?.let { id ->
+                    val fragment = SurveyStatusDialogFragment.newInstance(id, navItem.surveyStatus)
+                    fragment.setTargetFragment(this, GET_SURVEY_STATUS_REASON_CODE)
+                    fragment.show(requireFragmentManager(), SurveyStatusDialogFragment.TAG)
+                }
+            }
+        }
+
+        navigationViewModel.launchedSurvey = false
     }
 
     private fun launchSurvey() {
@@ -256,7 +280,6 @@ class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMa
             Toast.makeText(requireContext(), R.string.odk_collect_not_installed, Toast.LENGTH_LONG)
                     .show()
         }
-
     }
 
     private fun showSkipDialog() {
@@ -268,6 +291,7 @@ class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMa
     companion object {
         const val GET_SKIP_REASON_CODE = 1
         const val PICK_FORM_REASON_CODE = 2
+        const val GET_SURVEY_STATUS_REASON_CODE = 3
 
         fun newInstance(): Fragment {
             return NavigationFragment()

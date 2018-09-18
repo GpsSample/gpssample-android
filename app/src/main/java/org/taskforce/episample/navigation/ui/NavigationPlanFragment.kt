@@ -134,7 +134,7 @@ class NavigationPlanFragment : Fragment(), GoogleMap.OnMarkerClickListener, Goog
         binding.collectList.adapter = adapter
 
         navigationPlanViewModel.navigationItems.observe(this, Observer { items ->
-            val sortedItems = items?.sortedByDescending { it.navigationOrder } ?: emptyList()
+            val sortedItems = items?.sortedBy { it.navigationOrder } ?: emptyList()
             adapter?.data = sortedItems
         })
         navigationPlanViewModel.collectItems.observe(this, Observer { items ->

@@ -4,6 +4,7 @@ import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
+import android.support.v4.content.ContextCompat
 import android.view.View
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
@@ -33,11 +34,11 @@ class TextInputDialogViewModel(application: Application,
 
     val submitTextColor = (Transformations.map(submitEnabled, {
         if (it) {
-            R.color.colorAccent
+            ContextCompat.getColor(getApplication(), R.color.colorAccent)
         } else {
-            R.color.textColorDisabled
+            ContextCompat.getColor(getApplication(), R.color.textColorDisabled)
         }
-    }) as MutableLiveData<Int>).apply { value = R.color.textColorDisabled }
+    }) as MutableLiveData<Int>).apply { value = ContextCompat.getColor(getApplication(), R.color.textColorDisabled) }
 
     fun submit(view: View) {
         submit(formValue.value ?: "")

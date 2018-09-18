@@ -1,14 +1,11 @@
 package org.taskforce.episample.collection.managers
 
-import android.arch.lifecycle.LifecycleOwner
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import io.reactivex.Single
 import kotlinx.android.synthetic.main.item_custom_dropdown.view.*
 import org.taskforce.episample.R
 import org.taskforce.episample.collection.viewmodels.*

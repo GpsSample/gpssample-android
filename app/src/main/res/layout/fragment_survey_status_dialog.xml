@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.support.v4.content.ContextCompat" />
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.navigation.ui.SurveyStatusViewModel" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minWidth="@dimen/dialog_min_width">
+
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="24dp"
+            android:text="@{vm.title}"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/guideline3"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Dialog Title" />
+
+        <ImageView
+            android:id="@+id/completeImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:onClickListener="@{vm::completeImageViewClicked}"
+            android:src="@{vm.completeImage}"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintTop_toBottomOf="@+id/titleText" />
+
+        <TextView
+            android:id="@+id/completeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/survey_status_row_complete"
+            android:typeface="@{vm.completeTextStyle}"
+            app:layout_constraintBottom_toBottomOf="@+id/completeImageView"
+            app:layout_constraintEnd_toStartOf="@+id/guideline3"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@+id/completeImageView"
+            app:layout_constraintTop_toTopOf="@+id/completeImageView"
+            app:layout_constraintVertical_bias="0.5"
+            tools:text="Complete" />
+
+        <ImageView
+            android:id="@+id/skipImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:src="@{vm.skippedImage}"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintTop_toBottomOf="@+id/completeImageView" />
+
+        <TextView
+            android:id="@+id/skipTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/survey_status_row_skip"
+            android:typeface="@{vm.skippedTextStyle}"
+            app:layout_constraintBottom_toBottomOf="@+id/skipImageView"
+            app:layout_constraintEnd_toStartOf="@+id/guideline3"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@+id/skipImageView"
+            app:layout_constraintTop_toTopOf="@+id/skipImageView"
+            tools:text="Skip" />
+
+        <ImageView
+            android:id="@+id/problemImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:src="@{vm.problemImage}"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintTop_toBottomOf="@+id/skipImageView" />
+
+        <TextView
+            android:id="@+id/problemText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/survey_status_row_problem"
+            android:typeface="@{vm.problemTextStyle}"
+            app:layout_constraintBottom_toBottomOf="@+id/problemImageView"
+            app:layout_constraintEnd_toStartOf="@+id/guideline3"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@+id/problemImageView"
+            app:layout_constraintTop_toTopOf="@+id/problemImageView"
+            tools:text="Problem" />
+
+        <TextView
+            android:id="@+id/submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="16dp"
+            android:enabled="@{vm.submitEnabled}"
+            android:paddingBottom="9dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="12dp"
+            android:text="@{vm.okButtonText}"
+            android:textColor="@{vm.submitTextColor}"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline3"
+            app:layout_constraintTop_toBottomOf="@+id/problemImageView"
+            app:layout_constraintVertical_bias="0"
+            tools:text="@string/submit" />
+
+        <TextView
+            android:id="@+id/goBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:paddingBottom="9dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="12dp"
+            android:text="@{vm.cancelButtonText}"
+            android:textColor="@color/colorAccent"
+            android:textSize="14sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/submit"
+            app:layout_constraintEnd_toStartOf="@+id/submit"
+            tools:text="@string/go_back" />
+
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="28dp" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="24dp" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

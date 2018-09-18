@@ -21,7 +21,7 @@ interface NavigationManager {
     fun getPossiblePath(): LiveData<List<Breadcrumb>>
     fun getLandmarkTypes(): LiveData<List<LandmarkType>>
     fun addBreadcrumb(breadcrumb: Breadcrumb, callback: (breadcrumbId: String) -> Unit)
-    fun skipNavigationItem(navigationItemId: String, skipReason: String)
+    fun updateSurveyStatus(navigationItemId: String, surveyStatus: SurveyStatus)
 }
 
 data class MockNavigationItem(override val title: String,
@@ -59,36 +59,36 @@ data class MockNavigationItem(override val title: String,
 class MockNavigationManager : NavigationManager {
 
     private val navigationItems = listOf(
-            MockNavigationItem.createMockNavigationItem(title = "John Doe",
+            MockNavigationItem.createMockNavigationItem(title = "John Doe 1",
                     navigationOrder = 1,
-                    surveyStatus = SurveyStatus.Skipped("Skipped Reason"),
+                    surveyStatus = SurveyStatus.Incomplete(),
                     location = LatLng(37.4211343, -122.0860752),
                     gpsPrecision = 8.1,
                     note = "No answer at door"),
-            MockNavigationItem.createMockNavigationItem(title = "Jane Doe",
+            MockNavigationItem.createMockNavigationItem(title = "Jane Doe 2",
                     surveyStatus = SurveyStatus.Incomplete(),
                     navigationOrder = 2,
                     location = LatLng(37.422057, -122.1446663),
                     gpsPrecision = 3.2,
                     isIncomplete = true,
                     note = "Rabid dog"),
-            MockNavigationItem.createMockNavigationItem(title = "Jane Doe",
-                    surveyStatus = SurveyStatus.Skipped("Skipped Reason 2"),
+            MockNavigationItem.createMockNavigationItem(title = "Jane Doe 3",
+                    surveyStatus = SurveyStatus.Incomplete(),
                     navigationOrder = 3,
                     location = LatLng(37.422057, -122.1446663),
                     gpsPrecision = 3.2,
                     isIncomplete = true,
                     note = "Rabid dog"),
-            MockNavigationItem.createMockNavigationItem(title = "Joe Doe",
-                    surveyStatus = SurveyStatus.Complete(),
+            MockNavigationItem.createMockNavigationItem(title = "Joe Doe 4",
+                    surveyStatus = SurveyStatus.Incomplete(),
                     location = LatLng(37.422065, -122.0846862),
                     navigationOrder = 4,
                     gpsPrecision = 3.2,
                     excluded = true,
                     image = "file:///sdcard/Pictures/profile copy.jpg"),
-            MockNavigationItem.createMockNavigationItem(title = "John Doe",
+            MockNavigationItem.createMockNavigationItem(title = "John Doe 5",
                     navigationOrder = 5,
-                    surveyStatus = SurveyStatus.Problem("Problem description"),
+                    surveyStatus = SurveyStatus.Incomplete(),
                     location = LatLng(37.4211343, -122.1060752),
                     gpsPrecision = 8.1,
                     note = "No answer at door")
@@ -167,11 +167,10 @@ class MockNavigationManager : NavigationManager {
         liveBreadcrumbs.postValue(breadcrumbs)
     }
 
-    override fun skipNavigationItem(navigationItemId: String, skipReason: String) {
+    override fun updateSurveyStatus(navigationItemId: String, surveyStatus: SurveyStatus) {
         navigationItems.firstOrNull { it.id == navigationItemId }?.let {
-            it.surveyStatus = SurveyStatus.Skipped(skipReason)
+            it.surveyStatus = surveyStatus
             liveNavigationItems.postValue(navigationItems)
         }
-
     }
 }

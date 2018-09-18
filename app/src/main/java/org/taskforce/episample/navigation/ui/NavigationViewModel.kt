@@ -27,6 +27,8 @@ class NavigationViewModel(application: Application): AndroidViewModel(applicatio
     @Inject
     lateinit var locationService: LocationService
 
+    var launchedSurvey: Boolean = false
+
     init {
         (application as EpiApplication).collectComponent?.inject(this)
     }
@@ -34,6 +36,5 @@ class NavigationViewModel(application: Application): AndroidViewModel(applicatio
     val nextNavigationItem: LiveData<NavigationItem?> = Transformations.map(navigationManager.getNavigationItems()) {
         return@map it.sortedBy { it.navigationOrder }.firstOrNull { it.surveyStatus is SurveyStatus.Incomplete }
     }
-
     val collectItems = navigationManager.getCollectItems()
 }

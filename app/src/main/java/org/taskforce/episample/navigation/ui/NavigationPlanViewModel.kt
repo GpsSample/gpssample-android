@@ -48,9 +48,7 @@ class NavigationPlanViewModel(application: Application,
     val possiblePath = navigationManager.getPossiblePath()
     val breadcrumbs = navigationManager.getBreadcrumbs()
 
-    val navigationItems: LiveData<List<NavigationItem>> = Transformations.map(navigationManager.getCollectItems()) {
-        return@map it.mapNotNull { it as? NavigationItem }
-    }
+    val navigationItems: LiveData<List<NavigationItem>> = navigationManager.getNavigationItems()
 
     private val isComplete: LiveData<Boolean> = Transformations.map(navigationItems) {
         it.none { it.surveyStatus is SurveyStatus.Incomplete}

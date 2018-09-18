@@ -8,6 +8,8 @@ import com.google.android.gms.maps.GoogleMap
 import io.reactivex.Observable
 import io.reactivex.Single
 import org.taskforce.episample.config.language.LanguageService
+import org.taskforce.episample.core.interfaces.EnumerationSubject
+import org.taskforce.episample.core.interfaces.Enumeration
 
 class CollectAddViewModelFactory(private val application: Application,
                                  private val languageService: LanguageService,
@@ -19,7 +21,8 @@ class CollectAddViewModelFactory(private val application: Application,
                                  private val saveButtonEnabledTextColor: Int,
                                  private val saveButtonDisabledTextColor: Int,
                                  private val goToNext: () -> Unit,
-                                 private val takePicture: () -> Unit) : ViewModelProvider.NewInstanceFactory() {
+                                 private val takePicture: () -> Unit,
+                                 private val showDuplicateGpsDialog: (enumeration: Enumeration?, subject: EnumerationSubject) -> Unit) : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return CollectAddViewModel(application,
                 languageService,
@@ -31,6 +34,7 @@ class CollectAddViewModelFactory(private val application: Application,
                 saveButtonEnabledTextColor,
                 saveButtonDisabledTextColor,
                 goToNext,
-                takePicture) as T
+                takePicture,
+                showDuplicateGpsDialog) as T
     }
 }

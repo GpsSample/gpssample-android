@@ -244,22 +244,37 @@
 
                     </android.support.design.widget.TextInputLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/gpsView"
-                        android:background="@color/textColorDisabled"
-                        android:textColor="@color/textColorInverse"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginBottom="12dp"
-                        android:paddingTop="4dp"
-                        android:paddingBottom="4dp"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="8dp"
-                        android:text="@{vm.gpsDisplay}"
-                        tools:text="37.4217983, -122.084"/>
+                        android:gravity="center">
+                        <ImageView
+                            visibleOrGone="@{vm.showDuplicateIcon}"
+                            android:id="@+id/duplicatedGpsIcon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:src="@drawable/icon_gps_lock"
+                            android:layout_marginEnd="11dp" />
 
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/gpsView"
+                            android:background="@color/textColorDisabled"
+                            android:textColor="@color/textColorInverse"
+                            android:gravity="center"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginBottom="12dp"
+                            android:paddingTop="4dp"
+                            android:paddingBottom="4dp"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:text="@{vm.gpsDisplay}"
+                            tools:text="37.4217983, -122.084"/>
+                    </LinearLayout>
+                    
                     <include
                         android:id="@+id/gpsPrecision"
                         layout="@layout/app_gps_precision"
@@ -279,6 +294,21 @@
                         android:textSize="16sp"
                         android:gravity="center"
                         tools:text="Searching for GPS location. Try moving a few meters away for a better signal."/>
+
+                    <TextView
+                        visibleOrGone="@{!vm.isLandmark}"
+                        enabled="@{vm.duplicateGpsEnabled}"
+                        android:onClick="@{() -> vm.showDuplicateGpsDialog()}"
+                        android:id="@+id/collectAddDuplicateGps"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:textColor="@color/collect_duplicate_gps"
+                        android:text="@{vm.collectGpsText}"
+                        android:textSize="16sp"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        tools:text="USE LAST RECORDED GPS"/>
                     
                 </LinearLayout>
                 

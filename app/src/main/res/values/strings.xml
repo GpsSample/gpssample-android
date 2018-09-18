@@ -244,6 +244,10 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="collect_add_landmark_title">New Landmark</string>
     <string name="collect_add_item_title">New %s</string>
     <string name="collect_poor_gps">Searching for GPS location. Try moving a few meters away for a better signal.</string>
+    <string name="collect_duplicate_gps">USE LAST RECORDED GPS</string>
+    <string name="collect_duplicate_gps_title">Reuse Last Recorded GPS?</string>
+    <string name="collect_duplicate_gps_dialog">This will lock the GPS location for this point at the same coordinates as your last %s (\"%s\") at %s, %s. Are you sure?</string>
+    <string name="use_last_recorded">USE LAST RECORDED</string>
     <string name="collect_save_countdown">SAVE AVAILABLE IN %s</string>
 
     <string name="default_subject">Household</string>

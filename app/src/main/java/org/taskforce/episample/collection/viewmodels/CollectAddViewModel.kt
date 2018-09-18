@@ -3,6 +3,7 @@ package org.taskforce.episample.collection.viewmodels
 import android.annotation.SuppressLint
 import android.app.Application
 import android.arch.lifecycle.*
+import android.arch.lifecycle.Observer
 import android.databinding.ObservableField
 import android.location.Location
 import android.os.CountDownTimer
@@ -21,6 +22,7 @@ import org.taskforce.episample.core.interfaces.*
 import org.taskforce.episample.db.config.customfield.value.*
 import java.util.*
 import javax.inject.Inject
+import org.taskforce.episample.core.interfaces.Enumeration
 
 class CollectAddViewModel(
         application: Application,
@@ -33,7 +35,8 @@ class CollectAddViewModel(
         private val saveButtonEnabledTextColor: Int,
         private val saveButtonDisabledTextColor: Int,
         private val goToNext: () -> Unit,
-        private val takePicture: () -> Unit) : AndroidViewModel(application) {
+        private val takePicture: () -> Unit,
+        private val showDuplicateGpsDialog: (enumeration: Enumeration?, subject: EnumerationSubject) -> Unit) : AndroidViewModel(application) {
 
     @Inject
     lateinit var config: Config
@@ -66,7 +69,10 @@ class CollectAddViewModel(
             gpsDisplay.set(languageService.getString(R.string.collect_gps_waiting))
         }
         locationObservable.subscribe {
-            gpsDisplay.set("${it.latitude}, ${it.longitude}")
+            if (!useDuplicatedGps) { // Only update if not using the duplicated GPS
+                gpsDisplay.set("%.5f ".format(it.latitude) +
+                        ", %.5f".format(it.longitude))
+            }
         }
     }
 
@@ -99,8 +105,19 @@ class CollectAddViewModel(
     val primaryLabelErrorEnabled = MutableLiveData<Boolean>().apply { value = false }
 
     val primaryLabel = MutableLiveData<String>().apply { value = "" }
+    
+    val enumerations = collectManager.getEnumerations()
 
     var location = MutableLiveData<Location?>().apply { value = null }
+    val locationObserver: Observer<Location?> = Observer {
+        it?.let {
+            locationLatLng = LatLng(it.latitude, it.longitude)
+            locationPrecision = it.accuracy
+        }
+    }
+
+    var locationLatLng: LatLng? = null
+    var locationPrecision: Float? = null
 
     val notesErrorEnabled = MutableLiveData<Boolean>().apply { value = false }
 
@@ -118,22 +135,26 @@ class CollectAddViewModel(
 
         determineEnumerationValidity(primaryLabel)
     } as MutableLiveData
+
     private fun determineEnumerationValidity(primaryLabel: String?): Boolean {
+        val primaryLabelComplete = !primaryLabel.isNullOrBlank()
+
+        val customFieldsComplete = customFieldViewModels.filter { customVM ->
+            customVM.customField.isRequired || customVM.customField.isAutomatic
+        }.fold(true) { acc, next ->
+            when (next) {
+                is CustomTextViewModel -> acc && next.value.value != null && !next.value.value.isNullOrBlank()
+                is CustomDropdownViewModel -> acc && next.value.value != null
+                is CustomNumberViewModel -> acc && next.value.value != null && !next.value.value.isNullOrBlank()
+                is CustomDateViewModel -> acc && next.value.value != null
+                is CustomCheckboxViewModel -> acc && next.value.value != null
+                else -> acc && next.value != null
+            }
+        }
         return !isLandmark &&
-                !primaryLabel.isNullOrBlank() &&
-                (isSufficientlyPrecise || isUsingClonedGps) &&
-                customFieldViewModels.filter { customVM ->
-                    customVM.customField.isRequired || customVM.customField.isAutomatic
-                }.fold(true) { acc, next ->
-                    when (next) {
-                        is CustomTextViewModel -> acc && next.value.value != null && !next.value.value.isNullOrBlank()
-                        is CustomDropdownViewModel -> acc && next.value.value != null
-                        is CustomNumberViewModel -> acc && next.value.value != null && !next.value.value.isNullOrBlank()
-                        is CustomDateViewModel -> acc && next.value.value != null
-                        is CustomCheckboxViewModel -> acc && next.value.value != null
-                        else -> acc && next.value != null
-                    }
-                }
+                primaryLabelComplete &&
+                (isSufficientlyPrecise || useDuplicatedGps) &&
+                customFieldsComplete
     }
 
     private val landmarkInputs = LiveDataTriple(landmarkName, selectedLandmark, location)
@@ -159,37 +180,67 @@ class CollectAddViewModel(
         if (isLandmark) {
             false
         } else {
-            !isSufficientlyPrecise && !isUsingClonedGps
+            !isSufficientlyPrecise && duplicateGpsEnabled.value ?: true
         }
     }
 
-    var isUsingClonedGps = false // TODO Add the "reuse" button to the screen and have it control this value
+    val collectGpsText = MutableLiveData<String>().apply { value = languageService.getString(R.string.collect_duplicate_gps) }
+
+    val duplicateGpsEnabled: MutableLiveData<Boolean> = (Transformations.map(enumerations) {
+        it.isNotEmpty()
+    } as MutableLiveData<Boolean>).apply { value = false }
+
+    val showDuplicateIcon = MutableLiveData<Boolean>().apply { value = false }
+
+    var useDuplicatedGps = false
+    var mostRecentEnumeration: Enumeration? = null
+
+    fun showDuplicateGpsDialog() {
+        showDuplicateGpsDialog(mostRecentEnumeration, config.enumerationSubject)
+    }
+
+    fun duplicateGps(lastEnumeration: Enumeration?) {
+        lastEnumeration?.let {
+            showDuplicateIcon.postValue(true)
+            
+            cancelCountdown()
+            useDuplicatedGps = true
+            gpsVm?.precision?.set(it.gpsPrecision)
+            locationLatLng = lastEnumeration.location
+            locationPrecision = it.gpsPrecision.toFloat()
+            gpsDisplay.set("%.5f ".format(lastEnumeration.location.latitude) +
+                    ", %.5f".format(lastEnumeration.location.longitude))
+            customFieldMediatorLiveData.postValue(false) // Trigger update of isEnumerationValid
+        }
+
+        duplicateGpsEnabled.postValue(false)
+    }
 
     var countdownText = languageService.getString(R.string.collect_save_incomplete)
 
     val saveEnumerationButtonText: MutableLiveData<String> = (Transformations.map(isEnumerationValid) {
         val isEnumerationValid = it
         val subject = config.enumerationSubject
-        
+
         val isCountdownNew = !countdown.isRunning && !countdownDone // Not running and not done means it hasn't been started yet
 
-        if (isEnumerationValid) { // Completely valid. GPS is within preferred precision, all required fields filled in
+        if (isEnumerationValid) { // Completely valid. GPS is within preferred precision and all required fields filled
             cancelCountdown()
             languageService.getString(R.string.collect_save_complete, subject.singular.toUpperCase())
-        } else if (!isSufficientlyPrecise && !isUsingClonedGps) {
+        } else if (!isSufficientlyPrecise && !useDuplicatedGps) { // GPS not precise enough and haven't decided to use the previous value
             if (isCountdownNew) { // Countdown hasn't started yet
                 startCountdown()
                 countdownText
             } else if (countdown.isRunning) {
                 countdownText
-            } else {// Countdown finished
+            } else { // Countdown finished
                 languageService.getString(R.string.collect_save_incomplete)
             }
-        } else {
+        } else { // GPS is precise enough (or using duplicate) but required fields aren't filled in
             languageService.getString(R.string.collect_save_incomplete)
         }
-    } as MutableLiveData<String>).apply { value = "" }
-    
+    } as MutableLiveData<String>).apply { value = languageService.getString(R.string.collect_save_incomplete) }
+
     val saveLandmarkButtonText = MutableLiveData<String>().apply { value = languageService.getString(R.string.collect_save_landmark) }
 
     var countdownDone = false
@@ -203,9 +254,10 @@ class CollectAddViewModel(
         countdown.cancel()
         countdownDone = true
     }
-    private val countdown = object: CountDownTimer(countdownLength, countdownTick) {
+
+    private val countdown = object : CountDownTimer(countdownLength, countdownTick) {
         var isRunning = false
-        
+
         override fun onFinish() {
             isRunning = false
             if (!isSufficientlyPrecise) {
@@ -228,8 +280,9 @@ class CollectAddViewModel(
         }
     }
 
-    private val canSaveItem: Boolean
-        get() = (isSufficientlyPrecise || countdownDone) || (isLandmarkValid.value == true && !landmarkName.value.isNullOrBlank())
+    private val canSaveItem: Boolean // True even if it's incomplete
+        get() = (isSufficientlyPrecise || countdownDone) || // Either the GPS is precise enough or the countdown is over
+                (isLandmark && (isLandmarkValid.value == true && !landmarkName.value.isNullOrBlank())) // If landmark, check the name
 
     val saveEnumerationButtonTextColor = (Transformations.map(isEnumerationValid) {
         if (canSaveItem) {
@@ -238,7 +291,7 @@ class CollectAddViewModel(
             saveButtonDisabledTextColor
         }
     } as MutableLiveData).apply { value = saveButtonDisabledTextColor }
-    
+
     val saveLandmarkButtonTextColor = (Transformations.map(isLandmarkValid) { landmarkValid ->
         if (landmarkValid) {
             saveButtonEnabledTextColor
@@ -254,7 +307,7 @@ class CollectAddViewModel(
             saveButtonDisabledColor
         }
     } as MutableLiveData).apply { value = saveButtonDisabledColor }
-    
+
     val saveLandmarkButtonBackground = (Transformations.map(isLandmarkValid) {
         if (it) {
             saveButtonEnabledColor
@@ -276,31 +329,43 @@ class CollectAddViewModel(
     private val customFieldViewModels = mutableListOf<AbstractCustomViewModel>()
 
     private val isSufficientlyPrecise
-        get() = (location.value?.accuracy ?: 9999.0f < config.userSettings.gpsPreferredPrecision)
+        get() = (locationPrecision ?: 9999.0f <= config.userSettings.gpsPreferredPrecision)
 
     var googleMap: GoogleMap? = null
 
     init {
+        useDuplicatedGps = false // reset
+
         mapObservable.subscribe { map ->
             googleMap = map
             @SuppressLint("MissingPermission")
             map.isMyLocationEnabled = true
             map.mapType = GoogleMap.MAP_TYPE_SATELLITE
-            location.value?.let { location ->
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), mapZoom))
+            locationLatLng?.let { latLng ->
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, mapZoom))
             }
         }
 
         locationObservable.subscribe {
-            if (it.accuracy < (location.value?.accuracy ?: 1000.0f)) {
-                if (location.value == null) {
-                    googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(it.latitude, it.longitude), mapZoom))
+            if (!useDuplicatedGps) {
+                if (it.accuracy < (location.value?.accuracy ?: 1000.0f)) {
+                    locationLatLng?.let {
+                        googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(it, mapZoom))
+                    }
+                    location.postValue(it)
+                    gpsDisplay.set("%.5f ".format(it.latitude) + ", %.5f".format(it.longitude))
+                    gpsVm?.precision?.set(it.accuracy.toDouble())
                 }
-                location.postValue(it)
-                gpsDisplay.set("%.5f ".format(it.latitude) + ", %.5f".format(it.longitude))
-                gpsVm?.precision?.set(it.accuracy.toDouble())
             }
         }
+        
+        location.observeForever(locationObserver)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        
+        location.removeObserver(locationObserver)
     }
 
     fun addCustomFieldViewModel(viewModel: AbstractCustomViewModel) {
@@ -313,26 +378,26 @@ class CollectAddViewModel(
 
     fun saveItem() {
         if (canSaveItem) {
-            location.value?.let { location ->
+            locationLatLng?.let { latLng ->
                 gpsVm?.precision?.get()?.let { gpsPrecision ->
                     if (isLandmark) {
-                        saveLandmark(location, gpsPrecision)
+                        saveLandmark(latLng, gpsPrecision)
                     } else {
-                        saveEnumeration(location, gpsPrecision)
+                        saveEnumeration(latLng, gpsPrecision)
                     }
                 }
             }
         }
     }
 
-    private fun saveLandmark(location: Location, gpsPrecision: Double) {
+    private fun saveLandmark(latLng: LatLng, gpsPrecision: Double) {
         collectManager.addLandmark(
                 LiveLandmark(
                         landmarkName.value ?: "",
                         landmarkType,
                         notes.value,
                         landmarkImage.value,
-                        LatLng(location.latitude, location.longitude),
+                        latLng,
                         gpsPrecision,
                         id = null
                 )) {
@@ -340,7 +405,7 @@ class CollectAddViewModel(
         }
     }
 
-    private fun saveEnumeration(location: Location, gpsPrecision: Double) {
+    private fun saveEnumeration(latLng: LatLng, gpsPrecision: Double) {
         val customFields = customFieldViewModels.mapNotNull { customVm ->
             val type = customVm.customField.type
 
@@ -370,7 +435,7 @@ class CollectAddViewModel(
                 exclude.value ?: false,
                 primaryLabel.value ?: "",
                 notes.value,
-                LatLng(location.latitude, location.longitude),
+                latLng,
                 gpsPrecision,
                 "Display Date",
                 customFields,
@@ -390,6 +455,6 @@ class CollectAddViewModel(
     companion object {
         val mapZoom = 18.0f
         const val countdownLength: Long = 300000 // 5 minutes in milliseconds
-        const val countdownTick: Long = 1000
+        const val countdownTick: Long = 1000 // 1 second in milliseconds
     }
 }

@@ -2,9 +2,6 @@ package org.taskforce.episample.collection.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.AlertDialog
-import android.app.Dialog
-import android.app.TimePickerDialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
@@ -12,15 +9,15 @@ import android.content.Intent
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.LinearLayout
+import android.widget.Toast
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.PolylineOptions
@@ -53,6 +50,7 @@ class CollectAddFragment : Fragment() {
 
     @Inject
     lateinit var languageManager: LanguageManager
+    lateinit var languageService: LanguageService
 
     lateinit var locationManager: LocationManager
     lateinit var collectIconFactory: CollectIconFactory
@@ -85,10 +83,12 @@ class CollectAddFragment : Fragment() {
                 it.isMyLocationEnabled = true
                 it.mapType = GoogleMap.MAP_TYPE_SATELLITE
             }
+            
+            languageService = LanguageService(languageManager)
 
             collectViewModel = ViewModelProviders.of(this@CollectAddFragment, CollectAddViewModelFactory(
                     requireActivity().application,
-                    LanguageService(languageManager),
+                    languageService,
                     Single.create<GoogleMap> { single ->
                         mapFragment.getMapAsync {
                             single.onSuccess(it)
@@ -124,7 +124,15 @@ class CollectAddFragment : Fragment() {
                     }, {
                 // TODO: Launch intent to take picture
                 Toast.makeText(requireContext(), "TODO", Toast.LENGTH_SHORT).show()
-            }
+            },
+                    { enumeration, subject ->
+                        enumeration?.let {
+                            val duplicateDialog = DuplicateGpsDialogFragment.newInstance(enumeration, subject) {
+                                collectViewModel.duplicateGps(enumeration)
+                            }
+                            duplicateDialog.show(childFragmentManager, DuplicateGpsDialogFragment::class.java.simpleName)
+                        }
+                    }
             )).get(CollectAddViewModel::class.java)
 
             landmarkImageSelector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -203,6 +211,13 @@ class CollectAddFragment : Fragment() {
             adapter.addAll(types.map { it.name })
 
             this@CollectAddFragment.landmarkImageSelector.adapter = adapter
+        })
+        
+        collectViewModel.enumerations.observe(this, Observer { 
+            it?.let { 
+                val mostRecent = it.sortedByDescending { it.dateCreated }.firstOrNull()
+                collectViewModel.mostRecentEnumeration = mostRecent
+            }
         })
 
         val enumerationSubject = collectViewModel.config.enumerationSubject

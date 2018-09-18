@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <data>
+        <variable
+            name="vm"
+            type="org.taskforce.episample.collection.viewmodels.DuplicateGpsDialogViewModel" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="24dp">
+
+        <TextView
+            android:id="@+id/duplicateGpsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{vm.title}"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/duplicateGpsMessage"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/collect_duplicate_gps_title" />
+
+        <TextView
+            android:id="@+id/duplicateGpsMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@{vm.message}"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@+id/duplicateGpsTitle"
+            app:layout_constraintTop_toBottomOf="@+id/duplicateGpsTitle"
+            tools:text="@string/collect_duplicate_gps_dialog" />
+
+        <TextView
+            android:id="@+id/duplicateGpsConfirmButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:onClick="@{() -> vm.confirmUse()}"
+            android:text="@{vm.confirm}"
+            android:textColor="@color/colorAccent"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/duplicateGpsMessage"
+            tools:text="@string/use_last_recorded" />
+
+        <TextView
+            android:id="@+id/duplicateGpsCancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:onClick="@{() -> vm.goBack()}"
+            android:text="@{vm.cancel}"
+            android:textColor="@color/colorAccent"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/duplicateGpsConfirmButton"
+            app:layout_constraintEnd_toStartOf="@+id/duplicateGpsConfirmButton"
+            app:layout_constraintTop_toTopOf="@+id/duplicateGpsConfirmButton"
+            tools:text="@string/cancel" />
+    </android.support.constraint.ConstraintLayout>
+</layout>

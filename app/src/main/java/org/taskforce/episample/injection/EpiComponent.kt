@@ -4,6 +4,7 @@ import org.taskforce.episample.auth.LoginAdminDialogFragment
 import org.taskforce.episample.auth.LoginFragment
 import org.taskforce.episample.collection.ui.CollectAddFragment
 import org.taskforce.episample.collection.ui.CollectFragment
+import org.taskforce.episample.collection.ui.DuplicateGpsDialogFragment
 import org.taskforce.episample.config.base.*
 import org.taskforce.episample.config.fields.CustomFieldsAddDropdownDialog
 import org.taskforce.episample.config.fields.CustomFieldsAddFragment
@@ -66,4 +67,5 @@ interface EpiComponent {
     fun inject(samplingSubsetFragment: SamplingSubsetFragment)
     fun inject(navigationPlanFragment: NavigationPlanFragment)
     fun inject(navigationFragment: NavigationFragment)
+    fun inject(duplicateGpsDialogFragment: DuplicateGpsDialogFragment)
 }

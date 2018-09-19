@@ -6,13 +6,14 @@ import android.arch.lifecycle.Transformations
 import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.interfaces.*
 import org.taskforce.episample.db.ConfigRepository
+import org.taskforce.episample.db.StudyRepository
 import org.taskforce.episample.utils.toDBBreadcrumb
 import org.taskforce.episample.utils.toDBEnumeration
 import org.taskforce.episample.utils.toDBLandmark
 
 class LiveCollectManager(val application: Application,
                          val configManager: ConfigManager,
-                         val configRepository: ConfigRepository,
+                         val studyRepository: StudyRepository,
                          override val userSession: UserSession) : CollectManager {
 
     val studyId: String
@@ -21,14 +22,14 @@ class LiveCollectManager(val application: Application,
         get() = userSession.configId
 
     override fun getEnumerations(): LiveData<List<org.taskforce.episample.core.interfaces.Enumeration>> {
-        return Transformations.map(configRepository.getEnumerations(studyId), {
+        return Transformations.map(studyRepository.getEnumerations(studyId), {
             return@map it?.map { it.makeLiveEnumeration() }
         })
     }
 
     val mergedLandmarks = LiveDataPair(
             configManager.getConfig(application),
-            configRepository.getLandmarks(studyId)
+            studyRepository.getLandmarks(studyId)
     )
 
     val getLandmarks = Transformations.map(mergedLandmarks, { (config, landmarks) ->
@@ -69,7 +70,7 @@ class LiveCollectManager(val application: Application,
         return getLandmarks
     }
 
-    val collectItemsMediator = LiveDataPair(configRepository.getEnumerations(userSession.studyId), getLandmarks)
+    val collectItemsMediator = LiveDataPair(studyRepository.getEnumerations(userSession.studyId), getLandmarks)
     override fun getCollectItems(): LiveData<List<CollectItem>> {
         return Transformations.map(collectItemsMediator, {
             return@map it.first.map { it.makeLiveEnumeration() } + it.second.map { it as CollectItem }
@@ -77,7 +78,7 @@ class LiveCollectManager(val application: Application,
     }
 
     override fun getBreadcrumbs(): LiveData<List<Breadcrumb>> {
-        return Transformations.map(configRepository.getBreadcrumbs(studyId), {
+        return Transformations.map(studyRepository.getBreadcrumbs(studyId), {
             return@map it.map { LiveBreadcrumb(it.location, it.gpsPrecision, it.dateCreated) }
         })
     }
@@ -89,23 +90,23 @@ class LiveCollectManager(val application: Application,
     }
 
     override fun addBreadcrumb(breadcrumb: Breadcrumb, callback: (breadcrumbId: String) -> Unit) {
-        configRepository.addBreadcrumb(breadcrumb.toDBBreadcrumb(userSession.username, studyId), callback)
+        studyRepository.addBreadcrumb(breadcrumb.toDBBreadcrumb(userSession.username, studyId), callback)
     }
 
     override fun updateEnumerationItem(item: org.taskforce.episample.core.interfaces.Enumeration, callback: () -> Unit) {
-        configRepository.updateEnumerationItem(item.toDBEnumeration(userSession.username, studyId), listOf(), callback)
+        studyRepository.updateEnumerationItem(item.toDBEnumeration(userSession.username, studyId), listOf(), callback)
     }
 
     override fun updateLandmark(landmark: org.taskforce.episample.core.interfaces.Landmark, callback: () -> Unit) {
-        configRepository.updateLandmark(landmark.toDBLandmark(userSession.username, studyId), callback)
+        studyRepository.updateLandmark(landmark.toDBLandmark(userSession.username, studyId), callback)
 
     }
 
     override fun addEnumerationItem(item: org.taskforce.episample.core.interfaces.Enumeration, callback: (enumerationId: String) -> Unit) {
-        configRepository.insertEnumerationItem(item.toDBEnumeration(userSession.username, studyId), item.customFieldValues, callback)
+        studyRepository.insertEnumerationItem(item.toDBEnumeration(userSession.username, studyId), item.customFieldValues, callback)
     }
 
     override fun addLandmark(landmark: org.taskforce.episample.core.interfaces.Landmark, callback: (landmarkId: String) -> Unit) {
-        configRepository.insertLandmarkItem(landmark.toDBLandmark(userSession.username, studyId), callback)
+        studyRepository.insertLandmarkItem(landmark.toDBLandmark(userSession.username, studyId), callback)
     }
 }

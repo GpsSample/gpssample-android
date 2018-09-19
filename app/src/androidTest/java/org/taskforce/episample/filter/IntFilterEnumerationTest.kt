@@ -9,15 +9,13 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.taskforce.episample.db.ConfigRoomDatabase
+import org.taskforce.episample.db.StudyRoomDatabase
 import org.taskforce.episample.db.collect.ResolvedEnumerationDao
 import org.taskforce.episample.db.config.ConfigDao
 import org.taskforce.episample.db.config.ResolvedConfigDao
 import org.taskforce.episample.db.config.Study
 import org.taskforce.episample.db.config.StudyDao
-import org.taskforce.episample.db.config.customfield.CustomField
-import org.taskforce.episample.db.config.customfield.CustomFieldDao
-import org.taskforce.episample.db.config.customfield.CustomFieldType
-import org.taskforce.episample.db.config.customfield.CustomFieldValue
+import org.taskforce.episample.db.config.customfield.*
 import org.taskforce.episample.db.config.customfield.metadata.NumberMetadata
 import org.taskforce.episample.db.config.customfield.value.IntValue
 import org.taskforce.episample.db.filter.Filter
@@ -34,34 +32,36 @@ class IntFilterEnumerationTest {
     private var resolvedConfigDao: ResolvedConfigDao? = null
     private var studyDao: StudyDao? = null
     private var customFieldDao: CustomFieldDao? = null
+    private var customFieldValueDao: CustomFieldValueDao? = null
     private var resolvedEnumerationDao: ResolvedEnumerationDao? = null
-    private var db: ConfigRoomDatabase? = null
+    private var db: StudyRoomDatabase? = null
     lateinit var studyId: String
     lateinit var customField: CustomField
 
     @Before
     fun createDb() {
         val context = InstrumentationRegistry.getTargetContext()
-        db = Room.inMemoryDatabaseBuilder(context, ConfigRoomDatabase::class.java).build()
+        db = Room.inMemoryDatabaseBuilder(context, StudyRoomDatabase::class.java).build()
         configDao = db?.configDao()
         studyDao = db?.studyDao()
         resolvedConfigDao = db?.resolvedConfigDao()
         customFieldDao = db?.customFieldDao()
+        customFieldValueDao = db?.customFieldValueDao()
         resolvedEnumerationDao = db?.resolvedEnumerationDao()
 
         val insertConfigId = UUID.randomUUID().toString()
         setupConfig(configDao!!, insertConfigId)
 
+        val resolvedConfig = resolvedConfigDao!!.getConfigSync(insertConfigId)
         studyId = UUID.randomUUID().toString()
 
-        val insertStudy = Study("Study 1", "Study Password", id = studyId)
-        studyDao?.insert(insertStudy, insertConfigId)
+        val studyConfigId = studyDao!!.insert(studyId, "Study 1", "Study Password", resolvedConfig)
 
         val numberMetadata = NumberMetadata(true)
         customField = makeCustomField("name",
                 CustomFieldType.NUMBER,
                 numberMetadata,
-                insertConfigId
+                studyConfigId
         )
 
         configDao?.insert(customField)
@@ -78,7 +78,7 @@ class IntFilterEnumerationTest {
                     enumerationId,
                     customField.id)
 
-            customFieldDao?.insert(insertFieldValue)
+            customFieldValueDao?.insert(insertFieldValue)
         }
     }
 

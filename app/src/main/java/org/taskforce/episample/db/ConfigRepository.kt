@@ -17,10 +17,10 @@ import org.taskforce.episample.db.config.landmark.CustomLandmarkType
 import org.taskforce.episample.utils.makeDBConfig
 import java.util.*
 
-class ConfigRepository(application: Application, injectedDatabase: ConfigRoomDatabase? = null) {
+class ConfigRepository(application: Application, injectedDatabase: ConfigRoomDatabase? = null, injectedStudyDatabase: StudyRoomDatabase? = null) {
 
-    // TODO setup repository to inject database (exposing here for testing)
     lateinit var db: ConfigRoomDatabase
+    private val studyRepository = StudyRepository(application, injectedStudyDatabase)
 
     init {
         injectedDatabase?.let {
@@ -31,30 +31,10 @@ class ConfigRepository(application: Application, injectedDatabase: ConfigRoomDat
     }
 
     private val configDao: ConfigDao = db.configDao()
-    private val studyDao: StudyDao = db.studyDao()
     private val resolvedConfigDao: ResolvedConfigDao = db.resolvedConfigDao()
 
     private val allConfigs = configDao.getAllConfigs()
-    private val availableConfigs: LiveData<List<Config>> = Transformations.map(allConfigs, {
-        return@map it?.filter { config ->
-            config.studyId == null
-        }
-    })
-
-    private fun studyToNullable(studyId: String): LiveData<Study?> = Transformations.map(studyDao.getStudy(studyId)) {
-        return@map it
-    }
-
-    private val study: LiveData<Study?> = Transformations.switchMap(allConfigs, {
-        val studyConfig = it.firstOrNull() { config ->
-            config.studyId != null
-        }
-
-        studyConfig?.let {
-            return@switchMap studyToNullable(it.studyId!!)
-        }
-        return@switchMap MutableLiveData<Study?>().apply { value = null }
-    })
+    private val availableConfigs: LiveData<List<Config>> = configDao.getAllConfigs()
 
     // Wrap Dao LiveData
     fun getAllConfigs(): LiveData<List<Config>> {
@@ -65,10 +45,6 @@ class ConfigRepository(application: Application, injectedDatabase: ConfigRoomDat
         return availableConfigs
     }
 
-    fun getStudy(): LiveData<Study?> {
-        return study
-    }
-
     fun getConfig(configId: String): LiveData<Config> {
         return configDao.getConfig(configId)
     }
@@ -77,15 +53,7 @@ class ConfigRepository(application: Application, injectedDatabase: ConfigRoomDat
         return resolvedConfigDao.getConfig(configId)
     }
 
-    fun getEnumerations(studyId: String): LiveData<List<ResolvedEnumeration>> {
-        return studyDao.getEnumerations(studyId)
-    }
-
-    fun getEnumerationsSync(studyId: String): List<Enumeration> {
-        return studyDao.getEnumerationsSync(studyId)
-    }
-
-    fun getResolvedConfigSync(configId: String): List<ResolvedConfig> {
+    fun getResolvedConfigSync(configId: String): ResolvedConfig {
         return resolvedConfigDao.getConfigSync(configId)
     }
 
@@ -138,52 +106,12 @@ class ConfigRepository(application: Application, injectedDatabase: ConfigRoomDat
         DuplicateAsyncTask(configDao).execute(Triple(config, newName, callback))
     }
 
-    fun insertStudy(sourceConfig: Config, name: String, studyPassword: String, callback: (configId: String, studyId: String) -> Unit) {
-        val insertStudy = Study(name, studyPassword, Date())
-        InsertStudyAsyncTask(studyDao).execute(InsertStudyInput(insertStudy, sourceConfig.id, callback))
-    }
-
     fun deleteConfig(config: Config, callback: () -> Unit) {
         DeleteAsyncTask(configDao).execute(Pair(config, callback))
     }
 
-    fun insertEnumerationItem(item: Enumeration, customFieldValues: List<org.taskforce.episample.core.interfaces.CustomFieldValue>, callback: (enumerationId: String) -> Unit) {
-        val dbValues = customFieldValues.map {
-            return@map CustomFieldValue.makeDBCustomFieldValue(it, item.id)
-        }
-        InsertEnumerationTask(studyDao).execute(Triple(item, dbValues, callback))
-    }
-
-    fun updateEnumerationItem(item: Enumeration, customFieldValues: List<CustomFieldValue>, callback: () -> Unit) {
-        UpdateEnumerationTask(studyDao).execute(Triple(item, customFieldValues, callback))
-    }
-
-    fun insertLandmarkItem(item: Landmark, callback: (landmarkId: String) -> Unit) {
-        InsertLandmarkTask(studyDao).execute(Pair(item, callback))
-    }
-
-    fun updateLandmark(landmark: Landmark, callback: () -> Unit) {
-        UpdateLandmarkTask(studyDao).execute(Pair(landmark, callback))
-    }
-
-    fun addBreadcrumb(breadcrumb: GpsBreadcrumb, callback: (breadcrumbId: String) -> Unit) {
-        InsertBreadcrumbTask(studyDao).execute(Pair(breadcrumb, callback))
-    }
-
-    fun getResolvedEnumerationsSync(studyId: String): List<ResolvedEnumeration> {
-        return studyDao.getResolvedEnumerationsSync(studyId)
-    }
-
-    fun getLandmarks(studyId: String): LiveData<List<Landmark>> {
-        return studyDao.getLandmarks(studyId)
-    }
-
-    fun getBreadcrumbs(studyId: String): LiveData<List<GpsBreadcrumb>> {
-        return studyDao.getBreadcrumbs(studyId)
-    }
-
-    fun getCustomLandmarkTypes(configId: String): LiveData<List<CustomLandmarkType>> {
-        return studyDao.getCustomLandmarkTypes(configId)
+    fun insertStudy(sourceConfig: ResolvedConfig, name: String, studyPassword: String, callback: (configId: String, studyId: String) -> Unit) {
+        studyRepository.insertStudy(sourceConfig, name, studyPassword, callback)
     }
 }
 
@@ -215,59 +143,6 @@ private class InsertConfigAsyncTask(private val asyncTaskDao: ConfigDao) : Async
     }
 }
 
-private class InsertEnumerationTask(private val studyDao: StudyDao) : AsyncTask<Triple<Enumeration, List<CustomFieldValue>, (enumerationId: String) -> Unit>, Void, Void>() {
-    override fun doInBackground(vararg params: Triple<Enumeration, List<CustomFieldValue>, (enumerationId: String) -> Unit>): Void? {
-        val enumerationItem = params[0].first
-        val customFieldValues = params[0].second
-        val callback = params[0].third
-        studyDao.insert(enumerationItem, customFieldValues)
-        callback(enumerationItem.id)
-        return null
-    }
-}
-
-private class UpdateEnumerationTask(private val studyDao: StudyDao) : AsyncTask<Triple<Enumeration, List<CustomFieldValue>, () -> Unit>, Void, Void>() {
-    override fun doInBackground(vararg params: Triple<Enumeration, List<CustomFieldValue>, () -> Unit>): Void? {
-        val enumerationItem = params[0].first
-        val customFieldValues = params[0].second
-        val callback = params[0].third
-        studyDao.update(enumerationItem, customFieldValues)
-        callback()
-        return null
-    }
-}
-
-private class InsertLandmarkTask(private val studyDao: StudyDao) : AsyncTask<Pair<Landmark, (landmarkId: String) -> Unit>, Void, Void>() {
-    override fun doInBackground(vararg params: Pair<Landmark, (landmarkId: String) -> Unit>): Void? {
-        val landmark = params[0].first
-        val callback = params[0].second
-        studyDao.insert(landmark)
-        callback(landmark.id)
-        return null
-    }
-}
-
-private class UpdateLandmarkTask(private val studyDao: StudyDao) : AsyncTask<Pair<Landmark, () -> Unit>, Void, Void>() {
-    override fun doInBackground(vararg params: Pair<Landmark, () -> Unit>): Void? {
-        val landmark = params[0].first
-        val callback = params[0].second
-        studyDao.update(landmark)
-        callback()
-        return null
-    }
-}
-
-private class InsertBreadcrumbTask(private val studyDao: StudyDao) : AsyncTask<Pair<GpsBreadcrumb, (breadcrumbId: String) -> Unit>, Void, Void>() {
-    override fun doInBackground(vararg params: Pair<GpsBreadcrumb, (breadcrumbId: String) -> Unit>): Void? {
-        val breadcrumb = params[0].first
-        val callback = params[0].second
-        studyDao.insert(breadcrumb)
-        callback(breadcrumb.id)
-        return null
-    }
-}
-
-
 private class DeleteAsyncTask(private val asyncTaskDao: ConfigDao) : AsyncTask<Pair<Config, () -> Unit>, Void, Void>() {
     override fun doInBackground(vararg params: Pair<Config, () -> Unit>): Void? {
         val config = params[0].first
@@ -285,22 +160,6 @@ private class DuplicateAsyncTask(private val asyncTaskDao: ConfigDao) : AsyncTas
         val callback = params[0].third
 
         callback(asyncTaskDao.duplicate(originalConfig, newName))
-        return null
-    }
-}
-
-private data class InsertStudyInput(val study: Study,
-                                    val sourceConfigId: String,
-                                    val callback: (configId: String, studyId: String) -> Unit)
-
-private class InsertStudyAsyncTask(private val studyDao: StudyDao) : AsyncTask<InsertStudyInput, Void, Void>() {
-    override fun doInBackground(vararg params: InsertStudyInput): Void? {
-        val study = params[0].study
-        val sourceConfigId = params[0].sourceConfigId
-        val callback = params[0].callback
-
-        val configId = studyDao.insert(study, sourceConfigId)
-        callback(configId, study.id)
         return null
     }
 }

@@ -3,12 +3,15 @@ package org.taskforce.episample.db.config
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
 import org.taskforce.episample.db.collect.*
+import org.taskforce.episample.db.collect.Enumeration
 import org.taskforce.episample.db.config.customfield.CustomFieldDao
 import org.taskforce.episample.db.config.customfield.CustomFieldValue
+import org.taskforce.episample.db.config.customfield.CustomFieldValueDao
 import org.taskforce.episample.db.config.landmark.CustomLandmarkType
+import java.util.*
 
 @Dao
-abstract class StudyDao : ConfigDao(), CustomFieldDao, ResolvedEnumerationDao {
+abstract class StudyDao : ConfigDao(), CustomFieldDao, ResolvedEnumerationDao, CustomFieldValueDao {
 
     @Insert
     abstract fun insert(study: Study)
@@ -27,6 +30,9 @@ abstract class StudyDao : ConfigDao(), CustomFieldDao, ResolvedEnumerationDao {
 
     @Query("SELECT * FROM study_table")
     abstract fun getAllStudiesSync(): List<Study>
+
+    @Query("SELECT * FROM study_table")
+    abstract fun getAllStudies(): LiveData<List<Study>>
 
     @Query("SELECT * FROM study_table WHERE id LIKE :studyId")
     abstract fun getStudy(studyId: String): LiveData<Study>
@@ -68,11 +74,44 @@ abstract class StudyDao : ConfigDao(), CustomFieldDao, ResolvedEnumerationDao {
     }
 
     @Transaction
-    open fun insert(study: Study, sourceConfigId: String): String {
-        insert(study)
+    open fun insert(studyId: String, studyName: String, studyPassword: String, sourceConfig: ResolvedConfig): String {
 
-        val sourceConfig = getConfigSync(sourceConfigId)
+        val insertConfig = Config(sourceConfig.name)
 
-        return duplicate(sourceConfig, sourceConfig.name, study.id)
+        val adminSettings = sourceConfig.adminSettings.apply {
+            this.configId = insertConfig.id
+        }
+        val enumerationSubject = sourceConfig.enumerationSubject.apply {
+            this.configId = insertConfig.id
+        }
+        val userSettings = sourceConfig.userSettings.apply {
+            this.configId = insertConfig.id
+        }
+        val displaySettings = sourceConfig.displaySettings.apply {
+            this.configId = insertConfig.id
+        }
+
+        val customFields = sourceConfig.customFields
+        customFields.forEach {
+            it.id = UUID.randomUUID().toString()
+            it.configId = insertConfig.id
+        }
+
+        val landmarkTypes = sourceConfig.customLandmarkTypes
+        landmarkTypes.forEach {
+            it.id = UUID.randomUUID().toString()
+            it.configId = insertConfig.id
+        }
+
+        insert(insertConfig,
+                customFields,
+                landmarkTypes,
+                adminSettings,
+                enumerationSubject,
+                userSettings,
+                displaySettings)
+        insert(Study(studyName, studyPassword, configId = insertConfig.id, id = studyId))
+
+        return insertConfig.id
     }
 }

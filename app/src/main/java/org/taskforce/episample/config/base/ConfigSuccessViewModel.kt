@@ -8,6 +8,7 @@ import android.view.View
 import org.taskforce.episample.R
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.db.ConfigRepository
+import org.taskforce.episample.db.StudyRepository
 
 class ConfigSuccessViewModel(
         application: Application,
@@ -23,7 +24,8 @@ class ConfigSuccessViewModel(
     var insertedConfigId: String? = null
 
     val configRepository = ConfigRepository(getApplication())
-    val study = configRepository.getStudy()
+    val studyRepository = StudyRepository(getApplication())
+    val study = studyRepository.getStudy()
 
     val shareClickable = MutableLiveData<Boolean>().apply { value = false }
     val createStudyClickable = MutableLiveData<Boolean>().apply { value = false }

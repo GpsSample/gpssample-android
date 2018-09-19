@@ -8,17 +8,6 @@ import android.arch.persistence.room.Update
 
 @Dao
 interface CustomFieldDao {
-    @Insert
-    fun insert(customFieldValue: CustomFieldValue)
-
-    @Insert
-    fun insert(vararg customFieldValue: CustomFieldValue)
-
-    @Update
-    fun update(customFieldValue: CustomFieldValue)
-
-    @Update
-    fun update(vararg customFieldValue: CustomFieldValue)
 
     @Query("SELECT * from custom_field_table WHERE id LIKE :customFieldId")
     fun getField(customFieldId: String): LiveData<List<CustomField>>
@@ -31,6 +20,21 @@ interface CustomFieldDao {
 
     @Query("SELECT * from custom_field_table WHERE config_id LIKE :configId")
     fun getFieldsByConfigSync(configId: String): List<CustomField>
+}
+
+@Dao
+interface CustomFieldValueDao {
+    @Insert
+    fun insert(customFieldValue: CustomFieldValue)
+
+    @Insert
+    fun insert(vararg customFieldValue: CustomFieldValue)
+
+    @Update
+    fun update(customFieldValue: CustomFieldValue)
+
+    @Update
+    fun update(vararg customFieldValue: CustomFieldValue)
 
     @Query("SELECT * from custom_field_value_table WHERE id LIKE :customFieldValueId")
     fun getFieldValue(customFieldValueId: String): LiveData<List<CustomFieldValue>>

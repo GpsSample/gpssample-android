@@ -8,16 +8,12 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.taskforce.episample.db.ConfigRoomDatabase
+import org.taskforce.episample.db.StudyRoomDatabase
 import org.taskforce.episample.db.collect.ResolvedEnumerationDao
 import org.taskforce.episample.db.config.ConfigDao
 import org.taskforce.episample.db.config.ResolvedConfigDao
-import org.taskforce.episample.db.config.Study
 import org.taskforce.episample.db.config.StudyDao
-import org.taskforce.episample.db.config.customfield.CustomField
-import org.taskforce.episample.db.config.customfield.CustomFieldDao
-import org.taskforce.episample.db.config.customfield.CustomFieldType
-import org.taskforce.episample.db.config.customfield.CustomFieldValue
+import org.taskforce.episample.db.config.customfield.*
 import org.taskforce.episample.db.config.customfield.metadata.CustomDropdown
 import org.taskforce.episample.db.config.customfield.metadata.DropdownMetadata
 import org.taskforce.episample.db.config.customfield.value.DropdownValue
@@ -39,15 +35,17 @@ class DropdownFilterEnumerationTest {
     private var resolvedConfigDao: ResolvedConfigDao? = null
     private var studyDao: StudyDao? = null
     private var customFieldDao: CustomFieldDao? = null
+    private var customFieldValueDao: CustomFieldValueDao? = null
     private var resolvedEnumerationDao: ResolvedEnumerationDao? = null
-    private var db: ConfigRoomDatabase? = null
+    private var db: StudyRoomDatabase? = null
+
     lateinit var studyId: String
     lateinit var customField: CustomField
 
     @Before
     fun createDb() {
         val context = InstrumentationRegistry.getTargetContext()
-        db = Room.inMemoryDatabaseBuilder(context, ConfigRoomDatabase::class.java).build()
+        db = Room.inMemoryDatabaseBuilder(context, StudyRoomDatabase::class.java).build()
         configDao = db?.configDao()
         studyDao = db?.studyDao()
         resolvedConfigDao = db?.resolvedConfigDao()
@@ -57,10 +55,10 @@ class DropdownFilterEnumerationTest {
         val insertConfigId = UUID.randomUUID().toString()
         setupConfig(configDao!!, insertConfigId)
 
+        val resolvedConfig = resolvedConfigDao!!.getConfigSync(insertConfigId)
         studyId = UUID.randomUUID().toString()
 
-        val insertStudy = Study("Study 1", "Study Password", id = studyId)
-        studyDao?.insert(insertStudy, insertConfigId)
+        val studyConfigId = studyDao!!.insert(studyId, "Study 1", "Study Password", resolvedConfig)
 
         customField = makeCustomField("some dropdown",
                 CustomFieldType.DROPDOWN,
@@ -70,24 +68,21 @@ class DropdownFilterEnumerationTest {
                                 nonFilterValue
                         )
                 ),
-                insertConfigId
+                studyConfigId
         )
 
         configDao?.insert(customField)
 
         for (i in 1..10) {
             val enumerationId = UUID.randomUUID().toString()
-            val insertEnumeration = makeEnumeration(studyId, enumerationId)
-            studyDao?.insert(insertEnumeration)
-
             val dropdownValue = DropdownValue(if (i % 5 == 0) filterValue.key else nonFilterValue.key)
-
             val insertFieldValue = CustomFieldValue(dropdownValue,
                     CustomFieldType.CHECKBOX,
                     enumerationId,
                     customField.id)
 
-            customFieldDao?.insert(insertFieldValue)
+            val insertEnumeration = makeEnumeration(studyId, enumerationId)
+            studyDao?.insert(insertEnumeration, listOf(insertFieldValue))
         }
     }
 

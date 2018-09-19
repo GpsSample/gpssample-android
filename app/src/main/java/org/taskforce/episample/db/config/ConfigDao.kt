@@ -101,8 +101,8 @@ abstract class ConfigDao : CustomFieldDao {
     }
 
     @Transaction
-    open fun duplicate(sourceConfig: Config, newName: String, studyId: String? = null): String {
-        val insertConfig = Config(newName, studyId = studyId)
+    open fun duplicate(sourceConfig: Config, newName: String): String {
+        val insertConfig = Config(newName)
 
         val adminSettings = getAdminSettingsSync(sourceConfig.id)?.apply {
             this.configId = insertConfig.id

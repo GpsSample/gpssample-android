@@ -42,5 +42,5 @@ abstract class ResolvedConfigDao {
     abstract fun getConfig(configId: String): LiveData<ResolvedConfig>
 
     @Query("SELECT * from config_table c INNER JOIN display_settings_table ds ON ds.display_settings_config_id = c.id INNER JOIN user_settings_table us ON us.user_settings_config_id = c.id INNER JOIN admin_settings_table a ON a.admin_settings_config_id = c.id INNER JOIN enumeration_subject_table e ON e.enumeration_subject_config_id = c.id WHERE c.id LIKE :configId")
-    abstract fun getConfigSync(configId: String): List<ResolvedConfig>
+    abstract fun getConfigSync(configId: String): ResolvedConfig
 }

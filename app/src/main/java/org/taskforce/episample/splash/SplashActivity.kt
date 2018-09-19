@@ -36,10 +36,10 @@ class SplashActivity : FragmentActivity() {
 
         Fabric.with(this, crashlyticsKit)
 
-        viewModel.studyConfig.observe(this, Observer { config ->
+        viewModel.study.observe(this, Observer { study ->
             if (permissionManager.allPermissions) {
-                if (config != null) {
-                    LoginActivity.startActivity(this, config.id, config.studyId!!)
+                if (study != null) {
+                    LoginActivity.startActivity(this, study.configId, study.id)
                 } else {
                     ConfigActivity.startActivity(this)
                 }

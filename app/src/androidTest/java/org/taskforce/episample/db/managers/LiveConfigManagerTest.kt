@@ -16,6 +16,8 @@ import org.taskforce.episample.core.BuiltInLandmark
 import org.taskforce.episample.core.interfaces.ConfigManager
 import org.taskforce.episample.db.ConfigRepository
 import org.taskforce.episample.db.ConfigRoomDatabase
+import org.taskforce.episample.db.StudyRepository
+import org.taskforce.episample.db.StudyRoomDatabase
 import org.taskforce.episample.db.utils.CommonSetup
 import org.taskforce.episample.db.utils.blockingObserve
 import org.taskforce.episample.managers.LiveConfigManager
@@ -26,8 +28,10 @@ import java.io.IOException
 class LiveConfigManagerTest {
 
     private var configRepository: ConfigRepository? = null
+    private var studyRepository: StudyRepository? = null
     private var configManager: ConfigManager? = null
-    private var db: ConfigRoomDatabase? = null
+    private var configDb: ConfigRoomDatabase? = null
+    private var studyDb: StudyRoomDatabase? = null
 
     private val customLandmarkSource = listOf(
             Config.CustomLandmarkTypeInput("Name 1", "Location 1"),
@@ -39,15 +43,18 @@ class LiveConfigManagerTest {
 
     @Before
     fun createDb() {
-        db = Room.inMemoryDatabaseBuilder(context, ConfigRoomDatabase::class.java).build()
-        configRepository = ConfigRepository(context.applicationContext as Application, db)
+        configDb = Room.inMemoryDatabaseBuilder(context, ConfigRoomDatabase::class.java).build()
+        studyDb = Room.inMemoryDatabaseBuilder(context, StudyRoomDatabase::class.java).build()
+        configRepository = ConfigRepository(context.applicationContext as Application, configDb, studyDb)
+        studyRepository = StudyRepository(context.applicationContext as Application, studyDb)
 
         val syncObject = Object()
 
         CommonSetup.setupConfigAndStudy(configRepository!!,
+                studyRepository!!,
                 customLandmarkTypes = customLandmarkSource,
                 callback = { configId, studyId ->
-                    configManager = LiveConfigManager(configRepository!!, configId)
+                    configManager = LiveConfigManager(studyRepository!!, configId)
 
                     synchronized(syncObject) {
                         syncObject.notify()
@@ -63,8 +70,10 @@ class LiveConfigManagerTest {
     @After
     @Throws(IOException::class)
     fun closeDb() {
-        db?.close()
+        configDb?.close()
+        studyDb?.close()
         configRepository = null
+        studyRepository = null
         configManager = null
     }
 

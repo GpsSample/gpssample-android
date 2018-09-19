@@ -6,6 +6,7 @@ import android.databinding.ObservableField
 import android.view.View
 import org.taskforce.episample.config.transfer.TransferManager
 import org.taskforce.episample.db.ConfigRepository
+import org.taskforce.episample.db.StudyRepository
 import org.taskforce.episample.db.config.Config
 
 class ConfigStartViewModel(application: Application,
@@ -16,10 +17,11 @@ class ConfigStartViewModel(application: Application,
                            transferManager: TransferManager) : AndroidViewModel(application) {
 
     val configRepository = ConfigRepository(getApplication())
+    val studyRepository = StudyRepository(getApplication())
     val availableConfigs = configRepository.getAvailableConfigs()
-    val allConfigs = configRepository.getAllConfigs()
+    val studyConfigs = studyRepository.getAllConfigs()
 
-    val study = configRepository.getStudy()
+    val study = studyRepository.getStudy()
 
     //    Header Text
     // TODO move formatting string here if we can get languageManager back without a leak
@@ -63,7 +65,7 @@ class ConfigStartViewModel(application: Application,
     }
 
     fun signIn(view: View) {
-        signIn.invoke(allConfigs.value!!.first { it.studyId == study.value?.id }, study.value!!.id)
+        signIn.invoke(studyConfigs.value!!.first { it.id == study.value?.configId }, study.value!!.id)
     }
 
     companion object {

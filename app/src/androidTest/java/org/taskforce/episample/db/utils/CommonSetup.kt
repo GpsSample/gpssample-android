@@ -6,6 +6,7 @@ import org.taskforce.episample.config.fields.CustomFieldTypeConstants
 import org.taskforce.episample.config.settings.admin.AdminSettings
 import org.taskforce.episample.core.interfaces.LiveEnumerationSubject
 import org.taskforce.episample.db.ConfigRepository
+import org.taskforce.episample.db.StudyRepository
 import org.taskforce.episample.db.collect.Enumeration
 import org.taskforce.episample.db.config.*
 import org.taskforce.episample.db.config.customfield.CustomField
@@ -53,6 +54,7 @@ class CommonSetup {
         }
 
         fun setupConfigAndStudy(configRepository: ConfigRepository,
+                                studyRepository: StudyRepository,
                                 configName: String = "Config 1",
                                 enumerationSingular: String = "Person",
                                 enumerationPlural: String = "People",
@@ -76,19 +78,18 @@ class CommonSetup {
             configBuilder.customLandmarkTypes = customLandmarkTypes
 
             configRepository.insertConfigFromBuildManager(configBuilder) {
-                val resolvedConfigs = configRepository.getResolvedConfigSync(it)
-                Assert.assertEquals(1, resolvedConfigs.size)
-
-                val config = configRepository.getConfigSync(it)
+                val config = configRepository.getResolvedConfigSync(it)
                 configRepository.insertStudy(config, "Study Name", "Study Password", callback)
             }
         }
 
-        fun setupEnumeration(configDao: ConfigDao, studyDao: StudyDao, enumerationId: String, configId: String, studyId: String = UUID.randomUUID().toString()) {
+        fun setupEnumeration(configDao: ConfigDao, resolvedConfigDao: ResolvedConfigDao, studyDao: StudyDao, enumerationId: String, configId: String, studyId: String = UUID.randomUUID().toString()) {
             setupConfig(configDao, configId)
 
-            val insertStudy = Study("Study 1", "Study Password", id = studyId)
-            studyDao.insert(insertStudy, configId)
+            val resolvedConfig = resolvedConfigDao.getConfigSync(configId)
+            val studyId = UUID.randomUUID().toString()
+
+            studyDao?.insert(studyId, "Study 1", "Study Password", resolvedConfig)
 
             val insertEnumeration = CommonSetup.makeEnumeration(studyId, enumerationId)
             studyDao.insert(insertEnumeration)
@@ -139,7 +140,7 @@ class CommonSetup {
             )
         }
 
-        fun setupConfig(configDao: ConfigDao, configId: String) {
+        fun setupConfig(configDao: ConfigDao, configId: String = UUID.randomUUID().toString()) {
             val insertConfig = Config("Config 1", id = configId)
             configDao.insert(
                     insertConfig,

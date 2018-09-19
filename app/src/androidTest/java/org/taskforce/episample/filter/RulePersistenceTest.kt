@@ -8,15 +8,11 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.taskforce.episample.db.ConfigRoomDatabase
+import org.taskforce.episample.db.StudyRoomDatabase
 import org.taskforce.episample.db.config.ConfigDao
 import org.taskforce.episample.db.config.ResolvedConfigDao
-import org.taskforce.episample.db.config.Study
 import org.taskforce.episample.db.config.StudyDao
-import org.taskforce.episample.db.config.customfield.CustomField
-import org.taskforce.episample.db.config.customfield.CustomFieldDao
-import org.taskforce.episample.db.config.customfield.CustomFieldType
-import org.taskforce.episample.db.config.customfield.CustomFieldValue
+import org.taskforce.episample.db.config.customfield.*
 import org.taskforce.episample.db.config.customfield.metadata.NumberMetadata
 import org.taskforce.episample.db.filter.Filter
 import org.taskforce.episample.db.filter.Rule
@@ -33,8 +29,9 @@ class RulePersistenceTest {
     private var configDao: ConfigDao? = null
     private var resolvedConfigDao: ResolvedConfigDao? = null
     private var customFieldDao: CustomFieldDao? = null
+    private var customFieldValueDao: CustomFieldValueDao? = null
     private var ruleDao: RuleDao? = null
-    private var db: ConfigRoomDatabase? = null
+    private var db: StudyRoomDatabase? = null
     lateinit var studyId: String
     private var studyDao: StudyDao? = null
     lateinit var customField: CustomField
@@ -45,12 +42,13 @@ class RulePersistenceTest {
     @Before
     fun createDb() {
         val context = InstrumentationRegistry.getTargetContext()
-        db = Room.inMemoryDatabaseBuilder(context, ConfigRoomDatabase::class.java).build()
+        db = Room.inMemoryDatabaseBuilder(context, StudyRoomDatabase::class.java).build()
         configDao = db?.configDao()
         ruleDao = db?.ruleDao()
         studyDao = db?.studyDao()
         resolvedConfigDao = db?.resolvedConfigDao()
         customFieldDao = db?.customFieldDao()
+        customFieldValueDao = db?.customFieldValueDao()
 
         CommonSetup.setupConfig(configDao!!, configId)
 
@@ -68,10 +66,10 @@ class RulePersistenceTest {
 
         ruleDao?.insert(greaterThanRule.toRecord(ruleSet.id))
 
+        val resolvedConfig = resolvedConfigDao!!.getConfigSync(configId)
         studyId = UUID.randomUUID().toString()
 
-        val insertStudy = Study("Study 1", "Study Password", id = studyId)
-        studyDao?.insert(insertStudy, configId)
+        studyDao?.insert(studyId, "Study 1", "Study Password", resolvedConfig)
 
         for (i in 1..10) {
             val enumerationId = UUID.randomUUID().toString()
@@ -85,7 +83,7 @@ class RulePersistenceTest {
                     enumerationId,
                     customField.id)
 
-            customFieldDao?.insert(insertFieldValue)
+            customFieldValueDao?.insert(insertFieldValue)
         }
     }
 

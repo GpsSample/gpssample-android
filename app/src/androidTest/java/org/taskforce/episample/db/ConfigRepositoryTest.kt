@@ -2,7 +2,6 @@ package org.taskforce.episample.db
 
 import android.app.Application
 import android.arch.persistence.room.Room
-import android.os.Bundle
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import junit.framework.Assert.assertEquals
@@ -15,27 +14,25 @@ import org.taskforce.episample.config.fields.CustomFieldTypeConstants
 import org.taskforce.episample.config.settings.admin.AdminSettings
 import org.taskforce.episample.config.settings.display.DisplaySettings
 import org.taskforce.episample.config.settings.user.UserSettings
-import org.taskforce.episample.core.interfaces.LiveCustomFieldValue
 import org.taskforce.episample.core.interfaces.LiveEnumerationSubject
-import org.taskforce.episample.core.navigation.SurveyStatus
-import org.taskforce.episample.db.collect.Enumeration
-import org.taskforce.episample.db.config.EnumerationSubject
 import org.taskforce.episample.db.config.customfield.CustomFieldType
-import org.taskforce.episample.db.config.customfield.value.IntValue
-import org.taskforce.episample.db.utils.CommonSetup
 import java.io.IOException
 
 @RunWith(AndroidJUnit4::class)
 class ConfigRepositoryTest {
 
     private var configRepository: ConfigRepository? = null
+    private var studyRepository: StudyRepository? = null
+    private var studyDb: StudyRoomDatabase? = null
     private var db: ConfigRoomDatabase? = null
 
     @Before
     fun createDb() {
         val context = InstrumentationRegistry.getTargetContext()
         db = Room.inMemoryDatabaseBuilder(context, ConfigRoomDatabase::class.java).build()
-        configRepository = ConfigRepository(context.applicationContext as Application, db)
+        studyDb = Room.inMemoryDatabaseBuilder(context, StudyRoomDatabase::class.java).build()
+        configRepository = ConfigRepository(context.applicationContext as Application, db, studyDb)
+        studyRepository = StudyRepository(context.applicationContext as Application, studyDb)
     }
 
     @After
@@ -64,15 +61,14 @@ class ConfigRepositoryTest {
                 false, null, false, false, null, false, false, null)
 
         configRepository?.insertConfigFromBuildManager(configBuilder) {
-            val resolvedConfigs = configRepository!!.getResolvedConfigSync(it)
-            assertEquals(1, resolvedConfigs.size)
-            assertEquals(configName, resolvedConfigs[0].name)
-            assertEquals(adminPassword, resolvedConfigs[0].adminSettings.password)
-            assertEquals(enumerationSingular, resolvedConfigs[0].enumerationSubject.singular)
-            assertEquals(enumerationPlural, resolvedConfigs[0].enumerationSubject.plural)
-            assertEquals(enumerationLabel, resolvedConfigs[0].enumerationSubject.primaryLabel)
-            assertEquals(gpsMinimumPrecision, resolvedConfigs[0].userSettings.gpsMinimumPrecision)
-            assertEquals(gpsPreferredPrecision, resolvedConfigs[0].userSettings.gpsPreferredPrecision)
+            val resolvedConfig = configRepository!!.getResolvedConfigSync(it)
+            assertEquals(configName, resolvedConfig.name)
+            assertEquals(adminPassword, resolvedConfig.adminSettings.password)
+            assertEquals(enumerationSingular, resolvedConfig.enumerationSubject.singular)
+            assertEquals(enumerationPlural, resolvedConfig.enumerationSubject.plural)
+            assertEquals(enumerationLabel, resolvedConfig.enumerationSubject.primaryLabel)
+            assertEquals(gpsMinimumPrecision, resolvedConfig.userSettings.gpsMinimumPrecision)
+            assertEquals(gpsPreferredPrecision, resolvedConfig.userSettings.gpsPreferredPrecision)
 
             synchronized(syncObject) {
                 syncObject.notify()
@@ -111,98 +107,39 @@ class ConfigRepositoryTest {
         configBuilder.displaySettings = DisplaySettings(isMetricDate, is24HourTime)
 
         configRepository?.insertConfigFromBuildManager(configBuilder) {
-            val resolvedConfigs = configRepository!!.getResolvedConfigSync(it)
-            assertEquals(1, resolvedConfigs.size)
-            assertEquals(configName, resolvedConfigs[0].name)
-            assertEquals(adminPassword, resolvedConfigs[0].adminSettings.password)
-            assertEquals(enumerationSingular, resolvedConfigs[0].enumerationSubject.singular)
-            assertEquals(enumerationSingular, resolvedConfigs[0].enumerationSubject.singular)
-            assertEquals(enumerationPlural, resolvedConfigs[0].enumerationSubject.plural)
-            assertEquals(enumerationLabel, resolvedConfigs[0].enumerationSubject.primaryLabel)
-            assertEquals(gpsMinimumPrecision, resolvedConfigs[0].userSettings.gpsMinimumPrecision)
-            assertEquals(gpsPreferredPrecision, resolvedConfigs[0].userSettings.gpsPreferredPrecision)
-            assertEquals(isMetricDate, resolvedConfigs[0].displaySettings.isMetricDate)
-            assertEquals(is24HourTime, resolvedConfigs[0].displaySettings.is24HourTime)
-            assertEquals(true, resolvedConfigs[0].customFields[0].isRequired)
-            val config = configRepository!!.getConfigSync(it)
+            val resolvedConfig = configRepository!!.getResolvedConfigSync(it)
+            assertEquals(configName, resolvedConfig.name)
+            assertEquals(adminPassword, resolvedConfig.adminSettings.password)
+            assertEquals(enumerationSingular, resolvedConfig.enumerationSubject.singular)
+            assertEquals(enumerationSingular, resolvedConfig.enumerationSubject.singular)
+            assertEquals(enumerationPlural, resolvedConfig.enumerationSubject.plural)
+            assertEquals(enumerationLabel, resolvedConfig.enumerationSubject.primaryLabel)
+            assertEquals(gpsMinimumPrecision, resolvedConfig.userSettings.gpsMinimumPrecision)
+            assertEquals(gpsPreferredPrecision, resolvedConfig.userSettings.gpsPreferredPrecision)
+            assertEquals(isMetricDate, resolvedConfig.displaySettings.isMetricDate)
+            assertEquals(is24HourTime, resolvedConfig.displaySettings.is24HourTime)
+            assertEquals(true, resolvedConfig.customFields[0].isRequired)
 
-            configRepository?.insertStudy(config, "Study Name", "Study Password") { configId, _ ->
+            configRepository?.insertStudy(resolvedConfig, "Study Name", "Study Password") { configId, _ ->
 
-                val resolvedConfigsStudyConfig = configRepository!!.getResolvedConfigSync(configId)
-                val resolvedConfig = resolvedConfigsStudyConfig.first()
-                assertEquals(1, resolvedConfigsStudyConfig.size)
-                assertEquals(configName, resolvedConfig.name)
-                assertEquals(adminPassword, resolvedConfig.adminSettings.password)
-                assertEquals(enumerationSingular, resolvedConfig.enumerationSubject.singular)
-                assertEquals(enumerationSingular, resolvedConfig.enumerationSubject.singular)
-                assertEquals(enumerationPlural, resolvedConfig.enumerationSubject.plural)
-                assertEquals(enumerationLabel, resolvedConfig.enumerationSubject.primaryLabel)
+                val resolvedStudyConfig = studyRepository!!.getResolvedConfigSync(configId)
 
-                assertEquals(gpsMinimumPrecision, resolvedConfig.userSettings.gpsMinimumPrecision)
-                assertEquals(gpsPreferredPrecision, resolvedConfig.userSettings.gpsPreferredPrecision)
-                assertEquals(isMetricDate, resolvedConfig.displaySettings.isMetricDate)
-                assertEquals(is24HourTime, resolvedConfig.displaySettings.is24HourTime)
+                assertEquals(configName, resolvedStudyConfig.name)
+                assertEquals(adminPassword, resolvedStudyConfig.adminSettings.password)
+                assertEquals(enumerationSingular, resolvedStudyConfig.enumerationSubject.singular)
+                assertEquals(enumerationSingular, resolvedStudyConfig.enumerationSubject.singular)
+                assertEquals(enumerationPlural, resolvedStudyConfig.enumerationSubject.plural)
+                assertEquals(enumerationLabel, resolvedStudyConfig.enumerationSubject.primaryLabel)
+
+                assertEquals(gpsMinimumPrecision, resolvedStudyConfig.userSettings.gpsMinimumPrecision)
+                assertEquals(gpsPreferredPrecision, resolvedStudyConfig.userSettings.gpsPreferredPrecision)
+                assertEquals(isMetricDate, resolvedStudyConfig.displaySettings.isMetricDate)
+                assertEquals(is24HourTime, resolvedStudyConfig.displaySettings.is24HourTime)
 
                 synchronized(syncObject) {
                     syncObject.notify()
                 }
             }
-        }
-
-        synchronized(syncObject) {
-            syncObject.wait()
-        }
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun insertReadUpdateEnumerations() {
-        val syncObject = Object()
-        val expectedLat = 121.0
-        val expectedLng = 133.1231
-        val expectedNumberFieldValue = 20
-
-        val integerCustomField = CustomField(true, true, true, true, true, "Custom Number", CustomFieldType.NUMBER,
-                mapOf(CustomFieldTypeConstants.INTEGER_ONLY to true))
-
-        CommonSetup.setupConfigAndStudy(configRepository!!, customFields = listOf(integerCustomField)) { configId, studyId ->
-
-            val resolvedConfig = configRepository!!.getResolvedConfigSync(configId).first()
-            val enumeration = Enumeration("Jesse",
-                    expectedLat, expectedLng, null, true, false, 25.12, studyId, null, null)
-
-            val customFieldValues = listOf(
-                    LiveCustomFieldValue(
-                            IntValue(expectedNumberFieldValue),
-                            CustomFieldType.NUMBER,
-                            resolvedConfig.customFields.first().id
-                    )
-            )
-
-            configRepository!!.insertEnumerationItem(enumeration, customFieldValues, {
-
-                val enumerations = configRepository!!.getResolvedEnumerationsSync(studyId)
-                val dbCustomFieldValues = enumerations.first().customFieldValues
-
-                assertEquals(expectedLat, enumerations.first().lat)
-                assertEquals(expectedLng, enumerations.first().lng)
-                val intValue = enumerations.first().customFieldValues.first().value as IntValue
-                assertEquals(expectedNumberFieldValue, intValue.intValue)
-
-                enumeration.collectorName = "New collector name"
-                (dbCustomFieldValues.first().value as IntValue).intValue = 10
-
-                configRepository!!.updateEnumerationItem(enumeration, dbCustomFieldValues, {
-
-                    val updatedEnumeration = configRepository!!.getResolvedEnumerationsSync(studyId)
-                    val intValue = updatedEnumeration.first().customFieldValues[0].value as IntValue
-                    assertEquals(10, intValue.intValue)
-                    assertEquals("New collector name", updatedEnumeration.first().collectorName)
-                    synchronized(syncObject) {
-                        syncObject.notify()
-                    }
-                })
-            })
         }
 
         synchronized(syncObject) {

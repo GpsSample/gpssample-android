@@ -17,6 +17,8 @@ import org.taskforce.episample.core.BuiltInLandmark
 import org.taskforce.episample.core.interfaces.*
 import org.taskforce.episample.db.ConfigRepository
 import org.taskforce.episample.db.ConfigRoomDatabase
+import org.taskforce.episample.db.StudyRepository
+import org.taskforce.episample.db.StudyRoomDatabase
 import org.taskforce.episample.db.config.LiveCollectManager
 import org.taskforce.episample.db.config.customfield.CustomFieldType
 import org.taskforce.episample.db.config.customfield.value.TextValue
@@ -30,9 +32,11 @@ import java.io.IOException
 class LiveCollectManagerTest {
 
     private var configRepository: ConfigRepository? = null
+    private var studyRepository: StudyRepository? = null
     private var configManager: ConfigManager? = null
     private var collectManager: CollectManager? = null
-    private var db: ConfigRoomDatabase? = null
+    private var configDb: ConfigRoomDatabase? = null
+    private var studyDb: StudyRoomDatabase? = null
 
     private val customLandmarkSource = listOf(
             Config.CustomLandmarkTypeInput("Name 1", "Location 1"),
@@ -49,19 +53,22 @@ class LiveCollectManagerTest {
 
     @Before
     fun createDb() {
-        db = Room.inMemoryDatabaseBuilder(context, ConfigRoomDatabase::class.java).build()
-        configRepository = ConfigRepository(context.applicationContext as Application, db)
+        configDb = Room.inMemoryDatabaseBuilder(context, ConfigRoomDatabase::class.java).build()
+        studyDb = Room.inMemoryDatabaseBuilder(context, StudyRoomDatabase::class.java).build()
+        configRepository = ConfigRepository(context.applicationContext as Application, configDb, studyDb)
+        studyRepository = StudyRepository(context.applicationContext as Application, studyDb)
 
 
         val syncObject = Object()
 
         CommonSetup.setupConfigAndStudy(configRepository!!,
+                studyRepository!!,
                 customFields = customFieldSource,
                 customLandmarkTypes = customLandmarkSource,
                 callback = { configId, studyId ->
-                    configManager = LiveConfigManager(configRepository!!, configId)
+                    configManager = LiveConfigManager(studyRepository!!, configId)
                     collectManager = LiveCollectManager(context.applicationContext as Application,
-                            configManager!!, configRepository!!, LiveUserSession("Jesse", false, configId, studyId))
+                            configManager!!, studyRepository!!, LiveUserSession("Jesse", false, configId, studyId))
                     synchronized(syncObject) {
                         syncObject.notify()
                     }
@@ -74,8 +81,10 @@ class LiveCollectManagerTest {
     @After
     @Throws(IOException::class)
     fun closeDb() {
-        db?.close()
+        configDb?.close()
+        studyDb?.close()
         configRepository = null
+        studyRepository = null
         configManager = null
     }
 

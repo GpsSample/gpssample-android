@@ -1,23 +1,17 @@
 package org.taskforce.episample.auth
 
 import android.app.Application
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.Transformations
 import android.databinding.BaseObservable
 import android.databinding.Bindable
 import android.widget.ArrayAdapter
-import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.interfaces.Config
-import org.taskforce.episample.core.interfaces.ConfigManager
-import org.taskforce.episample.db.ConfigRepository
+import org.taskforce.episample.db.StudyRepository
 import org.taskforce.episample.db.config.ResolvedConfig
 import org.taskforce.episample.managers.LiveConfig
 import org.taskforce.episample.utils.bindDelegate
-import javax.inject.Inject
 
 class LoginViewModel(application: Application,
                      languageService: LanguageService,
@@ -27,8 +21,8 @@ class LoginViewModel(application: Application,
                      private val signInAsSupervisor: (name: String, config: Config) -> Unit,
                      private val displaysAdminLoginDialog: () -> Unit) : BaseObservable() {
 
-    val configRepository = ConfigRepository(application)
-    val configData = configRepository.getResolvedConfig(configId)
+    val studyRepository = StudyRepository(application)
+    val configData = studyRepository.getResolvedConfig(configId)
 
     val configObserver: Observer<ResolvedConfig> = Observer {
 

@@ -6,13 +6,14 @@ import android.content.Context
 import org.taskforce.episample.core.BuiltInLandmark
 import org.taskforce.episample.core.interfaces.*
 import org.taskforce.episample.db.ConfigRepository
+import org.taskforce.episample.db.StudyRepository
 import org.taskforce.episample.db.config.ResolvedConfig
 
-class LiveConfigManager(val configRepository: ConfigRepository,
+class LiveConfigManager(val studyRepository: StudyRepository,
                         override val configId: String): ConfigManager {
 
     override fun getConfig(context: Context): LiveData<Config> {
-        return Transformations.map(configRepository.getResolvedConfig(configId), {
+        return Transformations.map(studyRepository.getResolvedConfig(configId), {
             return@map org.taskforce.episample.managers.LiveConfig(context, it)
         })
     }

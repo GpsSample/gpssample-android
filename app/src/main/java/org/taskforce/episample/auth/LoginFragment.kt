@@ -12,6 +12,7 @@ import org.taskforce.episample.core.interfaces.LiveUserSession
 import org.taskforce.episample.core.ui.dialogs.TextInputDialogFragment
 import org.taskforce.episample.databinding.FragmentLoginBinding
 import org.taskforce.episample.db.ConfigRoomDatabase
+import org.taskforce.episample.db.StudyRoomDatabase
 import org.taskforce.episample.injection.CollectModule
 import org.taskforce.episample.main.MainActivity
 import org.taskforce.episample.toolbar.managers.LanguageManager
@@ -54,7 +55,7 @@ class LoginFragment : Fragment() {
                             val application = (requireActivity().application as EpiApplication)
                             application
                                     .createCollectComponent(CollectModule(application,
-                                            ConfigRoomDatabase.getDatabase(application),
+                                            StudyRoomDatabase.getDatabase(application),
                                             LiveUserSession(username = name,
                                                     isSupervisor = false,
                                                     studyId = studyId,
@@ -67,7 +68,7 @@ class LoginFragment : Fragment() {
                             val application = (requireActivity().application as EpiApplication)
                             application
                                     .createCollectComponent(CollectModule(application,
-                                            ConfigRoomDatabase.getDatabase(application),
+                                            StudyRoomDatabase.getDatabase(application),
                                             LiveUserSession(username = name,
                                                     isSupervisor = true,
                                                     studyId = studyId,

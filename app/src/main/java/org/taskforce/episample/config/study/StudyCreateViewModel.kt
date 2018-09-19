@@ -7,7 +7,9 @@ import android.arch.lifecycle.Observer
 import org.taskforce.episample.R
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.db.ConfigRepository
+import org.taskforce.episample.db.StudyRepository
 import org.taskforce.episample.db.config.Config
+import org.taskforce.episample.db.config.ResolvedConfig
 
 class StudyCreateViewModel(
         application: Application,
@@ -19,7 +21,7 @@ class StudyCreateViewModel(
         share: Boolean) : AndroidViewModel(application) {
 
     val configRepository = ConfigRepository(getApplication())
-    val configById = configRepository.getConfig(configId)
+    val configById = configRepository.getResolvedConfig(configId)
     val name = MutableLiveData<String>()
     var password = MutableLiveData<String>()
 
@@ -27,11 +29,11 @@ class StudyCreateViewModel(
         mapStateToView()
     }
 
-    val configObserver: Observer<Config> = Observer {
-        config = it
+    val configObserver: Observer<ResolvedConfig> = Observer {
+        resolvedConfig = it
     }
 
-    var config: Config? = null
+    var resolvedConfig: ResolvedConfig? = null
 
     init {
         languageService.update = {
@@ -83,7 +85,7 @@ class StudyCreateViewModel(
 
     fun createStudy() {
         displayError.value = false
-        configRepository.insertStudy(config!!, name.value!!, password.value!!, { configId, studyId ->
+        configRepository.insertStudy(resolvedConfig!!, name.value!!, password.value!!, { configId, studyId ->
             openStudy(configId, studyId)
         })
     }

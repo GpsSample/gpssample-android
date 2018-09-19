@@ -11,6 +11,7 @@ import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.config.transfer.TransferManager
 import org.taskforce.episample.core.language.LiveLanguageService
 import org.taskforce.episample.db.ConfigRepository
+import org.taskforce.episample.db.StudyRepository
 import org.taskforce.episample.db.config.Config
 
 
@@ -25,8 +26,9 @@ class ConfigAllViewModel(
     lateinit var back: () -> Unit
 
     val configRepository = ConfigRepository(getApplication())
+    val studyRepository = StudyRepository(getApplication())
     val availableConfigs = configRepository.getAvailableConfigs()
-    val study = configRepository.getStudy()
+    val study = studyRepository.getStudy()
 
     val networkAddress = MutableLiveData<String>()
 

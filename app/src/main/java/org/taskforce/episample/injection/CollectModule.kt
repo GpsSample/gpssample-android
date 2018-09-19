@@ -8,12 +8,14 @@ import org.taskforce.episample.core.language.LanguageService
 import org.taskforce.episample.core.language.LiveLanguageService
 import org.taskforce.episample.db.ConfigRepository
 import org.taskforce.episample.db.ConfigRoomDatabase
+import org.taskforce.episample.db.StudyRepository
+import org.taskforce.episample.db.StudyRoomDatabase
 import org.taskforce.episample.db.config.LiveCollectManager
 import org.taskforce.episample.managers.LiveConfigManager
 
 @Module
 class CollectModule(val application: Application,
-                    val db: ConfigRoomDatabase,
+                    val studyDb: StudyRoomDatabase,
                     val userSession: UserSession,
                     val config: Config) {
 
@@ -23,16 +25,16 @@ class CollectModule(val application: Application,
     fun providesUserSession(): UserSession = userSession
 
     @Provides
-    fun providesCollectManager(configManager: ConfigManager, configRepository: ConfigRepository): CollectManager = LiveCollectManager(application, configManager, configRepository, userSession)
+    fun providesCollectManager(configManager: ConfigManager, studyRepository: StudyRepository): CollectManager = LiveCollectManager(application, configManager, studyRepository, userSession)
 
     @Provides
     fun providesNavigationManager(): NavigationManager = mockNavigationManagerInstance
 
     @Provides
-    fun providesConfigManager(configRepository: ConfigRepository): ConfigManager = LiveConfigManager(configRepository, config.id)
+    fun providesConfigManager(studyRepository: StudyRepository): ConfigManager = LiveConfigManager(studyRepository, config.id)
 
     @Provides
-    fun providesConfigRepository() = ConfigRepository(application, db)
+    fun providesStudyRepository() = StudyRepository(application, studyDb)
 
     @Provides
     fun providesConfig(): Config = config

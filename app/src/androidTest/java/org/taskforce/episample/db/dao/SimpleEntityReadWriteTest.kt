@@ -11,14 +11,11 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.taskforce.episample.config.fields.CustomFieldTypeConstants
-import org.taskforce.episample.db.ConfigRoomDatabase
+import org.taskforce.episample.db.StudyRoomDatabase
 import org.taskforce.episample.db.collect.GpsBreakcrumbDao
 import org.taskforce.episample.db.collect.ResolvedEnumerationDao
 import org.taskforce.episample.db.config.*
-import org.taskforce.episample.db.config.customfield.CustomDateType
-import org.taskforce.episample.db.config.customfield.CustomFieldDao
-import org.taskforce.episample.db.config.customfield.CustomFieldType
-import org.taskforce.episample.db.config.customfield.CustomFieldValue
+import org.taskforce.episample.db.config.customfield.*
 import org.taskforce.episample.db.config.customfield.metadata.*
 import org.taskforce.episample.db.config.customfield.value.*
 import org.taskforce.episample.db.utils.CommonSetup
@@ -37,19 +34,21 @@ class SimpleEntityReadWriteTest {
     private var resolvedStudyDao: ResolvedStudyDao? = null
     private var breadcrumbDao: GpsBreakcrumbDao? = null
     private var customFieldDao: CustomFieldDao? = null
+    private var customFieldValueDao: CustomFieldValueDao? = null
     private var resolvedEnumerationDao: ResolvedEnumerationDao? = null
-    private var db: ConfigRoomDatabase? = null
+    private var db: StudyRoomDatabase? = null
 
     @Before
     fun createDb() {
         val context = InstrumentationRegistry.getTargetContext()
-        db = Room.inMemoryDatabaseBuilder(context, ConfigRoomDatabase::class.java).build()
+        db = Room.inMemoryDatabaseBuilder(context, StudyRoomDatabase::class.java).build()
         configDao = db!!.configDao()
         studyDao = db!!.studyDao()
         resolvedConfigDao = db!!.resolvedConfigDao()
         breadcrumbDao = db!!.breadcrumbDao()
         resolvedStudyDao = db!!.resolvedStudyDao()
         customFieldDao = db!!.customFieldDao()
+        customFieldValueDao = db!!.customFieldValueDao()
         resolvedEnumerationDao = db!!.resolvedEnumerationDao()
     }
 
@@ -85,13 +84,12 @@ class SimpleEntityReadWriteTest {
         val config = Config(configName)
         setupConfig(configDao!!, config, adminPassword, enumerationSingular, enumerationPlural, enumerationLabel)
 
-        val resolvedConfigs = resolvedConfigDao!!.getConfigSync(config.id)
-        assertEquals(1, resolvedConfigs.size)
-        assertEquals(configName, resolvedConfigs[0].name)
-        assertEquals(adminPassword, resolvedConfigs[0].adminSettings.password)
-        assertEquals(enumerationSingular, resolvedConfigs[0].enumerationSubject.singular)
-        assertEquals(enumerationPlural, resolvedConfigs[0].enumerationSubject.plural)
-        assertEquals(enumerationLabel, resolvedConfigs[0].enumerationSubject.primaryLabel)
+        val resolvedConfig = resolvedConfigDao!!.getConfigSync(config.id)
+        assertEquals(configName, resolvedConfig.name)
+        assertEquals(adminPassword, resolvedConfig.adminSettings.password)
+        assertEquals(enumerationSingular, resolvedConfig.enumerationSubject.singular)
+        assertEquals(enumerationPlural, resolvedConfig.enumerationSubject.plural)
+        assertEquals(enumerationLabel, resolvedConfig.enumerationSubject.primaryLabel)
     }
 
     @Test(expected = SQLiteConstraintException::class)
@@ -132,7 +130,7 @@ class SimpleEntityReadWriteTest {
 
         val dupeId = configDao!!.duplicate(insertConfig, "Dupe Name")
 
-        val resolvedConfig = resolvedConfigDao!!.getConfigSync(dupeId).first()
+        val resolvedConfig = resolvedConfigDao!!.getConfigSync(dupeId)
 
         assertNotEquals(dupeId, insertConfig.id)
         assertEquals(dupeName, resolvedConfig.name)
@@ -154,19 +152,16 @@ class SimpleEntityReadWriteTest {
         val insertConfig = Config(configName)
         setupConfig(configDao!!, insertConfig, adminPassword, enumerationSingular, enumerationPlural, enumerationLabel)
 
-        val config = configDao!!.getConfigSync(insertConfig.id)
+        val config = resolvedConfigDao!!.getConfigSync(insertConfig.id)
 
         val studyName = "Study 1"
         val studyPassword = "Study Password"
-        val insertStudy = Study(studyName, studyPassword)
-        studyDao?.insert(insertStudy, config.id)
+        val studyId = "Any Study Id"
+        studyDao?.insert(studyId, studyName, studyPassword, config)
 
-        val study = studyDao!!.getStudySync(insertStudy.id)
+        val study = studyDao!!.getStudySync(studyId)
         assertEquals(studyName, study.name)
         assertEquals(studyPassword, study.password)
-
-        val studyConfig = configDao!!.getAllConfigsSync().first { it.studyId == study.id }
-        assertEquals(configName, studyConfig.name)
     }
 
     @Test
@@ -268,7 +263,7 @@ class SimpleEntityReadWriteTest {
     fun insertCustomDoubleValue() {
         val enumerationId = "enumerationId"
         val configId = "configId"
-        setupEnumeration(configDao!!, studyDao!!, enumerationId, configId)
+        setupEnumeration(configDao!!, resolvedConfigDao!!, studyDao!!, enumerationId, configId)
 
         val numberMetadata = NumberMetadata(false)
         val insertField = CommonSetup.makeCustomField("name",
@@ -291,7 +286,7 @@ class SimpleEntityReadWriteTest {
                 enumerationId,
                 insertField.id)
 
-        customFieldDao?.insert(insertFieldValue)
+        customFieldValueDao?.insert(insertFieldValue)
 
         val resolvedEnumerations = resolvedEnumerationDao?.getResolvedEnumerationSync(enumerationId)
 
@@ -304,7 +299,7 @@ class SimpleEntityReadWriteTest {
     fun insertCustomIntValue() {
         val enumerationId = "enumerationId"
         val configId = "configId"
-        setupEnumeration(configDao!!, studyDao!!, enumerationId, configId)
+        setupEnumeration(configDao!!, resolvedConfigDao!!, studyDao!!, enumerationId, configId)
 
         val numberMetadata = NumberMetadata(true)
         val insertField = CommonSetup.makeCustomField("name",
@@ -323,7 +318,7 @@ class SimpleEntityReadWriteTest {
                 enumerationId,
                 insertField.id)
 
-        customFieldDao?.insert(insertFieldValue)
+        customFieldValueDao?.insert(insertFieldValue)
 
         val resolvedEnumerations = resolvedEnumerationDao?.getResolvedEnumerationSync(enumerationId)
 
@@ -336,7 +331,7 @@ class SimpleEntityReadWriteTest {
     fun insertCustomBooleanValue() {
         val enumerationId = "enumerationId"
         val configId = "configId"
-        setupEnumeration(configDao!!, studyDao!!, enumerationId, configId)
+        setupEnumeration(configDao!!, resolvedConfigDao!!, studyDao!!, enumerationId, configId)
 
         val insertField = CommonSetup.makeCustomField("name",
                 CustomFieldType.CHECKBOX,
@@ -353,7 +348,7 @@ class SimpleEntityReadWriteTest {
                 enumerationId,
                 insertField.id)
 
-        customFieldDao?.insert(insertFieldValue)
+        customFieldValueDao?.insert(insertFieldValue)
 
         val resolvedEnumerations = resolvedEnumerationDao?.getResolvedEnumerationSync(enumerationId)
 
@@ -366,7 +361,7 @@ class SimpleEntityReadWriteTest {
     fun insertCustomDateValue() {
         val enumerationId = "enumerationId"
         val configId = "configId"
-        setupEnumeration(configDao!!, studyDao!!, enumerationId, configId)
+        setupEnumeration(configDao!!, resolvedConfigDao!!, studyDao!!, enumerationId, configId)
 
         val insertField = CommonSetup.makeCustomField("name",
                 CustomFieldType.DATE,
@@ -385,7 +380,7 @@ class SimpleEntityReadWriteTest {
                 insertField.id
         )
 
-        customFieldDao?.insert(insertFieldValue)
+        customFieldValueDao?.insert(insertFieldValue)
 
         val resolvedEnumerations = resolvedEnumerationDao?.getResolvedEnumerationSync(enumerationId)
 
@@ -398,7 +393,7 @@ class SimpleEntityReadWriteTest {
     fun insertCustomDropdownValue() {
         val enumerationId = "enumerationId"
         val configId = "configId"
-        setupEnumeration(configDao!!, studyDao!!, enumerationId, configId)
+        setupEnumeration(configDao!!, resolvedConfigDao!!, studyDao!!, enumerationId, configId)
 
         val option1 = CustomDropdown("Option1")
         val option2 = CustomDropdown("Option2")
@@ -417,7 +412,7 @@ class SimpleEntityReadWriteTest {
                 enumerationId,
                 insertField.id)
 
-        customFieldDao?.insert(insertFieldValue)
+        customFieldValueDao?.insert(insertFieldValue)
 
         val resolvedEnumerations = resolvedEnumerationDao?.getResolvedEnumerationSync(enumerationId)
 
@@ -430,7 +425,7 @@ class SimpleEntityReadWriteTest {
     fun insertCustomTextValue() {
         val enumerationId = "enumerationId"
         val configId = "configId"
-        setupEnumeration(configDao!!, studyDao!!, enumerationId, configId)
+        setupEnumeration(configDao!!, resolvedConfigDao!!, studyDao!!, enumerationId, configId)
 
         val insertField = CommonSetup.makeCustomField("name",
                 CustomFieldType.TEXT,
@@ -448,7 +443,7 @@ class SimpleEntityReadWriteTest {
                 enumerationId,
                 insertField.id)
 
-        customFieldDao?.insert(insertFieldValue)
+        customFieldValueDao?.insert(insertFieldValue)
 
         val resolvedEnumerations = resolvedEnumerationDao?.getResolvedEnumerationSync(enumerationId)
 
@@ -471,7 +466,7 @@ class SimpleEntityReadWriteTest {
         )
 
         val resolvedConfig = resolvedConfigDao!!.getConfigSync(configId)
-        val actualField = resolvedConfig.first().customFields.first()
+        val actualField = resolvedConfig.customFields.first()
         assertTrue((actualField.metadata as NumberMetadata).isIntegerOnly)
         assertEquals(expectedFieldValues.configId, actualField.configId)
     }
@@ -491,7 +486,7 @@ class SimpleEntityReadWriteTest {
         )
 
         val resolvedConfig = resolvedConfigDao!!.getConfigSync(configId)
-        val actualField = resolvedConfig.first().customFields.first()
+        val actualField = resolvedConfig.customFields.first()
         assertFalse((actualField.metadata as NumberMetadata).isIntegerOnly)
         assertEquals(expectedFieldValues.configId, actualField.configId)
     }
@@ -515,7 +510,7 @@ class SimpleEntityReadWriteTest {
         )
 
         val resolvedConfig = resolvedConfigDao!!.getConfigSync(configId)
-        val actualField = resolvedConfig.first().customFields.first()
+        val actualField = resolvedConfig.customFields.first()
         val metadata = actualField.metadata as DateMetadata
         assertEquals(expectedCustomDateType, metadata.dateType)
         assertEquals(expectedUseCurrentTime, metadata.useCurrentTime)
@@ -535,7 +530,7 @@ class SimpleEntityReadWriteTest {
         )
 
         val resolvedConfig = resolvedConfigDao!!.getConfigSync(configId)
-        val actualField = resolvedConfig.first().customFields.first()
+        val actualField = resolvedConfig.customFields.first()
         assertTrue(actualField.metadata is EmptyMetadata)
         assertEquals(expectedFieldValues.configId, actualField.configId)
     }
@@ -553,7 +548,7 @@ class SimpleEntityReadWriteTest {
         )
 
         val resolvedConfig = resolvedConfigDao!!.getConfigSync(configId)
-        val actualField = resolvedConfig.first().customFields.first()
+        val actualField = resolvedConfig.customFields.first()
         assertTrue(actualField.metadata is EmptyMetadata)
         assertEquals(expectedFieldValues.configId, actualField.configId)
     }
@@ -581,7 +576,7 @@ class SimpleEntityReadWriteTest {
         )
 
         val resolvedConfig = resolvedConfigDao!!.getConfigSync(configId)
-        val actualField = resolvedConfig.first().customFields.first()
+        val actualField = resolvedConfig.customFields.first()
         val option1 = (actualField.metadata as DropdownMetadata).items[0]
         val option2 = (actualField.metadata as DropdownMetadata).items[1]
         assertEquals(expectedKey1, option1.key)
@@ -618,7 +613,7 @@ class SimpleEntityReadWriteTest {
                 CommonSetup.makeDisplaySettings(config.id)
         )
 
-        val resolvedConfig = resolvedConfigDao?.getConfigSync(config.id)
-        assertEquals(1, resolvedConfig?.size)
+        val resolvedConfig = resolvedConfigDao!!.getConfigSync(config.id)
+        assertEquals(1, resolvedConfig.customFields.size)
     }
 }

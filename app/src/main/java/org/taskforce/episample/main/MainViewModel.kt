@@ -12,6 +12,7 @@ import org.taskforce.episample.R
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.interfaces.UserSession
 import org.taskforce.episample.db.ConfigRepository
+import org.taskforce.episample.db.StudyRepository
 import org.taskforce.episample.utils.boldSubstring
 import java.util.*
 import javax.inject.Inject
@@ -31,17 +32,23 @@ class MainViewModel(
     @Inject
     lateinit var userSession: UserSession
 
-    val configRepository = ConfigRepository(getApplication())
-    val studyTitle: LiveData<String> = Transformations.map(configRepository.getStudy(), {
+    @Inject
+    lateinit var studyRepository: StudyRepository
+
+    init {
+        (application as EpiApplication).collectComponent!!.inject(this)
+    }
+
+    val studyTitle: LiveData<String> = Transformations.map(studyRepository.getStudy(), {
         // TODO get study from studyRepository
         return@map it!!.name
     })
 
     init {
-        (application as EpiApplication).collectComponent!!.inject(this)
         supervisor.value = userSession.isSupervisor
-        languageService.update = {
-            // TODO show last synced date
+        languageService.update =
+                {
+                    // TODO show last synced date
 //            commentary = if (lastSynced != null) {
 //                languageService.getString(R.string.main_commentary_last_synced,
 //                        config?.displaySettings?.getFormattedDate(lastSynced, false),
@@ -49,14 +56,14 @@ class MainViewModel(
 //            } else {
 //                languageService.getString(R.string.main_commentary_never_synced)
 //            }
-            signIn.value = boldSubstring(languageService.getString(R.string.main_signed_in_as, userSession.username), userSession.username)
-        }
+                    signIn.value = boldSubstring(languageService.getString(R.string.main_signed_in_as, userSession.username), userSession.username)
+                }
     }
 
     val signIn = MutableLiveData<SpannableStringBuilder>().apply { value = boldSubstring(languageService.getString(R.string.main_signed_in_as, userSession.username), userSession.username) }
 
     // TODO show last synced date
-    // languageService.getString(R.string.main_commentary_last_synced,
+// languageService.getString(R.string.main_commentary_last_synced,
 //    config?.displaySettings?.getFormattedDate(lastSynced, false),
 //    config?.displaySettings?.getFormattedTime(lastSynced))
     val commentary = MutableLiveData<String>().apply {

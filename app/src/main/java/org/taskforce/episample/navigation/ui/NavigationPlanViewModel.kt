@@ -9,7 +9,6 @@ import android.view.View
 import android.widget.Toast
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
-import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.LiveDataTriple
 import org.taskforce.episample.core.interfaces.Config
 import org.taskforce.episample.core.interfaces.LocationService
@@ -20,6 +19,7 @@ import org.taskforce.episample.core.navigation.SurveyStatus
 import javax.inject.Inject
 
 class NavigationPlanViewModel(application: Application,
+                              val navigatoinPlanId: String,
                               val startRoute: () -> Unit,
                               val addLandmark: () -> Unit) : AndroidViewModel(application) {
 
@@ -45,13 +45,13 @@ class NavigationPlanViewModel(application: Application,
     }
 
     val collectItems = navigationManager.getCollectItems()
-    val possiblePath = navigationManager.getPossiblePath()
+
     val breadcrumbs = navigationManager.getBreadcrumbs()
 
-    val navigationItems: LiveData<List<NavigationItem>> = navigationManager.getNavigationItems()
+    val navigationItems: LiveData<List<NavigationItem>> = navigationManager.getNavigationItems(navigatoinPlanId)
 
     private val isComplete: LiveData<Boolean> = Transformations.map(navigationItems) {
-        it.none { it.surveyStatus is SurveyStatus.Incomplete}
+        it.none { it.surveyStatus is SurveyStatus.Incomplete }
     }
 
     val goToSyncVisibility: LiveData<Boolean> = Transformations.map(isComplete) {
@@ -101,11 +101,14 @@ class NavigationPlanViewModel(application: Application,
         }
     })
 
-    val navigationDetailsDistance: LiveData<String> = Transformations.map(
-            LiveDataPair(navigationManager.getPossiblePath(), navigationManager.getBreadcrumbs())
-    ) {
-        return@map "TODO distance remaining"
-    }
+    // TODO calculate distance
+    val navigationDetailsDistance = MutableLiveData<String>().apply { value = "TODO distance remaining" }
+
+//            Transformations.map(
+//            LiveDataPair(navigationManager.getPossiblePath(), navigationManager.getBreadcrumbs())
+//    ) {
+//        return@map "TODO distance remaining"
+//    }
 
     val completeDetailsInput: LiveData<String> = Transformations.switchMap(navigationItems) {
         return@switchMap languageService.getQuantityString(R.string.navigation_items_surveyed_var, it.size)
@@ -127,8 +130,8 @@ class NavigationPlanViewModel(application: Application,
         }
     })
 
-    val nextNavigationItem = Transformations.map(navigationItems, {
-        it.sortedBy { it.dateCreated }.firstOrNull { it.isIncomplete }
+    private val nextNavigationItem: LiveData<NavigationItem?> = Transformations.map(navigationItems, {
+        it.sortedBy { it.dateCreated }.firstOrNull { it.surveyStatus is SurveyStatus.Incomplete }
     })
     val startRouteEnabled = (Transformations.map(nextNavigationItem) {
         it != null

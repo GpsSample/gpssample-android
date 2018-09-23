@@ -6,8 +6,6 @@ import dagger.Provides
 import org.taskforce.episample.core.interfaces.*
 import org.taskforce.episample.core.language.LanguageService
 import org.taskforce.episample.core.language.LiveLanguageService
-import org.taskforce.episample.db.ConfigRepository
-import org.taskforce.episample.db.ConfigRoomDatabase
 import org.taskforce.episample.db.StudyRepository
 import org.taskforce.episample.db.StudyRoomDatabase
 import org.taskforce.episample.db.config.LiveCollectManager
@@ -19,16 +17,14 @@ class CollectModule(val application: Application,
                     val userSession: UserSession,
                     val config: Config) {
 
-    private val mockNavigationManagerInstance = MockNavigationManager()
-
     @Provides
     fun providesUserSession(): UserSession = userSession
 
     @Provides
-    fun providesCollectManager(configManager: ConfigManager, studyRepository: StudyRepository): CollectManager = LiveCollectManager(application, configManager, studyRepository, userSession)
+    fun providesCollectManager(configManager: ConfigManager, studyRepository: StudyRepository): CollectManager = LiveCollectManager(application, configManager, config, studyRepository, userSession)
 
     @Provides
-    fun providesNavigationManager(): NavigationManager = mockNavigationManagerInstance
+    fun providesNavigationManager(studyRepository: StudyRepository): NavigationManager = LiveNavigationManager(application, config, studyRepository, userSession)
 
     @Provides
     fun providesConfigManager(studyRepository: StudyRepository): ConfigManager = LiveConfigManager(studyRepository, config.id)

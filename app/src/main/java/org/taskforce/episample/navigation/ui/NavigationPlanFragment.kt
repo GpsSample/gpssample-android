@@ -14,7 +14,9 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.PolylineOptions
 import io.reactivex.Single
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
@@ -42,6 +44,8 @@ class NavigationPlanFragment : Fragment(), GoogleMap.OnMarkerClickListener, Goog
     private var googleMap: GoogleMap? = null
     private var lastKnownLocation: LatLng? = null
 
+    private lateinit var navigationPlanId: String
+
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +55,7 @@ class NavigationPlanFragment : Fragment(), GoogleMap.OnMarkerClickListener, Goog
         collectIconFactory = CollectIconFactory(requireContext().resources)
 
         mapFragment = SupportMapFragment()
-
+        navigationPlanId = arguments!!.getString(ARG_NAVIGATION_PLAN_ID)
         Single.create<GoogleMap> { single ->
             mapFragment.getMapAsync {
                 single.onSuccess(it)
@@ -73,6 +77,7 @@ class NavigationPlanFragment : Fragment(), GoogleMap.OnMarkerClickListener, Goog
         navigationPlanViewModel = ViewModelProviders.of(this@NavigationPlanFragment,
                 NavigationPlanViewModelFactory(
                         requireActivity().application,
+                        navigationPlanId,
                         {
                             showNavigationScreen()
                         },
@@ -143,18 +148,6 @@ class NavigationPlanFragment : Fragment(), GoogleMap.OnMarkerClickListener, Goog
             }
         })
 
-        navigationPlanViewModel.possiblePath.observe(this, Observer { breadcrumbs ->
-            this@NavigationPlanFragment.mapFragment.getMapAsync { map ->
-                val breadCrumbPath = PolylineOptions()
-                        .pattern(listOf(Dot(), Gap(10.0F)))
-                        .jointType(JointType.ROUND)
-                        .width(15.0F)
-                        .clickable(false)
-                breadcrumbs?.sortedBy { it.dateCreated }?.forEach { breadCrumbPath.add(it.location) }
-                map.addPolyline(breadCrumbPath)
-            }
-        })
-
         navigationPlanViewModel.breadcrumbs.observe(this, Observer { breadcrumbs ->
             this@NavigationPlanFragment.mapFragment.getMapAsync { map ->
                 val breadCrumbPath = PolylineOptions()
@@ -214,7 +207,7 @@ class NavigationPlanFragment : Fragment(), GoogleMap.OnMarkerClickListener, Goog
     private fun showNavigationScreen() {
         requireFragmentManager()
                 .beginTransaction()
-                .replace(R.id.contentFrame, NavigationFragment.newInstance())
+                .replace(R.id.contentFrame, NavigationFragment.newInstance(navigationPlanId))
                 .addToBackStack(NavigationFragment::class.java.name)
                 .commit()
     }
@@ -232,8 +225,14 @@ class NavigationPlanFragment : Fragment(), GoogleMap.OnMarkerClickListener, Goog
     }
 
     companion object {
-        fun newInstance(): Fragment {
-            return NavigationPlanFragment()
+        private const val ARG_NAVIGATION_PLAN_ID = "ARG_NAVIGATION_PLAN_ID"
+
+        fun newInstance(navigationPlanId: String): Fragment {
+            val fragment = NavigationPlanFragment()
+            val bundle = Bundle()
+            bundle.putString(ARG_NAVIGATION_PLAN_ID, navigationPlanId)
+            fragment.arguments = bundle
+            return fragment
         }
     }
 }

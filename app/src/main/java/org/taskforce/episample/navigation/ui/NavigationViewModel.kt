@@ -13,7 +13,7 @@ import org.taskforce.episample.core.language.LanguageService
 import org.taskforce.episample.core.navigation.SurveyStatus
 import javax.inject.Inject
 
-class NavigationViewModel(application: Application): AndroidViewModel(application) {
+class NavigationViewModel(application: Application, navigationPlanId: String): AndroidViewModel(application) {
 
     @Inject
     lateinit var config: Config
@@ -33,7 +33,7 @@ class NavigationViewModel(application: Application): AndroidViewModel(applicatio
         (application as EpiApplication).collectComponent?.inject(this)
     }
 
-    val nextNavigationItem: LiveData<NavigationItem?> = Transformations.map(navigationManager.getNavigationItems()) {
+    val nextNavigationItem: LiveData<NavigationItem?> = Transformations.map(navigationManager.getNavigationItems(navigationPlanId)) {
         return@map it.sortedBy { it.navigationOrder }.firstOrNull { it.surveyStatus is SurveyStatus.Incomplete }
     }
     val collectItems = navigationManager.getCollectItems()

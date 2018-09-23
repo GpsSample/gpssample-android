@@ -16,6 +16,9 @@ import org.taskforce.episample.db.config.landmark.CustomLandmarkType
 import org.taskforce.episample.db.filter.RuleDao
 import org.taskforce.episample.db.filter.RuleRecord
 import org.taskforce.episample.db.filter.RuleSet
+import org.taskforce.episample.db.navigation.NavigationDao
+import org.taskforce.episample.db.navigation.NavigationItem
+import org.taskforce.episample.db.navigation.NavigationPlan
 
 @Database(version = 1,
         entities = [
@@ -29,6 +32,8 @@ import org.taskforce.episample.db.filter.RuleSet
             EnumerationSubject::class,
             GpsBreadcrumb::class,
             Landmark::class,
+            NavigationPlan::class,
+            NavigationItem::class,
             RuleSet::class,
             RuleRecord::class,
             Study::class,
@@ -44,6 +49,7 @@ abstract class StudyRoomDatabase : RoomDatabase() {
     abstract fun resolvedEnumerationDao(): ResolvedEnumerationDao
     abstract fun ruleDao(): RuleDao
     abstract fun customFieldValueDao(): CustomFieldValueDao
+    abstract fun navigationDao(): NavigationDao
 
     private class PopulateDbAsync(db: StudyRoomDatabase) : AsyncTask<Void, Void, Void>() {
 

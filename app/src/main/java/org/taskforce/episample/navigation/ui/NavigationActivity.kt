@@ -12,15 +12,21 @@ class NavigationActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigation)
+
+        val navigationPlanId = intent.getStringExtra(EXTRA_NAVIGATION_PLAN_ID)
         supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.contentFrame, NavigationPlanFragment.newInstance())
+                .replace(R.id.contentFrame, NavigationPlanFragment.newInstance(navigationPlanId))
                 .commit()
     }
 
     companion object {
-        fun startActivity(context: Context) {
-            context.startActivity(Intent(context, NavigationActivity::class.java))
+        const val EXTRA_NAVIGATION_PLAN_ID = "EXTRA_NAVIGATION_PLAN_ID"
+
+        fun startActivity(context: Context, navigationPlanId: String) {
+            val intent = Intent(context, NavigationActivity::class.java)
+            intent.putExtra(EXTRA_NAVIGATION_PLAN_ID, navigationPlanId)
+            context.startActivity(intent)
         }
     }
 }

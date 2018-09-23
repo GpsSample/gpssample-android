@@ -44,7 +44,17 @@ class MainFragment : Fragment() {
                             .commit()
                 },
                 navigateOnClick = {
-                    NavigationActivity.startActivity(requireContext())
+                    // TODO remove demo navigation plan creation
+                    viewModel.studyRepository.getNavigationPlans().observe(this, Observer {
+                        if (it?.isNotEmpty() == true) {
+                            NavigationActivity.startActivity(requireContext(), it.first().id)
+                        } else {
+                            val studyId = viewModel.userSession.studyId
+                            viewModel.studyRepository.createDemoNavigationPlan(studyId, { navigationPlanId ->
+                                NavigationActivity.startActivity(requireContext(), navigationPlanId)
+                            })
+                        }
+                    })
                 },
                 syncOnClick = {
                     // TODO open sync

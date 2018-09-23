@@ -203,16 +203,6 @@ class CollectAddFragment : Fragment() {
             }
         })
 
-        collectViewModel.landmarkTypes.observe(this@CollectAddFragment, Observer {
-            val types = it ?: emptyList()
-
-            val adapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item)
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            adapter.addAll(types.map { it.name })
-
-            this@CollectAddFragment.landmarkImageSelector.adapter = adapter
-        })
-        
         collectViewModel.enumerations.observe(this, Observer { 
             it?.let { 
                 val mostRecent = it.sortedByDescending { it.dateCreated }.firstOrNull()
@@ -228,6 +218,18 @@ class CollectAddFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val types = collectViewModel.landmarkTypes ?: emptyList()
+
+        val adapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        adapter.addAll(types.map { it.name })
+
+        landmarkImageSelector.adapter = adapter
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

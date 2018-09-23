@@ -5,13 +5,15 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import android.os.AsyncTask
+import org.taskforce.episample.core.navigation.SurveyStatus
+import org.taskforce.episample.db.collect.*
 import org.taskforce.episample.db.collect.Enumeration
-import org.taskforce.episample.db.collect.GpsBreadcrumb
-import org.taskforce.episample.db.collect.Landmark
-import org.taskforce.episample.db.collect.ResolvedEnumeration
 import org.taskforce.episample.db.config.*
 import org.taskforce.episample.db.config.customfield.CustomFieldValue
 import org.taskforce.episample.db.config.landmark.CustomLandmarkType
+import org.taskforce.episample.db.navigation.NavigationDao
+import org.taskforce.episample.db.navigation.NavigationPlan
+import org.taskforce.episample.db.navigation.ResolvedNavigationPlan
 import java.util.*
 
 class StudyRepository(application: Application, injectedDatabase: StudyRoomDatabase? = null) {
@@ -28,7 +30,7 @@ class StudyRepository(application: Application, injectedDatabase: StudyRoomDatab
     private val configDao: ConfigDao = db.configDao()
     private val studyDao: StudyDao = db.studyDao()
     private val resolvedConfigDao: ResolvedConfigDao = db.resolvedConfigDao()
-
+    private val navigationDao: NavigationDao = db.navigationDao()
     private val allConfigs = configDao.getAllConfigs()
 
     private fun studyToNullable(studyId: String): LiveData<Study?> = Transformations.map(studyDao.getStudy(studyId)) {
@@ -46,10 +48,6 @@ class StudyRepository(application: Application, injectedDatabase: StudyRoomDatab
 
     fun getStudy(): LiveData<Study?> {
         return study
-    }
-
-    fun getAllStudiesSync(): List<Study> {
-        return studyDao.getAllStudiesSync()
     }
 
     fun getConfig(configId: String): LiveData<Config> {
@@ -105,6 +103,10 @@ class StudyRepository(application: Application, injectedDatabase: StudyRoomDatab
         InsertBreadcrumbTask(studyDao).execute(Pair(breadcrumb, callback))
     }
 
+    fun updateNavigationItem(navigationItemId: String, surveyStatus: SurveyStatus, callback: () -> Unit) {
+        UpdateNavigationItemTask(navigationDao).execute(Triple(navigationItemId, surveyStatus, callback))
+    }
+
     fun getResolvedEnumerationsSync(studyId: String): List<ResolvedEnumeration> {
         return studyDao.getResolvedEnumerationsSync(studyId)
     }
@@ -123,6 +125,18 @@ class StudyRepository(application: Application, injectedDatabase: StudyRoomDatab
 
     fun getAllStudies(): LiveData<List<Study>> {
         return studyDao.getAllStudies()
+    }
+
+    fun getNavigationPlan(navigationPlanId: String): LiveData<ResolvedNavigationPlan> {
+        return navigationDao.getNavigationPlan(navigationPlanId)
+    }
+
+    fun getNavigationPlans(): LiveData<List<ResolvedNavigationPlan>> {
+        return navigationDao.getAllNavigationPlans()
+    }
+
+    fun createDemoNavigationPlan(studyId: String, callback: (navigationPlanId: String) -> Unit) {
+        InsertDemoNavigationPlanTask(navigationDao, studyDao).execute(Pair(studyId, callback))
     }
 }
 
@@ -195,6 +209,31 @@ private class InsertStudyAsyncTask(private val studyDao: StudyDao) : AsyncTask<I
         val studyId = UUID.randomUUID().toString()
         val configId = studyDao.insert(studyId, name, password, sourceConfig)
         callback(configId, studyId)
+        return null
+    }
+}
+
+private class UpdateNavigationItemTask(private val navigationDao: NavigationDao) : AsyncTask<Triple<String, SurveyStatus, () -> Unit>, Void, Void>() {
+    override fun doInBackground(vararg params: Triple<String, SurveyStatus, () -> Unit>): Void? {
+        val navigationItemId= params[0].first
+        val surveyStatus = params[0].second
+        val callback = params[0].third
+
+        navigationDao.updateNavigationItem(navigationItemId, surveyStatus)
+        callback()
+        return null
+    }
+}
+
+private class InsertDemoNavigationPlanTask(private val navigationDao: NavigationDao, private val studyDao: StudyDao) : AsyncTask<Pair<String, (navigationPlanId: String) -> Unit>, Void, Void>() {
+    override fun doInBackground(vararg params: Pair<String, (navigationPlanId: String) -> Unit>): Void? {
+        val studyId = params[0].first
+        val callback= params[0].second
+
+        val enumerations = studyDao.getResolvedEnumerationsSync(studyId)
+
+        callback(navigationDao.createDemoNavigationPlan(studyId, enumerations))
+
         return null
     }
 }

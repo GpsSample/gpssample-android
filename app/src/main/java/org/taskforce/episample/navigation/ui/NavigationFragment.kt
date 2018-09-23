@@ -2,17 +2,14 @@ package org.taskforce.episample.navigation.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.Activity.RESULT_OK
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -46,6 +43,7 @@ class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMa
     private lateinit var navigationCardViewModel: NavigationCardViewModel
 
     private lateinit var mapFragment: SupportMapFragment
+    private lateinit var navigationPlanId: String
 
     private var googleMap: GoogleMap? = null
     private var lastKnownLocation: LatLng? = null
@@ -54,6 +52,7 @@ class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMa
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (requireActivity().application as EpiApplication).component.inject(this)
+        navigationPlanId = arguments!!.getString(ARG_NAVIGATION_PLAN_ID)
 
         locationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         collectIconFactory = CollectIconFactory(requireContext().resources)
@@ -79,7 +78,8 @@ class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMa
         )
 
         navigationViewModel = ViewModelProviders.of(this@NavigationFragment,
-                NavigationViewModelFactory(requireActivity().application))
+                NavigationViewModelFactory(requireActivity().application,
+                        navigationPlanId))
                 .get(NavigationViewModel::class.java)
         lifecycle.addObserver(navigationViewModel.locationService)
         navigationViewModel.locationService.locationLiveData.observe(this, Observer {
@@ -231,7 +231,9 @@ class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMa
                 val skipReason = data?.getStringExtra(TextInputDialogFragment.EXTRA_TEXT_INPUT)
                 skipReason?.let { skipReason ->
                     navigationViewModel.nextNavigationItem.value?.id?.let { nextItem ->
-                        navigationViewModel.navigationManager.updateSurveyStatus(nextItem, SurveyStatus.Skipped(skipReason))
+                        navigationViewModel.navigationManager.updateSurveyStatus(nextItem, SurveyStatus.Skipped(skipReason), {
+                            // no - op: change is observed elsewhere in UI
+                        })
                     }
                 }
             }
@@ -248,7 +250,9 @@ class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMa
                 val surveyStatus = data?.getParcelableExtra<SurveyStatus>(SurveyStatusDialogFragment.EXTRA_SURVEY_STATUS)
                 surveyStatus?.let { surveyStatus ->
                     navigationViewModel.nextNavigationItem?.value?.id?.let {
-                        navigationViewModel.navigationManager.updateSurveyStatus(it, surveyStatus)
+                        navigationViewModel.navigationManager.updateSurveyStatus(it, surveyStatus, {
+                            // no - op: change is observed elsewhere in UI
+                        })
                     }
                 }
             }
@@ -289,12 +293,18 @@ class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMa
     }
 
     companion object {
+        const val ARG_NAVIGATION_PLAN_ID = "ARG_NAVIGATION_PLAN_ID"
+
         const val GET_SKIP_REASON_CODE = 1
         const val PICK_FORM_REASON_CODE = 2
         const val GET_SURVEY_STATUS_REASON_CODE = 3
 
-        fun newInstance(): Fragment {
-            return NavigationFragment()
+        fun newInstance(navigationPlanId: String): Fragment {
+            val fragment = NavigationFragment()
+            val arguments = Bundle()
+            arguments.putString(ARG_NAVIGATION_PLAN_ID, navigationPlanId)
+            fragment.arguments = arguments
+            return fragment
         }
     }
 }

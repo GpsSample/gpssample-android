@@ -59,8 +59,8 @@ class MockCollectManager : CollectManager {
     private val landmarks = listOf(
             MockLandmark.createMockLandmark(title = "Bus stop",
                     location = LatLng(37.4222736, -122.0838697),
-                    gpsPrecision = 8.5), 
-            MockLandmark.createMockLandmark(title = "Large tree", 
+                    gpsPrecision = 8.5),
+            MockLandmark.createMockLandmark(title = "Large tree",
                     location = LatLng(37.421865, -122.0833879),
                     gpsPrecision = 20.3))
 
@@ -84,19 +84,17 @@ class MockCollectManager : CollectManager {
     private val breadCrumbLiveData = MutableLiveData<List<Breadcrumb>>().apply {
         postValue(breadcrumbs)
     }
-    
+
     override fun getBreadcrumbs(): MutableLiveData<List<Breadcrumb>> {
         return breadCrumbLiveData
     }
 
-    override fun getLandmarkTypes(): LiveData<List<LandmarkType>> {
-        return MutableLiveData<List<LandmarkType>>().apply {
-            val landmarkType = MockLandmarkType.createMockLandmarkType(name = "Nature")
-            val defaultType = MockLandmarkType.createMockLandmarkType()
-            val othertype = MockLandmarkType.createMockLandmarkType(name = "Other")
+    override fun getLandmarkTypes(): List<LandmarkType> {
+        val landmarkType = MockLandmarkType.createMockLandmarkType(name = "Nature")
+        val defaultType = MockLandmarkType.createMockLandmarkType()
+        val othertype = MockLandmarkType.createMockLandmarkType(name = "Other")
 
-            value = listOf(defaultType, landmarkType, othertype)
-        }
+        return listOf(defaultType, landmarkType, othertype)
     }
 
     override fun addBreadcrumb(breadcrumb: Breadcrumb, callback: (breadcrumbId: String) -> Unit) {

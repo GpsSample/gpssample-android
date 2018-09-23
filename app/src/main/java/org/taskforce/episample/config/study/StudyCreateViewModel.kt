@@ -46,7 +46,6 @@ class StudyCreateViewModel(
         name.observeForever(textListener)
         password.observeForever(textListener)
         configById.observeForever(configObserver)
-        configById
     }
 
     override fun onCleared() {

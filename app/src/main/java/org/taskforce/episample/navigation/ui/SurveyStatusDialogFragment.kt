@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import kotlinx.android.synthetic.main.fragment_config_fields.*
 import kotlinx.android.synthetic.main.fragment_survey_status_dialog.*
 import org.taskforce.episample.R
 import org.taskforce.episample.core.navigation.SurveyStatus
@@ -83,7 +82,9 @@ class SurveyStatusDialogFragment: DialogFragment() {
     fun submit() {
         surveyStatusViewModel.surveyStatus.value?.let {
             val navigationItemId = arguments!!.getString(ARG_NAVIGATION_ITEM_ID)
-            surveyStatusViewModel.navigationManager.updateSurveyStatus(navigationItemId, it)
+            surveyStatusViewModel.navigationManager.updateSurveyStatus(navigationItemId, it, {
+                // no - op: change is observed elsewhere in UI
+            })
             dismiss()
         }
     }

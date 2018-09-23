@@ -30,6 +30,8 @@ import org.taskforce.episample.navigation.ui.NavigationFragment
 import org.taskforce.episample.navigation.ui.NavigationPlanFragment
 import org.taskforce.episample.permissions.ui.PermissionsFragment
 import org.taskforce.episample.splash.SplashActivity
+import org.taskforce.episample.supervisor.upload.ui.StudyUploadFragment
+import org.taskforce.episample.supervisor.upload.ui.StudyUploadViewModel
 
 interface EpiComponent {
     fun plus(collectModule: CollectModule): CollectComponent
@@ -68,4 +70,6 @@ interface EpiComponent {
     fun inject(navigationPlanFragment: NavigationPlanFragment)
     fun inject(navigationFragment: NavigationFragment)
     fun inject(duplicateGpsDialogFragment: DuplicateGpsDialogFragment)
+    fun inject(studyUploadViewModel: StudyUploadViewModel)
+    fun inject(studyUploadFragment: StudyUploadFragment)
 }

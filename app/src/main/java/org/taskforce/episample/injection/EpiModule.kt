@@ -13,6 +13,8 @@ import org.taskforce.episample.config.transfer.TransferManager
 import org.taskforce.episample.permissions.managers.PermissionManager
 import org.taskforce.episample.study.managers.StudyManager
 import org.taskforce.episample.study.managers.StudyStorage
+import org.taskforce.episample.supervisor.upload.managers.DriveUploadManager
+import org.taskforce.episample.supervisor.upload.managers.UploadManager
 import org.taskforce.episample.sync.managers.SyncManager
 import org.taskforce.episample.toolbar.managers.LanguageManager
 import org.taskforce.episample.utils.getLanguageManager
@@ -58,4 +60,10 @@ class EpiModule(private val context: Context) {
     @Provides
     @Singleton
     fun provideSyncManager() = SyncManager()
+    
+    @Provides
+    @Singleton
+    fun provideUploadManager(): UploadManager {
+        return DriveUploadManager()
+    }
 }

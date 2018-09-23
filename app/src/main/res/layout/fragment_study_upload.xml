@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="vm"
+            type="org.taskforce.episample.supervisor.upload.ui.StudyUploadViewModel" />
+        
+        <variable
+            name="toolbarVm"
+            type="org.taskforce.episample.toolbar.viewmodels.ToolbarViewModel" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            layout="@layout/app_toolbar"
+            app:vm="@{toolbarVm}" />
+
+        <Button
+            android:id="@+id/uploadButton"
+            enabled="@{vm.uploadButtonEnabled}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/upload_button"
+            android:onClick="@{() -> vm.beginUpload()}"
+            android:paddingEnd="12dp"
+            android:paddingStart="12dp"
+            android:text="@{vm.buttonText}"
+            android:textColor="@color/upload_button_text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/progressBar2"
+            tools:background="@color/colorPrimary"
+            tools:text="@string/final_upload_button"
+            tools:textColor="@color/textColorInverse" />
+
+        <TextView
+            android:id="@+id/finalUploadTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="80dp"
+            android:textSize="24sp"
+            android:text="@{vm.titleText}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/final_upload_title" />
+
+        <TextView
+            android:id="@+id/finalUploadMessage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@{vm.messageText}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/finalUploadTitle"
+            tools:text="@string/final_upload_message" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/finalUploadMessage" />
+
+        <TextView
+            visibleOrGone="@{!vm.uploadButtonEnabled}"
+            android:id="@+id/finalUploadReportTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/textColorDetails"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:text="@{vm.reportContentsTitle}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider"
+            tools:text="@string/final_upload_report_contents" />
+
+        <TextView
+            visibleOrGone="@{!vm.uploadButtonEnabled}"
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@{vm.lastUpdated}"
+            android:textColor="@color/textColorDetails"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/finalUploadReportTitle"
+            tools:text="@string/final_upload_last_updated" />
+
+        <android.support.v7.widget.CardView
+            visibleOrGone="@{!vm.uploadButtonEnabled}"
+            android:id="@+id/finalUploadCard"
+            android:layout_width="0dp"
+            android:layout_height="136dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            app:contentPaddingBottom="12dp"
+            app:contentPaddingLeft="16dp"
+            app:contentPaddingRight="16dp"
+            app:contentPaddingTop="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView7">
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TODO: Load contents of study"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="179 Households" />
+        </android.support.v7.widget.CardView>
+
+        <TextView
+            visibleOrGone="@{!vm.uploadButtonEnabled}"
+            android:id="@+id/uploadNoWifi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:text="@{vm.noWifiError}"
+            android:textColor="@color/colorError"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/finalUploadCard"
+            tools:text="@string/final_upload_need_wifi" />
+
+        <ProgressBar
+            android:id="@+id/progressBar2"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:progress="@{vm.progress}"
+            android:max="@{vm.totalNumberOfFiles}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/uploadNoWifi" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

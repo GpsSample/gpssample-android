@@ -81,6 +81,8 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:$rootProject.ext.okHttp3Version"
     implementation "com.google.android.gms:play-services-maps:$rootProject.ext.googlePlayServicesVersion"
     implementation "com.google.android.gms:play-services-location:$rootProject.ext.googlePlayServicesVersion"
+    implementation "com.google.android.gms:play-services-drive:$rootProject.ext.googlePlayServicesVersion"
+    implementation "com.google.android.gms:play-services-auth:$rootProject.ext.googlePlayServicesVersion"
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     implementation "com.squareup.retrofit2:converter-gson:2.3.0"
     implementation "com.squareup.retrofit2:converter-jackson:2.1.0"

@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable
+            name="vm"
+            type="org.taskforce.episample.config.sampling.SamplingSubsetViewModel"/>
+
+        <variable
             name="headerVm"
-            type="org.taskforce.episample.config.base.ConfigHeaderViewModel" />
+            type="org.taskforce.episample.config.base.ConfigHeaderViewModel"/>
     </data>
 
     <android.support.v4.widget.NestedScrollView
@@ -17,15 +22,62 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:orientation="vertical"
             android:padding="16dp">
 
             <include
                 android:id="@+id/header"
                 layout="@layout/app_config_header"
-                app:vm="@{headerVm}" />
+                app:vm="@{headerVm}"/>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="horizontal">
+
+                <ToggleButton
+                    style="@style/AppTheme.Sampling.ToggleButton"
+                    android:checked="@={vm.isFixedChecked}"
+                    android:onClick="@{vm.fixedCheckedChanged}"
+                    android:textOff="@string/fixed"
+                    android:textOn="@string/fixed"
+                    tools:checked="true"/>
+
+                <ToggleButton
+                    style="@style/AppTheme.Sampling.ToggleButton"
+                    android:checked="@={!vm.isFixedChecked}"
+                    android:onClick="@{vm.percentageCheckedChanged}"
+                    android:textOff="@string/percentage"
+                    android:textOn="@string/percentage"/>
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/subsetRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:itemCount="2"
+                tools:listitem="@layout/item_subset_card"/>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:onClick="@{vm.addRuleSetClicked}"
+                app:cardElevation="4dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:drawableLeft="@drawable/icon_group_lightblue_18"
+                    android:drawablePadding="12dp"
+                    android:text="@string/add_new_subset"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    tools:ignore="RtlHardcoded"/>
+            </android.support.v7.widget.CardView>
         </LinearLayout>
-
     </android.support.v4.widget.NestedScrollView>
-
 </layout>

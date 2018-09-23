@@ -1,7 +1,9 @@
 package org.taskforce.episample.db.filter
 
 import android.arch.persistence.room.*
-import org.taskforce.episample.db.config.Config
+import android.os.Parcel
+import android.os.Parcelable
+import org.taskforce.episample.config.sampling.filter.CustomFieldForRules
 import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.filter.checkbox.BooleanRuleFactory
 import org.taskforce.episample.db.filter.date.DateRuleFactory
@@ -11,21 +13,40 @@ import org.taskforce.episample.db.filter.integers.IntRuleFactory
 import org.taskforce.episample.db.filter.text.TextRuleFactory
 import java.util.*
 
-@Entity(tableName = "rule_set_table",
-        foreignKeys = [
-            (ForeignKey(
-                    entity = Config::class, parentColumns = ["id"], childColumns = ["config_id"], onDelete = ForeignKey.CASCADE
-            ))
-        ])
+@Entity(tableName = "rule_set_table")
 class RuleSet(
         @ColumnInfo(name = "name")
         var name: String,
-        @ColumnInfo(name = "config_id")
-        var configId: String,
+        @ColumnInfo(name = "isAny")
+        var isAny: Boolean,
         @PrimaryKey
         var id: String = UUID.randomUUID().toString()
-)
+) : Parcelable {
+    constructor(parcel: Parcel) : this(
+            parcel.readString(),
+            parcel.readByte() != 0.toByte(),
+            parcel.readString())
 
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(name)
+        parcel.writeByte(if (isAny) 1 else 0)
+        parcel.writeString(id)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<RuleSet> {
+        override fun createFromParcel(parcel: Parcel): RuleSet {
+            return RuleSet(parcel)
+        }
+
+        override fun newArray(size: Int): Array<RuleSet?> {
+            return arrayOfNulls(size)
+        }
+    }
+}
 @Entity(tableName = "rule_record_table",
         foreignKeys = [
             (ForeignKey(
@@ -48,7 +69,38 @@ class RuleRecord(
         var value: String,
         @PrimaryKey
         var id: String = UUID.randomUUID().toString()
-)
+) : Parcelable {
+    constructor(parcel: Parcel) : this(
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString())
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(ruleSetId)
+        parcel.writeString(customFieldId)
+        parcel.writeString(factory)
+        parcel.writeString(ruleName)
+        parcel.writeString(value)
+        parcel.writeString(id)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<RuleRecord> {
+        override fun createFromParcel(parcel: Parcel): RuleRecord {
+            return RuleRecord(parcel)
+        }
+
+        override fun newArray(size: Int): Array<RuleRecord?> {
+            return arrayOfNulls(size)
+        }
+    }
+}
 
 class ResolvedRuleRecord(
         @ColumnInfo(name = "value")
@@ -74,6 +126,18 @@ class ResolvedRuleRecord(
         BOOLEAN_FACTORY(BooleanRuleFactory::class.qualifiedName!!),
         TEXT_FACTORY(TextRuleFactory::class.qualifiedName!!),
         DROPDOWN_FACTORY(DropdownRuleFactory::class.qualifiedName!!);
+
+        companion object {
+            fun factoryFor(field: CustomFieldForRules): Factories {
+                return when (field) {
+                    is CustomFieldForRules.DropdownField -> DROPDOWN_FACTORY
+                    is CustomFieldForRules.TextField -> TEXT_FACTORY
+                    is CustomFieldForRules.IntegerField -> INT_FACTORY
+                    is CustomFieldForRules.DoubleField -> DOUBLE_FACTORY
+                    is CustomFieldForRules.BooleanField ->  BOOLEAN_FACTORY
+                }
+            }
+        }
     }
 
     val rule: Rule

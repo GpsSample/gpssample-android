@@ -49,6 +49,7 @@
             android:screenOrientation="portrait" />
 
         <activity android:name=".navigation.ui.NavigationActivity" />
+        <activity android:name=".config.sampling.filter.RuleSetCreationActivity"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"

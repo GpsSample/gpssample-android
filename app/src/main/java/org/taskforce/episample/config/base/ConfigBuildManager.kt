@@ -15,6 +15,9 @@ import org.taskforce.episample.config.settings.server.ServerSettings
 import org.taskforce.episample.config.settings.user.UserSettings
 import org.taskforce.episample.core.interfaces.EnumerationSubject
 import org.taskforce.episample.db.config.customfield.CustomFieldType
+import org.taskforce.episample.db.filter.RuleRecord
+import org.taskforce.episample.db.filter.RuleSet
+import org.taskforce.episample.db.sampling.subsets.Subset
 import org.taskforce.episample.fileImport.models.LandmarkType
 import java.io.Serializable
 import java.util.*
@@ -104,6 +107,22 @@ class ConfigBuildManager(val config: Config = Config(Date())):
                         mapOf(CustomFieldTypeConstants.INTEGER_ONLY to true)
                 )
         )
+
+    fun addRuleSet(ruleSet: RuleSet) {
+        val mutableRuleSetList = config.ruleSets.toMutableList()
+        mutableRuleSetList.add(ruleSet)
+        config.ruleSets = mutableRuleSetList.toList()
+    }
+
+    fun addRules(rules: List<RuleRecord>) {
+        val mutableRuleList = config.rules.toMutableList()
+        mutableRuleList.addAll(rules)
+        config.rules = mutableRuleList.toList()
+    }
+
+    fun addSubset(subset: Subset) {
+        val mutableSubsetList = config.subsets.toMutableList()
+    }
 
     val photoCompressionOptions = arrayOf(0 to "No Compression", 50 to "Some Compression", 100 to "Maximum Compression")
 }

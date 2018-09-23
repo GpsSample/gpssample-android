@@ -262,6 +262,7 @@ class SimpleEntityReadWriteTest {
     @Throws(Exception::class)
     fun insertCustomDoubleValue() {
         val enumerationId = "enumerationId"
+
         val configId = "configId"
         setupEnumeration(configDao!!, resolvedConfigDao!!, studyDao!!, enumerationId, configId)
 
@@ -298,6 +299,7 @@ class SimpleEntityReadWriteTest {
     @Throws(Exception::class)
     fun insertCustomIntValue() {
         val enumerationId = "enumerationId"
+
         val configId = "configId"
         setupEnumeration(configDao!!, resolvedConfigDao!!, studyDao!!, enumerationId, configId)
 
@@ -330,6 +332,7 @@ class SimpleEntityReadWriteTest {
     @Throws(Exception::class)
     fun insertCustomBooleanValue() {
         val enumerationId = "enumerationId"
+
         val configId = "configId"
         setupEnumeration(configDao!!, resolvedConfigDao!!, studyDao!!, enumerationId, configId)
 
@@ -360,6 +363,7 @@ class SimpleEntityReadWriteTest {
     @Throws(Exception::class)
     fun insertCustomDateValue() {
         val enumerationId = "enumerationId"
+
         val configId = "configId"
         setupEnumeration(configDao!!, resolvedConfigDao!!, studyDao!!, enumerationId, configId)
 
@@ -392,6 +396,7 @@ class SimpleEntityReadWriteTest {
     @Throws(Exception::class)
     fun insertCustomDropdownValue() {
         val enumerationId = "enumerationId"
+
         val configId = "configId"
         setupEnumeration(configDao!!, resolvedConfigDao!!, studyDao!!, enumerationId, configId)
 
@@ -424,6 +429,7 @@ class SimpleEntityReadWriteTest {
     @Throws(Exception::class)
     fun insertCustomTextValue() {
         val enumerationId = "enumerationId"
+
         val configId = "configId"
         setupEnumeration(configDao!!, resolvedConfigDao!!, studyDao!!, enumerationId, configId)
 

@@ -145,14 +145,17 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="config_admin_title">Admin Security</string>
     <string name="config_admin_explanation">Enter a password to protect this configuration from unauthorized edits. No changes can be made to this configuration in the future without this password.</string>
     <string name="config_admin_password">Password</string>
+
     <string name="config_sampling_title">Sampling Method</string>
     <string name="config_sampling_explanation">Select the statistical method to use when generating your sample.</string>
     <string name="config_sampling_method_select_title">Sampling Method</string>
     <string name="config_sampling_method_input_low_error">Sampling method size must be a number greater than 0.</string>
     <string name="config_sampling_method_size">Sample Size</string>
     <string name="config_sampling_method_input_percent_high_error">Sampling method percentage must be less than or equal to 100.</string>
+
     <string name="config_sampling_subset_title">Sample Subsets</string>
-    <string name="config_sampling_subset_explanation">Define any subsets and assign which proportion of the sample each should contribute.</string>
+    <string name="config_sampling_subset_explanation">Define any subsets and their sizes in terms of a fixed number of households or a percentage of all collected households matching the subset rules.</string>
+
     <string name="config_survey_select_title">Survey Application</string>
     <string name="config_survey_select_description">Select which fields to export to ODK Collect after enumerators navigate to a household in the sample.</string>
     <string name="config_survey_select_list_title">Fields to Export</string>
@@ -321,11 +324,23 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="dialog_skip_reason_title">Report Reason for Skipping</string>
     <string name="dialog_skip_reason_hint">Describe reason for skipping</string>
     <string name="odk_collect_not_installed">Please install ODK Collect before trying to launch survey.</string>
+    <string name="percentage">Percentage</string>
+    <string name="fixed">Fixed</string>
+    <string name="save">Save</string>
+    <string name="add_subset">Add Subset</string>
+    <string name="close">close</string>
+    <string name="add_new_subset">ADD NEW SUBSET</string>
+    <string name="all">All</string>
+    <string name="any">Any</string>
+    <string name="delete_subset">DELETE SUBSET</string>
+    <string name="subset_name">Subset Name</string>
+    <string name="rules">Rules</string>
+    <string name="add_new_rule">ADD NEW RULE</string>
+    <string name="delete_rule">DELETE RULE</string>
     <string name="survey_status_title_var">%s Status</string>
     <string name="survey_status_row_complete">Survey Complete</string>
     <string name="survey_status_row_skip">Skip Until Later</string>
     <string name="survey_status_row_problem">Problem</string>
-
     <string name="final_report">Final Report</string>
     <string name="final_upload_title">Send Final Study Report</string>
     <string name="final_upload_message">If you have completed all surveying for this study, upload the final report to the study server over Wi-Fi.</string>

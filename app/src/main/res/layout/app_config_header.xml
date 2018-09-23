@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="vm"
-            type="org.taskforce.episample.config.base.ConfigHeaderViewModel" />
+            type="org.taskforce.episample.config.base.ConfigHeaderViewModel"/>
     </data>
 
     <LinearLayout
@@ -16,19 +18,21 @@
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:lineSpacingExtra="8sp"
             android:text="@{vm.title}"
             android:textSize="24sp"
-            android:lineSpacingExtra="8sp"/>
+            tools:text="This is a sample title"
+            />
 
         <TextView
             android:id="@+id/explanation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{vm.explanation}"
             android:layout_marginTop="8dp"
+            android:lineSpacingExtra="6sp"
+            android:text="@{vm.explanation}"
             android:textSize="14sp"
-            android:lineSpacingExtra="6sp"/>
-
+            tools:text="This is a sample explanation. This is more sample explanation. This is even more sample explanation. "
+            />
     </LinearLayout>
-
 </layout>

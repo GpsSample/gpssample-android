@@ -37,7 +37,7 @@ class RulePersistenceTest {
     lateinit var customField: CustomField
     lateinit var greaterThanRule: Rule
     private val configId = UUID.randomUUID().toString()
-    private val ruleSet = RuleSet("My first rule set", configId)
+    private val ruleSet = RuleSet("My first rule set", configId, true)
 
     @Before
     fun createDb() {

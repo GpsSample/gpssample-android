@@ -5,7 +5,6 @@ import android.arch.persistence.room.*
 import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.landmark.CustomLandmarkType
 import org.taskforce.episample.db.converter.DateConverter
-import org.taskforce.episample.db.filter.RuleSet
 import java.util.*
 
 @TypeConverters(DateConverter::class)
@@ -32,8 +31,8 @@ class ResolvedConfig(var name: String,
     @Relation(parentColumn = "id", entityColumn = "config_id")
     lateinit var customLandmarkTypes: List<CustomLandmarkType>
 
-    @Relation(parentColumn = "id", entityColumn = "config_id")
-    lateinit var ruleSets: List<RuleSet>
+//    @Relation(parentColumn = "id", entityColumn = "config_id")
+//    lateinit var ruleSets: List<RuleSet>
 }
 
 @Dao

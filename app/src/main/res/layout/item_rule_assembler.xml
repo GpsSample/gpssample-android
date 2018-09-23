@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="vm"
+            type="org.taskforce.episample.config.sampling.filter.RuleAssemblerViewModel"/>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="17dp"
+            android:textColor="@color/textColorDetails"
+            android:text="@{vm.ruleNumber}"
+            tools:text="1"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="22dp"
+            android:orientation="vertical"
+            tools:ignore="RtlHardcoded">
+
+            <Spinner
+                android:id="@+id/ruleSpinner"
+                style="@style/AppTheme.Sampling.Rules.Assembly.LineItem"
+                tools:listitem="@android:layout/simple_spinner_item"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/dividerColor"/>
+
+            <LinearLayout
+                android:visibility="@{vm.operatorAndValueVisibility}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <Spinner
+                        android:id="@+id/ruleOperatorSpinner"
+                        style="@style/AppTheme.Sampling.Rules.Assembly.LineItem"
+                        tools:listitem="@android:layout/simple_spinner_item"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/dividerColor"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="17dp"
+                    android:visibility="@{vm.valueEntryVisibility}"
+                    android:layout_weight="2"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/ruleValueEditText"
+                        android:text="@={vm.value}"
+                        style="@style/AppTheme.Sampling.Rules.Assembly.LineItem.EditText"
+                        tools:listitem="@android:layout/simple_spinner_item"
+                        android:inputType="textNoSuggestions"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/dividerColor"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    tools:visibility="gone"
+                    android:visibility="@{vm.valueSelectVisibility}"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="17dp"
+                    android:layout_weight="2"
+                    android:orientation="vertical">
+
+                    <Spinner
+                        android:id="@+id/ruleValueSpinner"
+                        style="@style/AppTheme.Sampling.Rules.Assembly.LineItem"
+                        tools:listitem="@android:layout/simple_spinner_item"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/dividerColor"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:onClick="@{vm.deletePressed}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/delete_rule"
+                android:textColor="@color/colorError"
+                android:textStyle="bold"/>
+        </LinearLayout>
+    </LinearLayout>
+</layout>

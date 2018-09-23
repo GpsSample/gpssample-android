@@ -23,6 +23,36 @@
         <item name="android:textColor">@color/textColorDisabled</item>
     </style>
 
+    <style name="AppTheme.Sampling"/>
+    <style name="AppTheme.Sampling.ToggleButton">
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:background">@drawable/selector_sampling_toggle</item>
+        <item name="android:textColor">@color/toggle_color</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+    </style>
+
+    <style name="AppTheme.Sampling.ToggleButton.Grey">
+        <item name="android:background">@drawable/selector_sampling_toggle_grey</item>
+        <item name="android:textColor">@color/toggle_color_grey</item>
+    </style>
+    <style name="AppTheme.Sampling.Rules"></style>
+    <style name="AppTheme.Sampling.Rules.Assembly"></style>
+    <style name="AppTheme.Sampling.Rules.Assembly.LineItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">47dp</item>
+    </style>
+
+    <style name="AppTheme.Sampling.Rules.Assembly.LineItem.EditText">
+        <item name="android:background">@null</item>
+    </style>
 
     <style name="PickerDialogCustom" parent="AlertDialogCustom">
         <item name="android:datePickerMode">spinner</item>
@@ -31,5 +61,4 @@
     <style name="AlertDialogCustom" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:datePickerStyle">@style/PickerDialogCustom</item>
     </style>
-
 </resources>

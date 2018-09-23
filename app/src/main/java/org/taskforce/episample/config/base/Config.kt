@@ -10,6 +10,9 @@ import org.taskforce.episample.config.settings.display.DisplaySettings
 import org.taskforce.episample.config.settings.server.ServerSettings
 import org.taskforce.episample.config.settings.user.UserSettings
 import org.taskforce.episample.core.interfaces.EnumerationSubject
+import org.taskforce.episample.db.filter.RuleRecord
+import org.taskforce.episample.db.filter.RuleSet
+import org.taskforce.episample.db.sampling.subsets.Subset
 import org.taskforce.episample.fileImport.models.LandmarkType
 import org.taskforce.episample.utils.humanReadableBytes
 import java.io.ByteArrayOutputStream
@@ -38,6 +41,8 @@ class Config(
     var customFields = listOf<CustomField>()
     var adminSettings: AdminSettings? = null
     var enumerationSubject: EnumerationSubject? = null
+    var ruleSets = listOf<RuleSet>()
+    var rules = listOf<RuleRecord>()
 
     val size: String
         get() {
@@ -52,6 +57,7 @@ class Config(
 
     val displayDateCreated
         get() = displaySettings.getFormattedDate(dateCreated, true)
+    val subsets = listOf<Subset>()
 
     companion object {
         const val nameMaxChars = 32

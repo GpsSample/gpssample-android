@@ -13,8 +13,10 @@ import org.taskforce.episample.db.config.landmark.CustomLandmarkType
 import org.taskforce.episample.db.filter.RuleDao
 import org.taskforce.episample.db.filter.RuleRecord
 import org.taskforce.episample.db.filter.RuleSet
+import org.taskforce.episample.db.sampling.subsets.Subset
+import retrofit2.http.HEAD
 
-@Database(version = 24,
+@Database(version = 27,
         entities = [
             AdminSettings::class,
             Config::class,
@@ -24,6 +26,8 @@ import org.taskforce.episample.db.filter.RuleSet
             EnumerationSubject::class,
             RuleSet::class,
             RuleRecord::class,
+            Study::class,
+            Subset::class,
             UserSettings::class
         ])
 
@@ -48,7 +52,6 @@ abstract class ConfigRoomDatabase : RoomDatabase() {
 //            configDao.insert(config)
 
 //            configDao.insert(Config("Config Name", Date()))
-
             return null
         }
     }

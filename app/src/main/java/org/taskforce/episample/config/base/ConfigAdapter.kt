@@ -138,7 +138,7 @@ class ConfigAdapter(fragmentManager: FragmentManager) :
 //                ChildFragmentType.LANDMARK,
                 ChildFragmentType.CUSTOM_FIELDS,
 //                ChildFragmentType.SAMPLING_SELECTION,
-//                ChildFragmentType.SAMPLING_SUBSET,
+                ChildFragmentType.SAMPLING_SUBSET,
 //                ChildFragmentType.SURVEY_EXPORT,
 //                ChildFragmentType.SERVER_SETTINGS,
                 ChildFragmentType.DISPLAY_SETTINGS,

@@ -37,6 +37,7 @@ class RuleSetCreationActivity : FragmentActivity() {
         fields = intent.extras.getParcelableArray(EXTRA_CUSTOM_FIELDS).toList() as List<CustomFieldForRules>
 
         val binding = DataBindingUtil.setContentView<ActivityRuleSetCreationBinding>(this, R.layout.activity_rule_set_creation)
+        binding.setLifecycleOwner(this)
 
         if (!intent.hasExtra(EXTRA_RULESET)) {
             ruleSetId = intent.extras.getString(EXTRA_RULESET_ID) ?: UUID.randomUUID().toString()
@@ -53,7 +54,7 @@ class RuleSetCreationActivity : FragmentActivity() {
         viewModel = ViewModelProviders.of(this, RuleSetCreationViewModelFactory()).get(RuleSetCreationViewModel::class.java)
         ruleSet?.let {
             viewModel.isAnyChecked.set(it.isAny)
-            viewModel.name.set(it.name)
+            viewModel.name.postValue(it.name)
             adapter?.rules?.clear()
             adapter?.addAll(rules!!)
         }
@@ -87,7 +88,7 @@ class RuleSetCreationActivity : FragmentActivity() {
     }
 
     private fun generateRuleSet(): RuleSet {
-        return RuleSet(viewModel.name.get()!!, viewModel.isAnyChecked.get(), ruleSetId)
+        return RuleSet(viewModel.name.value!!, viewModel.isAnyChecked.get(), ruleSetId)
     }
 
     private fun generateRules(): List<RuleRecord> {

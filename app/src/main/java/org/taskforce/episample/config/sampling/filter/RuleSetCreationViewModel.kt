@@ -1,9 +1,9 @@
 package org.taskforce.episample.config.sampling.filter
 
 import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
 import android.databinding.ObservableBoolean
-import android.databinding.ObservableField
 import android.view.View
 
 
@@ -21,7 +21,13 @@ class RuleSetCreationViewModel: ViewModel() {
         }
     }
 
-    val name = ObservableField<String>()
+    val name = MutableLiveData<String>().apply {
+        value = ""
+    }
+
+    val isSaveEnabled = Transformations.map(name) {
+        it.isNotBlank()
+    }
 
     fun closePressed(view: View) {
         closeEvents.value = Event.CloseEvent()

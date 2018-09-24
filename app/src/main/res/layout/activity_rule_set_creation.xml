@@ -57,9 +57,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:enabled="@{vm.isSaveEnabled}"
                         android:onClick="@{vm.savePressed}"
                         android:text="@string/save"
-                        android:textColor="@color/textColorInverse"/>
+                        android:textColor="@color/disableable_toolbar_text_color"/>
                 </LinearLayout>
             </Toolbar>
 

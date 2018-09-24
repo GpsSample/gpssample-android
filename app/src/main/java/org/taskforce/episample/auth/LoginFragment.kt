@@ -42,6 +42,7 @@ class LoginFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
             FragmentLoginBinding.inflate(inflater).apply {
+                setLifecycleOwner(this@LoginFragment)
                 loginViewModel = LoginViewModel(
                         requireActivity().application,
                         LanguageService(languageManager),

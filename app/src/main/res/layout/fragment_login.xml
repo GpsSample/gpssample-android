@@ -112,6 +112,7 @@
                     android:layout_gravity="center_horizontal"
                     android:background="@drawable/login_input_background"
                     android:elevation="4dp"
+                    android:enabled="@{vm.signinEnabled}"
                     android:onClick="@{() -> vm.signIn()}"
                     android:minHeight="0dp"
                     android:minWidth="0dp"

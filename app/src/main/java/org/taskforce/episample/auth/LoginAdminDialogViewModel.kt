@@ -5,7 +5,7 @@ import android.arch.lifecycle.*
 import android.support.v4.content.ContextCompat
 import org.taskforce.episample.R
 import org.taskforce.episample.core.LiveDataPair
-import org.taskforce.episample.db.ConfigRepository
+import org.taskforce.episample.db.StudyRepository
 
 class LoginAdminDialogViewModel(
         application: Application,
@@ -18,8 +18,8 @@ class LoginAdminDialogViewModel(
         val onCancel: () -> Unit,
         val onDone: () -> Unit) : AndroidViewModel(application) {
 
-    val configRepository = ConfigRepository(application)
-    val password: LiveData<String> = Transformations.map(configRepository.getResolvedConfig(configId)) {
+    val studyRepository = StudyRepository(application)
+    val password: LiveData<String> = Transformations.map(studyRepository.getResolvedConfig(configId)) {
         it.adminSettings.password
     }
 

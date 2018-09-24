@@ -1,17 +1,15 @@
 package org.taskforce.episample.auth
 
 import android.app.Application
-import android.arch.lifecycle.Observer
-import android.databinding.BaseObservable
-import android.databinding.Bindable
+import android.arch.lifecycle.AndroidViewModel
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
 import android.widget.ArrayAdapter
 import org.taskforce.episample.R
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.interfaces.Config
 import org.taskforce.episample.db.StudyRepository
-import org.taskforce.episample.db.config.ResolvedConfig
 import org.taskforce.episample.managers.LiveConfig
-import org.taskforce.episample.utils.bindDelegate
 
 class LoginViewModel(application: Application,
                      languageService: LanguageService,
@@ -19,81 +17,75 @@ class LoginViewModel(application: Application,
                      val languageSelectAdapter: ArrayAdapter<String>,
                      private val signIn: (name: String, config: Config) -> Unit,
                      private val signInAsSupervisor: (name: String, config: Config) -> Unit,
-                     private val displaysAdminLoginDialog: () -> Unit) : BaseObservable() {
+                     private val displaysAdminLoginDialog: () -> Unit) : AndroidViewModel(application) {
 
     val studyRepository = StudyRepository(application)
     val configData = studyRepository.getResolvedConfig(configId)
 
-    val configObserver: Observer<ResolvedConfig> = Observer {
-
-        config = it?.let { return@let LiveConfig(application, it!!) }
-        adminPassword = it?.adminSettings?.password
-    }
-
-    var config: Config? = null
-    var adminPassword: String? = null
-
-    init {
-        languageService.update = {
-            welcome = languageService.getString(R.string.welcome_title)
-            nameHint = languageService.getString(R.string.login_name_hint)
-            supervisorSignInText = languageService.getString(R.string.login_signin_supervisor)
-            passwordHint = languageService.getString(R.string.login_password_supervisor_hint)
+    val adminPassword: String?
+        get() {
+            return configData.value?.let {
+                return@let it.adminSettings.password
+            }
         }
 
-        configData.observeForever(configObserver)
-    }
+    val config: Config?
+        get() {
+            return configData.value?.let {
+                return@let LiveConfig(getApplication(), it)
+            }
+        }
 
-    @get:Bindable
-    var welcome by bindDelegate(languageService.getString(R.string.welcome_title))
 
-    @get:Bindable
-    var nameHint by bindDelegate(languageService.getString(R.string.login_name_hint))
+    val welcome = languageService.getString(R.string.welcome_title)
 
-    @get:Bindable
-    var name by bindDelegate<String?>(null)
+    val nameHint = languageService.getString(R.string.login_name_hint)
 
-    var adapter = languageSelectAdapter
+    val name = MutableLiveData<String>().apply { value = "" }
 
-    @get:Bindable
-    var supervisorSignIn by bindDelegate(false)
+    val adapter = languageSelectAdapter
 
-    @get:Bindable
-    var supervisorSignInText by bindDelegate(languageService.getString(R.string.login_signin_supervisor))
+    val supervisorSignIn = MutableLiveData<Boolean>().apply { value = false }
 
-    @get:Bindable
-    var password by bindDelegate<String?>(null)
+    val supervisorSignInText = languageService.getString(R.string.login_signin_supervisor)
 
-    @get:Bindable
-    var passwordHint by bindDelegate(languageService.getString(R.string.login_password_supervisor_hint))
+    val password = MutableLiveData<String>().apply { value = "" }
 
-    @get:Bindable
-    var admin by bindDelegate(languageService.getString(R.string.login_admin))
+    val passwordHint = languageService.getString(R.string.login_password_supervisor_hint)
 
-    @get:Bindable
-    var signInText by bindDelegate(languageService.getString(R.string.login_signin))
+    val admin = languageService.getString(R.string.login_admin)
+
+    val signInText = languageService.getString(R.string.login_signin)
+
+    val signinEnabled = (Transformations.map(configData) {
+        return@map it != null
+    } as MutableLiveData<Boolean>).apply { value = false }
 
     fun signIn() {
-        if (name == null) {
+        if (name.value == null) {
             //TODO: display error message that username cannot be null.
         } else {
-            if (supervisorSignIn) {
-                if (password != null) {
-                    password?.let { password ->
-                        name?.let {
-                            if (password == adminPassword) {
-                                signInAsSupervisor(it, config!!)
-                            } else {
-                                //TODO: display incorrect password error.
+            supervisorSignIn.value?.let { supervisorSignIn ->
+                config?.let { config ->
+                    if (supervisorSignIn) {
+                        if (password.value != null) {
+                            password.value?.let { password ->
+                                name.value?.let {
+                                    if (password == adminPassword) {
+                                        signInAsSupervisor(it, config)
+                                    } else {
+                                        //TODO: display incorrect password error.
+                                    }
+                                }
                             }
+                        } else {
+                            //TODO: display supervisor password cannot be null.
+                        }
+                    } else {
+                        name.value?.let {
+                            signIn(it, config)
                         }
                     }
-                } else {
-                    //TODO: display supervisor password cannot be null.
-                }
-            } else {
-                name?.let {
-                    signIn(it, config!!)
                 }
             }
         }
@@ -104,6 +96,8 @@ class LoginViewModel(application: Application,
     }
 
     fun displaySupervisorSignIn() {
-        supervisorSignIn = !supervisorSignIn
+        supervisorSignIn.value?.let {
+            supervisorSignIn.postValue(!it)
+        }
     }
 }

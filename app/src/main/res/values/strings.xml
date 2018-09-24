@@ -341,6 +341,11 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="survey_status_row_complete">Survey Complete</string>
     <string name="survey_status_row_skip">Skip Until Later</string>
     <string name="survey_status_row_problem">Problem</string>
+    
+    <string name="sample">Sample</string>
+    <string name="sample_create_title">Assign Sample Sublists</string>
+    <string name="sample_create_button">Create Sample</string>
+
     <string name="final_report">Final Report</string>
     <string name="final_upload_title">Send Final Study Report</string>
     <string name="final_upload_message">If you have completed all surveying for this study, upload the final report to the study server over Wi-Fi.</string>

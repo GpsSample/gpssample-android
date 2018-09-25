@@ -25,7 +25,6 @@ import javax.inject.Inject
 class CollectViewModel(application: Application,
                        languageService: LanguageService,
                        googleMapSingle: Single<GoogleMap>,
-                       lastKnownLocationObservable: Observable<Pair<LatLng, Float>>,
                        val addPoint: (Boolean) -> Unit,
                        val back: () -> Unit) : AndroidViewModel(application) {
 
@@ -35,8 +34,14 @@ class CollectViewModel(application: Application,
     @Inject
     lateinit var config: Config
 
+    @Inject
+    lateinit var locationService: LocationService
+
     init {
         (application as EpiApplication).collectComponent?.inject(this)
+
+        locationService.collectManager = collectManager
+        locationService.collectBreadcrumbs = true
     }
 
     val enumerationSubject: EnumerationSubject = config.enumerationSubject
@@ -54,37 +59,12 @@ class CollectViewModel(application: Application,
                     "${landmarkCount.value} ${languageService.getString(R.string.config_landmarks_title)}"
         }
 
-        lastKnownLocationObservable.subscribe {
-            val location = it.first
-            val accuracy = it.second
-
-            if (lastKnownLocation == null) {
-                googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoomLevel))
-                lastKnownLocation = location
+        googleMapSingle.subscribe({
+            googleMap = it
+            lastKnownLocation?.let { location ->
+                it.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoomLevel))
             }
-
-            val distanceResult = FloatArray(1)
-            Location.distanceBetween(lastKnownLocation!!.latitude,
-                    lastKnownLocation!!.longitude,
-                    location.latitude,
-                    location.longitude,
-                    distanceResult)
-
-            val distance = distanceResult[0]
-            if (distance >= breadcrumbAccuracy) {
-                collectManager.addBreadcrumb(LiveBreadcrumb(location, accuracy.toDouble(), Date()), {
-                    // no-op
-                })
-            }
-
-            lastKnownLocation = location
-        }
-        googleMapSingle.subscribe( {
-                    googleMap = it
-                    lastKnownLocation?.let { location ->
-                        it.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoomLevel))
-                    }
-                },
+        },
                 {
                     //TODO: Display unable to load Google Map.
                 }
@@ -110,9 +90,11 @@ class CollectViewModel(application: Application,
         value = languageService.getString(R.string.collect_button_landmark)
     }
 
-    private var googleMap: GoogleMap? = null
+    var googleMap: GoogleMap? = null
 
-    private var lastKnownLocation: LatLng? = null
+    var lastKnownLocation: LatLng? = null
+    
+    var lastKnownBreadcrumbLocation: LatLng? = null
 
     companion object {
         val breadcrumbAccuracy: Float = 5F

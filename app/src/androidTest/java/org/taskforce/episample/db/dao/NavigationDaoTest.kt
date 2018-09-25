@@ -84,8 +84,8 @@ class NavigationDaoTest {
         assertEquals(navigationPlanTitle, navigationDao?.getNavigationPlanSync(insertNavigationPlan.id)?.title)
 
         val enumerations = resolvedEnumerationDao!!.getResolvedEnumerationsSync(studyId)
-        enumerations.forEach { enumeration ->
-            navigationDao?.insertNavigationItem(NavigationItem(insertNavigationPlan.id, enumeration.id, SurveyStatus.Incomplete()))
+        enumerations.forEachIndexed { index, enumeration ->
+            navigationDao?.insertNavigationItem(NavigationItem(insertNavigationPlan.id, enumeration.id, index + 1, SurveyStatus.Incomplete()))
         }
 
         assertEquals(enumerations.size, navigationDao?.getNavigationPlanSync(insertNavigationPlan.id)?.navigationItems?.size)
@@ -101,18 +101,17 @@ class NavigationDaoTest {
         assertEquals(navigationPlanTitle, navigationDao?.getNavigationPlanSync(insertNavigationPlan.id)?.title)
 
         val enumerations = resolvedEnumerationDao!!.getResolvedEnumerationsSync(studyId)
-        enumerations.forEach { enumeration ->
-            navigationDao?.insertNavigationItem(NavigationItem(insertNavigationPlan.id, enumeration.id, SurveyStatus.Incomplete()))
+        enumerations.forEachIndexed { index, enumeration ->
+            navigationDao?.insertNavigationItem(NavigationItem(insertNavigationPlan.id, enumeration.id, index + 1, SurveyStatus.Incomplete()))
         }
 
         // ^Setup Complete
-        val navigationItems = navigationDao!!.getNavigationPlanSync(insertNavigationPlan.id)!!.navigationItems
+        val navigationItems = navigationDao!!.getNavigationPlanSync(insertNavigationPlan.id).navigationItems
         navigationItems.forEachIndexed { index, item ->
-            item.surveyStatus = SurveyStatus.Problem("Problem reason $index")
-            navigationDao?.updateNavigationItem(item)
+            navigationDao?.updateNavigationItem(item.id, SurveyStatus.Problem("Problem reason $index"))
         }
 
-        val updatedNavigationItems = navigationDao!!.getNavigationPlanSync(insertNavigationPlan.id)!!.navigationItems
+        val updatedNavigationItems = navigationDao!!.getNavigationPlanSync(insertNavigationPlan.id).navigationItems
         updatedNavigationItems.forEach {
             assertTrue(it.surveyStatus is SurveyStatus.Problem)
         }
@@ -127,18 +126,17 @@ class NavigationDaoTest {
         assertEquals(navigationPlanTitle, navigationDao?.getNavigationPlanSync(insertNavigationPlan.id)?.title)
 
         val enumerations = resolvedEnumerationDao!!.getResolvedEnumerationsSync(studyId)
-        enumerations.forEach { enumeration ->
-            navigationDao?.insertNavigationItem(NavigationItem(insertNavigationPlan.id, enumeration.id, SurveyStatus.Incomplete()))
+        enumerations.forEachIndexed { index, enumeration ->
+            navigationDao?.insertNavigationItem(NavigationItem(insertNavigationPlan.id, enumeration.id, index + 1, SurveyStatus.Incomplete()))
         }
 
         // ^Setup Complete
-        val navigationItems = navigationDao!!.getNavigationPlanSync(insertNavigationPlan.id)!!.navigationItems
-        navigationItems.forEachIndexed { index, item ->
-            item.surveyStatus = SurveyStatus.Complete()
-            navigationDao?.updateNavigationItem(item)
+        val navigationItems = navigationDao!!.getNavigationPlanSync(insertNavigationPlan.id).navigationItems
+        navigationItems.forEach { item ->
+            navigationDao?.updateNavigationItem(item.id, SurveyStatus.Complete())
         }
 
-        val updatedNavigationItems = navigationDao!!.getNavigationPlanSync(insertNavigationPlan.id)!!.navigationItems
+        val updatedNavigationItems = navigationDao!!.getNavigationPlanSync(insertNavigationPlan.id).navigationItems
         updatedNavigationItems.forEach {
             assertTrue(it.surveyStatus is SurveyStatus.Complete)
         }

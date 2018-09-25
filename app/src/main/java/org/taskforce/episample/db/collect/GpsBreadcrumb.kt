@@ -18,9 +18,11 @@ import java.util.*
 class GpsBreadcrumb(
         override val gpsPrecision: Double,
         @ColumnInfo(name = "collector_name")
-        var collectorName: String,
+        override var collectorName: String,
         val lat: Double,
         val lng: Double,
+        @ColumnInfo(name = "start_of_session")
+        override val startOfSession: Boolean,
         @ColumnInfo(name = "study_id")
         var studyId: String,
         override val dateCreated: Date = Date(),

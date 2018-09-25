@@ -61,14 +61,15 @@ class LiveCollectManagerTest {
 
         val syncObject = Object()
 
-        CommonSetup.setupConfigAndStudy(configRepository!!,
+        CommonSetup.setupConfigAndStudy(context,
+                configRepository!!,
                 studyRepository!!,
                 customFields = customFieldSource,
                 customLandmarkTypes = customLandmarkSource,
-                callback = { configId, studyId ->
-                    configManager = LiveConfigManager(studyRepository!!, configId)
+                callback = { config, studyId ->
+                    configManager = LiveConfigManager(studyRepository!!, config.id)
                     collectManager = LiveCollectManager(context.applicationContext as Application,
-                            configManager!!, studyRepository!!, LiveUserSession("Jesse", false, configId, studyId))
+                            configManager!!, config, studyRepository!!, LiveUserSession("Jesse", false, config.id, studyId))
                     synchronized(syncObject) {
                         syncObject.notify()
                     }
@@ -93,7 +94,8 @@ class LiveCollectManagerTest {
     fun insertAndReadLandmarks() {
         val syncObject = Object()
 
-        collectManager!!.addLandmark(LiveLandmark("B41 Stop 1",
+        collectManager!!.addLandmark(LiveLandmark("Collector Name",
+                "B41 Stop 1",
                 LiveLandmarkType("Bus-stop", "iconLocation", LandmarkTypeMetadata.BuiltInLandmark(BuiltInLandmark.BUS_STOP)),
                 "Note",
                 null,
@@ -123,7 +125,7 @@ class LiveCollectManagerTest {
             LiveCustomFieldValue(TextValue("Filled out value"), CustomFieldType.TEXT, it.id)
         }
 
-        collectManager!!.addEnumerationItem(LiveEnumeration(null, false, false, "title", "note", LatLng(20.1, 20.2), 25.6,
+        collectManager!!.addEnumerationItem(LiveEnumeration("Collector Name", null, false, false, "title", "note", LatLng(20.1, 20.2), 25.6,
                 "TODO", customFieldValues = customFieldsValues, id = null)) {
 
             val enumerations = collectManager!!.getEnumerations().blockingObserve()

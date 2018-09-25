@@ -129,6 +129,7 @@ fun org.taskforce.episample.core.interfaces.Breadcrumb.toDBBreadcrumb(collectorN
             collectorName,
             location.latitude,
             location.longitude,
+            startOfSession,
             studyId
     )
 }
@@ -144,5 +145,6 @@ fun org.taskforce.episample.core.interfaces.Landmark.toDBLandmark(collectorName:
             builtInLandmark = (landmarkType.metadata as? LandmarkTypeMetadata.BuiltInLandmark)?.type,
             customLandmarkTypeId = (landmarkType.metadata as? LandmarkTypeMetadata.CustomId)?.id,
             gpsPrecision = gpsPrecision,
-            dateCreated = dateCreated)
+            dateCreated = dateCreated,
+            collectorName = collectorName)
 }

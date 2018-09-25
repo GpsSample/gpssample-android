@@ -2,15 +2,15 @@ package org.taskforce.episample.collection.viewmodels
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.arch.lifecycle.*
-import android.arch.lifecycle.Observer
+import android.arch.lifecycle.AndroidViewModel
+import android.arch.lifecycle.MediatorLiveData
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
 import android.databinding.ObservableField
-import android.location.Location
 import android.os.CountDownTimer
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
-import io.reactivex.Observable
 import io.reactivex.Single
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
@@ -19,16 +19,15 @@ import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.LiveDataTriple
 import org.taskforce.episample.core.interfaces.*
+import org.taskforce.episample.core.interfaces.Enumeration
 import org.taskforce.episample.db.config.customfield.value.*
 import java.util.*
 import javax.inject.Inject
-import org.taskforce.episample.core.interfaces.Enumeration
 
 class CollectAddViewModel(
         application: Application,
         languageService: LanguageService,
         mapObservable: Single<GoogleMap>,
-        locationObservable: Observable<Location>,
         val isLandmark: Boolean,
         private val saveButtonEnabledColor: Int,
         private val saveButtonDisabledColor: Int,
@@ -39,13 +38,21 @@ class CollectAddViewModel(
         private val showDuplicateGpsDialog: (enumeration: Enumeration?, subject: EnumerationSubject) -> Unit) : AndroidViewModel(application) {
 
     @Inject
+    lateinit var userSession: UserSession
+
+    @Inject
     lateinit var config: Config
 
     @Inject
     lateinit var collectManager: CollectManager
 
+    @Inject
+    lateinit var locationService: LocationService
+
     init {
         (application as EpiApplication).collectComponent?.inject(this)
+
+        locationService.configuration = LocationServiceConfiguration(minTime = 5000, minDistance = 0f)
     }
 
     var landmarkType = config.landmarkTypes.first()
@@ -67,12 +74,6 @@ class CollectAddViewModel(
             notesHint.set(languageService.getString(R.string.collect_notes_hint))
             photoText.set(languageService.getString(R.string.collect_add_text))
             gpsDisplay.set(languageService.getString(R.string.collect_gps_waiting))
-        }
-        locationObservable.subscribe {
-            if (!useDuplicatedGps) { // Only update if not using the duplicated GPS
-                gpsDisplay.set("%.5f ".format(it.latitude) +
-                        ", %.5f".format(it.longitude))
-            }
         }
     }
 
@@ -105,16 +106,10 @@ class CollectAddViewModel(
     val primaryLabelErrorEnabled = MutableLiveData<Boolean>().apply { value = false }
 
     val primaryLabel = MutableLiveData<String>().apply { value = "" }
-    
+
     val enumerations = collectManager.getEnumerations()
 
-    var location = MutableLiveData<Location?>().apply { value = null }
-    val locationObserver: Observer<Location?> = Observer {
-        it?.let {
-            locationLatLng = LatLng(it.latitude, it.longitude)
-            locationPrecision = it.accuracy
-        }
-    }
+    var location = MutableLiveData<LatLng?>().apply { value = null }
 
     var locationLatLng: LatLng? = null
     var locationPrecision: Float? = null
@@ -202,7 +197,7 @@ class CollectAddViewModel(
     fun duplicateGps(lastEnumeration: Enumeration?) {
         lastEnumeration?.let {
             showDuplicateIcon.postValue(true)
-            
+
             cancelCountdown()
             useDuplicatedGps = true
             gpsVm?.precision?.set(it.gpsPrecision)
@@ -332,6 +327,7 @@ class CollectAddViewModel(
         get() = (locationPrecision ?: 9999.0f <= config.userSettings.gpsPreferredPrecision)
 
     var googleMap: GoogleMap? = null
+    var lastKnownLocation: LatLng? = null
 
     init {
         useDuplicatedGps = false // reset
@@ -345,27 +341,6 @@ class CollectAddViewModel(
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, mapZoom))
             }
         }
-
-        locationObservable.subscribe {
-            if (!useDuplicatedGps) {
-                if (it.accuracy < (location.value?.accuracy ?: 1000.0f)) {
-                    locationLatLng?.let {
-                        googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(it, mapZoom))
-                    }
-                    location.postValue(it)
-                    gpsDisplay.set("%.5f ".format(it.latitude) + ", %.5f".format(it.longitude))
-                    gpsVm?.precision?.set(it.accuracy.toDouble())
-                }
-            }
-        }
-        
-        location.observeForever(locationObserver)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        
-        location.removeObserver(locationObserver)
     }
 
     fun addCustomFieldViewModel(viewModel: AbstractCustomViewModel) {
@@ -393,6 +368,7 @@ class CollectAddViewModel(
     private fun saveLandmark(latLng: LatLng, gpsPrecision: Double) {
         collectManager.addLandmark(
                 LiveLandmark(
+                        userSession.username,
                         landmarkName.value ?: "",
                         landmarkType,
                         notes.value,
@@ -430,7 +406,9 @@ class CollectAddViewModel(
             }
         }
         val isIncomplete = !(isEnumerationValid.value ?: false)
-        collectManager.addEnumerationItem(LiveEnumeration(null,
+        collectManager.addEnumerationItem(LiveEnumeration(
+                userSession.username,
+                null,
                 isIncomplete,
                 exclude.value ?: false,
                 primaryLabel.value ?: "",

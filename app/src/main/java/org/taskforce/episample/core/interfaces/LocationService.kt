@@ -1,60 +1,111 @@
 package org.taskforce.episample.core.interfaces
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.*
+import android.arch.lifecycle.Lifecycle
+import android.arch.lifecycle.LifecycleObserver
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.OnLifecycleEvent
 import android.content.Context
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
+import android.os.Bundle
 import com.google.android.gms.maps.model.LatLng
+import org.taskforce.episample.collection.viewmodels.CollectViewModel
+import java.util.*
 
-interface LocationService : LifecycleObserver {
+interface LocationService: LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun connectListener()
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun disconnectListener()
 
+    val collectorName: String
+    var collectManager: CollectManager?
+    var collectBreadcrumbs: Boolean
+    var configuration: LocationServiceConfiguration
     val locationLiveData: MutableLiveData<Pair<LatLng, Float>>
-    var locationServiceConfiguration: LocationServiceConfiguration
 }
+data class LocationServiceConfiguration(val minTime: Long = 15000,
+                                        val minDistance: Float = 0f)
 
-data class LocationServiceConfiguration(val interval: Long = 30000,
-                                 val fastestInterval: Long = 5000,
-                                 val priority: Int = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
+class LiveLocationService(context: Context,
+                          override val collectorName: String) : LocationService {
 
-class LiveLocationService(context: Context) : LocationService {
+    override var collectManager: CollectManager? = null
 
-    override var locationServiceConfiguration = LocationServiceConfiguration()
-    override val locationLiveData = MutableLiveData<Pair<LatLng, Float>>()
+    override var collectBreadcrumbs: Boolean = false
 
-    private val locationClient = LocationServices.getFusedLocationProviderClient(context)
-    private val request: LocationRequest
-        get() {
-            val request = LocationRequest.create()
-            request.interval = locationServiceConfiguration.interval
-            request.fastestInterval = locationServiceConfiguration.fastestInterval
-            request.priority = locationServiceConfiguration.priority
-            return request
+    private var startOfSession = true
+    private var lastKnownBreadcrumbLocation: LatLng? = null
+
+    override var configuration: LocationServiceConfiguration = LocationServiceConfiguration()
+        @SuppressLint("MissingPermission")
+        set(value) {
+            field = value
+            locationClient.removeUpdates(listener)
+            locationClient.requestLocationUpdates(LocationManager.GPS_PROVIDER, configuration.minTime, configuration.minDistance, listener)
         }
 
-    private val locationListener = object : LocationCallback() {
-        override fun onLocationResult(result: LocationResult?) {
-            result?.lastLocation?.let {
-                locationLiveData.postValue(Pair(LatLng(it.latitude, it.longitude), it.accuracy))
+    override val locationLiveData = MutableLiveData<Pair<LatLng, Float>>()
+
+    private val locationClient = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+    val listener = object: LocationListener {
+        override fun onLocationChanged(location: Location) {
+            val latLng = LatLng(location.latitude, location.longitude)
+            locationLiveData.postValue(latLng to location.accuracy)
+
+            if (collectBreadcrumbs) {
+                lastKnownBreadcrumbLocation?.let {
+                    val distanceResult = FloatArray(1)
+                    Location.distanceBetween(it.latitude,
+                            it.longitude,
+                            latLng.latitude,
+                            latLng.longitude,
+                            distanceResult)
+
+                    val distance = distanceResult[0]
+                    if (distance >= CollectViewModel.breadcrumbAccuracy) {
+                        collectManager?.addBreadcrumb(LiveBreadcrumb(collectorName, latLng, location.accuracy.toDouble(), startOfSession, Date()), {
+                            // no-op
+                        })
+
+                    }
+                } ?: run {
+                    lastKnownBreadcrumbLocation = latLng
+                    collectManager?.addBreadcrumb(LiveBreadcrumb(collectorName, latLng, location.accuracy.toDouble(), startOfSession, Date()), {
+                        // no-op
+                    })
+                }
+                lastKnownBreadcrumbLocation = latLng
             }
+
+            startOfSession = false
+        }
+
+        override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+            // no-op
+        }
+
+        override fun onProviderEnabled(provider: String?) {
+            // no-op
+        }
+
+        override fun onProviderDisabled(provider: String?) {
+            // no-op
         }
     }
 
     @SuppressLint("MissingPermission")
-    //    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     override fun connectListener() {
-        locationClient.requestLocationUpdates(request, locationListener, null)
+        lastKnownBreadcrumbLocation = null
+        startOfSession = true
+        locationClient.requestLocationUpdates(LocationManager.GPS_PROVIDER, configuration.minTime, configuration.minDistance, listener)
     }
 
-    //    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     override fun disconnectListener() {
-        locationClient.removeLocationUpdates(locationListener)
+        locationClient.removeUpdates(listener)
     }
 }

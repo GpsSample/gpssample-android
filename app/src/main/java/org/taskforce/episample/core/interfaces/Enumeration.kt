@@ -9,7 +9,8 @@ interface Enumeration : CollectItem {
     val isExcluded: Boolean
 }
 
-class LiveEnumeration(override val image: String?,
+class LiveEnumeration(override val collectorName: String,
+                      override val image: String?,
                       override val isIncomplete: Boolean,
                       override val isExcluded: Boolean,
                       override val title: String?,

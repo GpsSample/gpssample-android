@@ -11,6 +11,7 @@ import org.taskforce.episample.db.config.customfield.CustomFieldType
 import java.util.*
 
 class MockCollectManager : CollectManager {
+
     override fun updateLandmark(landmark: Landmark, callback: () -> Unit) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -77,10 +78,10 @@ class MockCollectManager : CollectManager {
         enumerations + landmarks
     }
 
-    private val breadcrumbs: MutableList<Breadcrumb> = mutableListOf(MockBreadcrumb(5.6, LatLng(37.4218651, -122.083387899)),
-            MockBreadcrumb(6.2, LatLng(37.42227362, -122.08386971)),
-            MockBreadcrumb(8.0, LatLng(37.42113431, -122.086075205)),
-            MockBreadcrumb(1.4, LatLng(37.42205705, -122.084666302)))
+    private val breadcrumbs: MutableList<Breadcrumb> = mutableListOf(MockBreadcrumb(userSession.username, 5.6, LatLng(37.4218651, -122.083387899), true),
+            MockBreadcrumb(userSession.username, 6.2, LatLng(37.42227362, -122.08386971), false),
+            MockBreadcrumb(userSession.username, 8.0, LatLng(37.42113431, -122.086075205), false),
+            MockBreadcrumb(userSession.username, 1.4, LatLng(37.42205705, -122.084666302), false))
     private val breadCrumbLiveData = MutableLiveData<List<Breadcrumb>>().apply {
         postValue(breadcrumbs)
     }

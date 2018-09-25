@@ -44,6 +44,7 @@ class LiveNavigationManager(val application: Application,
                     plan.id,
                     plan.navigationItems.map { item ->
                         return@map LiveNavigationItem(
+                                userSession.username,
                                 item.enumeration.title ?: "",
                                 item.navigationOrder,
                                 item.surveyStatus,

@@ -53,7 +53,7 @@ class CommonManager {
 
         fun getBreadcrumbs(studyRepository: StudyRepository, studyId: String): LiveData<List<Breadcrumb>> {
             return Transformations.map(studyRepository.getBreadcrumbs(studyId), {
-                return@map it.map { LiveBreadcrumb(it.location, it.gpsPrecision, it.dateCreated) }
+                return@map it.map { LiveBreadcrumb(it.collectorName, it.location, it.gpsPrecision, it.startOfSession, it.dateCreated) }
             })
         }
     }

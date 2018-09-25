@@ -13,14 +13,12 @@ import org.taskforce.episample.core.interfaces.EnumerationSubject
 class CollectViewModelFactory(private val application: Application,
                               private val languageService: LanguageService,
                               private val googleMapSingle: Single<GoogleMap>,
-                              private val lastKnownLocationObservable: Observable<Pair<LatLng, Float>>,
                               private val addPoint: (Boolean) -> Unit,
                               private val back: () -> Unit) : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return CollectViewModel(application,
                 languageService,
                 googleMapSingle,
-                lastKnownLocationObservable,
                 addPoint,
                 back) as T
     }

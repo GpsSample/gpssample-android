@@ -1,6 +1,6 @@
 package org.taskforce.episample.db.utils
 
-import junit.framework.Assert
+import android.content.Context
 import org.taskforce.episample.config.base.Config
 import org.taskforce.episample.config.fields.CustomFieldTypeConstants
 import org.taskforce.episample.config.settings.admin.AdminSettings
@@ -12,6 +12,7 @@ import org.taskforce.episample.db.config.*
 import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.customfield.CustomFieldType
 import org.taskforce.episample.db.config.customfield.metadata.CustomFieldMetadata
+import org.taskforce.episample.managers.LiveConfig
 import org.taskforce.episample.utils.makeDBConfig
 import java.util.*
 
@@ -53,7 +54,8 @@ class CommonSetup {
             )
         }
 
-        fun setupConfigAndStudy(configRepository: ConfigRepository,
+        fun setupConfigAndStudy(context: Context,
+                                configRepository: ConfigRepository,
                                 studyRepository: StudyRepository,
                                 configName: String = "Config 1",
                                 enumerationSingular: String = "Person",
@@ -67,7 +69,7 @@ class CommonSetup {
                                 gpsPreferredPrecision: Double = 20.0,
                                 isMetricDate: Boolean = true,
                                 is24HourTime: Boolean = true,
-                                callback: (configId: String, studyId: String) -> Unit) {
+                                callback: (config: org.taskforce.episample.core.interfaces.Config, studyId: String) -> Unit) {
             val configBuilder = org.taskforce.episample.config.base.Config(name = configName)
             configBuilder.adminSettings = AdminSettings(adminPassword)
             configBuilder.enumerationSubject = LiveEnumerationSubject(enumerationSingular, enumerationPlural, enumerationLabel)
@@ -79,7 +81,11 @@ class CommonSetup {
 
             configRepository.insertConfigFromBuildManager(configBuilder) {
                 val config = configRepository.getResolvedConfigSync(it)
-                configRepository.insertStudy(config, "Study Name", "Study Password", callback)
+                configRepository.insertStudy(config, "Study Name", "Study Password", { configId, studyId ->
+                    // get study Config from repository
+                    val studyConfig = LiveConfig(context, studyRepository.getResolvedConfigSync(configId))
+                    callback(studyConfig, studyId)
+                })
             }
         }
 

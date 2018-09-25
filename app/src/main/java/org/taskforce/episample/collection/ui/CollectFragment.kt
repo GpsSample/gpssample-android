@@ -3,18 +3,19 @@ package org.taskforce.episample.collection.ui
 import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.location.Location
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.gms.location.*
+import android.view.WindowManager
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.PolylineOptions
-import io.reactivex.Observable
 import io.reactivex.Single
 import kotlinx.android.synthetic.main.fragment_collect.*
 import org.taskforce.episample.EpiApplication
@@ -25,11 +26,15 @@ import org.taskforce.episample.collection.viewmodels.CollectCardViewModel
 import org.taskforce.episample.collection.viewmodels.CollectViewModel
 import org.taskforce.episample.collection.viewmodels.CollectViewModelFactory
 import org.taskforce.episample.config.language.LanguageService
+import org.taskforce.episample.core.interfaces.Breadcrumb
 import org.taskforce.episample.core.interfaces.CollectItem
+import org.taskforce.episample.core.interfaces.LiveBreadcrumb
+import org.taskforce.episample.core.interfaces.LocationServiceConfiguration
 import org.taskforce.episample.databinding.FragmentCollectBinding
 import org.taskforce.episample.toolbar.managers.LanguageManager
 import org.taskforce.episample.utils.getCompatColor
 import org.taskforce.episample.utils.inflater
+import java.util.*
 import javax.inject.Inject
 
 class CollectFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener {
@@ -38,7 +43,6 @@ class CollectFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMap.O
     lateinit var languageManager: LanguageManager
     lateinit var languageService: LanguageService
 
-    lateinit var locationClient: FusedLocationProviderClient
     lateinit var collectIconFactory: CollectIconFactory
     lateinit var markerManager: CollectionItemMarkerManager
 
@@ -56,26 +60,11 @@ class CollectFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMap.O
 
         languageService = LanguageService(languageManager)
 
-        locationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         collectIconFactory = CollectIconFactory(requireContext().resources)
 
         breadcrumbPath = PolylineOptions().clickable(false)
 
         mapFragment = SupportMapFragment()
-
-        val lastKnownLocationObservable = Observable.create<Pair<LatLng, Float>> { emitter ->
-            locationClient.requestLocationUpdates(LocationRequest.create().apply {
-                interval = 30000
-                fastestInterval = 5000
-                priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
-            }, object : LocationCallback() {
-                override fun onLocationResult(result: LocationResult?) {
-                    result?.lastLocation?.let {
-                        emitter.onNext(Pair(LatLng(it.latitude, it.longitude), it.accuracy))
-                    }
-                }
-            }, null)
-        }
 
         collectViewModel = ViewModelProviders.of(this@CollectFragment,
                 CollectViewModelFactory(
@@ -86,7 +75,6 @@ class CollectFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMap.O
                                 single.onSuccess(it)
                             }
                         },
-                        lastKnownLocationObservable,
                         {
                             showCollectAddScreen(it)
                         },
@@ -101,10 +89,22 @@ class CollectFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMap.O
         collectCardVm = CollectCardViewModel(userSettings,
                 enumerationSubject,
                 displaySettings,
-                lastKnownLocationObservable,
                 requireContext().getCompatColor(R.color.colorError),
                 requireContext().getCompatColor(R.color.colorWarning),
                 requireContext().getCompatColor(R.color.gpsAcceptable))
+
+        lifecycle.addObserver(collectViewModel.locationService)
+        collectViewModel.locationService.locationLiveData.observe(this, Observer {
+            it?.let { (latLng, accuracy) ->
+                collectCardVm.currentLocation.set(latLng)
+                if (collectViewModel.lastKnownLocation == null) {
+                    collectViewModel.googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, CollectViewModel.zoomLevel))
+                }
+
+                collectViewModel.lastKnownLocation = latLng
+            }
+        })
+
         mapFragment.getMapAsync {
             markerManager = CollectionItemMarkerManager(collectIconFactory, it)
 
@@ -146,9 +146,21 @@ class CollectFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMap.O
 
         collectViewModel.gpsBreadcrumbs.observe(this, Observer { breadcrumbs ->
             this@CollectFragment.mapFragment.getMapAsync { map ->
-                val breadCrumbPath = PolylineOptions().clickable(false).color(R.color.greyHighlights)
-                breadcrumbs?.sortedBy { it.dateCreated }?.forEach { breadCrumbPath.add(it.location) }
-                map.addPolyline(breadCrumbPath)
+
+                val polylineOptions= mutableListOf<PolylineOptions>()
+                breadcrumbs?.sortedBy { it.dateCreated }?.forEach {
+                    if (it.startOfSession) {
+                        polylineOptions.add(PolylineOptions()
+                                .clickable(false)
+                                .color(R.color.greyHighlights))
+                    }
+
+                    polylineOptions.last().add(it.location)
+                }
+
+                polylineOptions.forEach { breadCrumbPath ->
+                    map.addPolyline(breadCrumbPath)
+                }
             }
         })
 

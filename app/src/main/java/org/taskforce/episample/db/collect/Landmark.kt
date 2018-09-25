@@ -26,6 +26,8 @@ class Landmark(
         val lng: Double,
         val note: String?,
         val image: String?,
+        @ColumnInfo(name = "collector_name")
+        val collectorName: String,
         @ColumnInfo(name = "built_in_landmark")
         val builtInLandmark: BuiltInLandmark?,
         @ColumnInfo(name = "custom_landmark_type_id")
@@ -44,6 +46,6 @@ class Landmark(
     ?: customLandmarkTypeId?.let { return@let LandmarkTypeMetadata.CustomId(it) }
     ?: throw IllegalStateException()
 
-    fun makeLiveLandmark(landmarkType: LandmarkType): LiveLandmark = LiveLandmark(title, landmarkType, note, image, LatLng(lat, lng), gpsPrecision, id, dateCreated)
+    fun makeLiveLandmark(landmarkType: LandmarkType): LiveLandmark = LiveLandmark(collectorName, title, landmarkType, note, image, LatLng(lat, lng), gpsPrecision, id, dateCreated)
 
 }

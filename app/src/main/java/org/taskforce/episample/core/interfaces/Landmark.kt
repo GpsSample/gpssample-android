@@ -8,7 +8,8 @@ interface Landmark : CollectItem {
     val landmarkType: LandmarkType
 }
 
-class LiveLandmark(override val title: String,
+class LiveLandmark(override val collectorName: String,
+                   override val title: String,
                    override val landmarkType: LandmarkType,
                    override val note: String?,
                    override val image: String?,

@@ -22,7 +22,7 @@ class ResolvedEnumeration(
         @ColumnInfo(name = "gps_precision")
         val gpsPrecision: Double,
         @ColumnInfo(name = "collector_name")
-        val collectorName: String? = null,
+        val collectorName: String,
         val title: String? = null,
         val image: String? = null,
         @ColumnInfo(name = "date_created")
@@ -32,7 +32,7 @@ class ResolvedEnumeration(
     @Relation(parentColumn = "id", entityColumn = "enumeration_id")
     lateinit var customFieldValues: List<CustomFieldValue>
 
-    fun makeLiveEnumeration(): Enumeration = LiveEnumeration(image,
+    fun makeLiveEnumeration(): Enumeration = LiveEnumeration(collectorName, image,
             isIncomplete, isExcluded, title, note, LatLng(lat, lng), gpsPrecision, "TODO", customFieldValues.map { it as org.taskforce.episample.core.interfaces.CustomFieldValue }, id, dateCreated)
 }
 

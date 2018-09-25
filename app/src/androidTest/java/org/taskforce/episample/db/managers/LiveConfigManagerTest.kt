@@ -50,11 +50,12 @@ class LiveConfigManagerTest {
 
         val syncObject = Object()
 
-        CommonSetup.setupConfigAndStudy(configRepository!!,
+        CommonSetup.setupConfigAndStudy(context,
+                configRepository!!,
                 studyRepository!!,
                 customLandmarkTypes = customLandmarkSource,
-                callback = { configId, studyId ->
-                    configManager = LiveConfigManager(studyRepository!!, configId)
+                callback = { config, studyId ->
+                    configManager = LiveConfigManager(studyRepository!!, config.id)
 
                     synchronized(syncObject) {
                         syncObject.notify()

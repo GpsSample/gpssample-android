@@ -10,7 +10,8 @@ interface NavigationItem : Enumeration {
     val surveyStatus: SurveyStatus
 }
 
-data class LiveNavigationItem(override val title: String,
+data class LiveNavigationItem(override val collectorName: String,
+                              override val title: String,
                               override val navigationOrder: Int,
                               override val surveyStatus: SurveyStatus,
                               override val isIncomplete: Boolean,

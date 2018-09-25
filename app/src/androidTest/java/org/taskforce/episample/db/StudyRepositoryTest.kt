@@ -4,7 +4,6 @@ import android.app.Application
 import android.arch.persistence.room.Room
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
-import android.util.Log
 import junit.framework.Assert
 import org.junit.After
 import org.junit.Before
@@ -27,9 +26,12 @@ class StudyRepositoryTest {
     private var configDb: ConfigRoomDatabase? = null
     private var studyDb: StudyRoomDatabase? = null
 
+    val context
+        get() = InstrumentationRegistry.getTargetContext()
+
     @Before
     fun createDb() {
-        val context = InstrumentationRegistry.getTargetContext()
+
         configDb = Room.inMemoryDatabaseBuilder(context, ConfigRoomDatabase::class.java).build()
         studyDb = Room.inMemoryDatabaseBuilder(context, StudyRoomDatabase::class.java).build()
         configRepository = ConfigRepository(context.applicationContext as Application, configDb, studyDb)
@@ -57,9 +59,9 @@ class StudyRepositoryTest {
         val integerCustomField = CustomField(true, true, true, true, true, "Custom Number", CustomFieldType.NUMBER,
                 mapOf(CustomFieldTypeConstants.INTEGER_ONLY to true))
 
-        CommonSetup.setupConfigAndStudy(configRepository!!, studyRepository!!, customFields = listOf(integerCustomField)) { configId, studyId ->
+        CommonSetup.setupConfigAndStudy(context, configRepository!!, studyRepository!!, customFields = listOf(integerCustomField)) { config, studyId ->
 
-            val resolvedConfig = studyRepository!!.getResolvedConfigSync(configId)
+            val resolvedConfig = studyRepository!!.getResolvedConfigSync(config.id)
             val enumeration = Enumeration("Jesse",
                     expectedLat, expectedLng, null, true, false, 25.12, studyId, null, null)
 

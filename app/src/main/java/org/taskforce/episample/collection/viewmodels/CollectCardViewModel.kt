@@ -15,17 +15,10 @@ import org.taskforce.episample.utils.bindDelegate
 class CollectCardViewModel(userSettings: UserSettings?,
                            enumerationSubject: EnumerationSubject?,
                            displaySettings: DisplaySettings?,
-                           lastKnownLocationObservable: io.reactivex.Observable<Pair<LatLng, Float>>,
                            lowestColor: Int,
                            mediumColor: Int,
                            highestColor: Int) : BaseObservable() {
-    
-    init {
-        lastKnownLocationObservable.subscribe { 
-            currentLocation.set(it.first)
-        }
-    }
-    
+
     var itemData = object: ObservableField<CollectItem>() {
         override fun set(value: CollectItem?) {
             super.set(value)

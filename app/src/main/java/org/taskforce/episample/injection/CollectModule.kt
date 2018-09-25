@@ -40,5 +40,5 @@ class CollectModule(val application: Application,
     fun providesLanguageService(): LanguageService = LiveLanguageService(application, config.enumerationSubject, listOf())
 
     @Provides
-    fun providesLocationService(): LocationService = LiveLocationService(application)
+    fun providesLocationService(): LocationService = LiveLocationService(application, userSession.username)
 }

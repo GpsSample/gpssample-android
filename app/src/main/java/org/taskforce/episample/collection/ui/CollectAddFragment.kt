@@ -4,11 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.content.Intent
 import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -18,10 +15,10 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.Toast
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.PolylineOptions
-import io.reactivex.Observable
 import io.reactivex.Single
 import kotlinx.android.synthetic.main.fragment_collect_add.*
 import org.taskforce.episample.EpiApplication
@@ -32,9 +29,11 @@ import org.taskforce.episample.collection.managers.generateView
 import org.taskforce.episample.collection.managers.generateViewModel
 import org.taskforce.episample.collection.viewmodels.CollectAddViewModel
 import org.taskforce.episample.collection.viewmodels.CollectAddViewModelFactory
+import org.taskforce.episample.collection.viewmodels.CollectViewModel
 import org.taskforce.episample.collection.viewmodels.CustomDropdownViewModel
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.interfaces.CustomField
+import org.taskforce.episample.core.interfaces.LiveBreadcrumb
 import org.taskforce.episample.core.ui.dialogs.DatePickerFragment
 import org.taskforce.episample.core.ui.dialogs.TimePickerFragment
 import org.taskforce.episample.databinding.FragmentCollectAddBinding
@@ -52,7 +51,6 @@ class CollectAddFragment : Fragment() {
     lateinit var languageManager: LanguageManager
     lateinit var languageService: LanguageService
 
-    lateinit var locationManager: LocationManager
     lateinit var collectIconFactory: CollectIconFactory
     lateinit var markerManager: CollectionItemMarkerManager
 
@@ -63,7 +61,6 @@ class CollectAddFragment : Fragment() {
 
         (requireActivity().application as EpiApplication).component.inject(this)
 
-        locationManager = activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         collectIconFactory = CollectIconFactory(requireContext().resources)
     }
 
@@ -83,7 +80,7 @@ class CollectAddFragment : Fragment() {
                 it.isMyLocationEnabled = true
                 it.mapType = GoogleMap.MAP_TYPE_SATELLITE
             }
-            
+
             languageService = LanguageService(languageManager)
 
             collectViewModel = ViewModelProviders.of(this@CollectAddFragment, CollectAddViewModelFactory(
@@ -93,25 +90,6 @@ class CollectAddFragment : Fragment() {
                         mapFragment.getMapAsync {
                             single.onSuccess(it)
                         }
-                    },
-                    Observable.create<Location> { emitter ->
-                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, object : LocationListener {
-                            override fun onLocationChanged(location: Location) {
-                                emitter.onNext(location)
-                            }
-
-                            override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-                                //NOP
-                            }
-
-                            override fun onProviderEnabled(provider: String?) {
-                                //NOP
-                            }
-
-                            override fun onProviderDisabled(provider: String?) {
-                                //NOP
-                            }
-                        })
                     },
                     arguments?.getBoolean(IS_LANDMARK) == true,
                     requireContext().getCompatColor(R.color.colorAccent),
@@ -134,6 +112,34 @@ class CollectAddFragment : Fragment() {
                         }
                     }
             )).get(CollectAddViewModel::class.java)
+
+            lifecycle.addObserver(collectViewModel.locationService)
+            collectViewModel.locationService.locationLiveData.observe(this@CollectAddFragment, Observer {
+                it?.let { (latLng, accuracy) ->
+
+                    collectViewModel.googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, CollectViewModel.zoomLevel))
+
+                    if (!collectViewModel.useDuplicatedGps) { // Only update if not using the duplicated GPS
+                        collectViewModel.gpsDisplay.set("%.5f ".format(latLng.latitude) +
+                                ", %.5f".format(latLng.longitude))
+                    }
+
+                    if (!collectViewModel.useDuplicatedGps) {
+                        if (accuracy < collectViewModel.locationPrecision ?: 1000f) {
+                            collectViewModel.lastKnownLocation = latLng
+                            collectViewModel.locationPrecision = accuracy
+                            collectViewModel.locationLatLng = latLng
+
+                            collectViewModel.locationLatLng?.let {
+                                collectViewModel.googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(it, CollectAddViewModel.mapZoom))
+                            }
+                            collectViewModel.location.postValue(latLng)
+                            collectViewModel.gpsDisplay.set("%.5f ".format(latLng.latitude) + ", %.5f".format(latLng.longitude))
+                            gpsVm?.precision?.set(accuracy.toDouble())
+                        }
+                    }
+                }
+            })
 
             landmarkImageSelector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -191,9 +197,20 @@ class CollectAddFragment : Fragment() {
 
         collectViewModel.gpsBreadcrumbs.observe(this@CollectAddFragment, Observer { breadcrumbs ->
             mapFragment.getMapAsync { map ->
-                val breadCrumbPath = PolylineOptions().clickable(false).color(R.color.greyHighlights)
-                breadcrumbs?.sortedBy { it.dateCreated }?.forEach { breadCrumbPath.add(it.location) }
-                map.addPolyline(breadCrumbPath)
+                val polylineOptions= mutableListOf<PolylineOptions>()
+                breadcrumbs?.sortedBy { it.dateCreated }?.forEach {
+                    if (it.startOfSession) {
+                        polylineOptions.add(PolylineOptions()
+                                .clickable(false)
+                                .color(R.color.greyHighlights))
+                    }
+
+                    polylineOptions.last().add(it.location)
+                }
+
+                polylineOptions.forEach { breadCrumbPath ->
+                    map.addPolyline(breadCrumbPath)
+                }
             }
         })
 
@@ -203,8 +220,8 @@ class CollectAddFragment : Fragment() {
             }
         })
 
-        collectViewModel.enumerations.observe(this, Observer { 
-            it?.let { 
+        collectViewModel.enumerations.observe(this, Observer {
+            it?.let {
                 val mostRecent = it.sortedByDescending { it.dateCreated }.firstOrNull()
                 collectViewModel.mostRecentEnumeration = mostRecent
             }

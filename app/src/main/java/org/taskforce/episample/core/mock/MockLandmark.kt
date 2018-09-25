@@ -5,14 +5,15 @@ import org.taskforce.episample.core.interfaces.Landmark
 import org.taskforce.episample.core.interfaces.LandmarkType
 import java.util.*
 
-data class MockLandmark(override val title: String,
+data class MockLandmark(override val collectorName: String,
+                        override val title: String,
                         override val landmarkType: LandmarkType,
                         override val location: LatLng,
                         override val gpsPrecision: Double,
                         override val image: String?,
                         override val note: String?,
                         override val id: String?,
-                        override val dateCreated: Date = Date()): Landmark {
+                        override val dateCreated: Date = Date()) : Landmark {
     companion object {
         fun createMockLandmark(title: String,
                                landmarkType: LandmarkType = MockLandmarkType.createMockLandmarkType(),
@@ -20,8 +21,9 @@ data class MockLandmark(override val title: String,
                                gpsPrecision: Double = 0.0,
                                image: String? = null,
                                note: String? = null,
+                               collectorName: String = "Collector Name",
                                dateCreated: Date = Date()): MockLandmark {
-            return MockLandmark(title, landmarkType, location, gpsPrecision, image, note, UUID.randomUUID().toString(), dateCreated = dateCreated)
+            return MockLandmark(collectorName, title, landmarkType, location, gpsPrecision, image, note, UUID.randomUUID().toString(), dateCreated = dateCreated)
         }
     }
 }

@@ -5,7 +5,6 @@ import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.location.Location
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -33,7 +32,6 @@ import org.taskforce.episample.collection.viewmodels.CollectViewModel
 import org.taskforce.episample.collection.viewmodels.CustomDropdownViewModel
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.interfaces.CustomField
-import org.taskforce.episample.core.interfaces.LiveBreadcrumb
 import org.taskforce.episample.core.ui.dialogs.DatePickerFragment
 import org.taskforce.episample.core.ui.dialogs.TimePickerFragment
 import org.taskforce.episample.databinding.FragmentCollectAddBinding

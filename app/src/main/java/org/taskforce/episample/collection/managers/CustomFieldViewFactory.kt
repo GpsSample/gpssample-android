@@ -20,7 +20,7 @@ import java.util.*
 
 class CustomFieldViewFactory {
 
-    fun generateView(rootView: View, customField: CustomField, viewModel: AbstractCustomViewModel, context: Context, parent: ViewGroup? = null) =
+    fun generateView(customField: CustomField, viewModel: AbstractCustomViewModel, context: Context, parent: ViewGroup? = null) =
             when (customField.type) {
                 CustomFieldType.CHECKBOX -> {
                     ItemCustomCheckboxBinding.inflate(context.inflater).apply {
@@ -33,9 +33,9 @@ class CustomFieldViewFactory {
                     }.root
                 }
                 CustomFieldType.DROPDOWN -> {
-                    val binding = ItemCustomDropdownBinding.bind(rootView)
-                    binding.vm = viewModel as CustomDropdownViewModel
-                    binding.root
+                    ItemCustomDropdownBinding.inflate(context.inflater).apply {
+                        vm = viewModel as CustomDropdownViewModel
+                    }.root
                 }
                 CustomFieldType.NUMBER -> {
                     val numberViewModel = viewModel as CustomNumberViewModel
@@ -108,7 +108,7 @@ class CustomFieldViewFactory {
 }
 
 fun CustomField.generateView(rootView: View, context: Context, vm: AbstractCustomViewModel, parent: ViewGroup? = null) =
-        CustomFieldViewFactory().generateView(rootView, this, vm, context, parent)
+        CustomFieldViewFactory().generateView(this, vm, context, parent)
 
 fun CustomField.generateViewModel(displaySettings: DisplaySettings, showDatePicker: (CustomField) -> Unit, context: Context? = null) =
         CustomFieldViewFactory().generateViewModel(this, displaySettings, showDatePicker, context)

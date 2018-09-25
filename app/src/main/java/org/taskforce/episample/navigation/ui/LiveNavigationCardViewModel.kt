@@ -7,7 +7,6 @@ import android.location.Location
 import android.text.SpannableString
 import android.text.style.StyleSpan
 import android.view.View
-import android.widget.Toast
 import com.google.android.gms.maps.model.LatLng
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R

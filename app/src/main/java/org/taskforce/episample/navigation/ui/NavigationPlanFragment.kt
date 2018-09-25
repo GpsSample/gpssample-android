@@ -141,10 +141,15 @@ class NavigationPlanFragment : Fragment(), GoogleMap.OnMarkerClickListener, Goog
         navigationPlanViewModel.navigationItems.observe(this, Observer { items ->
             val sortedItems = items?.sortedBy { it.navigationOrder } ?: emptyList()
             adapter?.data = sortedItems
-        })
-        navigationPlanViewModel.collectItems.observe(this, Observer { items ->
+
             this@NavigationPlanFragment.mapFragment.getMapAsync {
                 markerManager.addMarkerDiff(items ?: emptyList())
+            }
+        })
+        
+        navigationPlanViewModel.landmarks.observe(this, Observer { landmarks ->
+            this@NavigationPlanFragment.mapFragment.getMapAsync {
+                markerManager.addMarkerDiff(landmarks ?: emptyList())
             }
         })
 

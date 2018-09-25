@@ -146,8 +146,13 @@ class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMa
         binding.toolbarVm = navigationToolbarViewModel
         binding.setLifecycleOwner(this)
 
+        navigationViewModel.landmarks.observe(this, Observer { landmarks ->
+            this@NavigationFragment.mapFragment.getMapAsync {
+                markerManager.addMarkerDiff(landmarks ?: emptyList())
+            }
+        })
 
-        navigationViewModel.collectItems.observe(this, Observer { items ->
+        navigationViewModel.navigationItems.observe(this, Observer { items ->
             this@NavigationFragment.mapFragment.getMapAsync {
                 markerManager.addMarkerDiff(items ?: emptyList())
             }

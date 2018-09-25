@@ -36,5 +36,8 @@ class NavigationViewModel(application: Application, navigationPlanId: String): A
     val nextNavigationItem: LiveData<NavigationItem?> = Transformations.map(navigationManager.getNavigationItems(navigationPlanId)) {
         return@map it.sortedBy { it.navigationOrder }.firstOrNull { it.surveyStatus is SurveyStatus.Incomplete }
     }
-    val collectItems = navigationManager.getCollectItems()
+    
+    val landmarks = navigationManager.getLandmarks()
+    
+    val navigationItems = navigationManager.getNavigationItems(navigationPlanId)
 }

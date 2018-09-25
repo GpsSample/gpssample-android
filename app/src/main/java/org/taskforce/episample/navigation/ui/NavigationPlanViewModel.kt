@@ -44,11 +44,11 @@ class NavigationPlanViewModel(application: Application,
         languageService.cleanup()
     }
 
-    val collectItems = navigationManager.getCollectItems()
-
     val breadcrumbs = navigationManager.getBreadcrumbs()
 
     val navigationItems: LiveData<List<NavigationItem>> = navigationManager.getNavigationItems(navigatoinPlanId)
+    
+    val landmarks = navigationManager.getLandmarks()
 
     private val isComplete: LiveData<Boolean> = Transformations.map(navigationItems) {
         it.none { it.surveyStatus is SurveyStatus.Incomplete }

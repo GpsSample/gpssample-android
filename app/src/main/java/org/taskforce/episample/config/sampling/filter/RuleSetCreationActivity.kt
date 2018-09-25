@@ -185,7 +185,9 @@ class RuleSetCreationActivity : FragmentActivity(), DateClickedListener {
         fun remapFields(customFields: List<CustomField>): List<CustomFieldForRules> {
             return customFields.map { field ->
                 when (field.type) {
-                    CustomFieldType.TEXT,
+                    CustomFieldType.TEXT -> {
+                        CustomFieldForRules.TextField(field.id, field.name, field.type)
+                    }
                     CustomFieldType.DATE -> {
                         CustomFieldForRules.DateField(field.id, field.name, field.type, field.metadata as DateMetadata)
                     }

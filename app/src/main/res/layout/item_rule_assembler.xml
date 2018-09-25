@@ -75,8 +75,6 @@
                         android:text="@={vm.value}"
                         style="@style/AppTheme.Sampling.Rules.Assembly.LineItem.EditText"
                         tools:listitem="@android:layout/simple_spinner_item"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
                         android:inputType="textNoSuggestions"/>
 
                     <View

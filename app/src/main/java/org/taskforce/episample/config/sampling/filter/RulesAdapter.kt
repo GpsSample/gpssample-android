@@ -4,11 +4,13 @@ import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.Observer
 import android.databinding.DataBindingUtil
 import android.support.v7.widget.RecyclerView
+import android.text.method.DigitsKeyListener
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import org.taskforce.episample.R
 import org.taskforce.episample.core.interfaces.DisplaySettings
 import org.taskforce.episample.databinding.ItemRuleAssemblerBinding
@@ -148,19 +150,40 @@ class RulesAdapter(val ruleSetId: String, val fields: List<CustomFieldForRules>,
 
             binding.ruleSpinner.setSelection(viewModel.selectedFieldIndex, false)
 
+            viewModel.value = ""
+
             when (viewModel.selectedField) {
+                is CustomFieldForRules.DoubleField -> {
+                    val adapter = ArrayAdapter(binding.root.context, android.R.layout.simple_spinner_dropdown_item, IntRuleFactory.Rules.values().map { it.displayName })
+                    binding.ruleOperatorSpinner.adapter = adapter
+                    binding.ruleValueEditText.isFocusable = true
+                    binding.ruleValueEditText.isFocusableInTouchMode = true
+                    binding.ruleValueEditText.keyListener = DigitsKeyListener.getInstance("-0123456789.")
+                    binding.ruleValueEditText.setOnClickListener(null)
+                }
                 is CustomFieldForRules.TextField -> {
                     val adapter = ArrayAdapter(binding.root.context, android.R.layout.simple_spinner_dropdown_item, TextRuleFactory.Rules.values().map { it.displayName })
                     binding.ruleOperatorSpinner.adapter = adapter
+                    binding.ruleValueEditText.isFocusable = true
+                    binding.ruleValueEditText.isFocusableInTouchMode = true
+                    binding.ruleValueEditText.keyListener = EditText(binding.root.context).keyListener //lol
+                    binding.ruleValueEditText.setOnClickListener(null)
                 }
                 is CustomFieldForRules.IntegerField -> {
                     val adapter = ArrayAdapter(binding.root.context, android.R.layout.simple_spinner_dropdown_item, IntRuleFactory.Rules.values().map { it.displayName })
                     binding.ruleOperatorSpinner.adapter = adapter
+                    binding.ruleValueEditText.isFocusable = true
+                    binding.ruleValueEditText.isFocusableInTouchMode = true
+                    binding.ruleValueEditText.keyListener = DigitsKeyListener.getInstance("-0123456789")
+                    binding.ruleValueEditText.setOnClickListener(null)
                 }
                 is CustomFieldForRules.DateField -> {
                     val adapter = ArrayAdapter(binding.root.context, android.R.layout.simple_spinner_dropdown_item, DateRuleFactory.Rules.values().map { it.displayName })
                     binding.ruleOperatorSpinner.adapter = adapter
                     binding.ruleValueEditText.setOnClickListener(dateClickedListener)
+                    binding.ruleValueEditText.isFocusable = false
+                    binding.ruleValueEditText.isFocusableInTouchMode = false
+                    binding.ruleValueEditText.keyListener = null
                 }
                 is CustomFieldForRules.BooleanField -> {
                     val adapter = ArrayAdapter(binding.root.context, android.R.layout.simple_spinner_dropdown_item, BooleanRuleFactory.Rules.values().map { it.displayName })

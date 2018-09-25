@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.widget.TimePicker
 import org.taskforce.episample.R
+import org.taskforce.episample.config.sampling.filter.RuleSetCreationActivity
 import java.util.*
 
 class TimePickerFragment : DialogFragment() {
@@ -35,7 +36,11 @@ class TimePickerFragment : DialogFragment() {
             data.putExtra(EXTRA_CUSTOM_FIELD_ID, arguments!!.getString(ARG_CUSTOM_FIELD_ID))
             data.putExtra(EXTRA_CHOSEN_DATE, arguments!!.getLong(ARG_CHOSEN_DATE, 0))
 
-            targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, data)
+            if (targetFragment != null) {
+                targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, data)
+            } else if (activity is RuleSetCreationActivity) {
+                (activity as RuleSetCreationActivity).setTimePickerResult(data)
+            }
             dismiss()
         }
                 .setNegativeButton(getString(R.string.cancel)) { dialog, id ->

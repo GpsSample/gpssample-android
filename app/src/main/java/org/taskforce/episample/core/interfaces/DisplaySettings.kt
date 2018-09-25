@@ -47,4 +47,14 @@ interface DisplaySettings {
         calendar.time = date
         return SimpleDateFormat(getTimeFormat()).format(date)
     }
+
+    companion object {
+        val default = object : DisplaySettings {
+            override val isMetricDate: Boolean
+                get() = true
+            override val is24HourTime: Boolean
+                get() = false //To change initializer of created properties use File | Settings | File Templates.
+
+        }
+    }
 }

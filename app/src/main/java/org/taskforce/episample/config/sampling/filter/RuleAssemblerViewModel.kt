@@ -60,6 +60,7 @@ class RuleAssemblerViewModel(private val ruleSetId: String, val fields: List<Cus
     }
 
     fun toRuleRecord(): RuleRecord {
+        @Suppress("SpellCheckingInspection")
         return when (selectedField) {
             is CustomFieldForRules.DropdownField -> {
                 val ruleName = DropdownRuleFactory.Rules.values()[selectedRuleIndex].name
@@ -80,6 +81,10 @@ class RuleAssemblerViewModel(private val ruleSetId: String, val fields: List<Cus
             is CustomFieldForRules.DoubleField -> {
                 val ruleName = DoubleRuleFactory.Rules.values()[selectedRuleIndex].name
                 RuleRecord(ruleSetId, selectedField!!.fieldId, ResolvedRuleRecord.Factories.DOUBLE_FACTORY.factoryName, ruleName, value)
+            }
+            is CustomFieldForRules.DateField -> {
+                val ruleName = DoubleRuleFactory.Rules.values()[selectedRuleIndex].name
+                RuleRecord(ruleSetId, selectedField!!.fieldId, ResolvedRuleRecord.Factories.DATE_FACTORY.factoryName, ruleName, value)
             }
             null -> throw IllegalAccessError("Cannot convert to record without a selected field -- this should be unpossible")
         }

@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.widget.DatePicker
 import org.taskforce.episample.R
+import org.taskforce.episample.config.sampling.filter.RuleSetCreationActivity
 import java.util.*
 
 class DatePickerFragment : DialogFragment() {
@@ -35,12 +36,18 @@ class DatePickerFragment : DialogFragment() {
                     data.putExtra(EXTRA_MONTH, datePicker.month)
                     data.putExtra(EXTRA_DAY_OF_MONTH, datePicker.dayOfMonth)
                     data.putExtra(EXTRA_SHOW_TIME_PICKER_AFTER, arguments!!.getBoolean(ARG_SHOW_TIME_PICKER_AFTER))
-                    targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, data)
+                    if (targetFragment != null) {
+                        targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, data)
+                    } else if (activity is RuleSetCreationActivity) {
+                        (activity as RuleSetCreationActivity).setDatePickerResult(data)
+                    }
                     dismiss()
                 }
                 .setNegativeButton(getString(R.string.cancel)) { _, _ ->
                     // Send the negative button event back to the host activity
-                    targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_CANCELED, null)
+                    if (targetFragment != null) {
+                        targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_CANCELED, null)
+                    }
                     dismiss()
                 }
         return builder.create()

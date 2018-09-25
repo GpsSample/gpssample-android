@@ -130,6 +130,7 @@ class ResolvedRuleRecord(
         companion object {
             fun factoryFor(field: CustomFieldForRules): Factories {
                 return when (field) {
+                    is CustomFieldForRules.DateField -> DATE_FACTORY
                     is CustomFieldForRules.DropdownField -> DROPDOWN_FACTORY
                     is CustomFieldForRules.TextField -> TEXT_FACTORY
                     is CustomFieldForRules.IntegerField -> INT_FACTORY

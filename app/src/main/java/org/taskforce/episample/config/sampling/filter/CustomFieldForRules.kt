@@ -3,6 +3,7 @@ package org.taskforce.episample.config.sampling.filter
 import android.os.Parcel
 import android.os.Parcelable
 import org.taskforce.episample.db.config.customfield.CustomFieldType
+import org.taskforce.episample.db.config.customfield.metadata.DateMetadata
 
 
 sealed class CustomFieldForRules(val fieldId: String, val fieldName: String, val fieldType: CustomFieldType) : Parcelable {
@@ -120,6 +121,36 @@ sealed class CustomFieldForRules(val fieldId: String, val fieldName: String, val
                 return arrayOfNulls(size)
             }
         }
+    }
+
+    class DateField(fieldId: String, fieldName: String, fieldType: CustomFieldType, val metaData: DateMetadata) : CustomFieldForRules(fieldId, fieldName, fieldType), Parcelable {
+        constructor(parcel: Parcel) : this(
+                parcel.readString(),
+                parcel.readString(),
+                CustomFieldType.valueOf(parcel.readString()),
+                parcel.readParcelable<DateMetadata>(DateMetadata::class.java.classLoader))
+
+        override fun writeToParcel(parcel: Parcel, flags: Int) {
+            parcel.writeString(fieldId)
+            parcel.writeString(fieldName)
+            parcel.writeString(fieldType.name)
+            parcel.writeParcelable(metaData, flags)
+        }
+
+        override fun describeContents(): Int {
+            return 0
+        }
+
+        companion object CREATOR : Parcelable.Creator<DateField> {
+            override fun createFromParcel(parcel: Parcel): DateField {
+                return DateField(parcel)
+            }
+
+            override fun newArray(size: Int): Array<DateField?> {
+                return arrayOfNulls(size)
+            }
+        }
+
     }
 
     class DropdownField(fieldId: String, fieldName: String, fieldType: CustomFieldType, val values: List<Value>) : CustomFieldForRules(fieldId, fieldName, fieldType), Parcelable {

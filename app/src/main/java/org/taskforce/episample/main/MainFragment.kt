@@ -11,7 +11,6 @@ import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.collection.ui.CollectFragment
 import org.taskforce.episample.config.language.LanguageService
-import org.taskforce.episample.core.interfaces.NavigationPlan
 import org.taskforce.episample.databinding.FragmentMainBinding
 import org.taskforce.episample.db.navigation.ResolvedNavigationPlan
 import org.taskforce.episample.navigation.ui.NavigationActivity

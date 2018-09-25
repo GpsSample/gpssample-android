@@ -18,7 +18,7 @@ open class EpiApplication : Application() {
         super.onCreate()
 
         component = DaggerEpiApplication_AppComponent.builder()
-                .epiModule(EpiModule(applicationContext))
+                .epiModule(EpiModule(this))
                 .configStorageModule(ConfigStorageModule())
                 .studyStorageModule(StudyStorageModule())
                 .build()

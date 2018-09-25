@@ -6,12 +6,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import org.taskforce.episample.EpiApplication
-import org.taskforce.episample.R
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.interfaces.LiveUserSession
-import org.taskforce.episample.core.ui.dialogs.TextInputDialogFragment
 import org.taskforce.episample.databinding.FragmentLoginBinding
-import org.taskforce.episample.db.ConfigRoomDatabase
 import org.taskforce.episample.db.StudyRoomDatabase
 import org.taskforce.episample.injection.CollectModule
 import org.taskforce.episample.main.MainActivity

@@ -11,6 +11,7 @@ import org.taskforce.episample.db.filter.doubles.DoubleRuleFactory
 import org.taskforce.episample.db.filter.dropdown.DropdownRuleFactory
 import org.taskforce.episample.db.filter.integers.IntRuleFactory
 import org.taskforce.episample.db.filter.text.TextRuleFactory
+import java.io.Serializable
 import java.util.*
 
 @Entity(tableName = "rule_set_table")
@@ -21,7 +22,7 @@ class RuleSet(
         var isAny: Boolean,
         @PrimaryKey
         var id: String = UUID.randomUUID().toString()
-) : Parcelable {
+) : Parcelable, Serializable {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readByte() != 0.toByte(),
@@ -69,7 +70,7 @@ class RuleRecord(
         var value: String,
         @PrimaryKey
         var id: String = UUID.randomUUID().toString()
-) : Parcelable {
+) : Parcelable, Serializable {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readString(),

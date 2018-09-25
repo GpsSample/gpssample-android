@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.os.Parcelable
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -87,7 +88,7 @@ class RuleSetCreationActivity : FragmentActivity(), DateClickedListener {
 
     private fun intentWithRuleSet(): Intent {
         val returnIntent = Intent()
-        returnIntent.putExtra(EXTRA_RESULT_RULESET, generateRuleSet())
+        returnIntent.putExtra(EXTRA_RESULT_RULESET, generateRuleSet() as Parcelable)
         returnIntent.putExtra(EXTRA_RESULT_RULES, generateRules().toTypedArray())
         return returnIntent
     }
@@ -177,12 +178,12 @@ class RuleSetCreationActivity : FragmentActivity(), DateClickedListener {
             val fields: List<CustomFieldForRules> = remapFields(customFields)
             intent.putExtra(EXTRA_CUSTOM_FIELDS, fields.toTypedArray())
             intent.putExtra(EXTRA_CONFIG_ID, configId)
-            intent.putExtra(EXTRA_RULESET, ruleSet)
+            intent.putExtra(EXTRA_RULESET, ruleSet as Parcelable)
             intent.putExtra(EXTRA_RULES, rules.toTypedArray())
             fragment.startActivityForResult(intent, REQUEST_CODE_FOR_RULESET)
         }
 
-        fun remapFields(customFields: List<CustomField>): List<CustomFieldForRules> {
+        private fun remapFields(customFields: List<CustomField>): List<CustomFieldForRules> {
             return customFields.map { field ->
                 when (field.type) {
                     CustomFieldType.TEXT -> {

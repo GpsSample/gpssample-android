@@ -5,6 +5,7 @@ import android.arch.lifecycle.*
 import android.databinding.ObservableField
 import android.view.View
 import org.taskforce.episample.config.transfer.TransferManager
+import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.db.ConfigRepository
 import org.taskforce.episample.db.StudyRepository
 import org.taskforce.episample.db.config.Config
@@ -56,6 +57,11 @@ class ConfigStartViewModel(application: Application,
         return@map it?.name ?: ""
     })
 
+    val enableSignIn = LiveDataPair(study, studyConfigs)
+    val studySignInEnabled = Transformations.map(enableSignIn) {
+        it.first != null && it.second.isNotEmpty()
+    }
+
     val uploadUrl = ObservableField("")
 
     init {
@@ -65,7 +71,12 @@ class ConfigStartViewModel(application: Application,
     }
 
     fun signIn(view: View) {
-        signIn.invoke(studyConfigs.value!!.first { it.id == study.value?.configId }, study.value!!.id)
+        studyConfigs.value?.let { configs ->
+            study.value?.let { study ->
+                val studyConfig = configs.first { it.id == study.configId }
+                signIn.invoke(studyConfig, study.id)
+            }
+        }
     }
 
     companion object {

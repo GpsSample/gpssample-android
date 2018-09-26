@@ -11,6 +11,7 @@
     <string name="cancel">CANCEL</string>
     <string name="signin">SIGN IN</string>
     <string name="share">SHARE</string>
+    <string name="refresh">REFRESH</string>
 
     <!-- Permission Strings -->
     <string name="permission_toolbar_title">Permissions</string>

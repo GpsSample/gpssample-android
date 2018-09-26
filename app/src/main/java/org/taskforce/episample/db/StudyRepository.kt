@@ -40,12 +40,8 @@ class StudyRepository(val application: Application, injectedDatabase: StudyRoomD
         studyDb.postValue(StudyRoomDatabase.reloadDatabaseInstance(application))
     }
 
-    private val configDao: LiveData<ConfigDao> = Transformations.map(studyDb) {
-        it.configDao()
-    }
-
     /**
-     * Make sure to initialize any Daos that need to write to the database
+     * Make sure to initialize Daos
      * They are potentially accessed before being observed
      */
     private val studyDao: LiveData<StudyDao> = (Transformations.map(studyDb) {
@@ -55,9 +51,20 @@ class StudyRepository(val application: Application, injectedDatabase: StudyRoomD
         value = defaultDatabase.studyDao()
     }
 
-    private val resolvedConfigDao: LiveData<ResolvedConfigDao> = Transformations.map(studyDb) {
-        it.resolvedConfigDao()
+    private val configDao: LiveData<ConfigDao> = (Transformations.map(studyDb) {
+        it.configDao()
+    } as MutableLiveData).apply {
+        val defaultDatabase = injectedDatabase ?: StudyRoomDatabase.getDatabase(application)
+        value = defaultDatabase.configDao()
     }
+
+    private val resolvedConfigDao: LiveData<ResolvedConfigDao> = (Transformations.map(studyDb) {
+        it.resolvedConfigDao()
+    } as MutableLiveData).apply {
+        val defaultDatabase = injectedDatabase ?: StudyRoomDatabase.getDatabase(application)
+        value = defaultDatabase.resolvedConfigDao()
+    }
+
     private val navigationDao: LiveData<NavigationDao> = (Transformations.map(studyDb) {
         it.navigationDao()
     } as MutableLiveData).apply {

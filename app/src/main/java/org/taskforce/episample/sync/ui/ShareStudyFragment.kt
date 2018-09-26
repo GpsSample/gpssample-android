@@ -55,6 +55,9 @@ class ShareStudyFragment : Fragment() {
         fragment_peers_shareButton.setOnClickListener({
             shareStudyToDevice()
         })
+        fragment_peers_refreshButton.setOnClickListener({
+            refreshPeers()
+        })
 
         viewModel.directTransferService.peerListLiveData.observe(this, Observer { peers ->
             adapter.setPeers(peers ?: listOf())
@@ -71,6 +74,10 @@ class ShareStudyFragment : Fragment() {
 
     private fun disconnect() {
         viewModel.directTransferService.removeGroup()
+    }
+
+    private fun refreshPeers() {
+        viewModel.directTransferService.refreshPeers()
     }
 
     private fun shareStudyToDevice() {

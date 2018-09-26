@@ -37,6 +37,7 @@ interface DirectTransferService : LifecycleObserver, WifiP2pManager.ConnectionIn
     }
 
     fun connect(config: WifiP2pConfig, context: ContextWrapper)
+    fun refreshPeers()
     fun removeGroup()
 
     companion object {
@@ -199,7 +200,7 @@ class LiveDirectTransferService(override val context: ContextWrapper,
         })
     }
 
-    fun getPeers() {
+    override fun refreshPeers() {
         mManager.requestPeers(mChannel) {
             peerListLiveData.postValue(it.deviceList.map(this::deviceToPeer))
         }

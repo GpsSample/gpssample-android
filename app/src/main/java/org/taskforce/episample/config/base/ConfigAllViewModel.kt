@@ -86,5 +86,7 @@ class ConfigAllViewModel(
     override fun onCleared() {
         super.onCleared()
         availableConfigs.removeObserver(configObserver)
+        configRepository.cleanUp()
+        studyRepository.cleanUp()
     }
 }

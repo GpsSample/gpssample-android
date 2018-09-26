@@ -10,6 +10,7 @@ import org.taskforce.episample.db.ConfigRepository
 import org.taskforce.episample.db.StudyRepository
 import org.taskforce.episample.db.config.Config
 
+
 class ConfigStartViewModel(application: Application,
                            val createNewConfiguration: () -> Unit,
                            val showAllConfigurations: () -> Unit,
@@ -18,7 +19,7 @@ class ConfigStartViewModel(application: Application,
                            transferManager: TransferManager) : AndroidViewModel(application) {
 
     val configRepository = ConfigRepository(getApplication())
-    val studyRepository = StudyRepository(getApplication())
+    private var studyRepository = StudyRepository(getApplication())
     val availableConfigs = configRepository.getAvailableConfigs()
     val studyConfigs = studyRepository.getAllConfigs()
 
@@ -47,6 +48,8 @@ class ConfigStartViewModel(application: Application,
     override fun onCleared() {
         super.onCleared()
         availableConfigs.removeObserver(configsObserver)
+        configRepository.cleanUp()
+        studyRepository.cleanUp()
     }
 
     val currentStudyDate: LiveData<String> = Transformations.map(study, {

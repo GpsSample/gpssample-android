@@ -1,13 +1,14 @@
 package org.taskforce.episample.config.study
 
 import android.app.Application
-import android.arch.lifecycle.*
+import android.arch.lifecycle.AndroidViewModel
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
 import org.taskforce.episample.R
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.db.ConfigRepository
-import org.taskforce.episample.db.StudyRepository
-import org.taskforce.episample.db.config.Config
 import org.taskforce.episample.db.config.ResolvedConfig
 
 class StudyCreateViewModel(
@@ -38,6 +39,12 @@ class StudyCreateViewModel(
             passwordHelp.value = languageService.getString(R.string.study_password_help)
             transferHelp.value = languageService.getString(R.string.study_transfer_help)
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+
+        configRepository.cleanUp()
     }
 
     val nameHint = MutableLiveData<String>().apply { value = languageService.getString(R.string.study_name) }

@@ -22,6 +22,10 @@ class ConfigRepository(application: Application, injectedDatabase: ConfigRoomDat
     lateinit var db: ConfigRoomDatabase
     private val studyRepository = StudyRepository(application, injectedStudyDatabase)
 
+    fun cleanUp() {
+        studyRepository.cleanUp()
+    }
+
     init {
         injectedDatabase?.let {
             db = it

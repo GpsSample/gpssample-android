@@ -39,6 +39,7 @@ class ConfigNameViewModel(
     override fun onCleared() {
         super.onCleared()
         takenNamesData.removeObserver(takenNamesObservable)
+        configRepository.cleanUp()
     }
 
     var backingName: String? = configBuildManager.config.name

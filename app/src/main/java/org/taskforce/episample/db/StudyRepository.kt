@@ -5,39 +5,75 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import android.os.AsyncTask
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
+import org.taskforce.episample.core.InitializedLiveData
 import org.taskforce.episample.core.navigation.SurveyStatus
-import org.taskforce.episample.db.collect.*
 import org.taskforce.episample.db.collect.Enumeration
+import org.taskforce.episample.db.collect.GpsBreadcrumb
+import org.taskforce.episample.db.collect.Landmark
+import org.taskforce.episample.db.collect.ResolvedEnumeration
 import org.taskforce.episample.db.config.*
 import org.taskforce.episample.db.config.customfield.CustomFieldValue
-import org.taskforce.episample.db.config.landmark.CustomLandmarkType
 import org.taskforce.episample.db.navigation.NavigationDao
-import org.taskforce.episample.db.navigation.NavigationPlan
 import org.taskforce.episample.db.navigation.ResolvedNavigationPlan
+import org.taskforce.episample.sync.core.StudyDatabaseFilesChangedMessage
 import java.util.*
 
-class StudyRepository(application: Application, injectedDatabase: StudyRoomDatabase? = null) {
-    lateinit var db: StudyRoomDatabase
+class StudyRepository(val application: Application, injectedDatabase: StudyRoomDatabase? = null) {
 
     init {
-        injectedDatabase?.let {
-            db = it
-        } ?: run {
-            db = StudyRoomDatabase.getDatabase(application)
-        }
+        EventBus.getDefault().register(this)
     }
 
-    private val configDao: ConfigDao = db.configDao()
-    private val studyDao: StudyDao = db.studyDao()
-    private val resolvedConfigDao: ResolvedConfigDao = db.resolvedConfigDao()
-    private val navigationDao: NavigationDao = db.navigationDao()
-    private val allConfigs = configDao.getAllConfigs()
-
-    private fun studyToNullable(studyId: String): LiveData<Study?> = Transformations.map(studyDao.getStudy(studyId)) {
-        return@map it
+    fun cleanUp() {
+        EventBus.getDefault().unregister(this)
     }
 
-    private val study: LiveData<Study?> = Transformations.map(studyDao.getAllStudies(), {
+    private val studyDb = InitializedLiveData(injectedDatabase
+            ?: StudyRoomDatabase.getDatabase(application))
+
+    @Suppress("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onDatabaseFilesChanged(event: StudyDatabaseFilesChangedMessage) {
+        studyDb.postValue(StudyRoomDatabase.reloadDatabaseInstance(application))
+    }
+
+    private val configDao: LiveData<ConfigDao> = Transformations.map(studyDb) {
+        it.configDao()
+    }
+
+    /**
+     * Make sure to initialize any Daos that need to write to the database
+     * They are potentially accessed before being observed
+     */
+    private val studyDao: LiveData<StudyDao> = (Transformations.map(studyDb) {
+        it.studyDao()
+    } as MutableLiveData).apply {
+        val defaultDatabase = injectedDatabase ?: StudyRoomDatabase.getDatabase(application)
+        value = defaultDatabase.studyDao()
+    }
+
+    private val resolvedConfigDao: LiveData<ResolvedConfigDao> = Transformations.map(studyDb) {
+        it.resolvedConfigDao()
+    }
+    private val navigationDao: LiveData<NavigationDao> = (Transformations.map(studyDb) {
+        it.navigationDao()
+    } as MutableLiveData).apply {
+        val defaultDatabase = injectedDatabase ?: StudyRoomDatabase.getDatabase(application)
+        value = defaultDatabase.navigationDao()
+    }
+
+    private val allConfigs = Transformations.switchMap(configDao, {
+        it.getAllConfigs()
+    })
+
+    private val allStudies = Transformations.switchMap(studyDao) {
+        it.getAllStudies()
+    }
+
+    private val study: LiveData<Study?> = Transformations.map(allStudies, {
         return@map it.firstOrNull()
     })
 
@@ -51,92 +87,119 @@ class StudyRepository(application: Application, injectedDatabase: StudyRoomDatab
     }
 
     fun getConfig(configId: String): LiveData<Config> {
-        return configDao.getConfig(configId)
+        return Transformations.switchMap(configDao) {
+            it.getConfig(configId)
+        }
     }
 
     fun getResolvedConfig(configId: String): LiveData<ResolvedConfig> {
-        return resolvedConfigDao.getConfig(configId)
+        return Transformations.switchMap(resolvedConfigDao) {
+            it.getConfig(configId)
+        }
     }
 
     fun getEnumerations(studyId: String): LiveData<List<ResolvedEnumeration>> {
-        return studyDao.getEnumerations(studyId)
-    }
-
-    fun getEnumerationsSync(studyId: String): List<Enumeration> {
-        return studyDao.getEnumerationsSync(studyId)
+        return Transformations.switchMap(studyDao) {
+            it.getEnumerations(studyId)
+        }
     }
 
     fun getResolvedConfigSync(configId: String): ResolvedConfig {
-        return resolvedConfigDao.getConfigSync(configId)
+        return studyDb.value!!.resolvedConfigDao().getConfigSync(configId)
     }
 
     fun getConfigSync(configId: String): Config {
-        return configDao.getConfigSync(configId)
+        return studyDb.value!!.configDao().getConfigSync(configId)
     }
 
     // Domain Actions
 
     fun insertStudy(sourceConfig: ResolvedConfig, name: String, studyPassword: String, callback: (configId: String, studyId: String) -> Unit) {
-        InsertStudyAsyncTask(studyDao).execute(InsertStudyInput(name, studyPassword, sourceConfig, callback))
+        studyDao.value?.let { studyDao ->
+            InsertStudyAsyncTask(studyDao).execute(InsertStudyInput(name, studyPassword, sourceConfig, callback))
+        }
     }
 
     fun insertEnumerationItem(item: Enumeration, customFieldValues: List<org.taskforce.episample.core.interfaces.CustomFieldValue>, callback: (enumerationId: String) -> Unit) {
         val dbValues = customFieldValues.map {
             return@map CustomFieldValue.makeDBCustomFieldValue(it, item.id)
         }
-        InsertEnumerationTask(studyDao).execute(Triple(item, dbValues, callback))
+
+        studyDao.value?.let { studyDao ->
+            InsertEnumerationTask(studyDao).execute(Triple(item, dbValues, callback))
+        }
     }
 
     fun updateEnumerationItem(item: Enumeration, customFieldValues: List<CustomFieldValue>, callback: () -> Unit) {
-        UpdateEnumerationTask(studyDao).execute(Triple(item, customFieldValues, callback))
+        studyDao.value?.let { studyDao ->
+            UpdateEnumerationTask(studyDao).execute(Triple(item, customFieldValues, callback))
+        }
     }
 
     fun insertLandmarkItem(item: Landmark, callback: (landmarkId: String) -> Unit) {
-        InsertLandmarkTask(studyDao).execute(Pair(item, callback))
+        studyDao.value?.let { studyDao ->
+            InsertLandmarkTask(studyDao).execute(Pair(item, callback))
+        }
     }
 
     fun updateLandmark(landmark: Landmark, callback: () -> Unit) {
-        UpdateLandmarkTask(studyDao).execute(Pair(landmark, callback))
+        studyDao.value?.let { studyDao ->
+            UpdateLandmarkTask(studyDao).execute(Pair(landmark, callback))
+        }
     }
 
     fun addBreadcrumb(breadcrumb: GpsBreadcrumb, callback: (breadcrumbId: String) -> Unit) {
-        InsertBreadcrumbTask(studyDao).execute(Pair(breadcrumb, callback))
+        studyDao.value?.let { studyDao ->
+            InsertBreadcrumbTask(studyDao).execute(Pair(breadcrumb, callback))
+        }
     }
 
     fun updateNavigationItem(navigationItemId: String, surveyStatus: SurveyStatus, callback: () -> Unit) {
-        UpdateNavigationItemTask(navigationDao).execute(Triple(navigationItemId, surveyStatus, callback))
+        navigationDao.value?.let { navigationDao ->
+            UpdateNavigationItemTask(navigationDao).execute(Triple(navigationItemId, surveyStatus, callback))
+        }
     }
 
     fun getResolvedEnumerationsSync(studyId: String): List<ResolvedEnumeration> {
-        return studyDao.getResolvedEnumerationsSync(studyId)
+        return studyDao.value!!.getResolvedEnumerationsSync(studyId)
     }
 
     fun getLandmarks(studyId: String): LiveData<List<Landmark>> {
-        return studyDao.getLandmarks(studyId)
+        return Transformations.switchMap(studyDao) {
+            it.getLandmarks(studyId)
+        }
     }
 
     fun getBreadcrumbs(studyId: String): LiveData<List<GpsBreadcrumb>> {
-        return studyDao.getBreadcrumbs(studyId)
-    }
-
-    fun getCustomLandmarkTypes(configId: String): LiveData<List<CustomLandmarkType>> {
-        return studyDao.getCustomLandmarkTypes(configId)
+        return Transformations.switchMap(studyDao) {
+            it.getBreadcrumbs(studyId)
+        }
     }
 
     fun getAllStudies(): LiveData<List<Study>> {
-        return studyDao.getAllStudies()
+        return Transformations.switchMap(studyDao) {
+            it.getAllStudies()
+        }
     }
 
     fun getNavigationPlan(navigationPlanId: String): LiveData<ResolvedNavigationPlan> {
-        return navigationDao.getNavigationPlan(navigationPlanId)
+        return Transformations.switchMap(navigationDao) {
+            it.getNavigationPlan(navigationPlanId)
+        }
     }
 
     fun getNavigationPlans(): LiveData<List<ResolvedNavigationPlan>> {
-        return navigationDao.getAllNavigationPlans()
+        return Transformations.switchMap(navigationDao) {
+            it.getAllNavigationPlans()
+        }
     }
 
     fun createDemoNavigationPlan(studyId: String, callback: (navigationPlanId: String) -> Unit) {
-        InsertDemoNavigationPlanTask(navigationDao, studyDao).execute(Pair(studyId, callback))
+        navigationDao.value?.let { navigationDao ->
+            studyDao.value?.let { studyDao ->
+                InsertDemoNavigationPlanTask(navigationDao, studyDao).execute(Pair(studyId, callback))
+            }
+        }
     }
 }
 
@@ -215,7 +278,7 @@ private class InsertStudyAsyncTask(private val studyDao: StudyDao) : AsyncTask<I
 
 private class UpdateNavigationItemTask(private val navigationDao: NavigationDao) : AsyncTask<Triple<String, SurveyStatus, () -> Unit>, Void, Void>() {
     override fun doInBackground(vararg params: Triple<String, SurveyStatus, () -> Unit>): Void? {
-        val navigationItemId= params[0].first
+        val navigationItemId = params[0].first
         val surveyStatus = params[0].second
         val callback = params[0].third
 
@@ -228,7 +291,7 @@ private class UpdateNavigationItemTask(private val navigationDao: NavigationDao)
 private class InsertDemoNavigationPlanTask(private val navigationDao: NavigationDao, private val studyDao: StudyDao) : AsyncTask<Pair<String, (navigationPlanId: String) -> Unit>, Void, Void>() {
     override fun doInBackground(vararg params: Pair<String, (navigationPlanId: String) -> Unit>): Void? {
         val studyId = params[0].first
-        val callback= params[0].second
+        val callback = params[0].second
 
         val enumerations = studyDao.getResolvedEnumerationsSync(studyId)
 

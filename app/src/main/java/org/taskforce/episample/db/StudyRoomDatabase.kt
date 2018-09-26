@@ -60,7 +60,12 @@ abstract class StudyRoomDatabase : RoomDatabase() {
 
     companion object {
         private var INSTANCE: StudyRoomDatabase? = null
+//        private var BACKUP: StudyRoomDatabase? = null
 
+        fun reloadDatabaseInstance(context: Context): StudyRoomDatabase {
+            INSTANCE = null
+            return getDatabase(context)
+        }
         fun getDatabase(context: Context): StudyRoomDatabase {
             if (INSTANCE == null) {
                 synchronized(ConfigRoomDatabase::class.java) {
@@ -75,6 +80,21 @@ abstract class StudyRoomDatabase : RoomDatabase() {
             }
             return INSTANCE!!
         }
+
+//        fun getBackupInstance(context: Context): StudyRoomDatabase {
+//            if (BACKUP == null) {
+//                synchronized(ConfigRoomDatabase::class.java) {
+//                    if (BACKUP == null) {
+//                        BACKUP = Room.databaseBuilder(context.applicationContext,
+//                                StudyRoomDatabase::class.java, "study_database_backup")
+//                                .addCallback(roomDatabaseCallback)
+//                                .fallbackToDestructiveMigration()
+//                                .build()
+//                    }
+//                }
+//            }
+//            return BACKUP!!
+//        }
 
         private val roomDatabaseCallback = object : RoomDatabase.Callback() {
 

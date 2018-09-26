@@ -12,4 +12,9 @@ class SplashViewModel(
     val study = Transformations.map(studyRepository.getAllStudies(), {
         return@map it.firstOrNull()
     })
+
+    override fun onCleared() {
+        super.onCleared()
+        studyRepository.cleanUp()
+    }
 }

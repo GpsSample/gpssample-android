@@ -76,6 +76,8 @@ class ConfigSuccessViewModel(
     override fun onCleared() {
         super.onCleared()
         savedSuccessfully.removeObserver(saveSuccessObserver)
+        configRepository.cleanUp()
+        studyRepository.cleanUp()
     }
 
     fun buttonWrapper() {

@@ -357,4 +357,6 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="final_upload_success">Report Sent Successfully</string>
     <string name="final_upload_success_body">You have already uploaded your final report for this study. You\'re all done!</string>
     <string name="final_upload_sign_in_failed">Sign-in failed</string>
+    <string name="connect">CONNECT</string>
+    <string name="disconnect">DISCONNECT</string>
 </resources>

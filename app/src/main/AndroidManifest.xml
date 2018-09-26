@@ -2,6 +2,8 @@
     package="org.taskforce.episample">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -49,8 +51,15 @@
             android:name=".config.base.ConfigSuccessActivity"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".navigation.ui.NavigationActivity" />
-        <activity android:name=".config.sampling.filter.RuleSetCreationActivity"/>
+        <activity
+            android:name=".navigation.ui.NavigationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".sync.ui.ShareStudyActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".config.sampling.filter.RuleSetCreationActivity"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="io.fabric.ApiKey"
@@ -58,7 +67,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${geoApiKey}" />
-        />
+
+        <service android:name=".sync.core.FileTransferService"></service>
+
     </application>
 
 </manifest>

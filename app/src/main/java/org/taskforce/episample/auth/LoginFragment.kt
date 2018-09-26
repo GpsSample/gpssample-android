@@ -81,6 +81,11 @@ class LoginFragment : Fragment() {
                 vm = loginViewModel
             }.root
 
+    override fun onStop() {
+        super.onStop()
+        loginViewModel.studyRepository.cleanUp()
+    }
+
     private fun showAdminLoginDialog() {
         LoginAdminDialogFragment.newInstance(configId).show(childFragmentManager, LoginAdminDialogFragment::class.java.simpleName)
     }

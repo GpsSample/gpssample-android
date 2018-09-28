@@ -16,7 +16,7 @@ data class PeerState(val device: WifiP2pDevice, val info: WifiP2pInfo?)
 interface DirectTransferService : LifecycleObserver, WifiP2pManager.ConnectionInfoListener, WiFiDirectBroadcastCallbacks {
 
     val context: Context
-    val receiver: WiFiDirectBroadcastReceiver
+    val receiver: WiFiDirectBroadcastReceiver?
 
     val deviceNameLiveData: LiveData<String>
     val isEnabledLiveData: LiveData<Boolean>
@@ -27,13 +27,17 @@ interface DirectTransferService : LifecycleObserver, WifiP2pManager.ConnectionIn
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun connectListener() {
-        context.registerReceiver(receiver, DirectTransferService.intentFilter)
+        if (receiver != null) {
+            context.registerReceiver(receiver, DirectTransferService.intentFilter)
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun disconnectListener() {
         removeGroup()
-        context.unregisterReceiver(receiver)
+        if (receiver != null) {
+            context.unregisterReceiver(receiver)
+        }
     }
 
     fun connect(config: WifiP2pConfig, context: ContextWrapper)
@@ -61,14 +65,14 @@ class LiveDirectTransferService(override val context: ContextWrapper,
     override val groupInfoLiveData = MutableLiveData<WifiP2pGroup?>()
 
     private val peers = ArrayList<WifiP2pDevice>()
-    override val receiver: WiFiDirectBroadcastReceiver
+    override val receiver: WiFiDirectBroadcastReceiver?
 
-    private val mChannel: WifiP2pManager.Channel
-    private val mManager: WifiP2pManager = context.getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
+    private val mChannel: WifiP2pManager.Channel?
+    private val mManager: WifiP2pManager? = context.getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager?
 
     init {
-        mChannel = mManager.initialize(context, context.mainLooper, null)
-        receiver = WiFiDirectBroadcastReceiver(mManager, mChannel, this)
+        mChannel = mManager?.initialize(context, context.mainLooper, null)
+        receiver = mManager?.let { mChannel?.let { channel -> WiFiDirectBroadcastReceiver(it, channel, this) } }
     }
 
     override fun stateChanged(isEnabled: Boolean) {
@@ -91,7 +95,7 @@ class LiveDirectTransferService(override val context: ContextWrapper,
             }
         }
 
-        mManager.requestPeers(mChannel, peerListListener)
+        mManager?.requestPeers(mChannel, peerListListener)
     }
 
     override fun connectionChanged(networkInfo: NetworkInfo) {
@@ -103,14 +107,14 @@ class LiveDirectTransferService(override val context: ContextWrapper,
             // We are connected with the other device, request connection
             // info to find group owner IP
 
-            mManager.requestConnectionInfo(mChannel, this)
+            mManager?.requestConnectionInfo(mChannel, this)
         }
     }
 
     override fun deviceChanged(device: WifiP2pDevice) {
         Log.d(TAG, "WIFI P2P DEVICE CHANGED ACTION")
         deviceNameLiveData.postValue(device.deviceName)
-        mManager.discoverPeers(mChannel, object : WifiP2pManager.ActionListener {
+        mManager?.discoverPeers(mChannel, object : WifiP2pManager.ActionListener {
 
             override fun onSuccess() {
                 Log.d(TAG, "DISCOVER PEERS INITIATION SUCCESS")
@@ -129,7 +133,7 @@ class LiveDirectTransferService(override val context: ContextWrapper,
             config.groupOwnerIntent = 1
         }
 
-        mManager.connect(mChannel, config, object : WifiP2pManager.ActionListener {
+        mManager?.connect(mChannel, config, object : WifiP2pManager.ActionListener {
 
             override fun onSuccess() {
                 Toast.makeText(context, "Connect Succeeded.",
@@ -175,7 +179,7 @@ class LiveDirectTransferService(override val context: ContextWrapper,
     }
 
     override fun removeGroup() {
-        mManager.stopPeerDiscovery(mChannel, object : WifiP2pManager.ActionListener {
+        mManager?.stopPeerDiscovery(mChannel, object : WifiP2pManager.ActionListener {
 
             override fun onSuccess() {
                 Log.d(TAG, "Connect Succeeded.")
@@ -187,7 +191,7 @@ class LiveDirectTransferService(override val context: ContextWrapper,
 
         })
         deletePersistentGroups()
-        mManager.removeGroup(mChannel, object : WifiP2pManager.ActionListener {
+        mManager?.removeGroup(mChannel, object : WifiP2pManager.ActionListener {
 
             override fun onSuccess() {
                 Log.d(TAG, "Connect Succeeded.")
@@ -201,13 +205,13 @@ class LiveDirectTransferService(override val context: ContextWrapper,
     }
 
     override fun refreshPeers() {
-        mManager.requestPeers(mChannel) {
+        mManager?.requestPeers(mChannel) {
             peerListLiveData.postValue(it.deviceList.map(this::deviceToPeer))
         }
     }
 
     fun getGroupInfo() {
-        mManager.requestGroupInfo(mChannel) {
+        mManager?.requestGroupInfo(mChannel) {
             groupInfoLiveData.postValue(it)
         }
     }

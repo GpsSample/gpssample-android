@@ -432,7 +432,7 @@ class CollectAddViewModel(
 
     companion object {
         val mapZoom = 18.0f
-        const val countdownLength: Long = 300000 // 5 minutes in milliseconds
+        const val countdownLength: Long = 120000 // 2 minutes in milliseconds
         const val countdownTick: Long = 1000 // 1 second in milliseconds
     }
 }

@@ -11,6 +11,7 @@ import org.taskforce.episample.config.fields.CustomFieldsAddFragment
 import org.taskforce.episample.config.fields.CustomFieldsFragment
 import org.taskforce.episample.config.geography.GeographyDialogFragment
 import org.taskforce.episample.config.geography.GeographyFragment
+import org.taskforce.episample.config.geography.OutsideAreaDialogFragment
 import org.taskforce.episample.config.landmark.LandmarkAddFragment
 import org.taskforce.episample.config.landmark.LandmarkFragment
 import org.taskforce.episample.config.language.LanguageFragment
@@ -72,4 +73,5 @@ interface EpiComponent {
     fun inject(duplicateGpsDialogFragment: DuplicateGpsDialogFragment)
     fun inject(studyUploadViewModel: StudyUploadViewModel)
     fun inject(studyUploadFragment: StudyUploadFragment)
+    fun inject(outsideAreaDialogFragment: OutsideAreaDialogFragment)
 }

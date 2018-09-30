@@ -1,11 +1,12 @@
 package org.taskforce.episample.config.geography
 
 import android.view.View
+import org.taskforce.episample.core.interfaces.EnumerationArea
 
 class EnumerationAreaViewModel(
         private val enumerationArea: EnumerationArea,
-        val depth: Int,
-        val enumerationAreaActionListener: EnumerationActionCallbacks) {
+        val enumerationAreaActionListener: EnumerationActionCallbacks,
+        val isQuickstart: Boolean) {
 
     val name: String
         get() = enumerationArea.name

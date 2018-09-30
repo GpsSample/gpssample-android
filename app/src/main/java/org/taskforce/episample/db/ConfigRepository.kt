@@ -90,7 +90,31 @@ class ConfigRepository(application: Application, injectedDatabase: ConfigRoomDat
             CustomLandmarkType(it.name, it.iconLocation, insertConfig.id)
         }
 
-        InsertConfigAsyncTask(configDao).execute(InsertConfigInput(insertConfig, insertAdminSettings, insertEnumerationSubject, insertCustomFields, insertLandmarks, insertUserSettings, insertDisplaySettings, callback))
+        val insertEnumerationAreaPoints = config.enumerationAreas.map { area ->
+            area.points.map { (lat, long) ->
+                EnumerationAreaPoint(lat, long, area.id)
+            }
+        }.flatMap {
+            it
+        }
+
+        val insertEnumerationAreas = config.enumerationAreas.map {
+            EnumerationArea(it.name, insertConfig.id, it.id)
+        }
+
+        val insertConfigInput = InsertConfigInput(
+                insertConfig,
+                insertAdminSettings,
+                insertEnumerationSubject,
+                insertCustomFields,
+                insertLandmarks,
+                insertUserSettings,
+                insertDisplaySettings,
+                insertEnumerationAreas,
+                insertEnumerationAreaPoints,
+                callback)
+        
+        InsertConfigAsyncTask(configDao).execute(insertConfigInput)
     }
 
     fun duplicateConfig(config: Config, callback: (configId: String) -> Unit) {
@@ -127,6 +151,8 @@ private data class InsertConfigInput(val config: Config,
                                      val landmarks: List<CustomLandmarkType>,
                                      val userSettings: UserSettings?,
                                      val displaySettings: DisplaySettings,
+                                     val enumerationAreas: List<EnumerationArea>,
+                                     val enumerationAreaPoints: List<EnumerationAreaPoint>,
                                      val callback: (configId: String) -> Unit)
 
 private class InsertConfigAsyncTask(private val asyncTaskDao: ConfigDao) : AsyncTask<InsertConfigInput, Void, Void>() {
@@ -140,7 +166,9 @@ private class InsertConfigAsyncTask(private val asyncTaskDao: ConfigDao) : Async
                 input.adminSettings,
                 input.enumerationSubject,
                 input.userSettings,
-                input.displaySettings
+                input.displaySettings,
+                input.enumerationAreas,
+                input.enumerationAreaPoints
         )
         input.callback(input.config.id)
         return null

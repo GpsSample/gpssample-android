@@ -80,6 +80,7 @@ dependencies {
     implementation "com.wonderkiln:camerakit:0.13.1"
     implementation "com.squareup.okhttp3:okhttp:$rootProject.ext.okHttp3Version"
     implementation "com.google.android.gms:play-services-maps:$rootProject.ext.googlePlayServicesVersion"
+    implementation 'com.google.maps.android:android-maps-utils:0.5'
     implementation "com.google.android.gms:play-services-location:$rootProject.ext.googlePlayServicesVersion"
     implementation "com.google.android.gms:play-services-drive:$rootProject.ext.googlePlayServicesVersion"
     implementation "com.google.android.gms:play-services-auth:$rootProject.ext.googlePlayServicesVersion"

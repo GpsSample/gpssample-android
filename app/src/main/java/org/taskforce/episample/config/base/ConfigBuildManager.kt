@@ -13,6 +13,7 @@ import org.taskforce.episample.config.sampling.SamplingMethod
 import org.taskforce.episample.config.settings.admin.AdminSettings
 import org.taskforce.episample.config.settings.server.ServerSettings
 import org.taskforce.episample.config.settings.user.UserSettings
+import org.taskforce.episample.core.interfaces.EnumerationArea
 import org.taskforce.episample.core.interfaces.EnumerationSubject
 import org.taskforce.episample.db.config.customfield.CustomFieldType
 import org.taskforce.episample.db.filter.RuleRecord
@@ -122,6 +123,12 @@ class ConfigBuildManager(val config: Config = Config(Date())):
 
     fun addSubset(subset: Subset) {
         val mutableSubsetList = config.subsets.toMutableList()
+    }
+    
+    fun addEnumerationAreas(enumerationAreas: List<EnumerationArea>) {
+        val mutableEnumerationAreasList = config.enumerationAreas.toMutableList()
+        mutableEnumerationAreasList.addAll(enumerationAreas)
+        config.enumerationAreas = mutableEnumerationAreasList.toList()
     }
 
     val photoCompressionOptions = arrayOf(0 to "No Compression", 50 to "Some Compression", 100 to "Maximum Compression")

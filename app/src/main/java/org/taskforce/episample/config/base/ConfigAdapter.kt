@@ -134,7 +134,7 @@ class ConfigAdapter(fragmentManager: FragmentManager) :
                 ChildFragmentType.NAME,
 //                ChildFragmentType.UPLOAD,
 //                ChildFragmentType.LANGUAGE,
-//                ChildFragmentType.GEOGRAPHY,
+                ChildFragmentType.GEOGRAPHY,
 //                ChildFragmentType.LANDMARK,
                 ChildFragmentType.CUSTOM_FIELDS,
 //                ChildFragmentType.SAMPLING_SELECTION,

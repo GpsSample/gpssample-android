@@ -103,13 +103,37 @@ abstract class StudyDao : ConfigDao(), CustomFieldDao, ResolvedEnumerationDao, C
             it.configId = insertConfig.id
         }
 
+        val enumerationAreas = sourceConfig.enumerationAreas
+        enumerationAreas.forEach {
+            val id = UUID.randomUUID().toString()
+            it.id = id
+            it.configId = insertConfig.id
+
+            it.points.forEach {
+                it.enumerationAreaId = id
+                it.id = UUID.randomUUID().toString()
+            }
+        }
+
+        val enumerationAreaPoints = enumerationAreas.map { area ->
+            area.points
+        }.flatMap {
+            it
+        }
+
+        val insertEnumerationAreas = enumerationAreas.map {
+            EnumerationArea(it.name, it.configId, it.id)
+        }
+
         insert(insertConfig,
                 customFields,
                 landmarkTypes,
                 adminSettings,
                 enumerationSubject,
                 userSettings,
-                displaySettings)
+                displaySettings,
+                insertEnumerationAreas,
+                enumerationAreaPoints)
         insert(Study(studyName, studyPassword, configId = insertConfig.id, id = studyId))
 
         return insertConfig.id

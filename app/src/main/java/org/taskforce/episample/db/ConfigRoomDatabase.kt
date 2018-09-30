@@ -23,6 +23,8 @@ import retrofit2.http.HEAD
             CustomField::class,
             CustomLandmarkType::class,
             DisplaySettings::class,
+            EnumerationArea::class,
+            EnumerationAreaPoint::class,
             EnumerationSubject::class,
             RuleSet::class,
             RuleRecord::class,
@@ -37,6 +39,7 @@ abstract class ConfigRoomDatabase : RoomDatabase() {
     abstract fun resolvedConfigDao(): ResolvedConfigDao
     abstract fun customFieldDao(): CustomFieldDao
     abstract fun ruleDao(): RuleDao
+    abstract fun enumerationAreaDao(): EnumerationAreaDao
 
     private class PopulateDbAsync(db: ConfigRoomDatabase) : AsyncTask<Void, Void, Void>() {
 

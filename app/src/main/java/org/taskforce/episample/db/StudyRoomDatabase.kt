@@ -29,6 +29,8 @@ import org.taskforce.episample.db.navigation.NavigationPlan
             CustomLandmarkType::class,
             DisplaySettings::class,
             Enumeration::class,
+            EnumerationArea::class,
+            EnumerationAreaPoint::class,
             EnumerationSubject::class,
             GpsBreadcrumb::class,
             Landmark::class,
@@ -50,6 +52,7 @@ abstract class StudyRoomDatabase : RoomDatabase() {
     abstract fun ruleDao(): RuleDao
     abstract fun customFieldValueDao(): CustomFieldValueDao
     abstract fun navigationDao(): NavigationDao
+    abstract fun enumerationAreaDao(): EnumerationAreaDao
 
     private class PopulateDbAsync(db: StudyRoomDatabase) : AsyncTask<Void, Void, Void>() {
 

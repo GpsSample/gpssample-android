@@ -3,13 +3,12 @@ package org.taskforce.episample.collection.viewmodels
 import android.app.Application
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
-import android.location.Location
 import com.google.android.gms.maps.GoogleMap
-import io.reactivex.Observable
+import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Single
 import org.taskforce.episample.config.language.LanguageService
-import org.taskforce.episample.core.interfaces.EnumerationSubject
 import org.taskforce.episample.core.interfaces.Enumeration
+import org.taskforce.episample.core.interfaces.EnumerationSubject
 
 class CollectAddViewModelFactory(private val application: Application,
                                  private val languageService: LanguageService,
@@ -21,7 +20,8 @@ class CollectAddViewModelFactory(private val application: Application,
                                  private val saveButtonDisabledTextColor: Int,
                                  private val goToNext: () -> Unit,
                                  private val takePicture: () -> Unit,
-                                 private val showDuplicateGpsDialog: (enumeration: Enumeration?, subject: EnumerationSubject) -> Unit) : ViewModelProvider.NewInstanceFactory() {
+                                 private val showDuplicateGpsDialog: (enumeration: Enumeration?, subject: EnumerationSubject) -> Unit,
+                                 private val showOutsideEnumerationAreaDialog: (latLng: LatLng, precision: Double) -> Unit) : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return CollectAddViewModel(application,
                 languageService,
@@ -33,6 +33,7 @@ class CollectAddViewModelFactory(private val application: Application,
                 saveButtonDisabledTextColor,
                 goToNext,
                 takePicture,
-                showDuplicateGpsDialog) as T
+                showDuplicateGpsDialog,
+                showOutsideEnumerationAreaDialog) as T
     }
 }

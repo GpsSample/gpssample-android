@@ -3,14 +3,18 @@ package org.taskforce.episample.config.geography
 import android.arch.lifecycle.ViewModel
 import android.databinding.ObservableField
 import org.taskforce.episample.R
+import org.taskforce.episample.config.base.ConfigBuildManager
 import org.taskforce.episample.config.base.Stepper
 import org.taskforce.episample.config.base.StepperCallback
+import org.taskforce.episample.config.geography.model.FeatureCollection
 import org.taskforce.episample.config.language.LanguageService
+import org.taskforce.episample.core.interfaces.GeoJsonEnumerationArea
 
 class GeographyViewModel(
         val languageService: LanguageService,
         private val stepper: Stepper,
-        val adapter: EnumerationAreaAdapter) :
+        val adapter: EnumerationAreaAdapter,
+        private val configBuildManager: ConfigBuildManager) :
         ViewModel(), StepperCallback, QuickstartReceiver, OnDatasetChangedListener {
 
     init {
@@ -25,6 +29,8 @@ class GeographyViewModel(
     }
     
     lateinit var quickstart: () -> Unit
+    
+    lateinit var pickFile: () -> Unit
 
     val quickstartButtonText = ObservableField(languageService.getString(R.string.config_geography_quickstart))
 
@@ -41,11 +47,15 @@ class GeographyViewModel(
     }
 
     val viewMapText = ObservableField(languageService.getString(R.string.config_geography_quickstart_alternate))
+    
+    val filesHeader = ObservableField(languageService.getString(R.string.config_upload_title))
+    
+    val loadFileButtonText = ObservableField(languageService.getString(R.string.config_upload_load_file))
 
     val enumerationAreaTitle = object: ObservableField<String>(itemCount) {
         override fun get(): String? {
             return if (itemCount.get()!! > 0)
-                "${languageService.getString(R.string.config_enumeration_area_title)} (${adapter.dataSize})"
+                "${languageService.getString(R.string.config_enumeration_area_title)} (${adapter.data?.size})"
             else
                 languageService.getString(R.string.config_enumeration_area_title)
         }
@@ -53,26 +63,35 @@ class GeographyViewModel(
 
     val enumerationAreaError = ObservableField(languageService.getString(R.string.config_list_empty))
 
-    val enumerationAreaErrorVisibility = ObservableField(true)
+    val enumerationAreaErrorVisibility = object: ObservableField<Boolean>(itemCount) {
+        override fun get() = itemCount.get() ?: 0 == 0
+    }
 
     override fun quickstartData(latitude: Double, longitude: Double, radius: Double) {
         quickstartVisibility.set(false)
         viewMapVisibility.set(true)
-        adapter.data = EnumerationLayer("Quickstart Enumeration Layer").apply {
-            enumerationAreas = mutableListOf(
-                    EnumerationArea.quickstart(
-                            "$latitude, $longitude ($radius km)",
-                            latitude,
-                            longitude,
-                            radius))
-        }
+        val quickJsonArea = GeoJsonEnumerationArea.createFromQuickstart(latitude, longitude, radius)
+        adapter.data = mutableListOf(Pair(quickJsonArea, true))
         enumerationAreaErrorVisibility.set(false)
         itemCount.set(adapter.itemCount)
         stepper.enableNext(true, GeographyFragment::class.java)
     }
+    
+    fun loadEnumerations(featureCollection: FeatureCollection?) {
+        featureCollection?.let {
+            adapter.data?.addAll(it.features.map { GeoJsonEnumerationArea.createFromFeature(it) }.map { Pair(it, false) })
+            adapter.notifyDataSetChanged()
+            itemCount.set(adapter.itemCount)
+            stepper.enableNext(true, GeographyFragment::class.java)
+        }
+    }
 
     override fun onNext(): Boolean {
-        return true
+        adapter.data?.let {
+            configBuildManager.addEnumerationAreas(it.map { it.first })
+            return true
+        }
+        return false
     }
 
     override fun onBack(): Boolean {

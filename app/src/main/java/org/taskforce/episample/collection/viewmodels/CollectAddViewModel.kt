@@ -35,7 +35,8 @@ class CollectAddViewModel(
         private val saveButtonDisabledTextColor: Int,
         private val goToNext: () -> Unit,
         private val takePicture: () -> Unit,
-        private val showDuplicateGpsDialog: (enumeration: Enumeration?, subject: EnumerationSubject) -> Unit) : AndroidViewModel(application) {
+        private val showDuplicateGpsDialog: (enumeration: Enumeration?, subject: EnumerationSubject) -> Unit,
+        private val showOutsideEnumerationAreaDialog: (latLng: LatLng, precision: Double) -> Unit) : AndroidViewModel(application) {
 
     @Inject
     lateinit var userSession: UserSession
@@ -358,10 +359,26 @@ class CollectAddViewModel(
                     if (isLandmark) {
                         saveLandmark(latLng, gpsPrecision)
                     } else {
-                        saveEnumeration(latLng, gpsPrecision)
+                        if (!isWithinEnumerationAreas()) {
+                            showOutsideEnumerationAreaDialog(latLng, gpsPrecision)
+                        } else {
+                            saveEnumeration(latLng, gpsPrecision)
+                        }
                     }
                 }
             }
+        }
+    }
+    
+    private fun isWithinEnumerationAreas(): Boolean {
+        return if (config.enumerationAreas.isNotEmpty()) {
+            config.enumerationAreas.any { area ->
+                locationLatLng?.let { location ->
+                    area.isWithinArea(location)
+                } ?: false
+            }
+        } else {
+            true
         }
     }
 
@@ -381,7 +398,7 @@ class CollectAddViewModel(
         }
     }
 
-    private fun saveEnumeration(latLng: LatLng, gpsPrecision: Double) {
+    fun saveEnumeration(latLng: LatLng, gpsPrecision: Double, shouldExclude: Boolean = false) {
         val customFields = customFieldViewModels.mapNotNull { customVm ->
             val type = customVm.customField.type
 
@@ -406,11 +423,12 @@ class CollectAddViewModel(
             }
         }
         val isIncomplete = !(isEnumerationValid.value ?: false)
+        val isExcluded = (exclude.value ?: false) || shouldExclude
         collectManager.addEnumerationItem(LiveEnumeration(
                 userSession.username,
                 null,
                 isIncomplete,
-                exclude.value ?: false,
+                isExcluded,
                 primaryLabel.value ?: "",
                 notes.value,
                 latLng,

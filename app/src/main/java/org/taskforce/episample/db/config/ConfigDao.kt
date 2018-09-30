@@ -9,7 +9,7 @@ import org.taskforce.episample.db.filter.RuleSet
 import java.util.*
 
 @Dao
-abstract class ConfigDao : CustomFieldDao {
+abstract class ConfigDao : CustomFieldDao, EnumerationAreaDao {
 
     @Insert
     abstract fun insert(config: Config)
@@ -77,7 +77,10 @@ abstract class ConfigDao : CustomFieldDao {
                     landmarkTypes: List<CustomLandmarkType>,
                     adminSettings: AdminSettings?,
                     enumerationSubject: EnumerationSubject?,
-                    userSettings: UserSettings?, displaySettings: DisplaySettings?) {
+                    userSettings: UserSettings?, 
+                    displaySettings: DisplaySettings?,
+                    enumerationAreas: List<EnumerationArea>,
+                    enumerationAreaPoints: List<EnumerationAreaPoint>) {
         insert(config)
 
         adminSettings?.let {
@@ -95,6 +98,8 @@ abstract class ConfigDao : CustomFieldDao {
 
         insert(*customFields.toTypedArray())
         insert(*landmarkTypes.toTypedArray())
+        insertEnumerationAreas(*enumerationAreas.toTypedArray())
+        insertEnumerationAreaPoints(*enumerationAreaPoints.toTypedArray())
     }
 
     @Transaction
@@ -125,6 +130,28 @@ abstract class ConfigDao : CustomFieldDao {
             it.id = UUID.randomUUID().toString()
             it.configId = insertConfig.id
         }
+        
+        val enumerationAreas = getEnumerationAreasSync(sourceConfig.id)
+        enumerationAreas.forEach { 
+            val id = UUID.randomUUID().toString()
+            it.id = id
+            it.configId = insertConfig.id
+            
+            it.points.forEach { 
+                it.enumerationAreaId = id
+                it.id = UUID.randomUUID().toString()
+            }
+        }
+        
+        val enumerationAreaPoints = enumerationAreas.map { area ->
+            area.points
+        }.flatMap {
+            it
+        }
+        
+        val insertEnumerationAreas = enumerationAreas.map { 
+            EnumerationArea(it.name, it.configId, it.id)
+        }
 
         insert(insertConfig,
                 customFields,
@@ -132,7 +159,9 @@ abstract class ConfigDao : CustomFieldDao {
                 adminSettings,
                 enumerationSubject,
                 userSettings,
-                displaySettings)
+                displaySettings,
+                insertEnumerationAreas,
+                enumerationAreaPoints)
 
         return insertConfig.id
     }

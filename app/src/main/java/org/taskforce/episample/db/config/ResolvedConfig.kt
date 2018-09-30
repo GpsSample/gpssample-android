@@ -33,6 +33,9 @@ class ResolvedConfig(var name: String,
 
 //    @Relation(parentColumn = "id", entityColumn = "config_id")
 //    lateinit var ruleSets: List<RuleSet>
+    
+    @Relation(entity = EnumerationArea::class, parentColumn = "id", entityColumn = "config_id")
+    lateinit var enumerationAreas: List<ResolvedEnumerationArea>
 }
 
 @Dao

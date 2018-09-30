@@ -30,6 +30,7 @@ import org.taskforce.episample.collection.viewmodels.CollectAddViewModel
 import org.taskforce.episample.collection.viewmodels.CollectAddViewModelFactory
 import org.taskforce.episample.collection.viewmodels.CollectViewModel
 import org.taskforce.episample.collection.viewmodels.CustomDropdownViewModel
+import org.taskforce.episample.config.geography.OutsideAreaDialogFragment
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.interfaces.CustomField
 import org.taskforce.episample.core.ui.dialogs.DatePickerFragment
@@ -108,6 +109,12 @@ class CollectAddFragment : Fragment() {
                             }
                             duplicateDialog.show(childFragmentManager, DuplicateGpsDialogFragment::class.java.simpleName)
                         }
+                    },
+                    { latLng, precision ->
+                        val outsideAreaDialog = OutsideAreaDialogFragment.newInstance {
+                            collectViewModel.saveEnumeration(latLng, precision, shouldExclude = true)
+                        }
+                        outsideAreaDialog.show(childFragmentManager, OutsideAreaDialogFragment::class.java.simpleName)
                     }
             )).get(CollectAddViewModel::class.java)
 

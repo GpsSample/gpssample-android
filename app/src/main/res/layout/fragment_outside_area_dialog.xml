@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.config.geography.OutsideAreaDialogViewModel" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="24dp">
+
+        <TextView
+            android:id="@+id/outsideAreaTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{vm.title}"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:text="@string/collect_outside_area_title" />
+
+        <TextView
+            android:id="@+id/outsideAreaMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@{vm.message}"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/outsideAreaTitle"
+            tools:text="@string/collect_outside_area_message" />
+
+        <TextView
+            android:id="@+id/outsideAreaSaveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/colorAccent"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:text="@{vm.saveButtonText}"
+            android:onClick="@{() -> vm.save()}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/outsideAreaMessage"
+            tools:text="SAVE" />
+
+        <TextView
+            android:id="@+id/outsideAreaCancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:textColor="@color/colorAccent"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:text="@{vm.cancelButtonText}"
+            android:onClick="@{() -> vm.cancel()}"
+            app:layout_constraintBottom_toBottomOf="@+id/outsideAreaSaveButton"
+            app:layout_constraintEnd_toStartOf="@+id/outsideAreaSaveButton"
+            app:layout_constraintTop_toTopOf="@+id/outsideAreaSaveButton"
+            tools:text="CANCEL" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

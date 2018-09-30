@@ -3,45 +3,37 @@ package org.taskforce.episample.config.geography
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import org.taskforce.episample.R
+import org.taskforce.episample.core.interfaces.EnumerationArea
 import org.taskforce.episample.databinding.ItemConfigGeographyAreaBinding
 import org.taskforce.episample.databinding.ItemConfigGeographyLayerBinding
 import org.taskforce.episample.utils.inflater
 
 class EnumerationAreaAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(), EnumerationAreaViewModel.EnumerationActionCallbacks {
-    var data: EnumerationLayer? = null
+    
+    var data: MutableList<Pair<EnumerationArea, Boolean>>? = mutableListOf()
         set(value) {
             field = value
             notifyDataSetChanged()
         }
 
-    val dataSize: Int
-        get() = data?.elementCount ?: 0
-
     var onDatasetChangedListener: OnDatasetChangedListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-            when (viewType) {
-                0 -> EnumerationLayerViewHolder(ItemConfigGeographyLayerBinding.inflate(parent.context.inflater))
-                else -> {
-                    EnumerationAreaViewHolder(ItemConfigGeographyAreaBinding.inflate(parent.context.inflater))
-                }
-            }
+            EnumerationAreaViewHolder(ItemConfigGeographyAreaBinding.inflate(parent.context.inflater))
 
-    override fun getItemCount() = dataSize
+    override fun getItemCount() = data?.size ?: 0
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val area = data!![position].first
+        val isQuickstart = data!![position].second
         when (holder) {
-            is EnumerationAreaViewHolder -> holder.bind(0, data?.enumerationAreas!![0], this)
-        //is EnumerationLayerViewHolder -> holder.bind()
+            is EnumerationAreaViewHolder -> holder.bind(area, this, isQuickstart)
         }
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return 1
-    }
-
     override fun onDelete(enumerationArea: EnumerationArea) {
-        if(data?.remove(enumerationArea) == true) {
+        val areaToDelete = data?.firstOrNull { it.first == enumerationArea }
+        if(data?.remove(areaToDelete) == true) {
             notifyDataSetChanged()
             onDatasetChangedListener?.onDatasetChanged()
         }
@@ -49,10 +41,10 @@ class EnumerationAreaAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(), 
 }
 
 class EnumerationAreaViewHolder(private val binding: ItemConfigGeographyAreaBinding) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(depth: Int,
-             area: EnumerationArea,
-             listener: EnumerationAreaViewModel.EnumerationActionCallbacks) {
-        binding.vm = EnumerationAreaViewModel(area, depth, listener)
+    fun bind(area: EnumerationArea,
+             listener: EnumerationAreaViewModel.EnumerationActionCallbacks,
+             isQuickstart: Boolean) {
+        binding.vm = EnumerationAreaViewModel(area, listener, isQuickstart)
     }
 }
 

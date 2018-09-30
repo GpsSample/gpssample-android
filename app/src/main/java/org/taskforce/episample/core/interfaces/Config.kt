@@ -12,4 +12,5 @@ interface Config {
     val enumerationSubject: EnumerationSubject
     val customFields: List<CustomField>
     val landmarkTypes: List<LandmarkType>
+    val enumerationAreas: List<EnumerationArea>
 }

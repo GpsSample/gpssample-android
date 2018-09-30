@@ -45,7 +45,8 @@
                 android:textColor="@color/textColorInverse"
                 android:minWidth="160dp"
                 android:onClick="@{() -> vm.quickstart.invoke()}"
-                android:text="@{vm.quickstartButtonText}" />
+                android:text="@{vm.quickstartButtonText}"
+                tools:text="QUICK START" />
 
             <TextView
                 visibleOrGone="@{vm.viewMapVisibility}"
@@ -66,7 +67,8 @@
                 android:lineSpacingExtra="4sp"
                 android:text="@{vm.quickstartExplanation}"
                 android:textColor="@color/textColorDisabled"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                tools:text="Quick Start lets you proceed with a single enumeration area by specifying a location and a radius for the map download."/>
 
             <TextView
                 android:id="@+id/enumerationAreaTitle"
@@ -76,7 +78,8 @@
                 android:text="@{vm.enumerationAreaTitle}"
                 android:textColor="@color/textColorDetails"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:text="Enumeration Areas" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/enumerationAreaList"
@@ -95,13 +98,36 @@
                 android:textStyle="italic"
                 android:text="@{vm.enumerationAreaError}" />
 
-            <include
-                android:id="@+id/transfer"
-                layout="@layout/app_config_transfer"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/fileListHeader"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                app:vm="@{transferVm}" />
+                android:layout_marginBottom="16dp"
+                android:textColor="@color/textColorDetails"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:text="@{vm.filesHeader}"
+                tools:text="Uploaded Files" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/geographyFileList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_config_file"/>
+
+            <TextView
+                android:id="@+id/loadFileButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
+                android:onClick="@{() -> vm.pickFile.invoke()}"
+                android:textColor="@color/colorAccent"
+                android:textSize="16sp"
+                android:text="@{vm.loadFileButtonText}"
+                tools:text="GET FILE"/>
 
         </LinearLayout>
 

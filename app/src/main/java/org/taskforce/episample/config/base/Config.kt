@@ -9,6 +9,7 @@ import org.taskforce.episample.config.settings.admin.AdminSettings
 import org.taskforce.episample.config.settings.display.DisplaySettings
 import org.taskforce.episample.config.settings.server.ServerSettings
 import org.taskforce.episample.config.settings.user.UserSettings
+import org.taskforce.episample.core.interfaces.EnumerationArea
 import org.taskforce.episample.core.interfaces.EnumerationSubject
 import org.taskforce.episample.db.filter.RuleRecord
 import org.taskforce.episample.db.filter.RuleSet
@@ -35,7 +36,7 @@ class Config(
     var offlineTiles: Collection<OfflineTile>? = null
     var landmarkTypes = listOf<LandmarkType>()
     var customLandmarkTypes = listOf<CustomLandmarkTypeInput>()
-    var geography: Geography? = null
+    var enumerationAreas: List<EnumerationArea> = listOf()
     var displaySettings = DisplaySettings()
     var customLanguages = listOf<CustomLanguage>()
     var customFields = listOf<CustomField>()

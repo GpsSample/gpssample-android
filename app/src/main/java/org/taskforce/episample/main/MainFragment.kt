@@ -17,7 +17,7 @@ import org.taskforce.episample.navigation.ui.NavigationActivity
 import org.taskforce.episample.study.ui.SurveyCreateFragment
 import org.taskforce.episample.supervisor.upload.ui.StudyUploadFragment
 import org.taskforce.episample.sync.managers.SyncManager
-import org.taskforce.episample.sync.ui.ShareStudyActivity
+import org.taskforce.episample.sync.ui.SyncActivity
 import org.taskforce.episample.toolbar.managers.LanguageManager
 import org.taskforce.episample.toolbar.viewmodels.ToolbarViewModel
 import javax.inject.Inject
@@ -31,10 +31,10 @@ class MainFragment : Fragment() {
     lateinit var syncManager: SyncManager
 
     lateinit var viewModel: MainViewModel
-    
+
     private var navigationPlans = listOf<ResolvedNavigationPlan>()
-    private val navigationPlanObserver = Observer<List<ResolvedNavigationPlan>> { 
-        it?.let { 
+    private val navigationPlanObserver = Observer<List<ResolvedNavigationPlan>> {
+        it?.let {
             navigationPlans = it
         }
     }
@@ -62,14 +62,8 @@ class MainFragment : Fragment() {
                     }
                 },
                 syncOnClick = {
-                    ShareStudyActivity.startActivity(requireContext(), true)
-                    // TODO open sync
-                    Toast.makeText(requireContext(), "TODO", Toast.LENGTH_SHORT).show()
-//                    requireFragmentManager()
-//                            .beginTransaction()
-//                            .replace(R.id.mainFrame, SyncFragment())
-//                            .addToBackStack(SyncFragment::class.java.name)
-//                            .commit()
+                    val isSupervisor = viewModel.userSession.isSupervisor
+                    SyncActivity.startActivity(requireContext(), isSupervisor)
                 },
                 sampleOnClick = {
                     requireFragmentManager()

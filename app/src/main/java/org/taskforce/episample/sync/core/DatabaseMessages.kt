@@ -1,4 +1,4 @@
 package org.taskforce.episample.sync.core
 
-class StudyDatabaseFilesChangedMessage
-class StudyDatabaseInstanceSwapped
+class StudyReceivedMessage
+class EnumerationsReceivedMessage

@@ -5,13 +5,11 @@ import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
-import android.support.v4.content.ContextCompat
 import android.text.SpannableStringBuilder
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.interfaces.UserSession
-import org.taskforce.episample.db.ConfigRepository
 import org.taskforce.episample.db.StudyRepository
 import org.taskforce.episample.utils.boldSubstring
 import java.util.*
@@ -27,13 +25,15 @@ class MainViewModel(
         sampleOnClick: () -> Unit,
         finalOnClick: () -> Unit) : AndroidViewModel(application) {
 
-    val supervisor = MutableLiveData<Boolean>().apply { value = false }
 
     @Inject
     lateinit var userSession: UserSession
 
     @Inject
     lateinit var studyRepository: StudyRepository
+
+    val supervisor: Boolean
+        get() = userSession.isSupervisor
 
     init {
         (application as EpiApplication).collectComponent!!.inject(this)
@@ -45,7 +45,6 @@ class MainViewModel(
     })
 
     init {
-        supervisor.value = userSession.isSupervisor
         languageService.update =
                 {
                     // TODO show last synced date

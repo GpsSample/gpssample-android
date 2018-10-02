@@ -18,7 +18,8 @@ import org.taskforce.episample.db.config.*
 import org.taskforce.episample.db.config.customfield.CustomFieldValue
 import org.taskforce.episample.db.navigation.NavigationDao
 import org.taskforce.episample.db.navigation.ResolvedNavigationPlan
-import org.taskforce.episample.sync.core.StudyDatabaseFilesChangedMessage
+import org.taskforce.episample.sync.core.EnumerationsReceivedMessage
+import org.taskforce.episample.sync.core.StudyReceivedMessage
 import java.util.*
 
 class StudyRepository(val application: Application, injectedDatabase: StudyRoomDatabase? = null) {
@@ -36,8 +37,27 @@ class StudyRepository(val application: Application, injectedDatabase: StudyRoomD
 
     @Suppress("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onDatabaseFilesChanged(event: StudyDatabaseFilesChangedMessage) {
+    fun onDatabaseFilesChanged(event: StudyReceivedMessage) {
         studyDb.postValue(StudyRoomDatabase.reloadDatabaseInstance(application))
+    }
+
+    @Suppress("unused")
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    fun onSyncUpdatesReceived(event: EnumerationsReceivedMessage) {
+        val targetDatabase = StudyRoomDatabase.getDatabase(application)
+        val sourceDatabase = StudyRoomDatabase.reloadIncomingInstance(application)
+
+        val sourceDao = sourceDatabase.transferDao()
+        val targetDao = targetDatabase.transferDao()
+
+        targetDao.transfer(
+                sourceDao.getEnumerations(),
+                sourceDao.getLandmarks(),
+                sourceDao.getBreadcrumbs(),
+                sourceDao.getCustomFieldValues(),
+                sourceDao.getNavigationPlans(),
+                sourceDao.getNavigationItems()
+        )
     }
 
     /**

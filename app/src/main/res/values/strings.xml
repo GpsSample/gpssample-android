@@ -361,7 +361,15 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="final_upload_sign_in_failed">Sign-in failed</string>
     <string name="connect">CONNECT</string>
     <string name="disconnect">DISCONNECT</string>
-    
+    <string name="supervisor_sync_send_study">Send Initial Study</string>
+    <string name="supervisor_sync_with_enumerators">Sync with Enumerators</string>
+    <string name="enumerator_sync_status_discoverable">Discoverable</string>
+    <string name="enumerator_sync_status_sending_study_data">Sending Study Data</string>
+    <string name="enumerator_sync_status_awaiting_study_data">Awaiting Study Data</string>
+    <string name="enumerator_sync_status_processing_study_data">Processing Study Data</string>
+    <string name="enumerator_sync_status_complete">Sync Complete</string>
+    <string name="enumerator_sync_status_awaiting_connection">Awaiting Connection</string>
     <string name="collect_outside_area_title">Household Is Outside Enumeration Area</string>
     <string name="collect_outside_area_message">This household is outside the study’s enumeration area. If you save it, it will not be considered valid for sampling.</string>
+
 </resources>

@@ -19,6 +19,7 @@ import org.taskforce.episample.db.filter.RuleSet
 import org.taskforce.episample.db.navigation.NavigationDao
 import org.taskforce.episample.db.navigation.NavigationItem
 import org.taskforce.episample.db.navigation.NavigationPlan
+import org.taskforce.episample.db.transfer.TransferDao
 
 @Database(version = 1,
         entities = [
@@ -41,7 +42,9 @@ import org.taskforce.episample.db.navigation.NavigationPlan
             Study::class,
             UserSettings::class
         ])
+
 abstract class StudyRoomDatabase : RoomDatabase() {
+
     abstract fun configDao(): ConfigDao
     abstract fun studyDao(): StudyDao
     abstract fun resolvedConfigDao(): ResolvedConfigDao
@@ -52,6 +55,7 @@ abstract class StudyRoomDatabase : RoomDatabase() {
     abstract fun ruleDao(): RuleDao
     abstract fun customFieldValueDao(): CustomFieldValueDao
     abstract fun navigationDao(): NavigationDao
+    abstract fun transferDao(): TransferDao
     abstract fun enumerationAreaDao(): EnumerationAreaDao
 
     private class PopulateDbAsync(db: StudyRoomDatabase) : AsyncTask<Void, Void, Void>() {
@@ -63,12 +67,19 @@ abstract class StudyRoomDatabase : RoomDatabase() {
 
     companion object {
         private var INSTANCE: StudyRoomDatabase? = null
-//        private var BACKUP: StudyRoomDatabase? = null
+        private var INCOMING: StudyRoomDatabase? = null
+        private var SCRATCH_PAD: StudyRoomDatabase? = null
 
         fun reloadDatabaseInstance(context: Context): StudyRoomDatabase {
             INSTANCE = null
             return getDatabase(context)
         }
+
+        fun reloadIncomingInstance(context: Context): StudyRoomDatabase {
+            INCOMING = null
+            return getIncomingInstance(context)
+        }
+
         fun getDatabase(context: Context): StudyRoomDatabase {
             if (INSTANCE == null) {
                 synchronized(ConfigRoomDatabase::class.java) {
@@ -84,28 +95,41 @@ abstract class StudyRoomDatabase : RoomDatabase() {
             return INSTANCE!!
         }
 
-//        fun getBackupInstance(context: Context): StudyRoomDatabase {
-//            if (BACKUP == null) {
-//                synchronized(ConfigRoomDatabase::class.java) {
-//                    if (BACKUP == null) {
-//                        BACKUP = Room.databaseBuilder(context.applicationContext,
-//                                StudyRoomDatabase::class.java, "study_database_backup")
-//                                .addCallback(roomDatabaseCallback)
-//                                .fallbackToDestructiveMigration()
-//                                .build()
-//                    }
-//                }
-//            }
-//            return BACKUP!!
-//        }
+        fun getIncomingInstance(context: Context): StudyRoomDatabase {
+            if (INCOMING == null) {
+                synchronized(ConfigRoomDatabase::class.java) {
+                    if (INCOMING == null) {
+                        INCOMING = Room.databaseBuilder(context.applicationContext,
+                                StudyRoomDatabase::class.java, "study_database_incoming")
+                                .addCallback(roomDatabaseCallback)
+                                .fallbackToDestructiveMigration()
+                                .build()
+                    }
+                }
+            }
+            return INCOMING!!
+        }
+
+        fun getScratchPad(context: Context): StudyRoomDatabase {
+            if (SCRATCH_PAD == null) {
+                synchronized(ConfigRoomDatabase::class.java) {
+                    if (SCRATCH_PAD == null) {
+                        SCRATCH_PAD = Room.databaseBuilder(context.applicationContext,
+                                StudyRoomDatabase::class.java, "study_database_scratch_pad")
+                                .addCallback(roomDatabaseCallback)
+                                .fallbackToDestructiveMigration()
+                                .build()
+                    }
+                }
+            }
+            return SCRATCH_PAD!!
+        }
 
         private val roomDatabaseCallback = object : RoomDatabase.Callback() {
-
             override fun onOpen(db: SupportSQLiteDatabase) {
                 super.onOpen(db)
                 PopulateDbAsync(INSTANCE!!).execute()
             }
         }
-
     }
 }

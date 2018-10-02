@@ -94,6 +94,11 @@ class FileUtil {
             }
         }
 
+        fun moveFile(input: File, output: File) {
+            copyFile(input.inputStream(), output.outputStream())
+            delete(listOf(input))
+        }
+
         fun copyFile(inputStream: InputStream, out: OutputStream): Boolean {
             val buf = ByteArray(1024)
             var len = 0
@@ -112,6 +117,27 @@ class FileUtil {
             }
 
             return true
+        }
+
+        fun writeDatabaseToZip(context: Context): File {
+            val databaseName = "study_database"
+            val databaseFile = context.getDatabasePath(databaseName)
+            val directory = databaseFile.parent
+
+            val shmFile = "$directory/$databaseName-shm"
+            val walFile = "$directory/$databaseName-wal"
+            val zipFile = "${context.filesDir}/$databaseName.zip"
+
+            val targetDirectory = context.filesDir.absolutePath
+            val renamedDbFile = "$targetDirectory/${databaseName}_incoming"
+            val renamedShm = "$targetDirectory/${databaseName}_incoming-shm"
+            val renamedWal = "$targetDirectory/${databaseName}_incoming-wal"
+            FileUtil.copyFile(databaseFile.inputStream(), File(renamedDbFile).outputStream())
+            FileUtil.copyFile(File(shmFile).inputStream(), File(renamedShm).outputStream())
+            FileUtil.copyFile(File(walFile).inputStream(), File(renamedWal).outputStream())
+
+            FileUtil.zip(listOf(renamedDbFile, renamedShm, renamedWal).toTypedArray(), zipFile)
+            return File(zipFile)
         }
 
         fun createImageFile(context: Context): File {
@@ -145,4 +171,5 @@ class FileUtil {
             }
         }
     }
+
 }

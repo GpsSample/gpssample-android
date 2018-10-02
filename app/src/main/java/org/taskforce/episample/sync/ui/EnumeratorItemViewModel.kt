@@ -3,9 +3,9 @@ package org.taskforce.episample.sync.ui
 import android.view.View
 import org.taskforce.episample.sync.core.PeerState
 
-class PeerItemViewModel(peerState: PeerState,
-                        val connect: () -> Unit,
-                        val disconnect: () -> Unit) {
+class EnumeratorItemViewModel(peerState: PeerState,
+                              val connect: () -> Unit,
+                              val disconnect: () -> Unit) {
 
     val deviceName = peerState.device.deviceName
     val deviceStatus = when (peerState.device.status) {

@@ -9,9 +9,19 @@ import android.net.wifi.p2p.*
 import android.os.AsyncTask
 import android.util.Log
 import android.widget.Toast
-import org.taskforce.episample.sync.FileServerAsyncTask
+import org.taskforce.episample.sync.EnumeratorSyncAsyncTask
+import org.taskforce.episample.sync.ReceiveStudyAsyncTask
+import org.taskforce.episample.sync.core.DirectTransferServiceMode.*
+import java.lang.ref.WeakReference
 
 data class PeerState(val device: WifiP2pDevice, val info: WifiP2pInfo?)
+
+enum class DirectTransferServiceMode {
+    RECEIVE_STUDY,
+    ENUMERATOR_SYNC,
+    SEND_STUDY,
+    SUPERVISOR_SYNC
+}
 
 interface DirectTransferService : LifecycleObserver, WifiP2pManager.ConnectionInfoListener, WiFiDirectBroadcastCallbacks {
 
@@ -24,6 +34,11 @@ interface DirectTransferService : LifecycleObserver, WifiP2pManager.ConnectionIn
     val peerListLiveData: LiveData<List<PeerState>>
     val connectionInfoLiveData: LiveData<WifiP2pInfo?>
     val groupInfoLiveData: LiveData<WifiP2pGroup?>
+
+    val transferMode: DirectTransferServiceMode
+
+    val receiveStudySyncStatus: MutableLiveData<ReceiveStudyAsyncTask.Progress>
+    val enumeratorSyncStatus: MutableLiveData<EnumeratorSyncAsyncTask.Progress>
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun connectListener() {
@@ -55,7 +70,10 @@ interface DirectTransferService : LifecycleObserver, WifiP2pManager.ConnectionIn
 }
 
 class LiveDirectTransferService(override val context: ContextWrapper,
-                                private val intendToOwnGroup: Boolean) : DirectTransferService {
+                                override val transferMode: DirectTransferServiceMode) : DirectTransferService {
+
+    override val enumeratorSyncStatus = MutableLiveData<EnumeratorSyncAsyncTask.Progress>().apply { value = EnumeratorSyncAsyncTask.Progress.NOT_STARTED }
+    override val receiveStudySyncStatus = MutableLiveData<ReceiveStudyAsyncTask.Progress>().apply { value = ReceiveStudyAsyncTask.Progress.NOT_STARTED }
 
     override val deviceNameLiveData = MutableLiveData<String>().apply { value = "" }
     override val isEnabledLiveData = MutableLiveData<Boolean>().apply { value = false }
@@ -69,6 +87,12 @@ class LiveDirectTransferService(override val context: ContextWrapper,
 
     private val mChannel: WifiP2pManager.Channel?
     private val mManager: WifiP2pManager? = context.getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager?
+
+    private val intendToOwnGroup: Boolean
+        get() = when (transferMode) {
+            RECEIVE_STUDY, ENUMERATOR_SYNC -> true
+            SEND_STUDY, SUPERVISOR_SYNC -> false
+        }
 
     init {
         mChannel = mManager?.initialize(context, context.mainLooper, null)
@@ -154,10 +178,12 @@ class LiveDirectTransferService(override val context: ContextWrapper,
             return
         }
 
-        if (info.groupFormed && intendToOwnGroup) {
-            FileServerAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, context.filesDir, context.getDatabasePath("study_database"))
-        } else if (info.groupFormed) {
-
+        if (info.groupFormed) {
+            when (transferMode) {
+                RECEIVE_STUDY -> ReceiveStudyAsyncTask(WeakReference(context), WeakReference(this)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+                ENUMERATOR_SYNC -> EnumeratorSyncAsyncTask(WeakReference(context), WeakReference(this)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+                else -> {}
+            }
         }
     }
 
@@ -224,10 +250,4 @@ class LiveDirectTransferService(override val context: ContextWrapper,
     companion object {
         const val TAG = "DirectTransferService"
     }
-}
-
-interface DirectTransferServiceCallbacks {
-    fun onConnectionInfoUpdate(info: WifiP2pInfo?)
-    fun onGroupInfoUpdate(group: WifiP2pGroup?)
-    fun onConnectedPeerListUpdate(deviceList: WifiP2pDeviceList)
 }

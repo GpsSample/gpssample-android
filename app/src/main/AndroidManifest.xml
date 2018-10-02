@@ -54,7 +54,7 @@
             android:name=".navigation.ui.NavigationActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".sync.ui.ShareStudyActivity"
+            android:name=".sync.ui.SyncActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".config.sampling.filter.RuleSetCreationActivity"
@@ -67,7 +67,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="${geoApiKey}" />
 
-        <service android:name=".sync.core.FileTransferService"></service>
+        <service android:name=".sync.core.SendFileTransferService"></service>
+        <service android:name=".sync.core.ReceiveFileTransferService"></service>
         
         <provider
             android:authorities="org.taskforce.episample.fileprovider"

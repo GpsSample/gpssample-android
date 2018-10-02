@@ -58,11 +58,14 @@
                         visibleOrGone="@{vm.showPhotoButton}"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:padding="2dp"
                         android:background="@color/monochromeAccent">
 
                         <ImageView
+                            android:id="@+id/collectAddImage"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:scaleType="centerCrop"
                             android:src="@drawable/photo_empty"
                             app:layout_constraintBottom_toTopOf="@id/photoText"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -71,6 +74,7 @@
                             tools:src="@mipmap/ic_launcher" />
 
                         <TextView
+                            visibleOrGone="@{vm.showTakePhoto}"
                             android:id="@+id/photoText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -79,6 +83,7 @@
                             android:textColor="@color/colorPrimaryDark"
                             android:textSize="14sp"
                             android:textStyle="bold"
+                            android:onClick="@{vm::takePhoto}"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"

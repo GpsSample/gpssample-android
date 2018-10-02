@@ -131,5 +131,5 @@ class ConfigBuildManager(val config: Config = Config(Date())):
         config.enumerationAreas = mutableEnumerationAreasList.toList()
     }
 
-    val photoCompressionOptions = arrayOf(0 to "No Compression", 50 to "Some Compression", 100 to "Maximum Compression")
+    val photoCompressionOptions = arrayOf(100 to "No Compression", 50 to "Some Compression", 25 to "Maximum Compression")
 }

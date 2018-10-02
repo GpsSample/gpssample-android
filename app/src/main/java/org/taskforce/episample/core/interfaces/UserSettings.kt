@@ -4,4 +4,5 @@ interface UserSettings {
     val gpsMinimumPrecision: Double
     val gpsPreferredPrecision: Double
     val allowPhotos: Boolean
+    val photoCompressionScale: Int?
 }

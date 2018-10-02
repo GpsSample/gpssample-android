@@ -5,15 +5,17 @@ import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.support.v4.app.Fragment
+import android.support.v4.content.FileProvider
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
-import android.widget.Toast
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
@@ -32,15 +34,20 @@ import org.taskforce.episample.collection.viewmodels.CollectViewModel
 import org.taskforce.episample.collection.viewmodels.CustomDropdownViewModel
 import org.taskforce.episample.config.geography.OutsideAreaDialogFragment
 import org.taskforce.episample.config.language.LanguageService
+import org.taskforce.episample.core.interfaces.Config
 import org.taskforce.episample.core.interfaces.CustomField
 import org.taskforce.episample.core.ui.dialogs.DatePickerFragment
 import org.taskforce.episample.core.ui.dialogs.TimePickerFragment
+import org.taskforce.episample.core.util.FileUtil
 import org.taskforce.episample.databinding.FragmentCollectAddBinding
 import org.taskforce.episample.db.config.customfield.CustomDateType
 import org.taskforce.episample.db.config.customfield.metadata.DateMetadata
 import org.taskforce.episample.toolbar.managers.LanguageManager
 import org.taskforce.episample.toolbar.viewmodels.ToolbarViewModel
 import org.taskforce.episample.utils.getCompatColor
+import org.taskforce.episample.utils.loadImage
+import java.io.File
+import java.io.IOException
 import java.util.*
 import javax.inject.Inject
 
@@ -49,16 +56,21 @@ class CollectAddFragment : Fragment() {
     @Inject
     lateinit var languageManager: LanguageManager
     lateinit var languageService: LanguageService
+    
+    @Inject
+    lateinit var config: Config
 
     lateinit var collectIconFactory: CollectIconFactory
     lateinit var markerManager: CollectionItemMarkerManager
 
     lateinit var collectViewModel: CollectAddViewModel
+    
+    var imageUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        (requireActivity().application as EpiApplication).component.inject(this)
+        (requireActivity().application as EpiApplication).collectComponent?.inject(this)
 
         collectIconFactory = CollectIconFactory(requireContext().resources)
     }
@@ -99,8 +111,25 @@ class CollectAddFragment : Fragment() {
                         requireFragmentManager()
                                 .popBackStack()
                     }, {
-                // TODO: Launch intent to take picture
-                Toast.makeText(requireContext(), "TODO", Toast.LENGTH_SHORT).show()
+                Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+                    takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
+                        val newPhoto = try {
+                            FileUtil.createImageFile(requireContext())
+                        } catch (ex: IOException) {
+                            null
+                        }
+                        
+                        newPhoto?.also {
+                            val photoUri = FileProvider.getUriForFile(requireContext(), 
+                                    "org.taskforce.episample.fileprovider",
+                                    it)
+                            imageUri = photoUri
+                            
+                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+                            startActivityForResult(takePictureIntent, TAKE_PICTURE)
+                        }
+                    }
+                }
             },
                     { enumeration, subject ->
                         enumeration?.let {
@@ -290,6 +319,19 @@ class CollectAddFragment : Fragment() {
 
                 collectViewModel.updateDateField(customFieldId, cal.time)
             }
+            TAKE_PICTURE -> {
+                // TODO: scale the image so it doesn't take much memory
+                imageUri?.let { photoUri ->
+                    collectViewModel.setImage(photoUri)
+                    
+                    config.userSettings.photoCompressionScale?.let { compressionScale ->
+                        FileUtil.compressBitmap(requireContext(), photoUri, compressionScale)
+                    }
+                    
+                    collectAddImage.loadImage(photoUri.toString(), 
+                            requireContext().getDrawable(R.drawable.photo_empty))
+                }
+            }
         }
     }
 
@@ -320,5 +362,6 @@ class CollectAddFragment : Fragment() {
         const val HELP_TARGET = "#collectAdd"
         const val GET_TIME_CODE = 1
         const val GET_DATE_CODE = 2
+        const val TAKE_PICTURE = 9457
     }
 }

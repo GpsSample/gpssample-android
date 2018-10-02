@@ -25,16 +25,12 @@ class CollectIconFactory(
     override fun getBitmapDescriptor(collectItem: CollectItem): BitmapDescriptor =
             when (collectItem) {
                 is Landmark -> {
-                    if (collectItem.image == null) {
-                        BitmapDescriptorFactory.fromResource(R.drawable.icon_landmark_default)
+                    val image = collectItem.landmarkType.iconLocation
+                    if (Uri.parse(image).scheme == ContentResolver.SCHEME_ANDROID_RESOURCE) {
+                        BitmapDescriptorFactory.fromResource(
+                                image.split(File.separator).last().toInt())
                     } else {
-                        if (Uri.parse(collectItem.image).scheme == ContentResolver.SCHEME_ANDROID_RESOURCE) {
-                            BitmapDescriptorFactory.fromResource(
-                                    collectItem.image?.split(File.separator)?.last()?.toInt()
-                                            ?: R.drawable.icon_landmark_default)
-                        } else {
-                            BitmapDescriptorFactory.fromPath(collectItem.image)
-                        }
+                        BitmapDescriptorFactory.fromPath(image)
                     }
                 }
                 is NavigationItem -> {
@@ -53,10 +49,13 @@ class CollectIconFactory(
 
     override fun getIconUri(collectItem: CollectItem) =
             when (collectItem) {
-                is Landmark -> if (collectItem.image?.isNotBlank() == true) {
-                    collectItem.image!!
-                } else {
-                    resources.getResourceUri(R.drawable.icon_landmark_default).toString()
+                is Landmark -> {
+                    val image = collectItem.landmarkType.iconLocation
+                    if (image.isNotBlank()) {
+                        image
+                    } else {
+                        resources.getResourceUri(R.drawable.icon_landmark_default).toString()
+                    }
                 }
                 is NavigationItem -> {
                     when (collectItem.surveyStatus) {

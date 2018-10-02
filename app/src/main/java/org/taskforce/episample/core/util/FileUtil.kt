@@ -1,7 +1,15 @@
 package org.taskforce.episample.core.util
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import java.io.*
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import java.util.zip.ZipInputStream
@@ -104,6 +112,37 @@ class FileUtil {
             }
 
             return true
+        }
+
+        fun createImageFile(context: Context): File {
+            // Create an image file name
+            val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+            val storageDir: File = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            return File.createTempFile(
+                    "GPSSample_${timeStamp}_", /* prefix */
+                    ".jpg", /* suffix */
+                    storageDir /* directory */
+            ).apply {
+                // Save a file: path for use with ACTION_VIEW intents
+                return this
+            }
+        }
+        
+        fun compressBitmap(context: Context, photoUri: Uri, compressionScale: Int) {
+            val original = MediaStore.Images.Media.getBitmap(context.contentResolver, photoUri)
+            val out = ByteArrayOutputStream()
+            original.compress(Bitmap.CompressFormat.JPEG, compressionScale, out)
+            
+            var fileOut: OutputStream? = null
+            try {
+                fileOut = context.contentResolver.openOutputStream(photoUri, "w")
+                
+                out.writeTo(fileOut)
+            } catch (ex: IOException) {
+                Log.d(TAG, ex.toString())
+            } finally {
+                fileOut?.close()
+            }
         }
     }
 }

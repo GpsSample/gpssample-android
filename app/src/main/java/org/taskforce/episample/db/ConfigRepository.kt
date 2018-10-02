@@ -81,7 +81,7 @@ class ConfigRepository(application: Application, injectedDatabase: ConfigRoomDat
         }
 
         val insertUserSettings = config.userSettings?.let {
-            UserSettings(it.gpsMinimumPrecision, it.gpsPreferredPrecision, it.allowPhotos, insertConfig.id)
+            UserSettings(it.gpsMinimumPrecision, it.gpsPreferredPrecision, it.allowPhotos, it.photoCompressionScale, insertConfig.id)
         }
 
         val insertDisplaySettings = DisplaySettings(config.displaySettings.isDateMetric, config.displaySettings.isTime24Hour, insertConfig.id)

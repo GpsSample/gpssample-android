@@ -7,7 +7,9 @@ import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import android.databinding.ObservableField
+import android.net.Uri
 import android.os.CountDownTimer
+import android.view.View
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
@@ -34,7 +36,7 @@ class CollectAddViewModel(
         private val saveButtonEnabledTextColor: Int,
         private val saveButtonDisabledTextColor: Int,
         private val goToNext: () -> Unit,
-        private val takePicture: () -> Unit,
+        val takePicture: () -> Unit,
         private val showDuplicateGpsDialog: (enumeration: Enumeration?, subject: EnumerationSubject) -> Unit,
         private val showOutsideEnumerationAreaDialog: (latLng: LatLng, precision: Double) -> Unit) : AndroidViewModel(application) {
 
@@ -85,6 +87,8 @@ class CollectAddViewModel(
     val showPhotoText = MutableLiveData<String>().apply {
         value = languageService.getString(R.string.collect_add_text)
     }
+    
+    val showTakePhoto = MutableLiveData<Boolean>().apply { value = true }
 
     val exclude = MutableLiveData<Boolean>().apply { value = false }
 
@@ -122,6 +126,8 @@ class CollectAddViewModel(
     val landmarkImage = Transformations.map(selectedLandmark) { it.iconLocation }
 
     var landmarkName = MutableLiveData<String>().apply { value = "" }
+    
+    var image: String? = null
 
     private val customFieldMediatorLiveData = MediatorLiveData<Boolean>().apply { value = false }
 
@@ -389,7 +395,7 @@ class CollectAddViewModel(
                         landmarkName.value ?: "",
                         landmarkType,
                         notes.value,
-                        landmarkImage.value,
+                        image,
                         latLng,
                         gpsPrecision,
                         id = null
@@ -426,7 +432,7 @@ class CollectAddViewModel(
         val isExcluded = (exclude.value ?: false) || shouldExclude
         collectManager.addEnumerationItem(LiveEnumeration(
                 userSession.username,
-                null,
+                image,
                 isIncomplete,
                 isExcluded,
                 primaryLabel.value ?: "",
@@ -438,6 +444,16 @@ class CollectAddViewModel(
                 id = null)) {
             goToNext()
         }
+    }
+    
+    fun takePhoto(view: View) {
+        takePicture()
+    }
+    
+    fun setImage(photoUri: Uri) {
+        image = photoUri.toString()
+        
+        showTakePhoto.postValue(false)
     }
 
     fun updateDateField(customFieldId: String, date: Date) {

@@ -62,7 +62,6 @@ interface EpiComponent {
     fun inject(loginFragment: LoginFragment)
     fun inject(transferDownloadDialogFragment: TransferDownloadDialogFragment)
     fun inject(customFieldsAddDropdownDialog: CustomFieldsAddDropdownDialog)
-    fun inject(collectAddFragment: CollectAddFragment)
     fun inject(collectFragment: CollectFragment)
     fun inject(configUploadFragment: ConfigUploadFragment)
     fun inject(geographyDialogFragment: GeographyDialogFragment)

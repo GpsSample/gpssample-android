@@ -20,8 +20,10 @@ import org.taskforce.episample.db.navigation.NavigationDao
 import org.taskforce.episample.db.navigation.NavigationItem
 import org.taskforce.episample.db.navigation.NavigationPlan
 import org.taskforce.episample.db.transfer.TransferDao
+import org.taskforce.episample.db.sampling.strata.Strata
+import org.taskforce.episample.db.sampling.subsets.Subset
 
-@Database(version = 1,
+@Database(version = 2,
         entities = [
             AdminSettings::class,
             Config::class,
@@ -39,6 +41,8 @@ import org.taskforce.episample.db.transfer.TransferDao
             NavigationItem::class,
             RuleSet::class,
             RuleRecord::class,
+            Strata::class,
+            Subset::class,
             Study::class,
             UserSettings::class
         ])

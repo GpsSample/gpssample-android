@@ -1,7 +1,6 @@
 package org.taskforce.episample.config.base
 
 import org.taskforce.episample.config.fields.CustomField
-import org.taskforce.episample.config.geography.Geography
 import org.taskforce.episample.config.geography.OfflineTile
 import org.taskforce.episample.config.language.CustomLanguage
 import org.taskforce.episample.config.sampling.SamplingMethod
@@ -13,6 +12,7 @@ import org.taskforce.episample.core.interfaces.EnumerationArea
 import org.taskforce.episample.core.interfaces.EnumerationSubject
 import org.taskforce.episample.db.filter.RuleRecord
 import org.taskforce.episample.db.filter.RuleSet
+import org.taskforce.episample.db.sampling.strata.Strata
 import org.taskforce.episample.db.sampling.subsets.Subset
 import org.taskforce.episample.fileImport.models.LandmarkType
 import org.taskforce.episample.utils.humanReadableBytes
@@ -32,7 +32,7 @@ class Config(
     var completeness = 1
     var userSettings: UserSettings? = null
     var serverSettings: ServerSettings? = null
-    var samplingMethod: SamplingMethod? = null
+    var samplingMethod: SamplingMethod = SamplingMethod.DEFAULT_METHOD
     var offlineTiles: Collection<OfflineTile>? = null
     var landmarkTypes = listOf<LandmarkType>()
     var customLandmarkTypes = listOf<CustomLandmarkTypeInput>()
@@ -44,7 +44,9 @@ class Config(
     var enumerationSubject: EnumerationSubject? = null
     var ruleSets = listOf<RuleSet>()
     var rules = listOf<RuleRecord>()
-
+    var subsets = listOf<Subset>()
+    var strata = listOf<Strata>()
+    
     val size: String
         get() {
             val sizeStream = ByteArrayOutputStream()
@@ -58,7 +60,7 @@ class Config(
 
     val displayDateCreated
         get() = displaySettings.getFormattedDate(dateCreated, true)
-    val subsets = listOf<Subset>()
+
 
     companion object {
         const val nameMaxChars = 32

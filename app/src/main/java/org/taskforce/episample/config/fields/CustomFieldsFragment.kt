@@ -3,12 +3,12 @@ package org.taskforce.episample.config.fields
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentActivity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.config.base.ConfigBuildViewModel
-import org.taskforce.episample.config.base.ConfigFragment
 import org.taskforce.episample.config.base.ConfigHeaderViewModel
 import org.taskforce.episample.config.base.ConfigManager
 import org.taskforce.episample.config.language.LanguageService
@@ -40,13 +40,11 @@ class CustomFieldsFragment : Fragment() {
                         LanguageService(languageManager),
                         R.string.config_fields_title,
                         R.string.config_fields_explanation)
-                val parentVm = (parentFragment as ConfigFragment).viewModel
                 val viewModel = ViewModelProviders.of(this@CustomFieldsFragment.requireActivity(), CustomFieldsViewModelFactory(LanguageService(languageManager),
-                        parentVm,
                         {
-                            parentFragment!!.requireFragmentManager()
+                            (context as FragmentActivity).supportFragmentManager
                                     .beginTransaction()
-                                    .add(R.id.configFrame, CustomFieldsAddFragment.newInstance(), CustomFieldsAddFragment::class.java.name)
+                                    .add(R.id.configFrame, CustomFieldsAddFragment.newInstance())
                                     .addToBackStack(CustomFieldsAddFragment::class.java.name)
                                     .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_in_up)
                                     .commit()
@@ -54,7 +52,6 @@ class CustomFieldsFragment : Fragment() {
                         configBuildViewModel.configBuildManager))
                         .get(CustomFieldsViewModel::class.java)
 
-                parentVm.addCallback(CustomFieldsFragment::class.java, viewModel)
                 vm = viewModel
             }.root
 

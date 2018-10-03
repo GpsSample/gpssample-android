@@ -84,6 +84,6 @@ class CustomFieldsAddFragment : Fragment(), CustomFieldTypeProvider {
     }
 
     companion object {
-        fun newInstance() = CustomFieldsAddFragment()
+        fun newInstance(): Fragment = CustomFieldsAddFragment()
     }
 }

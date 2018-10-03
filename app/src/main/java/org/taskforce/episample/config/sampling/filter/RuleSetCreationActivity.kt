@@ -1,9 +1,11 @@
 package org.taskforce.episample.config.sampling.filter
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
@@ -74,8 +76,17 @@ class RuleSetCreationActivity : FragmentActivity(), DateClickedListener {
                     }
                     is RuleSetCreationViewModel.Event.SaveEvent -> {
                         hideKeyboard()
-                        setResult(Activity.RESULT_OK, intentWithRuleSet())
-                        finish()
+                        if (adapter?.areRulesValid == true) {
+                            setResult(Activity.RESULT_OK, intentWithRuleSet())
+                            finish()
+                        } else {
+                            AlertDialog.Builder(this)
+                                    .setIcon(R.drawable.icon_warning_orange_18)
+                                    .setTitle(R.string.cannot_save)
+                                    .setMessage(R.string.rules_are_not_valid)
+                                    .setPositiveButton(R.string.okay) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+                                    .show()
+                        }
                     }
                     is RuleSetCreationViewModel.Event.AddRuleEvent -> adapter?.addRule()
                     else -> {

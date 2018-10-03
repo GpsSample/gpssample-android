@@ -18,7 +18,8 @@ import org.taskforce.episample.config.language.LanguageFragment
 import org.taskforce.episample.config.language.LanguageImporter
 import org.taskforce.episample.config.name.ConfigNameFragment
 import org.taskforce.episample.config.sampling.SamplingSelectionFragment
-import org.taskforce.episample.config.sampling.SamplingSubsetFragment
+import org.taskforce.episample.config.sampling.strata.SamplingStrataFragment
+import org.taskforce.episample.config.sampling.subsets.SamplingSubsetFragment
 import org.taskforce.episample.config.settings.admin.AdminSettingsFragment
 import org.taskforce.episample.config.settings.display.DisplaySettingsFragment
 import org.taskforce.episample.config.settings.server.ServerSettingsFragment
@@ -72,5 +73,6 @@ interface EpiComponent {
     fun inject(duplicateGpsDialogFragment: DuplicateGpsDialogFragment)
     fun inject(studyUploadViewModel: StudyUploadViewModel)
     fun inject(studyUploadFragment: StudyUploadFragment)
+    fun inject(samplingStrataFragment: SamplingStrataFragment)
     fun inject(outsideAreaDialogFragment: OutsideAreaDialogFragment)
 }

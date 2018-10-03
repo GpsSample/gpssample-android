@@ -8,11 +8,6 @@
             type="org.taskforce.episample.toolbar.viewmodels.ToolbarViewModel" />
     </data>
 
-    <RelativeLayout
-        android:id="@+id/toolbarWrapper"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -73,20 +68,4 @@
             </RelativeLayout>
 
         </Toolbar>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/toolbarLanguageList"
-            visible="@{vm.languageSelectVisibility}"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
-            android:layout_margin="12dp"
-            android:adapter="@{vm.languageAdapter}"
-            android:background="@android:color/white"
-            android:elevation="16dp"
-            android:padding="16dp"
-            app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
-
-    </RelativeLayout>
 </layout>

@@ -1,4 +1,4 @@
-package org.taskforce.episample.config.sampling
+package org.taskforce.episample.config.sampling.subsets
 
 import android.app.Activity
 import android.arch.lifecycle.Observer
@@ -8,20 +8,21 @@ import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_config_sampling_subset.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
+import org.taskforce.episample.config.base.AllSubsetsUpdated
 import org.taskforce.episample.config.base.ConfigBuildViewModel
 import org.taskforce.episample.config.base.ConfigHeaderViewModel
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.config.sampling.filter.RuleSetCardViewModel
 import org.taskforce.episample.config.sampling.filter.RuleSetCreationActivity
 import org.taskforce.episample.databinding.FragmentConfigSamplingSubsetBinding
-import org.taskforce.episample.databinding.ItemSubsetCardBinding
 import org.taskforce.episample.db.filter.RuleRecord
 import org.taskforce.episample.db.filter.RuleSet
 import org.taskforce.episample.db.sampling.subsets.Subset
@@ -30,11 +31,15 @@ import org.taskforce.episample.utils.makeDBConfig
 import javax.inject.Inject
 
 class SamplingSubsetFragment : Fragment(), Observer<SamplingSubsetViewModel.Event>, SubsetAdapter.SubsetSelectedListener {
+
     @Inject
     lateinit var languageManager: LanguageManager
 
     private lateinit var configBuildViewModel: ConfigBuildViewModel
     private lateinit var adapter: SubsetAdapter
+    private var viewModel: SamplingSubsetViewModel? = null
+
+    private val eventBus = EventBus.getDefault()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,10 +52,9 @@ class SamplingSubsetFragment : Fragment(), Observer<SamplingSubsetViewModel.Even
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentConfigSamplingSubsetBinding>(inflater, R.layout.fragment_config_sampling_subset, container, false)
         binding.headerVm = ConfigHeaderViewModel(LanguageService(languageManager), R.string.config_sampling_subset_title, R.string.config_sampling_subset_explanation)
-        binding.vm = ViewModelProviders.of(requireActivity(), SamplingSubsetViewModelFactory())
-                .get(SamplingSubsetViewModel::class.java).apply {
-                    events.observe(this@SamplingSubsetFragment, this@SamplingSubsetFragment)
-                }
+        viewModel = ViewModelProviders.of(requireActivity(), SamplingSubsetViewModelFactory())
+                .get(SamplingSubsetViewModel::class.java)
+        binding.vm = viewModel
         return binding.root
     }
 
@@ -60,9 +64,33 @@ class SamplingSubsetFragment : Fragment(), Observer<SamplingSubsetViewModel.Even
         subsetRecyclerView.adapter = adapter
     }
 
+    override fun onResume() {
+        super.onResume()
+        eventBus.register(this)
+        viewModel?.events?.observe(this@SamplingSubsetFragment, this@SamplingSubsetFragment)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        eventBus.unregister(this)
+        viewModel?.events?.removeObservers(this)
+        viewModel?.events?.value = null
+    }
+
+    @Subscribe(sticky = true)
+    fun onAllSubsetsReceived(subsetsUpdated: AllSubsetsUpdated) {
+        val viewModels = subsetsUpdated.ruleSets.map { ruleSet ->
+            val ruleCount = subsetsUpdated.ruleRecords.count {
+                it.ruleSetId == ruleSet.id
+            }
+            RuleSetCardViewModel(ruleSet.id, ruleSet.name, ruleCount, ruleSet.isAny)
+        }
+        adapter.setData(viewModels)
+        viewModel?.nextEnabled?.set(viewModels.isNotEmpty())
+    }
+
     override fun onChanged(t: SamplingSubsetViewModel.Event?) {
         when (t) {
-            //TODO : Examine why the fieldIds are changing
             is SamplingSubsetViewModel.Event.AddRuleSet -> {
                 RuleSetCreationActivity.startActivity(this, configBuildViewModel.configBuildManager.config.customFields.map {
                     it.makeDBConfig(configBuildViewModel.configBuildManager.config.id)
@@ -78,14 +106,9 @@ class SamplingSubsetFragment : Fragment(), Observer<SamplingSubsetViewModel.Even
                 val ruleSet = it.getParcelableExtra(RuleSetCreationActivity.EXTRA_RESULT_RULESET) as RuleSet
                 @Suppress("UNCHECKED_CAST")
                 val rules = it.getParcelableArrayExtra(RuleSetCreationActivity.EXTRA_RESULT_RULES).toList() as List<RuleRecord>
-
                 val newSubset = Subset(configBuildViewModel.configBuildManager.config.id, ruleSet.id)
 
-                configBuildViewModel.configBuildManager.addSubset(newSubset)
-                configBuildViewModel.configBuildManager.addRuleSet(ruleSet)
-                configBuildViewModel.configBuildManager.addRules(rules)
-
-                adapter.add(RuleSetCardViewModel(ruleSet.id, ruleSet.name, rules.size, ruleSet.isAny))
+                eventBus.post(SubsetsUpdated(newSubset, ruleSet, rules))
             }
         }
     }
@@ -115,36 +138,4 @@ class SamplingSubsetFragment : Fragment(), Observer<SamplingSubsetViewModel.Even
     }
 }
 
-class SubsetAdapter(private val subsetSelectedListener: SubsetSelectedListener) : RecyclerView.Adapter<SubsetAdapter.SubsetCardViewHolder>() {
-    private val viewModels = mutableListOf<RuleSetCardViewModel>()
-
-    fun add(viewModel: RuleSetCardViewModel) {
-        viewModels.add(viewModel).also { notifyDataSetChanged() }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubsetCardViewHolder {
-        return SubsetCardViewHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.item_subset_card, parent, false), subsetSelectedListener)
-    }
-
-    override fun getItemCount(): Int = viewModels.size
-
-    override fun onBindViewHolder(holder: SubsetCardViewHolder, position: Int) {
-        holder.bind(viewModels[position])
-    }
-
-    class SubsetCardViewHolder(val binding: ItemSubsetCardBinding, val onClickListener: SubsetSelectedListener) : RecyclerView.ViewHolder(binding.root) {
-        init {
-            binding.root.setOnClickListener {
-                binding.vm?.let { viewModel -> onClickListener.onSubsetSelected(viewModel) }
-            }
-        }
-
-        fun bind(viewModel: RuleSetCardViewModel) {
-            binding.vm = viewModel
-        }
-    }
-
-    interface SubsetSelectedListener {
-        fun onSubsetSelected(ruleSetCardViewModel: RuleSetCardViewModel)
-    }
-}
+class SubsetsUpdated(val subset: Subset, val ruleSet: RuleSet, val rules: List<RuleRecord>)

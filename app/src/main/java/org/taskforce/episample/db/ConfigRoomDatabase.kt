@@ -13,10 +13,10 @@ import org.taskforce.episample.db.config.landmark.CustomLandmarkType
 import org.taskforce.episample.db.filter.RuleDao
 import org.taskforce.episample.db.filter.RuleRecord
 import org.taskforce.episample.db.filter.RuleSet
+import org.taskforce.episample.db.sampling.strata.Strata
 import org.taskforce.episample.db.sampling.subsets.Subset
-import retrofit2.http.HEAD
 
-@Database(version = 27,
+@Database(version = 28,
         entities = [
             AdminSettings::class,
             Config::class,
@@ -29,6 +29,7 @@ import retrofit2.http.HEAD
             RuleSet::class,
             RuleRecord::class,
             Study::class,
+            Strata::class,
             Subset::class,
             UserSettings::class
         ])

@@ -18,8 +18,7 @@ class ConfigViewModel(
         stepperButtonDisabledColor: Int,
         private val closeKeyboard: () -> Unit,
         private val success: () -> Unit,
-        private val viewPager: ViewPager,
-        val adapter: ConfigAdapter) : BaseObservable(), Stepper {
+        private val viewPager: ViewPager) : BaseObservable(), Stepper {
 
     @get:Bindable
     var backText by bindDelegate(languageService.getString(R.string.config_back))
@@ -52,7 +51,7 @@ class ConfigViewModel(
     var nextButtonTextColor by bindDelegate(stepperButtonDisabledColor)
 
     @get:Bindable
-    var completeness by bindDelegate(configBuildManager.config.completeness, { _, newValue ->
+    var completeness by bindDelegate(configBuildManager.config.completeness, { oldValue, newValue ->
         viewPager.currentItem = newValue - 1
         if (newValue == configScreenCount) {
             nextText = languageService.getString(R.string.config_done)
@@ -149,6 +148,8 @@ class ConfigViewModel(
                     .fold(true) { current, next ->
                         current && next
                     }
+
+    internal fun removeCallbacks() = stepperCallbacks.clear()
 }
 
 interface StepperCallback {

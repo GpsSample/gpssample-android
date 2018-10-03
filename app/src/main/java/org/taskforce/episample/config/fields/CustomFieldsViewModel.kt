@@ -1,22 +1,21 @@
 package org.taskforce.episample.config.fields
 
 import android.arch.lifecycle.ViewModel
-import android.databinding.Observable
 import android.databinding.ObservableField
+import android.support.v4.app.FragmentActivity
+import android.view.View
 import org.taskforce.episample.R
+import org.taskforce.episample.config.base.BaseConfigViewModel
 import org.taskforce.episample.config.base.ConfigBuildManager
-import org.taskforce.episample.config.base.Stepper
-import org.taskforce.episample.config.base.StepperCallback
 import org.taskforce.episample.config.language.LanguageService
+import org.taskforce.episample.config.sampling.SamplingSelectionFragment
 import org.taskforce.episample.core.interfaces.LiveEnumerationSubject
 
 class CustomFieldsViewModel(
         val languageService: LanguageService,
-        private val stepper: Stepper,
         val createNewField: () -> Unit,
         private val configBuildManager: ConfigBuildManager) :
-        ViewModel(), StepperCallback {
-
+        ViewModel(), BaseConfigViewModel {
     init {
         languageService.update = {
             hint.set(it.getString(R.string.config_subject_hint))
@@ -60,25 +59,10 @@ class CustomFieldsViewModel(
         }
     }
 
-    val isValid = object: ObservableField<Boolean>(subject, pluralSubject, primaryLabel) {
+    val isValid = object : ObservableField<Boolean>(subject, pluralSubject, primaryLabel) {
         override fun get() = !(subject.get().isNullOrBlank() ||
                 pluralSubject.get().isNullOrBlank() ||
                 primaryLabel.get().isNullOrBlank())
-    }
-
-    private val validityObserver = object: Observable.OnPropertyChangedCallback() {
-        override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-            stepper.enableNext(isValid.get()!!, CustomFieldsFragment::class.java)
-        }
-    }
-
-    init {
-        isValid.addOnPropertyChangedCallback(validityObserver)
-    }
-
-    override fun onCleared() {
-        isValid.removeOnPropertyChangedCallback(validityObserver)
-        super.onCleared()
     }
 
     val hint = ObservableField(languageService.getString(R.string.config_subject_hint))
@@ -119,19 +103,28 @@ class CustomFieldsViewModel(
         configBuildManager.customFieldObservable.subscribe(customFieldAdapter)
     }
 
-    override fun onNext(): Boolean {
+    override val progress: Int
+        get() = 3
+    override val backEnabled: ObservableField<Boolean> = ObservableField(true)
+    override val nextEnabled: ObservableField<Boolean> = isValid
+
+    override fun onNextClicked(view: View) {
         configBuildManager.setEnumerationSubject(LiveEnumerationSubject(
                 subject.get()!!,
                 pluralSubject.get()!!,
                 primaryLabel.get()!!))
-        return true
+        val fragmentManager = (view.context as FragmentActivity).supportFragmentManager
+        fragmentManager
+                .beginTransaction()
+                .replace(R.id.configFrame, SamplingSelectionFragment())
+                .addToBackStack(SamplingSelectionFragment::class.qualifiedName)
+                .commit()
     }
 
-    override fun onBack() = true
-
-    override fun enableNext() = isValid.get() ?: false
-
-    override fun enableBack() = true
+    override fun onBackClicked(view: View) {
+        val fragmentManager = (view.context as FragmentActivity).supportFragmentManager
+        fragmentManager.popBackStack()
+    }
 }
 
 interface CustomFieldDefaultProvider {

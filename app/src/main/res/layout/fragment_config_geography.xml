@@ -7,129 +7,145 @@
 
         <variable
             name="headerVm"
-            type="org.taskforce.episample.config.base.ConfigHeaderViewModel" />
+            type="org.taskforce.episample.config.base.ConfigHeaderViewModel"/>
 
         <variable
             name="vm"
-            type="org.taskforce.episample.config.geography.GeographyViewModel" />
+            type="org.taskforce.episample.config.geography.GeographyViewModel"/>
 
         <variable
             name="transferVm"
-            type="org.taskforce.episample.config.transfer.TransferViewModel" />
+            type="org.taskforce.episample.config.transfer.TransferViewModel"/>
     </data>
 
-    <android.support.v4.widget.NestedScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:orientation="vertical">
 
-        <LinearLayout
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/app_toolbar"/>
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_height="0dp"
+            android:fillViewport="true">
 
-            <include
-                android:id="@+id/header"
-                layout="@layout/app_config_header"
-                app:vm="@{headerVm}" />
-
-            <android.support.v7.widget.AppCompatButton
-                android:id="@+id/quickstartButton"
-                visibleOrGone="@{vm.quickstartVisibility}"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="24dp"
-                android:background="@color/colorAccent"
-                android:textColor="@color/textColorInverse"
-                android:minWidth="160dp"
-                android:onClick="@{() -> vm.quickstart.invoke()}"
-                android:text="@{vm.quickstartButtonText}"
-                tools:text="QUICK START" />
-
-            <TextView
-                visibleOrGone="@{vm.viewMapVisibility}"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="24dp"
-                android:paddingBottom="16dp"
-                android:paddingEnd="16dp"
-                android:textColor="@color/colorAccent"
-                android:textSize="16sp"
-                android:text="@{vm.viewMapText}" />
-
-            <TextView
-                android:id="@+id/quickstartExplanation"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:lineSpacingExtra="4sp"
-                android:text="@{vm.quickstartExplanation}"
-                android:textColor="@color/textColorDisabled"
-                android:textSize="12sp"
-                tools:text="Quick Start lets you proceed with a single enumeration area by specifying a location and a radius for the map download."/>
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <TextView
-                android:id="@+id/enumerationAreaTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:text="@{vm.enumerationAreaTitle}"
-                android:textColor="@color/textColorDetails"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                tools:text="Enumeration Areas" />
+                <include
+                    android:id="@+id/header"
+                    layout="@layout/app_config_header"
+                    app:vm="@{headerVm}"/>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/enumerationAreaList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-                android:adapter="@{vm.adapter}"
-                tools:listitem="@layout/item_config_geography_area"/>
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/quickstartButton"
+                    visibleOrGone="@{vm.quickstartVisibility}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@color/colorAccent"
+                    android:minWidth="160dp"
+                    android:onClick="@{() -> vm.quickstart.invoke()}"
+                    android:text="@{vm.quickstartButtonText}"
+                    android:textColor="@color/textColorInverse"
+                    tools:text="QUICK START"/>
 
-            <TextView
-                android:id="@+id/enumerationAreaError"
-                visibleOrGone="@{vm.enumerationAreaErrorVisibility}"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/textColorDetails"
-                android:textStyle="italic"
-                android:text="@{vm.enumerationAreaError}" />
+                <TextView
+                    visibleOrGone="@{vm.viewMapVisibility}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="24dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="16dp"
+                    android:text="@{vm.viewMapText}"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="16sp"/>
 
-            <TextView
-                android:id="@+id/fileListHeader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:textColor="@color/textColorDetails"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:text="@{vm.filesHeader}"
-                tools:text="Uploaded Files" />
+                <TextView
+                    android:id="@+id/quickstartExplanation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    android:lineSpacingExtra="4sp"
+                    android:text="@{vm.quickstartExplanation}"
+                    android:textColor="@color/textColorDisabled"
+                    android:textSize="12sp"
+                    tools:text="Quick Start lets you proceed with a single enumeration area by specifying a location and a radius for the map download."/>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/geographyFileList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_config_file"/>
+                <TextView
+                    android:id="@+id/enumerationAreaTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="@{vm.enumerationAreaTitle}"
+                    android:textColor="@color/textColorDetails"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="Enumeration Areas"/>
 
-            <TextView
-                android:id="@+id/loadFileButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="16dp"
-                android:onClick="@{() -> vm.pickFile.invoke()}"
-                android:textColor="@color/colorAccent"
-                android:textSize="16sp"
-                android:text="@{vm.loadFileButtonText}"
-                tools:text="GET FILE"/>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/enumerationAreaList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adapter="@{vm.adapter}"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_config_geography_area"/>
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/enumerationAreaError"
+                    visibleOrGone="@{vm.enumerationAreaErrorVisibility}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{vm.enumerationAreaError}"
+                    android:textColor="@color/textColorDetails"
+                    android:textStyle="italic"/>
 
-    </android.support.v4.widget.NestedScrollView>
+                <TextView
+                    android:id="@+id/fileListHeader"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="@{vm.filesHeader}"
+                    android:textColor="@color/textColorDetails"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="Uploaded Files"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/geographyFileList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_config_file"/>
+
+                <TextView
+                    android:id="@+id/loadFileButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:onClick="@{() -> vm.pickFile.invoke()}"
+                    android:text="@{vm.loadFileButtonText}"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="16sp"
+                    tools:text="GET FILE"/>
+
+            </LinearLayout>
+
+        </android.support.v4.widget.NestedScrollView>
+
+        <include
+            layout="@layout/bottom_bar"
+            app:vm="@{vm}"/>
+    </LinearLayout>
+
 </layout>

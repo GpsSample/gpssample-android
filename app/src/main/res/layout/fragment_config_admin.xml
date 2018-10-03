@@ -1,61 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+        xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="headerVm"
-            type="org.taskforce.episample.config.base.ConfigHeaderViewModel" />
+            type="org.taskforce.episample.config.base.ConfigHeaderViewModel"/>
 
         <variable
             name="vm"
-            type="org.taskforce.episample.config.settings.admin.AdminSettingsViewModel" />
-        
+            type="org.taskforce.episample.config.settings.admin.AdminSettingsViewModel"/>
+
         <variable
             name="languageService"
-            type="org.taskforce.episample.config.language.LanguageService" />
+            type="org.taskforce.episample.config.language.LanguageService"/>
     </data>
 
-    <android.support.v4.widget.NestedScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:orientation="vertical"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:focusedByDefault="true">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <include
-            android:id="@+id/header"
-            layout="@layout/app_config_header"
-            app:vm="@{headerVm}" />
+            android:id="@+id/toolbar"
+            layout="@layout/app_toolbar"/>
 
-        <android.support.design.widget.TextInputLayout
+        <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:hint="@{languageService.getString(vm.hint)}"
-            app:errorEnabled="@{vm.errorEnabled}"
-            error="@{languageService.getString(vm.error)}"
-            app:errorTextAppearance="@style/errorStyle">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true">
 
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/nameInput"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:singleLine="true"
-                android:inputType="textPassword"
-                android:text="@={vm.password}"/>
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:focusedByDefault="true"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-        </android.support.design.widget.TextInputLayout>
+                <include
+                    android:id="@+id/header"
+                    layout="@layout/app_config_header"
+                    app:vm="@{headerVm}"/>
 
-        </LinearLayout>
+                <android.support.design.widget.TextInputLayout
+                    error="@{languageService.getString(vm.error)}"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:hint="@{languageService.getString(vm.hint)}"
+                    app:errorEnabled="@{vm.errorEnabled}"
+                    app:errorTextAppearance="@style/errorStyle">
 
-    </android.support.v4.widget.NestedScrollView>
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/nameInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword"
+                        android:singleLine="true"
+                        android:text="@={vm.password}"
+                        android:textSize="18sp"/>
 
+                </android.support.design.widget.TextInputLayout>
+
+            </LinearLayout>
+
+        </android.support.v4.widget.NestedScrollView>
+
+        <include
+            layout="@layout/bottom_bar"
+            app:vm="@{vm}"/>
+    </LinearLayout>
 </layout>

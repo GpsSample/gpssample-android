@@ -1,112 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+        xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <variable
             name="headerVm"
-            type="org.taskforce.episample.config.base.ConfigHeaderViewModel" />
+            type="org.taskforce.episample.config.base.ConfigHeaderViewModel"/>
 
         <variable
             name="vm"
-            type="org.taskforce.episample.config.settings.display.DisplaySettingsViewModel" />
+            type="org.taskforce.episample.config.settings.display.DisplaySettingsViewModel"/>
 
     </data>
 
-    <android.support.v4.widget.NestedScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fillViewport="true">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <RelativeLayout
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/app_toolbar"/>
+
+        <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="16dp">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true">
 
-            <include
-                android:id="@+id/header"
-                layout="@layout/app_config_header"
-                app:vm="@{headerVm}" />
-
-            <TextView
-                android:id="@+id/defaultLangaugeTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/header"
-                android:layout_marginTop="32dp"
-                android:text="@{vm.languageTitle}"
-                android:layout_marginStart="12dp"
-                android:textColor="@color/textColorDisabled"
-                android:textSize="12sp" />
-
-            <Spinner
-                android:id="@+id/defaultLanguageSelector"
-                style="@style/Widget.AppCompat.Spinner.Underlined"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/defaultLangaugeTitle"
-                android:adapter="@{vm.defaultLanguageAdapter}"/>
+                android:layout_height="match_parent"
+                android:padding="16dp">
 
-            <LinearLayout
-                android:id="@+id/dateTimeWrapper"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/defaultLanguageSelector"
-                android:layout_marginTop="32dp">
+                <include
+                    android:id="@+id/header"
+                    layout="@layout/app_config_header"
+                    app:vm="@{headerVm}"/>
+
+                <TextView
+                    android:id="@+id/defaultLangaugeTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/header"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="32dp"
+                    android:text="@{vm.languageTitle}"
+                    android:textColor="@color/textColorDisabled"
+                    android:textSize="12sp"/>
+
+                <Spinner
+                    android:id="@+id/defaultLanguageSelector"
+                    style="@style/Widget.AppCompat.Spinner.Underlined"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/defaultLangaugeTitle"
+                    android:adapter="@{vm.defaultLanguageAdapter}"/>
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:id="@+id/dateTimeWrapper"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:layout_below="@id/defaultLanguageSelector"
+                    android:layout_marginTop="32dp">
 
-                    <TextView
-                        android:id="@+id/dateFormatTitle"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="@{vm.dateFormatTitle}"
-                        android:layout_marginStart="12dp"
-                        android:textColor="@color/textColorDisabled"
-                        android:textSize="12sp" />
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
-                    <Spinner
-                        android:id="@+id/dateFormatSelector"
-                        style="@style/Widget.AppCompat.Spinner.Underlined"
-                        android:layout_width="match_parent"
+                        <TextView
+                            android:id="@+id/dateFormatTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:text="@{vm.dateFormatTitle}"
+                            android:textColor="@color/textColorDisabled"
+                            android:textSize="12sp"/>
+
+                        <Spinner
+                            android:id="@+id/dateFormatSelector"
+                            style="@style/Widget.AppCompat.Spinner.Underlined"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:adapter="@{vm.dateFormatAdapter}"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:adapter="@{vm.dateFormatAdapter}"/>
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/timeFormatTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:text="@{vm.timeFormatTitle}"
+                            android:textColor="@color/textColorDisabled"
+                            android:textSize="12sp"/>
+
+                        <Spinner
+                            android:id="@+id/timeFormatSelector"
+                            style="@style/Widget.AppCompat.Spinner.Underlined"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:adapter="@{vm.timeFormatAdapter}"/>
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+            </RelativeLayout>
 
-                    <TextView
-                        android:id="@+id/timeFormatTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:text="@{vm.timeFormatTitle}"
-                        android:textColor="@color/textColorDisabled"
-                        android:textSize="12sp" />
+        </android.support.v4.widget.NestedScrollView>
 
-                    <Spinner
-                        android:id="@+id/timeFormatSelector"
-                        style="@style/Widget.AppCompat.Spinner.Underlined"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:adapter="@{vm.timeFormatAdapter}" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </RelativeLayout>
-
-    </android.support.v4.widget.NestedScrollView>
-
+        <include
+            layout="@layout/bottom_bar"
+            app:vm="@{vm}"/>
+    </LinearLayout>
 </layout>

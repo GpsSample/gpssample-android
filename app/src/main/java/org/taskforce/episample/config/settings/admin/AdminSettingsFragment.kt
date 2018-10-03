@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.config.base.ConfigBuildViewModel
-import org.taskforce.episample.config.base.ConfigFragment
 import org.taskforce.episample.config.base.ConfigHeaderViewModel
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.databinding.FragmentConfigAdminBinding
@@ -44,12 +43,9 @@ class AdminSettingsFragment : Fragment() {
                 headerVm = ConfigHeaderViewModel(
                         LanguageService(languageManager),
                         R.string.config_admin_title, R.string.config_admin_explanation)
-                val parentFragment = parentFragment as ConfigFragment
-                adminSettingsViewModel = ViewModelProviders.of(this@AdminSettingsFragment.requireActivity(), AdminSettingsViewModelFactory(
-                        parentFragment.viewModel, configBuildViewModel.configBuildManager))
+                adminSettingsViewModel = ViewModelProviders.of(this@AdminSettingsFragment.requireActivity(), AdminSettingsViewModelFactory(configBuildViewModel.configBuildManager))
                         .get(AdminSettingsViewModel::class.java)
 
-                parentFragment.viewModel.addCallback(this@AdminSettingsFragment.javaClass, adminSettingsViewModel)
                 vm = adminSettingsViewModel
                 languageService = this@AdminSettingsFragment.languageService
             }.root

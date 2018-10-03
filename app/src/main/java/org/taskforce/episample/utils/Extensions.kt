@@ -106,7 +106,8 @@ fun org.taskforce.episample.config.fields.CustomField.makeDBConfig(configId: Str
             isRequired,
             isPersonallyIdentifiableInformation,
             metadata,
-            configId
+            configId,
+            customKey
     )
 }
 

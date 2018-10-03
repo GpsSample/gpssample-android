@@ -18,89 +18,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:id="@+id/bottomBar"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_alignParentBottom="true"
-            android:background="@color/greyHighlights">
 
-            <LinearLayout
-                android:id="@+id/back"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="12dp"
-                android:padding="12dp"
-                android:onClick="@{() -> vm.back()}">
-
-                <ImageView
-                    android:id="@+id/backArrow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="8dp"
-                    android:src="@drawable/ic_stepper_back"
-                    bind:enabled="@{vm.backEnabled}"/>
-
-                <TextView
-                    android:id="@+id/backText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="@{vm.backText}"
-                    android:textColor="@{vm.backButtonTextColor}"/>
-
-            </LinearLayout>
-
-            <ProgressBar
-                android:id="@+id/progress"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_toEndOf="@id/back"
-                android:layout_toStartOf="@id/next"
-                android:paddingEnd="32dp"
-                android:paddingStart="32dp"
-                android:max="@{vm.configScreenCount}"
-                android:progress="@{vm.completeness}"/>
-
-            <LinearLayout
-                android:id="@+id/next"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="12dp"
-                android:padding="12dp"
-                android:onClick="@{() -> vm.next()}">
-
-                <TextView
-                    android:id="@+id/nextText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="@{vm.nextText}"
-                    android:textColor="@{vm.nextButtonTextColor}"/>
-
-                <ImageView
-                    android:id="@+id/nextArrow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="8dp"
-                    android:src="@drawable/ic_stepper_next"
-                    bind:enabled="@{vm.nextEnabled}"/>
-
-            </LinearLayout>
-
-        </RelativeLayout>
 
         <org.taskforce.episample.config.base.NonSwipeableViewPager
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/contentPager"
             android:layout_above="@id/bottomBar"
-            android:adapter="@{vm.adapter}"
             android:layout_marginTop="56dp"/>
 
         <include

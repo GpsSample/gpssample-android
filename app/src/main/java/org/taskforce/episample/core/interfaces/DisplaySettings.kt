@@ -54,7 +54,6 @@ interface DisplaySettings {
                 get() = true
             override val is24HourTime: Boolean
                 get() = false //To change initializer of created properties use File | Settings | File Templates.
-
         }
     }
 }

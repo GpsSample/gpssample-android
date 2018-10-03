@@ -1,61 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:bind="http://schemas.android.com/tools">
 
     <data>
 
         <variable
             name="headerVm"
-            type="org.taskforce.episample.config.base.ConfigHeaderViewModel" />
+            type="org.taskforce.episample.config.base.ConfigHeaderViewModel"/>
 
         <variable
             name="languageService"
-            type="org.taskforce.episample.config.language.LanguageService" />
+            type="org.taskforce.episample.config.language.LanguageService"/>
 
         <variable
             name="vm"
-            type="org.taskforce.episample.config.name.ConfigNameViewModel" />
+            type="org.taskforce.episample.config.name.ConfigNameViewModel"/>
     </data>
 
-    <android.support.v4.widget.NestedScrollView
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/app_toolbar"/>
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:focusedByDefault="true"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_height="0dp"
+            android:fillViewport="true">
 
-            <include
-                android:id="@+id/header"
-                layout="@layout/app_config_header"
-                app:vm="@{headerVm}" />
-
-            <android.support.design.widget.TextInputLayout
-                error="@{languageService.getString(vm.error)}"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:hint="@{languageService.getString(vm.hint)}"
-                app:errorTextAppearance="@style/errorStyle">
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:focusedByDefault="true"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/nameInput"
+                <include
+                    android:id="@+id/header"
+                    layout="@layout/app_config_header"
+                    app:vm="@{headerVm}"/>
+
+                <android.support.design.widget.TextInputLayout
+                    error="@{languageService.getString(vm.error)}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
-                    android:inputType="textCapWords"
-                    android:text="@={vm.name}"
-                    android:textSize="18sp" />
+                    android:layout_marginTop="20dp"
+                    android:hint="@{languageService.getString(vm.hint)}"
+                    app:errorTextAppearance="@style/errorStyle">
 
-            </android.support.design.widget.TextInputLayout>
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/nameInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapWords"
+                        android:singleLine="true"
+                        android:text="@={vm.name}"
+                        android:textSize="18sp"/>
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
 
-        </LinearLayout>
-
-    </android.support.v4.widget.NestedScrollView>
+        <include
+            layout="@layout/bottom_bar"
+            bind:vm="@{vm}"/>
+    </LinearLayout>
 </layout>

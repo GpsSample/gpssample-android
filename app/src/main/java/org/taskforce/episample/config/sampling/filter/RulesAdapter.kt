@@ -29,6 +29,16 @@ class RulesAdapter(val ruleSetId: String, val fields: List<CustomFieldForRules>,
         add(RuleAssemblerViewModel(ruleSetId, fields))
     }
 
+    val areRulesValid: Boolean
+        get() {
+            rules.forEach {
+                if (!it.isValid) {
+                    return false
+                }
+            }
+            return true
+        }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RuleHolder {
         val binding = DataBindingUtil.inflate<ItemRuleAssemblerBinding>(LayoutInflater.from(parent.context), R.layout.item_rule_assembler, parent, false)
         return RuleHolder(binding, fields, lifecycleOwner, this, dateListener)
@@ -96,6 +106,7 @@ class RulesAdapter(val ruleSetId: String, val fields: List<CustomFieldForRules>,
                 binding.vm?.selectedFieldIndex = position
                 binding.vm?.selectedField = fields[position]
                 binding.vm?.selectedRuleIndex = 0
+                binding.vm?.value = ""
                 binding.vm?.let { setState(it) }
             }
 
@@ -149,8 +160,6 @@ class RulesAdapter(val ruleSetId: String, val fields: List<CustomFieldForRules>,
             binding.ruleSpinner.adapter = ArrayAdapter<String>(binding.root.context, android.R.layout.simple_spinner_dropdown_item, fields.map { it.fieldName })
 
             binding.ruleSpinner.setSelection(viewModel.selectedFieldIndex, false)
-
-            viewModel.value = ""
 
             when (viewModel.selectedField) {
                 is CustomFieldForRules.DoubleField -> {

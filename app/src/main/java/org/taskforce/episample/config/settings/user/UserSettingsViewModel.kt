@@ -1,20 +1,20 @@
 package org.taskforce.episample.config.settings.user
 
 import android.arch.lifecycle.ViewModel
-import android.databinding.Observable
 import android.databinding.ObservableField
+import android.support.v4.app.FragmentActivity
+import android.view.View
 import android.widget.ArrayAdapter
 import org.taskforce.episample.R
+import org.taskforce.episample.config.base.BaseConfigViewModel
 import org.taskforce.episample.config.base.ConfigBuildManager
-import org.taskforce.episample.config.base.Stepper
-import org.taskforce.episample.config.base.StepperCallback
+import org.taskforce.episample.config.settings.admin.AdminSettingsFragment
 import org.taskforce.episample.toolbar.managers.LanguageManager
 
 class UserSettingsViewModel(
-        val stepper: Stepper,
         val photoCompressionAdapter: ArrayAdapter<String>,
         val photoCompressionSelection: () -> Int,
-        val configBuildManager: ConfigBuildManager) : ViewModel(), StepperCallback {
+        val configBuildManager: ConfigBuildManager) : ViewModel(), BaseConfigViewModel {
 
     val gpsMinimumPrecision = object: ObservableField<String>("") {
         override fun set(value: String?) {
@@ -59,22 +59,6 @@ class UserSettingsViewModel(
         }
     }
 
-    private val validityObserver = object: Observable.OnPropertyChangedCallback() {
-        override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-            stepper.enableNext(isValid.get()!!, UserSettingsFragment::class.java)
-        }
-    }
-
-    init {
-
-        isValid.addOnPropertyChangedCallback(validityObserver)
-    }
-
-    override fun onCleared() {
-        isValid.removeOnPropertyChangedCallback(validityObserver)
-        super.onCleared()
-    }
-    
     fun validatePrecision() {
         val preferredPrecision = gpsPreferredPrecision.get()?.toDoubleOrNull()
         val minPrecision = gpsMinimumPrecision.get()?.toDoubleOrNull()
@@ -129,35 +113,41 @@ class UserSettingsViewModel(
 
     val supervisorPasswordHint = ObservableField(R.string.config_user_settings_permissions_password)
 
-    override fun onNext(): Boolean {
-        return if (isValid.get()!!) {
-            configBuildManager.setUserSettings(
-                    UserSettings(
-                            gpsMinimumPrecision.get()!!.toDouble(),
-                            gpsPreferredPrecision.get()!!.toDouble(),
-                            photoEnforcement.get()!!,
-                            if (photoEnforcement.get()!!) {
-                                photoCompressionSelection.invoke()
-                            } else {
-                                null
-                            },
-                            requireComment.get()!!,
-                            minimumDistanceEnforcement.get()!!,
-                            minimumDistance.get()?.toIntOrNull(),
-                            supervisorDisablePhotos.get()!!,
-                            supervisorPasswordEnforcement.get()!!,
-                            supervisorPassword.get()!!
-                    )
-            )
-            true
-        } else {
-            false
-        }
+    override val progress: Int
+        get() = 7
+    override val backEnabled: ObservableField<Boolean> = ObservableField(true)
+    override val nextEnabled: ObservableField<Boolean> = isValid
+
+    override fun onNextClicked(view: View) {
+        configBuildManager.setUserSettings(
+                UserSettings(
+                        gpsMinimumPrecision.get()!!.toDouble(),
+                        gpsPreferredPrecision.get()!!.toDouble(),
+                        photoEnforcement.get()!!,
+                        if (photoEnforcement.get()!!) {
+                            photoCompressionSelection.invoke()
+                        } else {
+                            null
+                        },
+                        requireComment.get()!!,
+                        minimumDistanceEnforcement.get()!!,
+                        minimumDistance.get()?.toIntOrNull(),
+                        supervisorDisablePhotos.get()!!,
+                        supervisorPasswordEnforcement.get()!!,
+                        supervisorPassword.get()!!
+                )
+        )
+        val fragmentManager = (view.context as FragmentActivity).supportFragmentManager
+        fragmentManager
+                .beginTransaction()
+                .replace(R.id.configFrame, AdminSettingsFragment())
+                .addToBackStack(AdminSettingsFragment::class.qualifiedName)
+                .commit()
     }
 
-    override fun onBack() = true
+    override fun onBackClicked(view: View) {
+        val fragmentManager = (view.context as FragmentActivity).supportFragmentManager
+        fragmentManager.popBackStack()
+    }
 
-    override fun enableNext() = isValid.get()!!
-
-    override fun enableBack() = true
 }

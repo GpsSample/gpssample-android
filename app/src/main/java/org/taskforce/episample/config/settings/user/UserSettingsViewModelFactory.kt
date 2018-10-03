@@ -7,12 +7,11 @@ import org.taskforce.episample.config.base.ConfigBuildManager
 import org.taskforce.episample.config.base.Stepper
 import org.taskforce.episample.config.language.LanguageService
 
-class UserSettingsViewModelFactory(private val stepper: Stepper,
-                                   private val photoCompressionAdapter: ArrayAdapter<String>,
+class UserSettingsViewModelFactory(private val photoCompressionAdapter: ArrayAdapter<String>,
                                    private val photoCompressionSelection: () -> Int,
                                    private val configBuildManager: ConfigBuildManager) : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return UserSettingsViewModel(stepper,
+        return UserSettingsViewModel(
                 photoCompressionAdapter,
                 photoCompressionSelection,
                 configBuildManager) as T

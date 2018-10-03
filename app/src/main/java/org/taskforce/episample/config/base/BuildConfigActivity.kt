@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import org.taskforce.episample.R
+import org.taskforce.episample.config.name.ConfigNameFragment
 
 class BuildConfigActivity : FragmentActivity() {
 
@@ -13,7 +14,7 @@ class BuildConfigActivity : FragmentActivity() {
         setContentView(R.layout.activity_build_config)
         supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.configFrame, ConfigFragment.newInstance())
+                .replace(R.id.configFrame, ConfigNameFragment.newInstance())
                 .commit()
     }
 

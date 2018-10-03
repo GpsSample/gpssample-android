@@ -1,113 +1,105 @@
 package org.taskforce.episample.config.sampling
 
 import android.arch.lifecycle.ViewModel
-import android.databinding.Observable
 import android.databinding.ObservableField
-import android.widget.ArrayAdapter
+import android.support.v4.app.FragmentActivity
+import android.view.View
+import android.widget.AdapterView
+import android.widget.RadioButton
+import org.greenrobot.eventbus.EventBus
 import org.taskforce.episample.R
-import org.taskforce.episample.config.base.ConfigBuildManager
-import org.taskforce.episample.config.base.Stepper
-import org.taskforce.episample.config.base.StepperCallback
-import org.taskforce.episample.toolbar.managers.LanguageManager
+import org.taskforce.episample.config.base.BaseConfigViewModel
+import org.taskforce.episample.config.sampling.no_grouping.SamplingNoGroupFragment
+import org.taskforce.episample.config.sampling.strata.SamplingStrataFragment
+import org.taskforce.episample.config.sampling.subsets.SamplingSubsetFragment
 
 class SamplingSelectionViewModel(
-        var selectionType: ObservableField<SamplingSelectionType>,
-        var selectionInputType: ObservableField<SamplingSelectionInputType>,
-        private val stepper: Stepper,
-        private val configBuildManager: ConfigBuildManager,
-        val samplingSelectionDropdownProvider: SamplingDropdownProvider) :
-        ViewModel(), StepperCallback, SamplingSelectionOnDatasetChanged {
+        val methodology: ObservableField<SamplingMethodology>,
+        val units: ObservableField<SamplingUnits>) :
+        ViewModel(), SamplingSelectionOnDatasetChanged, BaseConfigViewModel {
+    val samplingGrouping = ObservableField<SamplingGrouping>(SamplingGrouping.SUBSETS)
 
-    var sampleSizeInput = ObservableField("")
+    val eventBus: EventBus = EventBus.getDefault()
 
-    val isValid = object: ObservableField<Boolean>(sampleSizeInput, selectionType, selectionInputType) {
-        override fun get(): Boolean? {
-            return validateForm() == LanguageManager.undefinedStringResourceId
+    val samplingMethodOnItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        override fun onNothingSelected(parent: AdapterView<*>?) {
+            // no-op
+        }
+
+        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            methodology.set(SamplingMethodology.values()[position])
+            samplingMethodChanged()
         }
     }
 
-    private val validityObserver = object: Observable.OnPropertyChangedCallback() {
-        override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-            stepper.enableNext(isValid.get()!!, SamplingSelectionFragment::class.java)
-        }
+    override fun samplingMethodologyChanged(type: SamplingMethodology) {
+        methodology.set(type)
     }
 
-    init {
-        isValid.addOnPropertyChangedCallback(validityObserver)
+    override fun samplingUnitsChanged(input: SamplingUnits) {
+        units.set(input)
     }
 
-    override fun onCleared() {
-        isValid.removeOnPropertyChangedCallback(validityObserver)
-        super.onCleared()
-    }
-
-    val samplingMethodTitle = ObservableField(R.string.config_sampling_method_select_title)
-
-    val samplingMethodError = object: ObservableField<Int>(sampleSizeInput, isValid) {
-        override fun get(): Int {
-            return if (sampleSizeInput.get().isNullOrBlank()) {
-                LanguageManager.undefinedStringResourceId
-            } else {
-                validateForm()
+    fun onSamplingGroupingRadioButtonClicked(view: View) {
+        if (view is RadioButton) {
+            when (view.id) {
+                R.id.subsetRadioButton -> {
+                    if (view.isChecked) {
+                        samplingGrouping.set(SamplingGrouping.SUBSETS)
+                        eventBus.post(samplingGrouping.get())
+                    }
+                }
+                R.id.strataRadioButton -> {
+                    if (view.isChecked) {
+                        samplingGrouping.set(SamplingGrouping.STRATA)
+                        eventBus.post(samplingGrouping.get())
+                    }
+                }
+                R.id.noneRadioButton -> {
+                    if (view.isChecked) {
+                        samplingGrouping.set(SamplingGrouping.NONE)
+                        eventBus.post(samplingGrouping.get())
+                    }
+                }
+                else -> {
+                    //NOP
+                }
             }
+            samplingMethodChanged()
         }
     }
 
-    val errorEnabled = object: ObservableField<Boolean>(samplingMethodError) {
-        override fun get() = samplingMethodError.get() != LanguageManager.undefinedStringResourceId
+    fun samplingMethodChanged() {
+        val newMethod = SamplingMethod(methodology.get()!!, units.get()!!, samplingGrouping.get()!!)
+        eventBus.post(SamplingMethodChanged(newMethod))
     }
 
-    val samplingMethodHint = ObservableField(R.string.config_sampling_method_select_title)
+    override val progress: Int
+        get() = 4
+    override val backEnabled: ObservableField<Boolean> = ObservableField(true)
+    override val nextEnabled: ObservableField<Boolean> = ObservableField(true)
 
-    val sampleSizeHint = ObservableField(R.string.config_sampling_method_size)
+    override fun onNextClicked(view: View) {
+        val fragmentManager = (view.context as FragmentActivity).supportFragmentManager
 
-    private val sampleSize: Double
-        get() = sampleSizeInput.get()?.toDoubleOrNull() ?: 0.0
-
-    fun validateForm(): Int {
-        val newValue = sampleSizeInput.get()
-
-        newValue?.toDoubleOrNull()?.let {
-            return if (it < 0) {
-                R.string.config_sampling_method_input_low_error
-            } else if (selectionInputType.get()!! == SamplingSelectionInputType.PERCENT &&
-                    it > 100
-            ) {
-                R.string.config_sampling_method_input_percent_high_error
-            } else {
-                LanguageManager.undefinedStringResourceId
-            }
-        } ?: run {
-            return R.string.config_sampling_method_input_low_error
+        val fragment = when (samplingGrouping.get()) {
+            SamplingGrouping.SUBSETS -> SamplingSubsetFragment()
+            SamplingGrouping.STRATA -> SamplingStrataFragment()
+            SamplingGrouping.NONE -> SamplingNoGroupFragment()
+            null -> throw IllegalAccessError()
         }
+
+        fragmentManager
+                .beginTransaction()
+                .replace(R.id.configFrame, fragment)
+                .addToBackStack(fragment::class.qualifiedName)
+                .commit()
     }
 
-    override fun onNext() =
-            if (isValid.get()!!) {
-                configBuildManager.setSamplingMethod(SamplingMethod(selectionType.get()!!,
-                        selectionInputType.get()!!,
-                        sampleSize))
-                true
-            } else {
-                false
-            }
-
-    override fun onBack() = true
-
-    override fun enableNext() = isValid.get()!!
-
-    override fun enableBack() = true
-
-    override fun onSamplingSelectionTypeChanged(type: SamplingSelectionType) {
-        selectionType.set(type)
-    }
-
-    override fun onSamplingSelectionInputChanged(input: SamplingSelectionInputType) {
-        selectionInputType.set(input)
+    override fun onBackClicked(view: View) {
+        val fragmentManager = (view.context as FragmentActivity).supportFragmentManager
+        fragmentManager.popBackStack()
     }
 }
 
-interface SamplingDropdownProvider {
-    var samplingSelectionTypeAdapter: ArrayAdapter<String>
-    var samplingSelectionInputTypeAdapter: ArrayAdapter<String>
-}
+class SamplingMethodChanged(val samplingMethod: SamplingMethod)

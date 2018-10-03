@@ -54,6 +54,34 @@ class RuleAssemblerViewModel(private val ruleSetId: String, val fields: List<Cus
     var selectedRuleIndex: Int = 0 //by default the first option is selected
     var value: String = "" // either there will be a string value or a selected index for the value (they are dropdowns or text entry fields
     var selectedValueIndex: Int? = null
+    val isValid: Boolean
+        get() {
+            return when (selectedField) {
+                is CustomFieldForRules.DropdownField,
+                is CustomFieldForRules.BooleanField -> true
+                is CustomFieldForRules.DateField,
+                is CustomFieldForRules.TextField -> {
+                    value.isNotBlank()
+                }
+                is CustomFieldForRules.IntegerField -> {
+                    try {
+                        value.toInt()
+                        true
+                    } catch (throwable: Throwable) {
+                        false
+                    }
+                }
+                is CustomFieldForRules.DoubleField -> {
+                    try {
+                        value.toDouble()
+                        true
+                    } catch (throwable: Throwable) {
+                        false
+                    }
+                }
+                null -> throw IllegalAccessError("Cannot convert to record without a selected field -- this should be unpossible")
+            }
+        }
 
     fun deletePressed(view: View) {
         events.value = Event.DeleteEvent(position)

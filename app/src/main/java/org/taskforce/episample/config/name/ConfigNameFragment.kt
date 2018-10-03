@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.config.base.ConfigBuildViewModel
-import org.taskforce.episample.config.base.ConfigFragment
 import org.taskforce.episample.config.base.ConfigHeaderViewModel
 import org.taskforce.episample.config.base.ConfigManager
 import org.taskforce.episample.config.language.LanguageService
@@ -48,15 +47,12 @@ class ConfigNameFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil.inflate<FragmentConfigNameBinding>(inflater, R.layout.fragment_config_name, container, false)
-        val parentViewModel = (parentFragment as ConfigFragment).viewModel
 
         configNameViewModel =
                 ViewModelProviders.of(requireActivity(), ConfigNameViewModelFactory(requireActivity().application,
-                        parentViewModel,
                         configBuildViewModel.configBuildManager
                 )).get(ConfigNameViewModel::class.java)
 
-        parentViewModel.addCallback(javaClass, configNameViewModel)
         binding.vm = configNameViewModel
         binding.languageService = languageService
         binding.headerVm = ConfigHeaderViewModel(
@@ -70,7 +66,6 @@ class ConfigNameFragment : Fragment() {
                     return@InputFilter ""
                 }
             }
-
             null
         }
 
@@ -80,6 +75,10 @@ class ConfigNameFragment : Fragment() {
     }
 
     companion object {
+        fun newInstance(): Fragment {
+            return ConfigNameFragment()
+        }
+
         const val HELP_TARGET = "#configName"
     }
 }

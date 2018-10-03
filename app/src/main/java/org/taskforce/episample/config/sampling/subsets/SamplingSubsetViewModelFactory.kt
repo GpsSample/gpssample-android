@@ -1,4 +1,4 @@
-package org.taskforce.episample.config.sampling
+package org.taskforce.episample.config.sampling.subsets
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider

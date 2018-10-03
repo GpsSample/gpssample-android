@@ -2,20 +2,16 @@ package org.taskforce.episample.db
 
 import android.app.Application
 import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Transformations
 import android.os.AsyncTask
 import org.taskforce.episample.config.base.ConfigManagerException
-import org.taskforce.episample.db.collect.Enumeration
-import org.taskforce.episample.db.collect.GpsBreadcrumb
-import org.taskforce.episample.db.collect.Landmark
-import org.taskforce.episample.db.collect.ResolvedEnumeration
 import org.taskforce.episample.db.config.*
 import org.taskforce.episample.db.config.customfield.CustomField
-import org.taskforce.episample.db.config.customfield.CustomFieldValue
 import org.taskforce.episample.db.config.landmark.CustomLandmarkType
+import org.taskforce.episample.db.filter.RuleRecord
+import org.taskforce.episample.db.filter.RuleSet
+import org.taskforce.episample.db.sampling.strata.Strata
+import org.taskforce.episample.db.sampling.subsets.Subset
 import org.taskforce.episample.utils.makeDBConfig
-import java.util.*
 
 class ConfigRepository(application: Application, injectedDatabase: ConfigRoomDatabase? = null, injectedStudyDatabase: StudyRoomDatabase? = null) {
 
@@ -67,7 +63,7 @@ class ConfigRepository(application: Application, injectedDatabase: ConfigRoomDat
 
     // Domain Actions
     fun insertConfigFromBuildManager(config: org.taskforce.episample.config.base.Config, callback: (configId: String) -> Unit) {
-        val insertConfig = Config(config.name, config.dateCreated)
+        val insertConfig = Config(config.name, config.dateCreated, config.id)
         val insertAdminSettings = config.adminSettings?.let {
             AdminSettings(it.password, insertConfig.id)
         }
@@ -90,6 +86,11 @@ class ConfigRepository(application: Application, injectedDatabase: ConfigRoomDat
             CustomLandmarkType(it.name, it.iconLocation, insertConfig.id)
         }
 
+        val insertSubsets = config.subsets
+        val insertStrata = config.strata
+        val insertRules = config.rules
+        val insertRuleSets = config.ruleSets
+
         val insertEnumerationAreaPoints = config.enumerationAreas.map { area ->
             area.points.map { (lat, long) ->
                 EnumerationAreaPoint(lat, long, area.id)
@@ -110,6 +111,10 @@ class ConfigRepository(application: Application, injectedDatabase: ConfigRoomDat
                 insertLandmarks,
                 insertUserSettings,
                 insertDisplaySettings,
+                insertStrata,
+                insertSubsets,
+                insertRuleSets,
+                insertRules,
                 insertEnumerationAreas,
                 insertEnumerationAreaPoints,
                 callback)
@@ -151,6 +156,10 @@ private data class InsertConfigInput(val config: Config,
                                      val landmarks: List<CustomLandmarkType>,
                                      val userSettings: UserSettings?,
                                      val displaySettings: DisplaySettings,
+                                     val insertStrata: List<Strata>,
+                                     val insertSubsets: List<Subset>,
+                                     val insertRuleSets: List<RuleSet>,
+                                     val insertRules: List<RuleRecord>,
                                      val enumerationAreas: List<EnumerationArea>,
                                      val enumerationAreaPoints: List<EnumerationAreaPoint>,
                                      val callback: (configId: String) -> Unit)
@@ -167,6 +176,10 @@ private class InsertConfigAsyncTask(private val asyncTaskDao: ConfigDao) : Async
                 input.enumerationSubject,
                 input.userSettings,
                 input.displaySettings,
+                input.insertStrata,
+                input.insertSubsets,
+                input.insertRuleSets,
+                input.insertRules,
                 input.enumerationAreas,
                 input.enumerationAreaPoints
         )

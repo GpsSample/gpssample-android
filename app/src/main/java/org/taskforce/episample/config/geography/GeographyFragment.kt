@@ -11,12 +11,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import io.reactivex.internal.operators.observable.ObservableFlattenIterable
-import kotlinx.android.synthetic.main.fragment_config_geography.*
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.config.base.ConfigBuildViewModel
-import org.taskforce.episample.config.base.ConfigFragment
 import org.taskforce.episample.config.base.ConfigHeaderViewModel
 import org.taskforce.episample.config.geography.model.FeatureCollection
 import org.taskforce.episample.config.language.LanguageService
@@ -52,7 +49,6 @@ class GeographyFragment : Fragment() {
 
         viewModel = ViewModelProviders.of(this@GeographyFragment.requireActivity(),
                 GeographyViewModelFactory(LanguageService(languageManager),
-                        (parentFragment as ConfigFragment).viewModel,
                         EnumerationAreaAdapter(),
                         configBuildViewModel.configBuildManager))
                 .get(GeographyViewModel::class.java)
@@ -70,9 +66,6 @@ class GeographyFragment : Fragment() {
              */
             viewModel.quickstart = showQuickStartDialog()
             viewModel.pickFile = pickFile()
-
-            (parentFragment as ConfigFragment)
-                    .viewModel.addCallback(this@GeographyFragment.javaClass, viewModel)
 
             headerVm = ConfigHeaderViewModel(
                     LanguageService(languageManager),

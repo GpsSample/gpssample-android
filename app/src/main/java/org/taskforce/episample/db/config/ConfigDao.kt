@@ -5,7 +5,10 @@ import android.arch.persistence.room.*
 import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.customfield.CustomFieldDao
 import org.taskforce.episample.db.config.landmark.CustomLandmarkType
+import org.taskforce.episample.db.filter.RuleRecord
 import org.taskforce.episample.db.filter.RuleSet
+import org.taskforce.episample.db.sampling.strata.Strata
+import org.taskforce.episample.db.sampling.subsets.Subset
 import java.util.*
 
 @Dao
@@ -65,11 +68,38 @@ abstract class ConfigDao : CustomFieldDao, EnumerationAreaDao {
     @Query("SELECT * FROM display_settings_table WHERE display_settings_config_id LIKE :configId")
     abstract fun getDisplaySettingsSync(configId: String): DisplaySettings?
 
+    @Query("SELECT * FROM strata_table WHERE config_id LIKE :configId")
+    abstract fun getStrataByConfigSync(configId: String): List<Strata>
+
+    @Query("SELECT * FROM subset_table WHERE config_id LIKE :configId")
+    abstract fun getSubsetsByConfigSync(configId: String): List<Subset>
+
+    @Query("SELECT * FROM rule_set_table JOIN strata_table ON rule_set_id WHERE config_id LIKE :configId")
+    abstract fun getStrataRuleSetsByConfigSync(configId: String): List<RuleSet>
+
+    @Query("SELECT * FROM rule_set_table JOIN subset_table ON rule_set_id WHERE config_id LIKE :configId")
+    abstract fun getSubsetRuleSetsByConfigSync(configId: String): List<RuleSet>
+
+    @Query("SELECT * FROM rule_record_table JOIN rule_set_table rst ON rst.id JOIN strata_table st ON st.rule_set_id WHERE config_id LIKE :configId")
+    abstract fun getStrataRuleRecordsByConfigSync(configId: String): List<RuleRecord>
+
+    @Query("SELECT * FROM rule_record_table JOIN rule_set_table rst ON rst.id JOIN subset_table st ON st.rule_set_id WHERE config_id LIKE :configId")
+    abstract fun getSubsetRuleRecordsByConfigSync(configId: String): List<RuleRecord>
+
     @Query("SELECT * FROM custom_landmark_type_table WHERE config_id LIKE :configId")
     abstract fun getLandmarkTypesByConfigSync(configId: String): List<CustomLandmarkType>
 
     @Insert
-    abstract fun insert(ruleSet: RuleSet)
+    abstract fun insert(vararg ruleSet: RuleSet)
+
+    @Insert
+    abstract fun insert(vararg ruleSet: RuleRecord)
+
+    @Insert
+    abstract fun insert(vararg ruleSet: Strata)
+
+    @Insert
+    abstract fun insert(vararg ruleSet: Subset)
 
     @Transaction
     open fun insert(config: Config,
@@ -77,8 +107,12 @@ abstract class ConfigDao : CustomFieldDao, EnumerationAreaDao {
                     landmarkTypes: List<CustomLandmarkType>,
                     adminSettings: AdminSettings?,
                     enumerationSubject: EnumerationSubject?,
-                    userSettings: UserSettings?, 
+                    userSettings: UserSettings?,
                     displaySettings: DisplaySettings?,
+                    strata: List<Strata>,
+                    subsets: List<Subset>,
+                    ruleSets: List<RuleSet>,
+                    ruleRecords: List<RuleRecord>,
                     enumerationAreas: List<EnumerationArea>,
                     enumerationAreaPoints: List<EnumerationAreaPoint>) {
         insert(config)
@@ -98,6 +132,12 @@ abstract class ConfigDao : CustomFieldDao, EnumerationAreaDao {
 
         insert(*customFields.toTypedArray())
         insert(*landmarkTypes.toTypedArray())
+
+        insert(*ruleSets.toTypedArray())
+        insert(*ruleRecords.toTypedArray())
+        insert(*strata.toTypedArray())
+        insert(*subsets.toTypedArray())
+
         insertEnumerationAreas(*enumerationAreas.toTypedArray())
         insertEnumerationAreaPoints(*enumerationAreaPoints.toTypedArray())
     }
@@ -153,6 +193,26 @@ abstract class ConfigDao : CustomFieldDao, EnumerationAreaDao {
             EnumerationArea(it.name, it.configId, it.id)
         }
 
+
+        //TODO review by someone who has better knowledge of sync
+        val strataRuleRecords = getStrataRuleRecordsByConfigSync(sourceConfig.id)
+        val subsetRuleRecords = getSubsetRuleRecordsByConfigSync(sourceConfig.id)
+        val strata = getStrataByConfigSync(sourceConfig.id).apply {
+            forEach {
+                it.configId = insertConfig.id
+            }
+        }
+        val strataRuleSets = getStrataRuleSetsByConfigSync(sourceConfig.id)
+        val subsets = getSubsetsByConfigSync(sourceConfig.id).apply {
+            forEach {
+                it.configId = insertConfig.id
+            }
+        }
+        val subsetRuleSets = getSubsetRuleSetsByConfigSync(sourceConfig.id)
+
+        val ruleSets = strataRuleSets.toMutableList().apply { addAll(subsetRuleSets) }.toList()
+        val ruleRecords = strataRuleRecords.toMutableList().apply { addAll(subsetRuleRecords) }.toList()
+
         insert(insertConfig,
                 customFields,
                 landmarkTypes,
@@ -160,6 +220,10 @@ abstract class ConfigDao : CustomFieldDao, EnumerationAreaDao {
                 enumerationSubject,
                 userSettings,
                 displaySettings,
+                strata,
+                subsets,
+                ruleSets,
+                ruleRecords,
                 insertEnumerationAreas,
                 enumerationAreaPoints)
 

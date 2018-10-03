@@ -43,7 +43,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="24dp"
-                        android:text="@string/add_subset"
+                        android:text="@string/add_rules"
                         android:textColor="@color/textColorInverse"
                         android:textStyle="bold"
                         tools:ignore="RtlHardcoded"/>

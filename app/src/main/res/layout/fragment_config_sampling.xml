@@ -1,90 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable
             name="vm"
-            type="org.taskforce.episample.config.sampling.SamplingSelectionViewModel" />
+            type="org.taskforce.episample.config.sampling.SamplingSelectionViewModel"/>
 
         <variable
             name="languageService"
-            type="org.taskforce.episample.config.language.LanguageService" />
+            type="org.taskforce.episample.config.language.LanguageService"/>
 
         <variable
             name="headerVm"
-            type="org.taskforce.episample.config.base.ConfigHeaderViewModel" />
+            type="org.taskforce.episample.config.base.ConfigHeaderViewModel"/>
     </data>
 
-    <android.support.v4.widget.NestedScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fillViewport="true">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/app_toolbar"/>
+
+        <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true">
 
-            <include
-                android:id="@+id/header"
-                layout="@layout/app_config_header"
-                app:vm="@{headerVm}" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:textColor="@color/textColorDisabled"
-                android:textSize="12sp" />
-
-            <Spinner
-                android:id="@+id/sampleMethodTypeSelector"
-                style="@style/Widget.AppCompat.Spinner.Underlined"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:adapter="@{vm.samplingSelectionDropdownProvider.samplingSelectionTypeAdapter}" />
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp">
-
-                <android.support.design.widget.TextInputLayout
-                    error="@{languageService.getString(vm.samplingMethodError)}"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/sampleMethodInputTypeSelector"
-                    android:hint="@{languageService.getString(vm.sampleSizeHint)}"
-                    app:errorEnabled="@{vm.errorEnabled}"
-                    android:id="@+id/sampleSizeInputWrapper"
-                    app:errorTextAppearance="@style/errorStyle">
-
-                    <android.support.design.widget.TextInputEditText
-                        android:id="@+id/sampleSizeInput"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:singleLine="true"
-                        android:inputType="numberDecimal"
-                        android:text="@={vm.sampleSizeInput}"
-                        android:textSize="16sp" />
-
-                </android.support.design.widget.TextInputLayout>
-
-                <Spinner
-                    android:id="@+id/sampleMethodInputTypeSelector"
-                    style="@style/Widget.AppCompat.Spinner.Underlined"
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBottom="@id/sampleSizeInputWrapper"
-                    android:adapter="@{vm.samplingSelectionDropdownProvider.samplingSelectionInputTypeAdapter}" />
+                    android:fontFamily="sans-serif"
+                    android:text="@string/config_sampling_title"
+                    android:textColor="#000000"
+                    android:textSize="24sp"
+                    android:textStyle="normal"
+                    />
 
-            </RelativeLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:lineSpacingExtra="6sp"
+                    android:paddingTop="8dp"
+                    android:text="@string/config_sampling_explanation"
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:textStyle="normal"
+                    />
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/config_sampling_title"
+                    android:textColor="@color/textColorDisabled"
+                    android:textSize="12sp"/>
 
-    </android.support.v4.widget.NestedScrollView>
+                <Spinner
+                    android:id="@+id/sampleMethodTypeSelector"
+                    style="@style/Widget.AppCompat.Spinner.Underlined"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:lineSpacingExtra="8sp"
+                    android:text="@string/sample_grouping"
+                    android:textColor="#757575"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    />
+
+                <RadioGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <RadioButton
+                        android:id="@+id/subsetRadioButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:onClick="@{vm::onSamplingGroupingRadioButtonClicked}"
+                        android:paddingLeft="19dp"
+                        android:text="@string/subsets_may_overlap"
+                        tools:ignore="RtlHardcoded,RtlSymmetry"/>
+
+                    <RadioButton
+                        android:id="@+id/strataRadioButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:onClick="@{vm::onSamplingGroupingRadioButtonClicked}"
+                        android:paddingLeft="19dp"
+                        android:text="@string/strata_mutually_exclusive"
+                        tools:ignore="RtlHardcoded,RtlSymmetry"/>
+
+                    <RadioButton
+                        android:id="@+id/noneRadioButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:onClick="@{vm::onSamplingGroupingRadioButtonClicked}"
+                        android:paddingLeft="19dp"
+                        android:text="@string/none_sample_from_all"
+                        tools:ignore="RtlHardcoded,RtlSymmetry"/>
+                </RadioGroup>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:lineSpacingExtra="6sp"
+                    android:text="@string/define_groupings_and_their_sizes_on_the_next_screen"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="14sp"
+                    android:textStyle="normal"
+                    />
+
+            </LinearLayout>
+
+        </android.support.v4.widget.NestedScrollView>
+
+        <include
+            layout="@layout/bottom_bar"
+            app:vm="@{vm}"/>
+    </LinearLayout>
 </layout>

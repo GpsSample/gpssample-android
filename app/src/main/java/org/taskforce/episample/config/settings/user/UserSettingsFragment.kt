@@ -9,7 +9,6 @@ import android.widget.ArrayAdapter
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.config.base.ConfigBuildViewModel
-import org.taskforce.episample.config.base.ConfigFragment
 import org.taskforce.episample.config.base.ConfigHeaderViewModel
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.databinding.FragmentConfigUserSettingsBinding
@@ -58,7 +57,6 @@ class UserSettingsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
             FragmentConfigUserSettingsBinding.inflate(inflater).apply {
                 userSettingsViewModel = ViewModelProviders.of(this@UserSettingsFragment.requireActivity(), UserSettingsViewModelFactory(
-                        (parentFragment as ConfigFragment).viewModel,
                         ArrayAdapter<String>(context, android.R.layout.simple_spinner_item).apply {
                             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                             addAll(*(configBuildViewModel.configBuildManager.photoCompressionOptions.map {
@@ -72,7 +70,6 @@ class UserSettingsFragment : Fragment() {
                 ))
                         .get(UserSettingsViewModel::class.java)
 
-                (parentFragment as ConfigFragment).viewModel.addCallback(this@UserSettingsFragment.javaClass, userSettingsViewModel)
                 headerVm = ConfigHeaderViewModel(LanguageService(languageManager),
                         R.string.config_user_settings_title, R.string.config_user_settings_explanation)
                 vm = userSettingsViewModel

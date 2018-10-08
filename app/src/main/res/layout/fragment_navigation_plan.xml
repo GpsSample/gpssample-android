@@ -87,7 +87,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:autoSizeTextType="uniform"
-                    android:lines="2"
                     android:text="@{vm.navigationDetails}"
                     android:textSize="14sp"
                     tools:text="5 Places Skipped, 0.2km to go" />
@@ -110,7 +109,7 @@
                         android:text="@{vm.goToSyncText}"
                         android:textColor="@color/textColorInverse"
                         android:textSize="14sp"
-                        tools:text="Start Route" />
+                        tools:text="GO TO SYNC" />
 
                     <android.support.v7.widget.AppCompatButton
                         android:id="@+id/collectAddSubject"

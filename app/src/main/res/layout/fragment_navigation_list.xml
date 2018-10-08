@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="toolbarVm"
+            type="org.taskforce.episample.navigation.ui.NavigationToolbarViewModel" />
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.navigation.ui.NavigationListViewModel" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/list_toolbar_layout"
+            layout="@layout/app_navigation_toolbar"
+            bind:layout_constraintEnd_toEndOf="parent"
+            bind:layout_constraintStart_toStartOf="parent"
+            bind:layout_constraintTop_toTopOf="parent"
+            bind:vm="@{toolbarVm}"
+            tools:visible="true" />
+
+        <TextView
+            android:id="@+id/chooseNavigationPlanTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="80dp"
+            android:text="@string/choose_plan_title"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Choose Navigation Plan" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/chooseNavigationPlanList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/chooseNavigationPlanTitle"
+            tools:listitem="@layout/item_navigation_plan"/>
+
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

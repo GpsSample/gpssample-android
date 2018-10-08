@@ -28,4 +28,5 @@ interface CollectComponent {
     fun inject(surveyStatusViewModel: SurveyStatusViewModel)
     fun inject(surveyCreateViewModel: SurveyCreateViewModel)
     fun inject(surveyCreateFragment: SurveyCreateFragment)
+    fun inject(navigationListViewModel: NavigationListViewModel)
 }

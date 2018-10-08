@@ -53,6 +53,10 @@ class ConfigFragment : Fragment() {
                             activity?.currentFocus?.closeKeyboard()
                         },
                         {
+                            val defaultCustomFields = configBuildViewModel.configBuildManager.defaultCustomFields(LanguageService(languageManager))
+                            defaultCustomFields.forEach { 
+                                configBuildViewModel.configBuildManager.addCustomField(it)
+                            }
                             ConfigSuccessActivity.startActivity(this@ConfigFragment.requireContext(), configBuildViewModel.configBuildManager.config)
                             viewModel.removeCallbacks()
                             this@ConfigFragment.requireActivity().finish()

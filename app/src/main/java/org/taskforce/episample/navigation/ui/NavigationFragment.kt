@@ -4,12 +4,16 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -29,6 +33,7 @@ import org.taskforce.episample.core.interfaces.CollectItem
 import org.taskforce.episample.core.navigation.SurveyStatus
 import org.taskforce.episample.core.ui.dialogs.TextInputDialogFragment
 import org.taskforce.episample.databinding.FragmentNavigationBinding
+import org.taskforce.episample.db.config.customfield.value.IntValue
 import org.taskforce.episample.utils.getCompatColor
 
 
@@ -284,11 +289,39 @@ class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMa
         try {
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "vnd.android.cursor.dir/vnd.odk.form"
+            
+            getRecordId()?.let { 
+                setClipboard("$it")
+            }
+            
             startActivityForResult(intent, PICK_FORM_REASON_CODE)
         } catch (e: Exception) {
             Toast.makeText(requireContext(), R.string.odk_collect_not_installed, Toast.LENGTH_LONG)
                     .show()
+            Log.e(TAG, e.localizedMessage)
         }
+    }
+    
+    private fun getRecordId(): Int? {
+        val config = navigationViewModel.config
+        val navigationItem = navigationViewModel.nextNavigationItem.value
+        return navigationItem?.let { navItem ->
+            val recordIdField = config.customFields.firstOrNull { customField ->  
+                customField.isAutomatic && customField.name == getString(R.string.custom_field_record_id)
+            }
+            val recordIdValue = navItem.customFieldValues.firstOrNull { customFieldValue ->  
+                customFieldValue.customFieldId == recordIdField?.id
+            }
+            recordIdValue?.let {  customFieldValue ->
+                return (customFieldValue.value as IntValue).intValue
+            }
+        }
+    }
+    
+    private fun setClipboard(string: String) {
+        val clipboard = requireContext().getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("Record ID", string)
+        clipboard.primaryClip = clip
     }
 
     private fun showSkipDialog() {
@@ -303,6 +336,8 @@ class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMa
         const val GET_SKIP_REASON_CODE = 1
         const val PICK_FORM_REASON_CODE = 2
         const val GET_SURVEY_STATUS_REASON_CODE = 3
+        
+        const val TAG = "NavigationFragment"
 
         fun newInstance(navigationPlanId: String): Fragment {
             val fragment = NavigationFragment()

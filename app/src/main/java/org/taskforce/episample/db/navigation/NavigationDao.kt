@@ -47,7 +47,8 @@ abstract class NavigationDao {
 
     @Transaction
     open fun createDemoNavigationPlan(studyId: String, enumerations: List<ResolvedEnumeration>): String {
-        val insertNavigationPlan = NavigationPlan(studyId, "Navigation Plan 1")
+        val number = getAllNavigationPlansSync().size
+        val insertNavigationPlan = NavigationPlan(studyId, "Navigation Plan ${number + 1}")
         insertNavigationPlan(insertNavigationPlan)
 
         enumerations.forEachIndexed({ index, item ->

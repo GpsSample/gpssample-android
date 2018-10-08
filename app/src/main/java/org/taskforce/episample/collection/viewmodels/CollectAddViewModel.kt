@@ -428,6 +428,9 @@ class CollectAddViewModel(
                 LiveCustomFieldValue(customFieldValue, type, customVm.customField.id)
             }
         }
+        
+        // TODO: Assign automatic custom fields (Record ID, etc)
+        
         val isIncomplete = !(isEnumerationValid.value ?: false)
         val isExcluded = (exclude.value ?: false) || shouldExclude
         collectManager.addEnumerationItem(LiveEnumeration(

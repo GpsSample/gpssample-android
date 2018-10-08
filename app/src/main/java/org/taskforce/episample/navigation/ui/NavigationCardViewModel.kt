@@ -16,6 +16,7 @@ interface NavigationCardViewModel {
     val distance: LiveData<String>
     val gpsPrecisionVm: CollectGpsPrecisionViewModel
     val imageUrl: LiveData<String?>
+    val showDetailsText: LiveData<Boolean>
     val detailsText: LiveData<SpannableString>
     val primaryButtonText: LiveData<String?>
     val secondaryButtonText: LiveData<String?>

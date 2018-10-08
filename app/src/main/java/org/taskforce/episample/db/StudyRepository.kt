@@ -320,7 +320,7 @@ private class InsertDemoNavigationPlanTask(private val navigationDao: Navigation
         val studyId = params[0].first
         val callback = params[0].second
 
-        val enumerations = studyDao.getResolvedEnumerationsSync(studyId)
+        val enumerations = studyDao.getResolvedEnumerationsSync(studyId).shuffled()
 
         callback(navigationDao.createDemoNavigationPlan(studyId, enumerations))
 

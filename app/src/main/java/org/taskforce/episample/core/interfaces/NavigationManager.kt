@@ -7,12 +7,14 @@ import com.google.android.gms.maps.model.LatLng
 import org.taskforce.episample.core.navigation.SurveyStatus
 import org.taskforce.episample.db.StudyRepository
 import org.taskforce.episample.db.config.CommonManager
+import org.taskforce.episample.db.navigation.ResolvedNavigationPlan
 
 interface NavigationManager {
     val userSession: UserSession
 
     fun getLandmarkTypes(): List<LandmarkType>
 
+    fun getNavigationPlans(): LiveData<List<NavigationPlan>>
     fun getNavigationPlan(navigationPlanId: String): LiveData<NavigationPlan>
     fun getNavigationItems(navigationPlanId: String): LiveData<List<NavigationItem>>
     fun getLandmarks(): LiveData<List<Landmark>>
@@ -35,32 +37,44 @@ class LiveNavigationManager(val application: Application,
         get() = userSession.studyId
     val configId: String
         get() = userSession.configId
+    
+    override fun getNavigationPlans(): LiveData<List<NavigationPlan>> {
+        return Transformations.map(studyRepository.getNavigationPlans()) { planList -> 
+            planList.map { plan ->
+                convertDbNavigationPlan(plan)
+            }
+        }
+    }
 
     override fun getNavigationPlan(navigationPlanId: String): LiveData<NavigationPlan> {
         return Transformations.map(studyRepository.getNavigationPlan(navigationPlanId)) { plan ->
-            return@map LiveNavigationPlan(
-                    plan.studyId,
-                    plan.title,
-                    plan.id,
-                    plan.navigationItems.map { item ->
-                        return@map LiveNavigationItem(
-                                userSession.username,
-                                item.enumeration.title ?: "",
-                                item.navigationOrder,
-                                item.surveyStatus,
-                                item.enumeration.isIncomplete,
-                                item.enumeration.customFieldValues,
-                                item.enumeration.isExcluded,
-                                item.id,
-                                item.enumeration.note,
-                                item.enumeration.image,
-                                LatLng(item.enumeration.lat, item.enumeration.lng),
-                                item.enumeration.gpsPrecision,
-                                item.dateCreated
-                        )
-                    }
-            )
+            return@map convertDbNavigationPlan(plan)
         }
+    }
+    
+    private fun convertDbNavigationPlan(plan: ResolvedNavigationPlan): NavigationPlan {
+        return LiveNavigationPlan(
+                plan.studyId,
+                plan.title,
+                plan.id,
+                plan.navigationItems.map { item ->
+                    return@map LiveNavigationItem(
+                            userSession.username,
+                            item.enumeration.title ?: "",
+                            item.navigationOrder,
+                            item.surveyStatus,
+                            item.enumeration.isIncomplete,
+                            item.enumeration.customFieldValues,
+                            item.enumeration.isExcluded,
+                            item.id,
+                            item.enumeration.note,
+                            item.enumeration.image,
+                            LatLng(item.enumeration.lat, item.enumeration.lng),
+                            item.enumeration.gpsPrecision,
+                            item.dateCreated
+                    )
+                }
+        )
     }
 
     override fun getNavigationItems(navigationPlanId: String): LiveData<List<NavigationItem>> {

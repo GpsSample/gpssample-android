@@ -297,6 +297,7 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="photo_options_maximum_compression">Maximum Compression</string>
     <string name="config_all_duplicate_error">There was a problem duplicating your configuration.</string>
     <string name="config_all_delete_error">There was a problem deleting your configuration.</string>
+    
     <string name="navigation_overview_title_var">%1$s %2$s to Survey</string>
     <string name="start_route">Start Route</string>
     <string name="config_subject_hint">Subject (singular)</string>
@@ -329,6 +330,8 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="percentage">Percentage</string>
     <string name="fixed">Fixed</string>
     <string name="save">Save</string>
+    <string name="choose_plan_title">Choose Navigation Plan</string>
+    
     <string name="add_subset">Add Subset</string>
     <string name="add_strata_lowercase">Add Strata</string>
     <string name="close">close</string>

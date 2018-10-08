@@ -56,7 +56,7 @@ class MainFragment : Fragment() {
                 },
                 navigateOnClick = {
                     if (navigationPlans.isNotEmpty() == true) {
-                        NavigationActivity.startActivity(requireContext(), navigationPlans.first().id)
+                        NavigationActivity.startActivity(requireContext())
                     } else {
                         Toast.makeText(requireContext(), "No navigation plans created.", Toast.LENGTH_SHORT).show()
                     }

@@ -111,6 +111,10 @@ class LiveNavigationCardViewModel(application: Application,
 
         return@map String.format("%.1f km away", results[0] / 1000)
     }
+    
+    override val showDetailsText = Transformations.map(itemData){
+        !it.note.isNullOrBlank()
+    }
 
     override val detailsText: LiveData<SpannableString> = Transformations.map(itemData, {
         val detailsFormat = "Notes: %s"

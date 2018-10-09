@@ -284,12 +284,13 @@ class CollectAddFragment : Fragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode != Activity.RESULT_OK || data == null) {
+        if (resultCode != Activity.RESULT_OK) {
             return
         }
 
         when (requestCode) {
             GET_DATE_CODE -> {
+                if (data == null) { return }
                 val customFieldId = data.getStringExtra(DatePickerFragment.EXTRA_CUSTOM_FIELD_ID)
                 val year = data.getIntExtra(DatePickerFragment.EXTRA_YEAR, 0)
                 val month = data.getIntExtra(DatePickerFragment.EXTRA_MONTH, 1) + 1
@@ -306,6 +307,7 @@ class CollectAddFragment : Fragment() {
                 }
             }
             GET_TIME_CODE -> {
+                if (data == null) { return }
                 val customFieldId = data.getStringExtra(TimePickerFragment.EXTRA_CUSTOM_FIELD_ID)
                 val chosenDateLong = data.getLongExtra(TimePickerFragment.EXTRA_CHOSEN_DATE, 0)
                 val hour = data.getIntExtra(TimePickerFragment.EXTRA_HOUR, 0)

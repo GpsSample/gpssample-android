@@ -5,15 +5,16 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import org.taskforce.episample.R
+import org.taskforce.episample.config.sampling.SamplingUnits
 import org.taskforce.episample.config.sampling.filter.RuleSetCardViewModel
 import org.taskforce.episample.databinding.ItemSubsetCardBinding
 
 
-class SubsetAdapter(private val subsetSelectedListener: SubsetSelectedListener) : RecyclerView.Adapter<SubsetAdapter.SubsetCardViewHolder>() {
+class SubsetAdapter : RecyclerView.Adapter<SubsetAdapter.SubsetCardViewHolder>() {
     private val viewModels = mutableListOf<RuleSetCardViewModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubsetCardViewHolder {
-        return SubsetCardViewHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.item_subset_card, parent, false), subsetSelectedListener)
+        return SubsetCardViewHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.item_subset_card, parent, false))
     }
 
     override fun getItemCount(): Int = viewModels.size
@@ -28,19 +29,26 @@ class SubsetAdapter(private val subsetSelectedListener: SubsetSelectedListener) 
         notifyDataSetChanged()
     }
 
-    class SubsetCardViewHolder(val binding: ItemSubsetCardBinding, val onClickListener: SubsetSelectedListener) : RecyclerView.ViewHolder(binding.root) {
-        init {
-            binding.root.setOnClickListener {
-                binding.vm?.let { viewModel -> onClickListener.onSubsetSelected(viewModel) }
-            }
-        }
-
-        fun bind(viewModel: RuleSetCardViewModel) {
-            binding.vm = viewModel
+    fun samplingUnitsChanged(samplingUnit: SamplingUnits) {
+        viewModels.forEach {
+            it.isUnitPercent = samplingUnit == SamplingUnits.PERCENT
         }
     }
 
-    interface SubsetSelectedListener {
-        fun onSubsetSelected(ruleSetCardViewModel: RuleSetCardViewModel)
+    fun isValid(): Boolean {
+        if (viewModels.size == 0) {
+            return false
+        }
+        viewModels.forEach {
+            if (!it.isValid())
+                return false
+        }
+        return true
+    }
+
+    class SubsetCardViewHolder(val binding: ItemSubsetCardBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(viewModel: RuleSetCardViewModel) {
+            binding.vm = viewModel
+        }
     }
 }

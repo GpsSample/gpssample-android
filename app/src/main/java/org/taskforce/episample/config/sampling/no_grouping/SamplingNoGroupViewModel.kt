@@ -8,16 +8,21 @@ import android.databinding.ObservableInt
 import android.support.design.widget.TextInputLayout
 import android.support.v4.app.FragmentActivity
 import android.view.View
+import org.greenrobot.eventbus.EventBus
 import org.taskforce.episample.R
 import org.taskforce.episample.config.base.BaseConfigViewModel
+import org.taskforce.episample.config.sampling.SamplingUnits
 import org.taskforce.episample.config.settings.display.DisplaySettingsFragment
+import org.taskforce.episample.db.filter.RuleSet
 
 
-class SamplingNoGroupViewModel : ViewModel(), BaseConfigViewModel {
-    var samplingUnit: SamplingUnit = SamplingUnit.HOUSEHOLDS
+class SamplingNoGroupViewModel(incomingSamplingUnit: SamplingUnits, val methodologyId: String) : ViewModel(), BaseConfigViewModel {
+    val eventBus = EventBus.getDefault()
+    var samplingUnit: SamplingUnits = incomingSamplingUnit
         set(value) {
             field = value
             amount.set("")
+            error.notifyChange()
         }
     var amount: ObservableField<String> = ObservableField("")
     var error = object : ObservableInt(amount) {
@@ -26,8 +31,8 @@ class SamplingNoGroupViewModel : ViewModel(), BaseConfigViewModel {
                 -1
             } else {
                 when (samplingUnit) {
-                    SamplingUnit.HOUSEHOLDS -> R.string.household_amount_error
-                    SamplingUnit.PERCENT -> R.string.percentage_amount_error
+                    SamplingUnits.PERCENT -> R.string.percentage_amount_error
+                    SamplingUnits.FIXED -> R.string.household_amount_error
                 }
             }
         }
@@ -38,8 +43,8 @@ class SamplingNoGroupViewModel : ViewModel(), BaseConfigViewModel {
         var isValid: Boolean? = null
         try {
             isValid = when (samplingUnit) {
-                SamplingUnit.HOUSEHOLDS -> amount.get()?.let { isAmountValidHouseholdCount(it.toInt()) }
-                SamplingUnit.PERCENT -> amount.get()?.let { isAmountValidPercentage(it.toDouble()) }
+                SamplingUnits.FIXED -> amount.get()?.let { isAmountValidHouseholdCount(it.toInt()) }
+                SamplingUnits.PERCENT -> amount.get()?.let { isAmountValidPercentage(it.toDouble()) }
             }
         } catch (exception: Throwable) {
             //NOP
@@ -65,8 +70,8 @@ class SamplingNoGroupViewModel : ViewModel(), BaseConfigViewModel {
     }
 
     override fun onNextClicked(view: View) {
-        //TODO probably have to store some data some where, huh. Here's where you should fire that off through event bus
-
+        val ruleSet = RuleSet(methodologyId, "NO GROUPING", true, amount.get()!!.toInt())
+        eventBus.post(RuleSetAdded(ruleSet))
         val fragmentManager = (view.context as FragmentActivity).supportFragmentManager
 
         fragmentManager
@@ -82,9 +87,9 @@ class SamplingNoGroupViewModel : ViewModel(), BaseConfigViewModel {
     }
 }
 
-class SamplingNoGroupViewModelProvider() : ViewModelProvider.NewInstanceFactory() {
+class SamplingNoGroupViewModelProvider(private val samplingUnit: SamplingUnits, val methodologyId: String) : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return SamplingNoGroupViewModel() as T
+        return SamplingNoGroupViewModel(samplingUnit, methodologyId) as T
     }
 }
 
@@ -96,3 +101,5 @@ fun setErrorText(view: TextInputLayout, observableInt: ObservableInt) {
         view.error = null
     }
 }
+
+class RuleSetAdded(val ruleSet: RuleSet)

@@ -6,12 +6,25 @@ import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.support.v4.app.FragmentActivity
 import android.view.View
+import org.greenrobot.eventbus.EventBus
 import org.taskforce.episample.R
 import org.taskforce.episample.config.base.BaseConfigViewModel
+import org.taskforce.episample.config.sampling.SamplingUnits
 import org.taskforce.episample.config.settings.display.DisplaySettingsFragment
 
-class SamplingSubsetViewModel : ViewModel(), BaseConfigViewModel {
-    val isFixedChecked = ObservableBoolean(true)
+class SamplingSubsetViewModel(isFixed: Boolean) : ViewModel(), BaseConfigViewModel {
+    val eventBus = EventBus.getDefault()
+
+    val isFixedChecked = object: ObservableBoolean(isFixed) {
+        override fun set(value: Boolean) {
+            super.set(value)
+            val samplingUnit = when(value) {
+                true -> SamplingUnits.FIXED
+                false -> SamplingUnits.PERCENT
+            }
+            eventBus.post(Event.SamplingUnitsChanged(samplingUnit))
+        }
+    }
     val events = MutableLiveData<Event>()
 
     val fixedCheckedChanged = View.OnClickListener { _ ->
@@ -27,7 +40,7 @@ class SamplingSubsetViewModel : ViewModel(), BaseConfigViewModel {
     }
 
     val addRuleSetClicked = View.OnClickListener { view ->
-        events.value = Event.AddRuleSet()
+        events.value = Event.AddRuleSet
     }
 
     override val progress: Int
@@ -51,6 +64,7 @@ class SamplingSubsetViewModel : ViewModel(), BaseConfigViewModel {
     }
 
     sealed class Event {
-        class AddRuleSet : Event()
+        object AddRuleSet : Event()
+        class SamplingUnitsChanged(val samplingUnit: SamplingUnits): Event()
     }
 }

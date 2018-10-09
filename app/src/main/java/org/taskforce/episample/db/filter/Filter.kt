@@ -6,6 +6,9 @@ import org.taskforce.episample.db.config.customfield.CustomFieldValue
 
 class Filter(private val rules: List<Rule>) {
     fun filterAny(enumerations: List<ResolvedEnumeration>): List<ResolvedEnumeration> {
+        if (rules.isEmpty()) {
+            return enumerations
+        }
         return enumerations.filter { enumeration ->
             enumeration.customFieldValues.map {
                 Pair(it, ruleFor(it))
@@ -18,6 +21,9 @@ class Filter(private val rules: List<Rule>) {
     }
 
     fun filterAll(enumerations: List<ResolvedEnumeration>): List<ResolvedEnumeration> {
+        if (rules.isEmpty()) {
+            return enumerations
+        }
         return enumerations.filter { enumeration ->
             enumeration.customFieldValues.map {
                 Pair(it, ruleFor(it))

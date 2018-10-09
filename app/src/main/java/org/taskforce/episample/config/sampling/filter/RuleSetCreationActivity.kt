@@ -32,6 +32,7 @@ import java.util.*
 class RuleSetCreationActivity : FragmentActivity(), DateClickedListener {
     private lateinit var viewModel: RuleSetCreationViewModel
     private lateinit var ruleSetId: String
+    private lateinit var methodologyId: String
     private var ruleSet: RuleSet? = null
     private var rules: List<RuleRecord>? = null
     private lateinit var fields: List<CustomFieldForRules>
@@ -46,14 +47,8 @@ class RuleSetCreationActivity : FragmentActivity(), DateClickedListener {
         val binding = DataBindingUtil.setContentView<ActivityRuleSetCreationBinding>(this, R.layout.activity_rule_set_creation)
         binding.setLifecycleOwner(this)
 
-        if (!intent.hasExtra(EXTRA_RULESET)) {
-            ruleSetId = intent.extras.getString(EXTRA_RULESET_ID) ?: UUID.randomUUID().toString()
-        } else {
-            ruleSet = intent.extras.getParcelable(EXTRA_RULESET)
-            ruleSetId = ruleSet!!.id
-            @Suppress("UNCHECKED_CAST")
-            rules = intent.getParcelableArrayExtra(EXTRA_RULES).toList() as List<RuleRecord>
-        }
+        ruleSetId = intent.extras.getString(EXTRA_RULESET_ID) ?: UUID.randomUUID().toString()
+        methodologyId = intent.extras.getString(EXTRA_METHODOLOGY_ID)
         //TODO don't use default display settings, use the one they create in config
         adapter = RulesAdapter(ruleSetId, fields, this, this, DisplaySettings.default)
         ruleRecyclerView.adapter = adapter
@@ -105,7 +100,7 @@ class RuleSetCreationActivity : FragmentActivity(), DateClickedListener {
     }
 
     private fun generateRuleSet(): RuleSet {
-        return RuleSet(viewModel.name.value!!, viewModel.isAnyChecked.get(), ruleSetId)
+        return RuleSet(methodologyId, viewModel.name.value!!, viewModel.isAnyChecked.get(), 0, ruleSetId)
     }
 
     private fun generateRules(): List<RuleRecord> {
@@ -176,21 +171,12 @@ class RuleSetCreationActivity : FragmentActivity(), DateClickedListener {
     }
 
     companion object {
-        fun startActivity(fragment: Fragment, customFields: List<CustomField>, configId: String) {
+        fun startActivity(fragment: Fragment, customFields: List<CustomField>, configId: String, methodologyId: String) {
             val intent = Intent(fragment.context, RuleSetCreationActivity::class.java)
             val fields: List<CustomFieldForRules> = remapFields(customFields)
             intent.putExtra(EXTRA_CUSTOM_FIELDS, fields.toTypedArray())
             intent.putExtra(EXTRA_CONFIG_ID, configId)
-            fragment.startActivityForResult(intent, REQUEST_CODE_FOR_RULESET)
-        }
-
-        fun startActivity(fragment: Fragment, customFields: List<CustomField>, configId: String, ruleSet: RuleSet, rules: List<RuleRecord>) {
-            val intent = Intent(fragment.context, RuleSetCreationActivity::class.java)
-            val fields: List<CustomFieldForRules> = remapFields(customFields)
-            intent.putExtra(EXTRA_CUSTOM_FIELDS, fields.toTypedArray())
-            intent.putExtra(EXTRA_CONFIG_ID, configId)
-            intent.putExtra(EXTRA_RULESET, ruleSet as Parcelable)
-            intent.putExtra(EXTRA_RULES, rules.toTypedArray())
+            intent.putExtra(EXTRA_METHODOLOGY_ID, methodologyId)
             fragment.startActivityForResult(intent, REQUEST_CODE_FOR_RULESET)
         }
 
@@ -230,8 +216,7 @@ class RuleSetCreationActivity : FragmentActivity(), DateClickedListener {
         const val EXTRA_RESULT_RULES = "EXTRA_RESULT_RULES"
         const val EXTRA_CUSTOM_FIELDS = "EXTRA_CUSTOM_FIELDS"
         const val EXTRA_RULESET_ID = "EXTRA_RULESET_ID"
+        const val EXTRA_METHODOLOGY_ID = "EXTRA_METHODOLOGY_ID"
         const val EXTRA_CONFIG_ID = "EXTRA_CONFIG_ID"
-        const val EXTRA_RULES = "EXTRA_RULES"
-        const val EXTRA_RULESET = "EXTRA_RULESET"
     }
 }

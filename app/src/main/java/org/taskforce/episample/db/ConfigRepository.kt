@@ -4,13 +4,12 @@ import android.app.Application
 import android.arch.lifecycle.LiveData
 import android.os.AsyncTask
 import org.taskforce.episample.config.base.ConfigManagerException
+import org.taskforce.episample.config.sampling.SamplingMethodEntity
 import org.taskforce.episample.db.config.*
 import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.landmark.CustomLandmarkType
 import org.taskforce.episample.db.filter.RuleRecord
 import org.taskforce.episample.db.filter.RuleSet
-import org.taskforce.episample.db.sampling.strata.Strata
-import org.taskforce.episample.db.sampling.subsets.Subset
 import org.taskforce.episample.utils.makeDBConfig
 
 class ConfigRepository(application: Application, injectedDatabase: ConfigRoomDatabase? = null, injectedStudyDatabase: StudyRoomDatabase? = null) {
@@ -86,8 +85,7 @@ class ConfigRepository(application: Application, injectedDatabase: ConfigRoomDat
             CustomLandmarkType(it.name, it.iconLocation, insertConfig.id)
         }
 
-        val insertSubsets = config.subsets
-        val insertStrata = config.strata
+        val methodology = config.samplingMethod.toEntity(config.id)
         val insertRules = config.rules
         val insertRuleSets = config.ruleSets
 
@@ -111,8 +109,7 @@ class ConfigRepository(application: Application, injectedDatabase: ConfigRoomDat
                 insertLandmarks,
                 insertUserSettings,
                 insertDisplaySettings,
-                insertStrata,
-                insertSubsets,
+                methodology,
                 insertRuleSets,
                 insertRules,
                 insertEnumerationAreas,
@@ -156,8 +153,7 @@ private data class InsertConfigInput(val config: Config,
                                      val landmarks: List<CustomLandmarkType>,
                                      val userSettings: UserSettings?,
                                      val displaySettings: DisplaySettings,
-                                     val insertStrata: List<Strata>,
-                                     val insertSubsets: List<Subset>,
+                                     val methodology: SamplingMethodEntity,
                                      val insertRuleSets: List<RuleSet>,
                                      val insertRules: List<RuleRecord>,
                                      val enumerationAreas: List<EnumerationArea>,
@@ -176,8 +172,7 @@ private class InsertConfigAsyncTask(private val asyncTaskDao: ConfigDao) : Async
                 input.enumerationSubject,
                 input.userSettings,
                 input.displaySettings,
-                input.insertStrata,
-                input.insertSubsets,
+                input.methodology,
                 input.insertRuleSets,
                 input.insertRules,
                 input.enumerationAreas,

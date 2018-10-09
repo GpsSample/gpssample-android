@@ -386,7 +386,7 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="total_sample">Total Sample</string>
     <string name="sample_unit">Sample Unit</string>
     <string name="percentage_amount_error">Percentages must be between 0 and 100</string>
-    <string name="household_amount_error">You must enter more than 0 households</string>
+    <string name="household_amount_error">You must enter more than 0</string>
     <string name="add_rules">Add Rules</string>
     <string name="collect_outside_area_title">Household Is Outside Enumeration Area</string>
     <string name="collect_outside_area_message">This household is outside the study’s enumeration area. If you save it, it will not be considered valid for sampling.</string>

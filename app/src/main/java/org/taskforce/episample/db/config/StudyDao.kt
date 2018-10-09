@@ -103,24 +103,11 @@ abstract class StudyDao : ConfigDao(), CustomFieldDao, ResolvedEnumerationDao, C
             it.configId = insertConfig.id
         }
 
-        //TODO review by someone who has better knowledge of sync
-        val strataRuleRecords = getStrataRuleRecordsByConfigSync(sourceConfig.id)
-        val subsetRuleRecords = getSubsetRuleRecordsByConfigSync(sourceConfig.id)
-        val strata = getStrataByConfigSync(sourceConfig.id).apply {
-            forEach {
-                it.configId = insertConfig.id
-            }
+        val methodology = getMethodologyByConfigSync(sourceConfig.id)?.apply {
+            configId = insertConfig.id
         }
-        val strataRuleSets = getStrataRuleSetsByConfigSync(sourceConfig.id)
-        val subsets = getSubsetsByConfigSync(sourceConfig.id).apply {
-            forEach {
-                it.configId = insertConfig.id
-            }
-        }
-        val subsetRuleSets = getSubsetRuleSetsByConfigSync(sourceConfig.id)
-
-        val ruleSets = strataRuleSets.toMutableList().apply { addAll(subsetRuleSets) }.toList()
-        val ruleRecords = strataRuleRecords.toMutableList().apply { addAll(subsetRuleRecords) }.toList()
+        val ruleSets = getRuleSetsByConfigSync(sourceConfig.id)
+        val ruleRecords = getRuleRecordsByConfigSync(sourceConfig.id)
 
         val enumerationAreas = sourceConfig.enumerationAreas
         enumerationAreas.forEach {
@@ -151,8 +138,7 @@ abstract class StudyDao : ConfigDao(), CustomFieldDao, ResolvedEnumerationDao, C
                 enumerationSubject,
                 userSettings,
                 displaySettings,
-                strata,
-                subsets,
+                methodology,
                 ruleSets,
                 ruleRecords,
                 insertEnumerationAreas,

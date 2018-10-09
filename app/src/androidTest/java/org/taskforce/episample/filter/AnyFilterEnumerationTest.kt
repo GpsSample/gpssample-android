@@ -170,6 +170,31 @@ class AnyFilterEnumerationTest {
         }
     }
 
+    /*
+        Tentatively no grouping will have filtering without any rules. This test ensures that filterAny and filterAll resolve all the enumerations
+        when there are no rules
+     */
+    @Test
+    @Throws(Exception::class)
+    fun filterWithoutRules() {
+        val resolvedEnumerations = studyDao?.getResolvedEnumerationsSync(studyId)
+
+        val filter = Filter(
+                listOf()
+        )
+
+        val filteredAllEnumerations = resolvedEnumerations?.let {
+            filter.filterAll(it)
+        }
+
+        val filteredAnyEnumerations = resolvedEnumerations?.let {
+            filter.filterAll(it)
+        }
+
+        Assert.assertEquals(resolvedEnumerations?.size, filteredAllEnumerations?.size)
+        Assert.assertEquals(resolvedEnumerations?.size, filteredAnyEnumerations?.size)
+    }
+
     @After
     @Throws(IOException::class)
     fun closeDb() {

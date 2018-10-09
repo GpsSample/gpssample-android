@@ -20,6 +20,7 @@ import org.taskforce.episample.config.base.AllStrataUpdated
 import org.taskforce.episample.config.base.ConfigBuildViewModel
 import org.taskforce.episample.config.base.ConfigHeaderViewModel
 import org.taskforce.episample.config.language.LanguageService
+import org.taskforce.episample.config.sampling.SamplingUnits
 import org.taskforce.episample.config.sampling.filter.RuleSetCardViewModel
 import org.taskforce.episample.config.sampling.filter.RuleSetCreationActivity
 import org.taskforce.episample.config.sampling.subsets.SamplingSubsetViewModel
@@ -28,13 +29,12 @@ import org.taskforce.episample.config.sampling.subsets.SubsetAdapter
 import org.taskforce.episample.databinding.FragmentConfigSamplingStrataBinding
 import org.taskforce.episample.db.filter.RuleRecord
 import org.taskforce.episample.db.filter.RuleSet
-import org.taskforce.episample.db.sampling.strata.Strata
 import org.taskforce.episample.toolbar.managers.LanguageManager
 import org.taskforce.episample.utils.makeDBConfig
 import javax.inject.Inject
 
 
-class SamplingStrataFragment : Fragment(), Observer<SamplingSubsetViewModel.Event>, SubsetAdapter.SubsetSelectedListener {
+class SamplingStrataFragment : Fragment(), Observer<SamplingSubsetViewModel.Event> {
     @Inject
     lateinit var languageManager: LanguageManager
 
@@ -48,13 +48,13 @@ class SamplingStrataFragment : Fragment(), Observer<SamplingSubsetViewModel.Even
 
         (requireActivity().application as EpiApplication).component.inject(this)
         configBuildViewModel = ViewModelProviders.of(requireActivity()).get(ConfigBuildViewModel::class.java)
-        adapter = SubsetAdapter(this)
+        adapter = SubsetAdapter()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentConfigSamplingStrataBinding>(inflater, R.layout.fragment_config_sampling_strata, container, false)
         binding.headerVm = ConfigHeaderViewModel(LanguageService(languageManager), R.string.config_sampling_subset_title, R.string.config_sampling_subset_explanation)
-        viewModel = ViewModelProviders.of(requireActivity(), SamplingSubsetViewModelFactory())
+        viewModel = ViewModelProviders.of(requireActivity(), SamplingSubsetViewModelFactory(configBuildViewModel.configBuildManager.config.samplingMethod.units == SamplingUnits.FIXED))
                 .get(SamplingSubsetViewModel::class.java).apply {
                     events.observe(this@SamplingStrataFragment, this@SamplingStrataFragment)
                 }
@@ -86,19 +86,26 @@ class SamplingStrataFragment : Fragment(), Observer<SamplingSubsetViewModel.Even
             val ruleCount = strataUpdated.ruleRecords.count {
                 it.ruleSetId == ruleSet.id
             }
-            RuleSetCardViewModel(ruleSet.id, ruleSet.name, ruleCount, ruleSet.isAny)
+            RuleSetCardViewModel(ruleSet.id, ruleSet.name, ruleCount, ruleSet.isAny, configBuildViewModel.configBuildManager.config.samplingMethod.units == SamplingUnits.PERCENT, ruleSet.sampleSize)
         }
         adapter.setData(viewModels)
-        viewModel?.nextEnabled?.set(viewModels.isNotEmpty())
+        viewModel?.nextEnabled?.set(adapter.isValid())
+    }
+
+    @Subscribe
+    fun onSamplingUnitsChanged(event: SamplingSubsetViewModel.Event.SamplingUnitsChanged) = adapter.samplingUnitsChanged(event.samplingUnit)
+
+    @Subscribe
+    fun onSamplingAmountChanged(event: RuleSetCardViewModel.SamplingAmountChanged) {
+        viewModel?.nextEnabled?.set(adapter.isValid())
     }
 
     override fun onChanged(t: SamplingSubsetViewModel.Event?) {
         when (t) {
-            //TODO : Examine why the fieldIds are changing
             is SamplingSubsetViewModel.Event.AddRuleSet -> {
                 RuleSetCreationActivity.startActivity(this, configBuildViewModel.configBuildManager.config.customFields.map {
                     it.makeDBConfig(configBuildViewModel.configBuildManager.config.id)
-                }, configBuildViewModel.configBuildManager.config.id)
+                }, configBuildViewModel.configBuildManager.config.id, configBuildViewModel.configBuildManager.config.samplingMethod.id)
             }
         }
     }
@@ -111,30 +118,8 @@ class SamplingStrataFragment : Fragment(), Observer<SamplingSubsetViewModel.Even
                 @Suppress("UNCHECKED_CAST")
                 val rules = it.getParcelableArrayExtra(RuleSetCreationActivity.EXTRA_RESULT_RULES).toList() as List<RuleRecord>
 
-                val newStrata = Strata(configBuildViewModel.configBuildManager.config.id, ruleSet.id)
-
-                eventBus.post(StrataUpdated(newStrata, ruleSet, rules))
+                eventBus.post(StrataUpdated(ruleSet, rules))
             }
-        }
-    }
-
-    @Suppress("UNREACHABLE_CODE")
-    override fun onSubsetSelected(ruleSetCardViewModel: RuleSetCardViewModel) {
-        //TODO remove this return when you want to get back to working on editing the rulesets
-        return
-        //open ruleset creation activity with the subset
-        val ruleSetId = ruleSetCardViewModel.ruleSetId
-        val ruleSet = configBuildViewModel.configBuildManager.config.ruleSets.find {
-            it.id == ruleSetId
-        }
-        val rules = configBuildViewModel.configBuildManager.config.rules.filter {
-            it.ruleSetId == ruleSetId
-        }
-
-        if (ruleSet != null) {
-            RuleSetCreationActivity.startActivity(this, configBuildViewModel.configBuildManager.config.customFields.map {
-                it.makeDBConfig(configBuildViewModel.configBuildManager.config.id)
-            }, configBuildViewModel.configBuildManager.config.id, ruleSet, rules)
         }
     }
 
@@ -143,4 +128,4 @@ class SamplingStrataFragment : Fragment(), Observer<SamplingSubsetViewModel.Even
     }
 }
 
-class StrataUpdated(val strata: Strata, val ruleSet: RuleSet, val rules: List<RuleRecord>)
+class StrataUpdated(val ruleSet: RuleSet, val rules: List<RuleRecord>)

@@ -64,7 +64,7 @@ class SamplingSelectionFragment : Fragment() {
 
 
         binding.sampleMethodTypeSelector.adapter = samplingSelectionTypeAdapter
-        binding.sampleMethodTypeSelector.setSelection(SamplingMethodology.values().indexOf(config.samplingMethod.type))
+        binding.sampleMethodTypeSelector.setSelection(SamplingMethodology.values().indexOf(config.samplingMethod.type), false)
         binding.sampleMethodTypeSelector.onItemSelectedListener = samplingSelectionViewModel.samplingMethodOnItemSelectedListener
 
         binding.vm = samplingSelectionViewModel

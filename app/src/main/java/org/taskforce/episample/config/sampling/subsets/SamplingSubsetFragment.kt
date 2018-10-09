@@ -20,17 +20,17 @@ import org.taskforce.episample.config.base.AllSubsetsUpdated
 import org.taskforce.episample.config.base.ConfigBuildViewModel
 import org.taskforce.episample.config.base.ConfigHeaderViewModel
 import org.taskforce.episample.config.language.LanguageService
+import org.taskforce.episample.config.sampling.SamplingUnits
 import org.taskforce.episample.config.sampling.filter.RuleSetCardViewModel
 import org.taskforce.episample.config.sampling.filter.RuleSetCreationActivity
 import org.taskforce.episample.databinding.FragmentConfigSamplingSubsetBinding
 import org.taskforce.episample.db.filter.RuleRecord
 import org.taskforce.episample.db.filter.RuleSet
-import org.taskforce.episample.db.sampling.subsets.Subset
 import org.taskforce.episample.toolbar.managers.LanguageManager
 import org.taskforce.episample.utils.makeDBConfig
 import javax.inject.Inject
 
-class SamplingSubsetFragment : Fragment(), Observer<SamplingSubsetViewModel.Event>, SubsetAdapter.SubsetSelectedListener {
+class SamplingSubsetFragment : Fragment(), Observer<SamplingSubsetViewModel.Event> {
 
     @Inject
     lateinit var languageManager: LanguageManager
@@ -46,13 +46,13 @@ class SamplingSubsetFragment : Fragment(), Observer<SamplingSubsetViewModel.Even
 
         (requireActivity().application as EpiApplication).component.inject(this)
         configBuildViewModel = ViewModelProviders.of(requireActivity()).get(ConfigBuildViewModel::class.java)
-        adapter = SubsetAdapter(this)
+        adapter = SubsetAdapter()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentConfigSamplingSubsetBinding>(inflater, R.layout.fragment_config_sampling_subset, container, false)
         binding.headerVm = ConfigHeaderViewModel(LanguageService(languageManager), R.string.config_sampling_subset_title, R.string.config_sampling_subset_explanation)
-        viewModel = ViewModelProviders.of(requireActivity(), SamplingSubsetViewModelFactory())
+        viewModel = ViewModelProviders.of(requireActivity(), SamplingSubsetViewModelFactory(configBuildViewModel.configBuildManager.config.samplingMethod.units == SamplingUnits.FIXED))
                 .get(SamplingSubsetViewModel::class.java)
         binding.vm = viewModel
         return binding.root
@@ -77,16 +77,24 @@ class SamplingSubsetFragment : Fragment(), Observer<SamplingSubsetViewModel.Even
         viewModel?.events?.value = null
     }
 
+    @Subscribe
+    fun onSamplingUnitsChanged(event: SamplingSubsetViewModel.Event.SamplingUnitsChanged) = adapter.samplingUnitsChanged(event.samplingUnit)
+
+    @Subscribe
+    fun onSamplingAmountChanged(event: RuleSetCardViewModel.SamplingAmountChanged) {
+        viewModel?.nextEnabled?.set(adapter.isValid())
+    }
+
     @Subscribe(sticky = true)
     fun onAllSubsetsReceived(subsetsUpdated: AllSubsetsUpdated) {
         val viewModels = subsetsUpdated.ruleSets.map { ruleSet ->
             val ruleCount = subsetsUpdated.ruleRecords.count {
                 it.ruleSetId == ruleSet.id
             }
-            RuleSetCardViewModel(ruleSet.id, ruleSet.name, ruleCount, ruleSet.isAny)
+            RuleSetCardViewModel(ruleSet.id, ruleSet.name, ruleCount, ruleSet.isAny, configBuildViewModel.configBuildManager.config.samplingMethod.units == SamplingUnits.PERCENT, ruleSet.sampleSize)
         }
         adapter.setData(viewModels)
-        viewModel?.nextEnabled?.set(viewModels.isNotEmpty())
+        viewModel?.nextEnabled?.set(adapter.isValid())
     }
 
     override fun onChanged(t: SamplingSubsetViewModel.Event?) {
@@ -94,7 +102,7 @@ class SamplingSubsetFragment : Fragment(), Observer<SamplingSubsetViewModel.Even
             is SamplingSubsetViewModel.Event.AddRuleSet -> {
                 RuleSetCreationActivity.startActivity(this, configBuildViewModel.configBuildManager.config.customFields.map {
                     it.makeDBConfig(configBuildViewModel.configBuildManager.config.id)
-                }, configBuildViewModel.configBuildManager.config.id)
+                }, configBuildViewModel.configBuildManager.config.id, configBuildViewModel.configBuildManager.config.samplingMethod.id)
             }
         }
     }
@@ -106,30 +114,9 @@ class SamplingSubsetFragment : Fragment(), Observer<SamplingSubsetViewModel.Even
                 val ruleSet = it.getParcelableExtra(RuleSetCreationActivity.EXTRA_RESULT_RULESET) as RuleSet
                 @Suppress("UNCHECKED_CAST")
                 val rules = it.getParcelableArrayExtra(RuleSetCreationActivity.EXTRA_RESULT_RULES).toList() as List<RuleRecord>
-                val newSubset = Subset(configBuildViewModel.configBuildManager.config.id, ruleSet.id)
 
-                eventBus.post(SubsetsUpdated(newSubset, ruleSet, rules))
+                eventBus.post(SubsetsUpdated(ruleSet, rules))
             }
-        }
-    }
-
-    @Suppress("UNREACHABLE_CODE")
-    override fun onSubsetSelected(ruleSetCardViewModel: RuleSetCardViewModel) {
-        //TODO remove this return when you want to get back to working on editing the rulesets
-        return
-        //open ruleset creation activity with the subset
-        val ruleSetId = ruleSetCardViewModel.ruleSetId
-        val ruleSet = configBuildViewModel.configBuildManager.config.ruleSets.find {
-            it.id == ruleSetId
-        }
-        val rules = configBuildViewModel.configBuildManager.config.rules.filter {
-            it.ruleSetId == ruleSetId
-        }
-
-        if (ruleSet != null) {
-            RuleSetCreationActivity.startActivity(this, configBuildViewModel.configBuildManager.config.customFields.map {
-                it.makeDBConfig(configBuildViewModel.configBuildManager.config.id)
-            }, configBuildViewModel.configBuildManager.config.id, ruleSet, rules)
         }
     }
 
@@ -138,4 +125,4 @@ class SamplingSubsetFragment : Fragment(), Observer<SamplingSubsetViewModel.Even
     }
 }
 
-class SubsetsUpdated(val subset: Subset, val ruleSet: RuleSet, val rules: List<RuleRecord>)
+class SubsetsUpdated(val ruleSet: RuleSet, val rules: List<RuleRecord>)

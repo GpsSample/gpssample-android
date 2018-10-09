@@ -616,7 +616,14 @@ class SimpleEntityReadWriteTest {
                 AdminSettings("anypassword", config.id),
                 EnumerationSubject("Person", "People", "Point of Contact", config.id),
                 CommonSetup.makeUserSettings(config.id),
-                CommonSetup.makeDisplaySettings(config.id)
+                CommonSetup.makeDisplaySettings(config.id),
+                listOf(),
+                listOf(),
+                listOf(),
+                listOf(),
+                listOf(),
+                listOf()
+
         )
 
         val resolvedConfig = resolvedConfigDao!!.getConfigSync(config.id)

@@ -4,8 +4,8 @@ import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 
 
-class SamplingSubsetViewModelFactory() : ViewModelProvider.NewInstanceFactory() {
+class SamplingSubsetViewModelFactory(val isFixed: Boolean) : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return SamplingSubsetViewModel() as T
+        return SamplingSubsetViewModel(isFixed) as T
     }
 }

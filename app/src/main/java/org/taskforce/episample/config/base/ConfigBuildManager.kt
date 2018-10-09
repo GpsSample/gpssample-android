@@ -13,7 +13,10 @@ import org.taskforce.episample.config.language.CustomLanguage
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.config.sampling.SamplingMethod
 import org.taskforce.episample.config.sampling.SamplingMethodChanged
+import org.taskforce.episample.config.sampling.filter.RuleSetCardViewModel
+import org.taskforce.episample.config.sampling.no_grouping.RuleSetAdded
 import org.taskforce.episample.config.sampling.strata.StrataUpdated
+import org.taskforce.episample.config.sampling.subsets.SamplingSubsetViewModel
 import org.taskforce.episample.config.sampling.subsets.SubsetsUpdated
 import org.taskforce.episample.config.settings.admin.AdminSettings
 import org.taskforce.episample.config.settings.server.ServerSettings
@@ -23,8 +26,6 @@ import org.taskforce.episample.core.interfaces.EnumerationSubject
 import org.taskforce.episample.db.config.customfield.CustomFieldType
 import org.taskforce.episample.db.filter.RuleRecord
 import org.taskforce.episample.db.filter.RuleSet
-import org.taskforce.episample.db.sampling.strata.Strata
-import org.taskforce.episample.db.sampling.subsets.Subset
 import org.taskforce.episample.fileImport.models.LandmarkType
 import java.io.Serializable
 import java.util.*
@@ -139,30 +140,16 @@ class ConfigBuildManager(val config: Config = Config(Date())):
         config.rules = mutableRuleList.toList()
     }
 
-    fun addSubset(subset: Subset) {
-        val mutableSubsetList = config.subsets.toMutableList()
-        mutableSubsetList.add(subset)
-        config.subsets = mutableSubsetList.toList()
-    }
-
     @Subscribe
     fun onSubsetsUpdated(subsetsUpdatedEvent: SubsetsUpdated) {
-        addSubset(subsetsUpdatedEvent.subset)
         addRuleSet(subsetsUpdatedEvent.ruleSet)
         addRules(subsetsUpdatedEvent.rules)
 
         postNewSubsets()
     }
 
-    fun addStrata(strata: Strata) {
-        val mutableStrataList = config.strata.toMutableList()
-        mutableStrataList.add(strata)
-        config.strata = mutableStrataList.toList()
-    }
-
     @Subscribe
     fun onStrataUpdated(event: StrataUpdated) {
-        addStrata(event.strata)
         addRuleSet(event.ruleSet)
         addRules(event.rules)
 
@@ -171,55 +158,37 @@ class ConfigBuildManager(val config: Config = Config(Date())):
 
     @Subscribe
     fun onSamplingMethodChanged(event: SamplingMethodChanged) {
-        config.samplingMethod = event.samplingMethod
+        config.ruleSets = listOf()
+        config.rules = listOf()
+        config.samplingMethod.type = event.samplingMethod
+        config.samplingMethod.grouping = event.grouping
+        postNewSubsets()
+        postNewStrata()
+    }
+
+    @Subscribe
+    fun onSamplingUnitsChanged(event: SamplingSubsetViewModel.Event.SamplingUnitsChanged) {
+        config.samplingMethod.units = event.samplingUnit
+    }
+
+    @Subscribe
+    fun onSamplingAmountChanged(event: RuleSetCardViewModel.UpdateSamplingAmount) {
+        config.ruleSets.first {
+            it.id == event.ruleSetId
+        }.sampleSize = event.samplingAmount
+    }
+
+    @Subscribe
+    fun onRuleSetAdded(event: RuleSetAdded) {
+        config.ruleSets = listOf(event.ruleSet)
     }
 
     private fun postNewSubsets() {
-        val subsetsRuleSets = mutableListOf<RuleSet>()
-        config.subsets.forEach { subset ->
-            val ruleSetForSubset = config.ruleSets.find { ruleSet ->
-                ruleSet.id == subset.ruleSetId
-            }
-
-            ruleSetForSubset?.let {
-                subsetsRuleSets.add(it)
-            }
-        }
-
-        val subsetsRuleRecords = mutableListOf<RuleRecord>()
-        subsetsRuleSets.forEach { ruleSet ->
-            val ruleRecordsForRuleSet = config.rules.filter {
-                it.ruleSetId == ruleSet.id
-            }
-
-            subsetsRuleRecords.addAll(ruleRecordsForRuleSet)
-        }
-
-        eventBus.postSticky(AllSubsetsUpdated(config.subsets.toList(), subsetsRuleSets.toList(), subsetsRuleRecords.toList()))
+        eventBus.postSticky(AllSubsetsUpdated(config.ruleSets.toList(), config.rules.toList()))
     }
 
     private fun postNewStrata() {
-        val strataRuleSets = mutableListOf<RuleSet>()
-        config.strata.forEach { strata ->
-            val ruleSetForStrata = config.ruleSets.find { ruleSet ->
-                ruleSet.id == strata.ruleSetId
-            }
-
-            ruleSetForStrata?.let {
-                strataRuleSets.add(it)
-            }
-        }
-
-        val strataRuleRecords = mutableListOf<RuleRecord>()
-        strataRuleSets.forEach { ruleSet ->
-            val ruleRecordsForRuleSet = config.rules.filter {
-                it.ruleSetId == ruleSet.id
-            }
-
-            strataRuleRecords.addAll(ruleRecordsForRuleSet)
-        }
-
-        eventBus.postSticky(AllStrataUpdated(config.strata.toList(), strataRuleSets.toList(), strataRuleRecords.toList()))
+        eventBus.postSticky(AllStrataUpdated(config.ruleSets.toList(), config.rules.toList()))
     }
     
     fun addEnumerationAreas(enumerationAreas: List<EnumerationArea>) {
@@ -231,5 +200,5 @@ class ConfigBuildManager(val config: Config = Config(Date())):
     val photoCompressionOptions = arrayOf(100 to "No Compression", 50 to "Some Compression", 25 to "Maximum Compression")
 }
 
-class AllSubsetsUpdated(val subsets: List<Subset>, val ruleSets: List<RuleSet>, val ruleRecords: List<RuleRecord>)
-class AllStrataUpdated(val subsets: List<Strata>, val ruleSets: List<RuleSet>, val ruleRecords: List<RuleRecord>)
+class AllSubsetsUpdated(val ruleSets: List<RuleSet>, val ruleRecords: List<RuleRecord>)
+class AllStrataUpdated(val ruleSets: List<RuleSet>, val ruleRecords: List<RuleRecord>)

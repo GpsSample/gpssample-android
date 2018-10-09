@@ -18,22 +18,38 @@
         app:contentPadding="16dp">
 
         <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:text="@{vm.name}"
-                android:textSize="16sp"
-                android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                tools:text="Vaccinated Children Under 5"/>
+                android:orientation="vertical">
 
+                <TextView
+                    android:text="@{vm.name}"
+                    android:textSize="16sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Vaccinated Children Under 5"/>
+
+                <TextView
+                    android:text="@{vm.subtext}"
+                    tools:text="Any of 3 rules"
+                    android:textColor="@color/textColorDetails"
+                    android:textSize="14sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+            <EditText
+                android:text="@={vm.samplingAmount}"
+                android:digits="1234567890"
+                android:layout_width="42dp"
+                android:layout_height="match_parent"/>
             <TextView
-                android:text="@{vm.subtext}"
-                tools:text="Any of 3 rules"
-                android:textColor="@color/textColorDetails"
-                android:textSize="14sp"
+                android:text="@{vm.unitText}"
+                tools:text="%"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         </LinearLayout>

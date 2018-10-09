@@ -6,6 +6,7 @@ import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
 import android.os.AsyncTask
+import org.taskforce.episample.config.sampling.SamplingMethodEntity
 import org.taskforce.episample.db.collect.*
 import org.taskforce.episample.db.config.*
 import org.taskforce.episample.db.config.customfield.CustomField
@@ -20,10 +21,8 @@ import org.taskforce.episample.db.navigation.NavigationDao
 import org.taskforce.episample.db.navigation.NavigationItem
 import org.taskforce.episample.db.navigation.NavigationPlan
 import org.taskforce.episample.db.transfer.TransferDao
-import org.taskforce.episample.db.sampling.strata.Strata
-import org.taskforce.episample.db.sampling.subsets.Subset
 
-@Database(version = 2,
+@Database(version = 3,
         entities = [
             AdminSettings::class,
             Config::class,
@@ -41,8 +40,7 @@ import org.taskforce.episample.db.sampling.subsets.Subset
             NavigationItem::class,
             RuleSet::class,
             RuleRecord::class,
-            Strata::class,
-            Subset::class,
+            SamplingMethodEntity::class,
             Study::class,
             UserSettings::class
         ])

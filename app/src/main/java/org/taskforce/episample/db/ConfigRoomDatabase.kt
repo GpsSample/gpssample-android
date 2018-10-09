@@ -6,6 +6,7 @@ import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
 import android.os.AsyncTask
+import org.taskforce.episample.config.sampling.SamplingMethodEntity
 import org.taskforce.episample.db.config.*
 import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.customfield.CustomFieldDao
@@ -13,10 +14,8 @@ import org.taskforce.episample.db.config.landmark.CustomLandmarkType
 import org.taskforce.episample.db.filter.RuleDao
 import org.taskforce.episample.db.filter.RuleRecord
 import org.taskforce.episample.db.filter.RuleSet
-import org.taskforce.episample.db.sampling.strata.Strata
-import org.taskforce.episample.db.sampling.subsets.Subset
 
-@Database(version = 28,
+@Database(version = 29,
         entities = [
             AdminSettings::class,
             Config::class,
@@ -28,9 +27,8 @@ import org.taskforce.episample.db.sampling.subsets.Subset
             EnumerationSubject::class,
             RuleSet::class,
             RuleRecord::class,
+            SamplingMethodEntity::class,
             Study::class,
-            Strata::class,
-            Subset::class,
             UserSettings::class
         ])
 

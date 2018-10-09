@@ -3,6 +3,7 @@ package org.taskforce.episample.db.filter
 import android.arch.persistence.room.*
 import android.os.Parcel
 import android.os.Parcelable
+import org.taskforce.episample.config.sampling.SamplingMethodEntity
 import org.taskforce.episample.config.sampling.filter.CustomFieldForRules
 import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.filter.checkbox.BooleanRuleFactory
@@ -14,23 +15,35 @@ import org.taskforce.episample.db.filter.text.TextRuleFactory
 import java.io.Serializable
 import java.util.*
 
-@Entity(tableName = "rule_set_table")
+@Entity(tableName = "rule_set_table", foreignKeys = [
+    (ForeignKey(
+            entity = SamplingMethodEntity::class, parentColumns = ["id"], childColumns = ["methodology_id"], onDelete = ForeignKey.CASCADE
+    ))
+])
 class RuleSet(
+        @ColumnInfo(name = "methodology_id")
+        var methodologyId: String,
         @ColumnInfo(name = "name")
         var name: String,
         @ColumnInfo(name = "isAny")
         var isAny: Boolean,
+        @ColumnInfo(name = "sample_size")
+        var sampleSize: Int = 0,
         @PrimaryKey
         var id: String = UUID.randomUUID().toString()
 ) : Parcelable, Serializable {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
+            parcel.readString(),
             parcel.readByte() != 0.toByte(),
+            parcel.readInt(),
             parcel.readString())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(methodologyId)
         parcel.writeString(name)
         parcel.writeByte(if (isAny) 1 else 0)
+        parcel.writeInt(sampleSize)
         parcel.writeString(id)
     }
 
@@ -48,6 +61,7 @@ class RuleSet(
         }
     }
 }
+
 @Entity(tableName = "rule_record_table",
         foreignKeys = [
             (ForeignKey(
@@ -136,7 +150,7 @@ class ResolvedRuleRecord(
                     is CustomFieldForRules.TextField -> TEXT_FACTORY
                     is CustomFieldForRules.IntegerField -> INT_FACTORY
                     is CustomFieldForRules.DoubleField -> DOUBLE_FACTORY
-                    is CustomFieldForRules.BooleanField ->  BOOLEAN_FACTORY
+                    is CustomFieldForRules.BooleanField -> BOOLEAN_FACTORY
                 }
             }
         }

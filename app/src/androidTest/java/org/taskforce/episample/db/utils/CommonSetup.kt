@@ -33,8 +33,8 @@ class CommonSetup {
                     configId = configId)
         }
 
-        fun makeUserSettings(configId: String, gpsMinimumPrecision: Double = 40.0, gpsPreferredPrecision: Double = 20.0, allowPhotos: Boolean = true): UserSettings {
-            return UserSettings(gpsMinimumPrecision, gpsPreferredPrecision, allowPhotos, configId)
+        fun makeUserSettings(configId: String, gpsMinimumPrecision: Double = 40.0, gpsPreferredPrecision: Double = 20.0, allowPhotos: Boolean = true, photoCompressionScale: Int = 50): UserSettings {
+            return UserSettings(gpsMinimumPrecision, gpsPreferredPrecision, allowPhotos, photoCompressionScale,configId)
         }
 
         fun makeDisplaySettings(configId: String, isMetricDate: Boolean = true, is24HourTime: Boolean = false): DisplaySettings {
@@ -128,7 +128,13 @@ class CommonSetup {
                     org.taskforce.episample.db.config.AdminSettings("password", configId),
                     EnumerationSubject("s", "p", "l", configId),
                     CommonSetup.makeUserSettings(configId),
-                    CommonSetup.makeDisplaySettings(configId))
+                    CommonSetup.makeDisplaySettings(configId),
+                    listOf(),
+                    listOf(),
+                    listOf(),
+                    listOf(),
+                    listOf(),
+                    listOf())
 
             configDao.insert(*convertedFields.toTypedArray())
 
@@ -142,7 +148,13 @@ class CommonSetup {
                     AdminSettings(adminPassword, config.id),
                     EnumerationSubject(enumerationSingular, enumerationPlural, enumerationLabel, config.id),
                     CommonSetup.makeUserSettings(config.id),
-                    CommonSetup.makeDisplaySettings(config.id)
+                    CommonSetup.makeDisplaySettings(config.id),
+                    listOf(),
+                    listOf(),
+                    listOf(),
+                    listOf(),
+                    listOf(),
+                    listOf()
             )
         }
 
@@ -155,7 +167,13 @@ class CommonSetup {
                     AdminSettings("anypassword", insertConfig.id),
                     EnumerationSubject("Person", "People", "Point of Contact", insertConfig.id),
                     CommonSetup.makeUserSettings(configId),
-                    CommonSetup.makeDisplaySettings(insertConfig.id)
+                    CommonSetup.makeDisplaySettings(insertConfig.id),
+                    listOf(),
+                    listOf(),
+                    listOf(),
+                    listOf(),
+                    listOf(),
+                    listOf()
             )
         }
     }

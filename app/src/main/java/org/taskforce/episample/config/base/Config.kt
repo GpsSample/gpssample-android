@@ -12,8 +12,6 @@ import org.taskforce.episample.core.interfaces.EnumerationArea
 import org.taskforce.episample.core.interfaces.EnumerationSubject
 import org.taskforce.episample.db.filter.RuleRecord
 import org.taskforce.episample.db.filter.RuleSet
-import org.taskforce.episample.db.sampling.strata.Strata
-import org.taskforce.episample.db.sampling.subsets.Subset
 import org.taskforce.episample.fileImport.models.LandmarkType
 import org.taskforce.episample.utils.humanReadableBytes
 import java.io.ByteArrayOutputStream
@@ -44,9 +42,7 @@ class Config(
     var enumerationSubject: EnumerationSubject? = null
     var ruleSets = listOf<RuleSet>()
     var rules = listOf<RuleRecord>()
-    var subsets = listOf<Subset>()
-    var strata = listOf<Strata>()
-    
+
     val size: String
         get() {
             val sizeStream = ByteArrayOutputStream()

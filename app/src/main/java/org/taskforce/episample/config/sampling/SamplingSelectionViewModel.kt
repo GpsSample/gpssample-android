@@ -14,9 +14,12 @@ import org.taskforce.episample.config.sampling.strata.SamplingStrataFragment
 import org.taskforce.episample.config.sampling.subsets.SamplingSubsetFragment
 
 class SamplingSelectionViewModel(
-        val methodology: ObservableField<SamplingMethodology>,
-        val units: ObservableField<SamplingUnits>) :
+        method: SamplingMethodology,
+        unit: SamplingUnits) :
         ViewModel(), SamplingSelectionOnDatasetChanged, BaseConfigViewModel {
+
+    val methodology = ObservableField<SamplingMethodology>(method)
+    val units = ObservableField<SamplingUnits>(unit)
     val samplingGrouping = ObservableField<SamplingGrouping>(SamplingGrouping.SUBSETS)
 
     val eventBus: EventBus = EventBus.getDefault()
@@ -70,8 +73,7 @@ class SamplingSelectionViewModel(
     }
 
     fun samplingMethodChanged() {
-        val newMethod = SamplingMethod(methodology.get()!!, units.get()!!, samplingGrouping.get()!!)
-        eventBus.post(SamplingMethodChanged(newMethod))
+        eventBus.post(SamplingMethodChanged(methodology.get()!!, samplingGrouping.get()!!))
     }
 
     override val progress: Int
@@ -102,4 +104,4 @@ class SamplingSelectionViewModel(
     }
 }
 
-class SamplingMethodChanged(val samplingMethod: SamplingMethod)
+class SamplingMethodChanged(val samplingMethod: SamplingMethodology, val grouping: SamplingGrouping)

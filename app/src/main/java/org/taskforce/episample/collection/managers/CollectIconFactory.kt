@@ -1,15 +1,14 @@
 package org.taskforce.episample.collection.managers
 
 import android.content.ContentResolver
+import android.content.Context
 import android.content.res.Resources
 import android.net.Uri
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.mapbox.mapboxsdk.annotations.Icon
 import org.taskforce.episample.R
-import org.taskforce.episample.core.interfaces.CollectItem
-import org.taskforce.episample.core.interfaces.Enumeration
-import org.taskforce.episample.core.interfaces.Landmark
-import org.taskforce.episample.core.interfaces.NavigationItem
+import org.taskforce.episample.core.interfaces.*
 import org.taskforce.episample.core.navigation.SurveyStatus
 import org.taskforce.episample.utils.getResourceUri
 import java.io.File

@@ -6,25 +6,19 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import android.databinding.ObservableField
-import android.location.Location
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.LatLng
-import io.reactivex.Observable
-import io.reactivex.Single
+import com.mapbox.mapboxsdk.geometry.LatLng
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.LiveDataPair
-import org.taskforce.episample.core.LiveDataTriple
-import org.taskforce.episample.core.interfaces.*
-import org.taskforce.episample.core.mock.MockBreadcrumb
-import java.util.*
+import org.taskforce.episample.core.interfaces.CollectManager
+import org.taskforce.episample.core.interfaces.Config
+import org.taskforce.episample.core.interfaces.EnumerationSubject
+import org.taskforce.episample.core.interfaces.LocationService
 import javax.inject.Inject
 
 class CollectViewModel(application: Application,
                        languageService: LanguageService,
-                       googleMapSingle: Single<GoogleMap>,
                        val addPoint: (Boolean) -> Unit,
                        val back: () -> Unit) : AndroidViewModel(application) {
 
@@ -58,17 +52,6 @@ class CollectViewModel(application: Application,
             descriptionText.value = "${subjectCount.value} ${config.enumerationSubject.plural}, " +
                     "${landmarkCount.value} ${languageService.getString(R.string.config_landmarks_title)}"
         }
-
-        googleMapSingle.subscribe({
-            googleMap = it
-            lastKnownLocation?.let { location ->
-                it.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoomLevel))
-            }
-        },
-                {
-                    //TODO: Display unable to load Google Map.
-                }
-        )
     }
 
     private val subjectCount: LiveData<Int> = Transformations.map(collectManager.getEnumerations()) { it.size }
@@ -90,14 +73,10 @@ class CollectViewModel(application: Application,
         value = languageService.getString(R.string.collect_button_landmark)
     }
 
-    var googleMap: GoogleMap? = null
-
     var lastKnownLocation: LatLng? = null
-    
-    var lastKnownBreadcrumbLocation: LatLng? = null
 
     companion object {
         val breadcrumbAccuracy: Float = 5F
-        val zoomLevel = 18.0f
+        val zoomLevel = 18.0
     }
 }

@@ -12,7 +12,6 @@ import org.taskforce.episample.core.interfaces.EnumerationSubject
 
 class CollectAddViewModelFactory(private val application: Application,
                                  private val languageService: LanguageService,
-                                 private val mapObservable: Single<GoogleMap>,
                                  private val isLandmark: Boolean,
                                  private val saveButtonEnabledColor: Int,
                                  private val saveButtonDisabledColor: Int,
@@ -25,7 +24,6 @@ class CollectAddViewModelFactory(private val application: Application,
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return CollectAddViewModel(application,
                 languageService,
-                mapObservable,
                 isLandmark,
                 saveButtonEnabledColor,
                 saveButtonDisabledColor,

@@ -1,6 +1,5 @@
 package org.taskforce.episample.collection.viewmodels
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MediatorLiveData
@@ -10,10 +9,7 @@ import android.databinding.ObservableField
 import android.net.Uri
 import android.os.CountDownTimer
 import android.view.View
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
-import io.reactivex.Single
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.collection.ui.CollectGpsPrecisionViewModel
@@ -29,7 +25,6 @@ import javax.inject.Inject
 class CollectAddViewModel(
         application: Application,
         languageService: LanguageService,
-        mapObservable: Single<GoogleMap>,
         val isLandmark: Boolean,
         private val saveButtonEnabledColor: Int,
         private val saveButtonDisabledColor: Int,
@@ -333,21 +328,8 @@ class CollectAddViewModel(
     private val isSufficientlyPrecise
         get() = (locationPrecision ?: 9999.0f <= config.userSettings.gpsPreferredPrecision)
 
-    var googleMap: GoogleMap? = null
-    var lastKnownLocation: LatLng? = null
-
     init {
         useDuplicatedGps = false // reset
-
-        mapObservable.subscribe { map ->
-            googleMap = map
-            @SuppressLint("MissingPermission")
-            map.isMyLocationEnabled = true
-            map.mapType = GoogleMap.MAP_TYPE_SATELLITE
-            locationLatLng?.let { latLng ->
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, mapZoom))
-            }
-        }
     }
 
     fun addCustomFieldViewModel(viewModel: AbstractCustomViewModel) {
@@ -468,7 +450,7 @@ class CollectAddViewModel(
     }
 
     companion object {
-        val mapZoom = 18.0f
+        val mapZoom = 18.0
         const val countdownLength: Long = 120000 // 2 minutes in milliseconds
         const val countdownTick: Long = 1000 // 1 second in milliseconds
     }

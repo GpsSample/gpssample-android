@@ -12,6 +12,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import com.google.android.gms.maps.model.CircleOptions
+import com.google.android.gms.maps.model.LatLng
+import com.mapbox.mapboxsdk.annotations.Polygon
+import com.mapbox.mapboxsdk.annotations.PolygonOptions
+import com.mapbox.mapboxsdk.annotations.PolylineOptions
 import org.taskforce.episample.R
 import org.taskforce.episample.config.fields.CustomDropdown
 import org.taskforce.episample.config.fields.CustomFieldTypeConstants
@@ -149,3 +154,5 @@ fun org.taskforce.episample.core.interfaces.Landmark.toDBLandmark(collectorName:
             dateCreated = dateCreated,
             collectorName = collectorName)
 }
+
+fun LatLng.toMapboxLatLng(): com.mapbox.mapboxsdk.geometry.LatLng = com.mapbox.mapboxsdk.geometry.LatLng(latitude, longitude)

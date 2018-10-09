@@ -1,80 +1,72 @@
 package org.taskforce.episample.collection.ui
 
 import android.annotation.SuppressLint
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.location.Location
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.PolylineOptions
-import io.reactivex.Single
+import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.annotations.Marker
+import com.mapbox.mapboxsdk.annotations.PolylineOptions
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
+import com.mapbox.mapboxsdk.maps.MapboxMap
+import com.mapbox.mapboxsdk.maps.MapboxMapOptions
+import com.mapbox.mapboxsdk.maps.SupportMapFragment
 import kotlinx.android.synthetic.main.fragment_collect.*
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.collection.managers.CollectIconFactory
-import org.taskforce.episample.collection.managers.CollectionItemMarkerManager
+import org.taskforce.episample.collection.managers.MapboxItemMarkerManager
 import org.taskforce.episample.collection.viewmodels.CollectCardViewModel
 import org.taskforce.episample.collection.viewmodels.CollectViewModel
 import org.taskforce.episample.collection.viewmodels.CollectViewModelFactory
 import org.taskforce.episample.config.language.LanguageService
-import org.taskforce.episample.core.interfaces.Breadcrumb
-import org.taskforce.episample.core.interfaces.CollectItem
-import org.taskforce.episample.core.interfaces.LiveBreadcrumb
-import org.taskforce.episample.core.interfaces.LocationServiceConfiguration
+import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.databinding.FragmentCollectBinding
 import org.taskforce.episample.toolbar.managers.LanguageManager
 import org.taskforce.episample.utils.getCompatColor
 import org.taskforce.episample.utils.inflater
-import java.util.*
+import org.taskforce.episample.utils.toMapboxLatLng
 import javax.inject.Inject
 
-class CollectFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener {
+class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.OnMapClickListener {
 
     @Inject
     lateinit var languageManager: LanguageManager
     lateinit var languageService: LanguageService
 
     lateinit var collectIconFactory: CollectIconFactory
-    lateinit var markerManager: CollectionItemMarkerManager
 
     lateinit var collectViewModel: CollectViewModel
 
-    var adapter: CollectItemAdapter? =  null
-    lateinit var mapFragment: SupportMapFragment
+    var adapter: CollectItemAdapter? = null
     lateinit var breadcrumbPath: PolylineOptions
     lateinit var collectCardVm: CollectCardViewModel
+
+    private var mapFragment: SupportMapFragment? = null
+    private val markerManagerLiveData = MutableLiveData<MapboxItemMarkerManager>()
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (requireActivity().application as EpiApplication).component.inject(this)
 
+        Mapbox.getInstance(requireContext(), getString(R.string.mapbox_access_token))
+
         languageService = LanguageService(languageManager)
 
         collectIconFactory = CollectIconFactory(requireContext().resources)
 
-        breadcrumbPath = PolylineOptions().clickable(false)
-
-        mapFragment = SupportMapFragment()
+        breadcrumbPath = PolylineOptions()
 
         collectViewModel = ViewModelProviders.of(this@CollectFragment,
                 CollectViewModelFactory(
                         requireActivity().application,
                         languageService,
-                        Single.create<GoogleMap> { single ->
-                            mapFragment.getMapAsync {
-                                single.onSuccess(it)
-                            }
-                        },
                         {
                             showCollectAddScreen(it)
                         },
@@ -94,34 +86,10 @@ class CollectFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMap.O
                 requireContext().getCompatColor(R.color.gpsAcceptable))
 
         lifecycle.addObserver(collectViewModel.locationService)
-        collectViewModel.locationService.locationLiveData.observe(this, Observer {
-            it?.let { (latLng, accuracy) ->
-                collectCardVm.currentLocation.set(latLng)
-                if (collectViewModel.lastKnownLocation == null) {
-                    collectViewModel.googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, CollectViewModel.zoomLevel))
-                }
-
-                collectViewModel.lastKnownLocation = latLng
-            }
-        })
-
-        mapFragment.getMapAsync {
-            markerManager = CollectionItemMarkerManager(collectIconFactory, it)
-
-            it.isMyLocationEnabled = true
-            it.mapType = GoogleMap.MAP_TYPE_SATELLITE
-            it.setOnMarkerClickListener(this@CollectFragment)
-            it.setOnMapClickListener(this@CollectFragment)
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = FragmentCollectBinding.inflate(inflater.context.inflater).apply {
-            childFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.collectionMap, mapFragment)
-                    .commit()
-
             vm = collectViewModel
             cardVm = collectCardVm
         }
@@ -131,31 +99,30 @@ class CollectFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMap.O
                 collectViewModel.config.displaySettings)
         binding.collectList.adapter = adapter
 
-        collectViewModel.collectItems.observe(this, Observer {
-            val items = it
-            val sortedItems = items?.sortedByDescending { it.dateCreated } ?: emptyList()
-            adapter?.data = sortedItems
+        LiveDataPair(markerManagerLiveData, collectViewModel.collectItems).observe(this, Observer {
+            it?.let { (markerManager, items) ->
 
-            val titleText = languageService.getString(R.string.collect_title, "${items?.size ?: 0}")
-            collectTitle.text = titleText
+                val sortedItems = items.sortedByDescending { it.dateCreated }
+                adapter?.data = sortedItems
 
-            this@CollectFragment.mapFragment.getMapAsync {
-                markerManager.addMarkerDiff(items ?: emptyList())
+                val titleText = languageService.getString(R.string.collect_title, "${items.size}")
+                collectTitle.text = titleText
+
+                markerManager.addMarkerDiff(items)
             }
         })
 
         collectViewModel.gpsBreadcrumbs.observe(this, Observer { breadcrumbs ->
-            this@CollectFragment.mapFragment.getMapAsync { map ->
+            mapFragment?.getMapAsync { map ->
 
-                val polylineOptions= mutableListOf<PolylineOptions>()
+                val polylineOptions = mutableListOf<PolylineOptions>()
                 breadcrumbs?.sortedBy { it.dateCreated }?.forEach {
                     if (it.startOfSession) {
                         polylineOptions.add(PolylineOptions()
-                                .clickable(false)
                                 .color(R.color.greyHighlights))
                     }
 
-                    polylineOptions.last().add(it.location)
+                    polylineOptions.last().add(it.location.toMapboxLatLng())
                 }
 
                 polylineOptions.forEach { breadCrumbPath ->
@@ -169,9 +136,58 @@ class CollectFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMap.O
         return binding.root
     }
 
-    override fun onMarkerClick(marker: Marker?): Boolean {
-        marker?.let {
-            val collectItem = it.tag as CollectItem
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        if (savedInstanceState == null) {
+            mapFragment = SupportMapFragment.newInstance(MapboxMapOptions().styleUrl("mapbox://styles/jesseblack/cjlwkyu3p3qjw2rpqtpxnsb5j"))
+            childFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.collectionMap, mapFragment, MAP_FRAGMENT_TAG)
+                    .commit()
+
+        } else {
+            mapFragment = childFragmentManager.findFragmentByTag(MAP_FRAGMENT_TAG) as SupportMapFragment
+        }
+
+        mapFragment?.getMapAsync {
+            markerManagerLiveData.postValue(MapboxItemMarkerManager(requireContext(), it))
+
+            it.setOnMarkerClickListener(this@CollectFragment)
+            it.addOnMapClickListener(this@CollectFragment)
+        }
+
+        LiveDataPair(markerManagerLiveData, collectViewModel.locationService.locationLiveData).observe(this, Observer {
+            it?.let { (markerManager, locationUpdate) ->
+                locationUpdate.let { (latLng, accuracy) ->
+                    collectCardVm.currentLocation.set(latLng)
+                    markerManager.setCurrentLocation(latLng.toMapboxLatLng(), accuracy.toDouble())
+                    if (collectViewModel.lastKnownLocation == null) {
+                        mapFragment?.getMapAsync {
+                            it.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng.toMapboxLatLng(), CollectViewModel.zoomLevel))
+                        }
+                    }
+
+                    collectViewModel.lastKnownLocation = latLng.toMapboxLatLng()
+                }
+            }
+        })
+
+        mapFragment?.onCreate(savedInstanceState)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        collectViewModel.lastKnownLocation?.let { lastLocation ->
+            mapFragment?.getMapAsync {
+                it.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, CollectViewModel.zoomLevel))
+            }
+        }
+    }
+
+    override fun onMarkerClick(marker: Marker): Boolean {
+        markerManagerLiveData.value?.getCollectItem(marker)?.let { collectItem ->
+
             collectCardVm.visibility = true
             collectCardVm.itemData.set(collectItem)
         }
@@ -179,7 +195,7 @@ class CollectFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMap.O
         return true
     }
 
-    override fun onMapClick(marker: LatLng?) {
+    override fun onMapClick(point: com.mapbox.mapboxsdk.geometry.LatLng) {
         if (collectCardVm.visibility) {
             collectCardVm.visibility = false
         }
@@ -198,6 +214,8 @@ class CollectFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMap.O
     }
 
     companion object {
+        const val MAP_FRAGMENT_TAG = "collectFragment.MapboxFragment"
+
         fun newInstance(): Fragment {
             return CollectFragment()
         }

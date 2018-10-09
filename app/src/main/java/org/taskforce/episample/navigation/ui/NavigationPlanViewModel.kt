@@ -19,7 +19,7 @@ import org.taskforce.episample.core.navigation.SurveyStatus
 import javax.inject.Inject
 
 class NavigationPlanViewModel(application: Application,
-                              val navigatoinPlanId: String,
+                              val navigationPlanId: String,
                               val startRoute: () -> Unit,
                               val addLandmark: () -> Unit) : AndroidViewModel(application) {
 
@@ -46,7 +46,7 @@ class NavigationPlanViewModel(application: Application,
 
     val breadcrumbs = navigationManager.getBreadcrumbs()
 
-    val navigationItems: LiveData<List<NavigationItem>> = navigationManager.getNavigationItems(navigatoinPlanId)
+    val navigationItems: LiveData<List<NavigationItem>> = navigationManager.getNavigationItems(navigationPlanId)
     
     val landmarks = navigationManager.getLandmarks()
 

@@ -2,6 +2,7 @@ package org.taskforce.episample.navigation.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.ClipData
@@ -16,41 +17,36 @@ import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.*
 import android.widget.Toast
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import io.reactivex.Single
+import com.mapbox.mapboxsdk.annotations.Marker
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
+import com.mapbox.mapboxsdk.geometry.LatLng
+import com.mapbox.mapboxsdk.maps.MapboxMap
+import com.mapbox.mapboxsdk.maps.MapboxMapOptions
+import com.mapbox.mapboxsdk.maps.SupportMapFragment
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
-import org.taskforce.episample.collection.managers.CollectIconFactory
-import org.taskforce.episample.collection.managers.CollectionItemMarkerManager
+import org.taskforce.episample.collection.managers.MapboxItemMarkerManager
 import org.taskforce.episample.collection.viewmodels.CollectViewModel
-import org.taskforce.episample.core.interfaces.CollectItem
+import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.navigation.SurveyStatus
 import org.taskforce.episample.core.ui.dialogs.TextInputDialogFragment
 import org.taskforce.episample.databinding.FragmentNavigationBinding
 import org.taskforce.episample.db.config.customfield.value.IntValue
 import org.taskforce.episample.utils.getCompatColor
+import org.taskforce.episample.utils.toMapboxLatLng
 
 
-class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener {
+class NavigationFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.OnMapClickListener {
 
-    private lateinit var locationClient: FusedLocationProviderClient
-    private lateinit var collectIconFactory: CollectIconFactory
-    private lateinit var markerManager: CollectionItemMarkerManager
+    private var mapFragment: SupportMapFragment? = null
+    private val markerManagerLiveData = MutableLiveData<MapboxItemMarkerManager>()
 
     private lateinit var navigationViewModel: NavigationViewModel
     private lateinit var navigationToolbarViewModel: NavigationToolbarViewModel
     private lateinit var navigationCardViewModel: NavigationCardViewModel
 
-    private lateinit var mapFragment: SupportMapFragment
     private lateinit var navigationPlanId: String
 
-    private var googleMap: GoogleMap? = null
     private var lastKnownLocation: LatLng? = null
 
     @SuppressLint("MissingPermission")
@@ -59,44 +55,11 @@ class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMa
         (requireActivity().application as EpiApplication).component.inject(this)
         navigationPlanId = arguments!!.getString(ARG_NAVIGATION_PLAN_ID)
 
-        locationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-        collectIconFactory = CollectIconFactory(requireContext().resources)
-
-        mapFragment = SupportMapFragment()
-
-        Single.create<GoogleMap> { single ->
-            mapFragment.getMapAsync {
-                single.onSuccess(it)
-                it.setOnMarkerClickListener(this@NavigationFragment)
-                it.setOnMapClickListener(this@NavigationFragment)
-            }
-        }.subscribe({
-            googleMap = it
-            lastKnownLocation?.let { location ->
-                it.moveCamera(CameraUpdateFactory.newLatLngZoom(location, CollectViewModel.zoomLevel))
-            }
-
-        },
-                {
-                    //TODO: Display unable to load Google Map.
-                }
-        )
-
         navigationViewModel = ViewModelProviders.of(this@NavigationFragment,
                 NavigationViewModelFactory(requireActivity().application,
                         navigationPlanId))
                 .get(NavigationViewModel::class.java)
         lifecycle.addObserver(navigationViewModel.locationService)
-        navigationViewModel.locationService.locationLiveData.observe(this, Observer {
-            it?.let { pair ->
-                val location = pair.first
-
-                if (lastKnownLocation == null) {
-                    googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(location, CollectViewModel.zoomLevel))
-                }
-                lastKnownLocation = location
-            }
-        })
         navigationCardViewModel = ViewModelProviders.of(this@NavigationFragment,
                 LiveNavigationCardViewModelFactory(
                         requireActivity().application,
@@ -126,13 +89,6 @@ class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMa
             }
 
         })
-
-        mapFragment.getMapAsync {
-            markerManager = CollectionItemMarkerManager(collectIconFactory, it)
-
-            it.isMyLocationEnabled = true
-            it.mapType = GoogleMap.MAP_TYPE_SATELLITE
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -141,30 +97,29 @@ class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMa
         val toolbar = binding.root.findViewById<Toolbar>(R.id.toolbar)
         (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
 
-        childFragmentManager
-                .beginTransaction()
-                .replace(R.id.collectionMap, mapFragment)
-                .commit()
-
         binding.vm = navigationViewModel
         binding.cardVm = navigationCardViewModel
         binding.toolbarVm = navigationToolbarViewModel
         binding.setLifecycleOwner(this)
 
-        navigationViewModel.landmarks.observe(this, Observer { landmarks ->
-            this@NavigationFragment.mapFragment.getMapAsync {
-                markerManager.addMarkerDiff(landmarks ?: emptyList())
+        LiveDataPair(markerManagerLiveData, navigationViewModel.landmarks).observe(this, Observer {
+            it?.let { (markerManager, landmarks) ->
+                mapFragment?.getMapAsync {
+                    markerManager.addMarkerDiff(landmarks)
+                }
             }
         })
 
-        navigationViewModel.navigationItems.observe(this, Observer { items ->
-            this@NavigationFragment.mapFragment.getMapAsync {
-                markerManager.addMarkerDiff(items ?: emptyList())
+        LiveDataPair(markerManagerLiveData, navigationViewModel.navigationItems).observe(this, Observer {
+            it?.let { (markerManager, items) ->
+                mapFragment?.getMapAsync {
+                    markerManager.addMarkerDiff(items)
+                }
             }
         })
 //
 //        navigationViewModel.possiblePath.observe(this, Observer { breadcrumbs ->
-//            this@NavigationFragment.mapFragment.getMapAsync { map ->
+//            mapFragment?.getMapAsync { map ->
 //                val breadCrumbPath = PolylineOptions()
 //                        .pattern(listOf(Dot(), Gap(10.0F)))
 //                        .jointType(JointType.ROUND)
@@ -176,7 +131,7 @@ class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMa
 //        })
 //
 //        navigationViewModel.breadcrumbs.observe(this, Observer { breadcrumbs ->
-//            this@NavigationFragment.mapFragment.getMapAsync { map ->
+//            mapFragment?.getMapAsync { map ->
 //                val breadCrumbPath = PolylineOptions()
 //                        .width(5.0F)
 //                        .clickable(false)
@@ -184,6 +139,20 @@ class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMa
 //                map.addPolyline(breadCrumbPath)
 //            }
 //        })
+
+        LiveDataPair(markerManagerLiveData, navigationViewModel.locationService.locationLiveData).observe(this, Observer {
+            it?.let { (markerManager, locationPair) ->
+                locationPair.let { (latLng, accuracy) ->
+                    markerManager.setCurrentLocation(latLng.toMapboxLatLng(), accuracy.toDouble())
+                    if (lastKnownLocation == null) {
+                        mapFragment?.getMapAsync {
+                            it.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng.toMapboxLatLng(), CollectViewModel.zoomLevel))
+                        }
+                    }
+                    lastKnownLocation = latLng.toMapboxLatLng()
+                }
+            }
+        })
 
         return binding.root
     }
@@ -193,22 +162,41 @@ class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMa
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onMarkerClick(marker: Marker?): Boolean {
-        marker?.let {
-            val collectItem = it.tag as CollectItem
-            navigationCardViewModel.visibility.postValue(true)
-            navigationCardViewModel.itemData.postValue(collectItem)
+    override fun onMarkerClick(marker: Marker): Boolean {
+        marker.let {
+            markerManagerLiveData.value?.getCollectItem(marker)?.let { collectItem ->
+                navigationCardViewModel.visibility.postValue(true)
+                navigationCardViewModel.itemData.postValue(collectItem)
+            }
         }
 
         return true
     }
 
-    override fun onMapClick(p0: LatLng?) {
+    override fun onMapClick(point: LatLng) {
         navigationCardViewModel.visibility.postValue(false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (savedInstanceState == null) {
+            mapFragment = SupportMapFragment.newInstance(MapboxMapOptions().styleUrl("mapbox://styles/jesseblack/cjlwkyu3p3qjw2rpqtpxnsb5j"))
+            childFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.collectionMap, mapFragment, MAP_FRAGMENT_TAG)
+                    .commit()
+
+        } else {
+            mapFragment = childFragmentManager.findFragmentByTag(MAP_FRAGMENT_TAG) as SupportMapFragment
+        }
+
+        mapFragment?.getMapAsync {
+            markerManagerLiveData.postValue(MapboxItemMarkerManager(requireContext(), it))
+            it.setOnMarkerClickListener(this)
+            it.addOnMapClickListener(this)
+        }
+
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
 
         toolbar?.setNavigationOnClickListener {
@@ -218,6 +206,24 @@ class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMa
                 requireActivity().finish()
             }
         }
+
+        mapFragment?.onCreate(savedInstanceState)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (navigationViewModel.launchedSurvey) {
+            navigationViewModel.nextNavigationItem.value?.let { navItem ->
+                navItem.id?.let { id ->
+                    val fragment = SurveyStatusDialogFragment.newInstance(id, navItem.surveyStatus)
+                    fragment.setTargetFragment(this, GET_SURVEY_STATUS_REASON_CODE)
+                    fragment.show(requireFragmentManager(), SurveyStatusDialogFragment.TAG)
+                }
+            }
+        }
+
+        navigationViewModel.launchedSurvey = false
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -269,22 +275,6 @@ class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMa
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        if (navigationViewModel.launchedSurvey) {
-            navigationViewModel.nextNavigationItem.value?.let { navItem ->
-                navItem.id?.let { id ->
-                    val fragment = SurveyStatusDialogFragment.newInstance(id, navItem.surveyStatus)
-                    fragment.setTargetFragment(this, GET_SURVEY_STATUS_REASON_CODE)
-                    fragment.show(requireFragmentManager(), SurveyStatusDialogFragment.TAG)
-                }
-            }
-        }
-
-        navigationViewModel.launchedSurvey = false
-    }
-
     private fun launchSurvey() {
         try {
             val intent = Intent(Intent.ACTION_PICK)
@@ -331,6 +321,8 @@ class NavigationFragment : Fragment(), GoogleMap.OnMarkerClickListener, GoogleMa
     }
 
     companion object {
+        const val MAP_FRAGMENT_TAG = "navigationPlanFragment.MapboxFragment"
+
         const val ARG_NAVIGATION_PLAN_ID = "ARG_NAVIGATION_PLAN_ID"
 
         const val GET_SKIP_REASON_CODE = 1

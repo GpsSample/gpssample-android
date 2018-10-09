@@ -2,6 +2,7 @@ package org.taskforce.episample.collection.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
@@ -16,16 +17,14 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.PolylineOptions
-import io.reactivex.Single
+import com.mapbox.mapboxsdk.annotations.PolylineOptions
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
+import com.mapbox.mapboxsdk.maps.MapboxMapOptions
+import com.mapbox.mapboxsdk.maps.SupportMapFragment
 import kotlinx.android.synthetic.main.fragment_collect_add.*
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
-import org.taskforce.episample.collection.managers.CollectIconFactory
-import org.taskforce.episample.collection.managers.CollectionItemMarkerManager
+import org.taskforce.episample.collection.managers.MapboxItemMarkerManager
 import org.taskforce.episample.collection.managers.generateView
 import org.taskforce.episample.collection.managers.generateViewModel
 import org.taskforce.episample.collection.viewmodels.CollectAddViewModel
@@ -34,6 +33,7 @@ import org.taskforce.episample.collection.viewmodels.CollectViewModel
 import org.taskforce.episample.collection.viewmodels.CustomDropdownViewModel
 import org.taskforce.episample.config.geography.OutsideAreaDialogFragment
 import org.taskforce.episample.config.language.LanguageService
+import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.interfaces.Config
 import org.taskforce.episample.core.interfaces.CustomField
 import org.taskforce.episample.core.ui.dialogs.DatePickerFragment
@@ -46,7 +46,7 @@ import org.taskforce.episample.toolbar.managers.LanguageManager
 import org.taskforce.episample.toolbar.viewmodels.ToolbarViewModel
 import org.taskforce.episample.utils.getCompatColor
 import org.taskforce.episample.utils.loadImage
-import java.io.File
+import org.taskforce.episample.utils.toMapboxLatLng
 import java.io.IOException
 import java.util.*
 import javax.inject.Inject
@@ -56,52 +56,32 @@ class CollectAddFragment : Fragment() {
     @Inject
     lateinit var languageManager: LanguageManager
     lateinit var languageService: LanguageService
-    
+
     @Inject
     lateinit var config: Config
 
-    lateinit var collectIconFactory: CollectIconFactory
-    lateinit var markerManager: CollectionItemMarkerManager
-
     lateinit var collectViewModel: CollectAddViewModel
-    
+
     var imageUri: Uri? = null
+
+    private var mapFragment: SupportMapFragment? = null
+    private val markerManagerLiveData = MutableLiveData<MapboxItemMarkerManager>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         (requireActivity().application as EpiApplication).collectComponent?.inject(this)
-
-        collectIconFactory = CollectIconFactory(requireContext().resources)
     }
 
     @SuppressLint("MissingPermission")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val mapFragment = SupportMapFragment()
-
         val binding = FragmentCollectAddBinding.inflate(inflater).apply {
-            childFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.collectAddMap, mapFragment)
-                    .commit()
-
-            mapFragment.getMapAsync {
-                markerManager = CollectionItemMarkerManager(collectIconFactory, it)
-
-                it.isMyLocationEnabled = true
-                it.mapType = GoogleMap.MAP_TYPE_SATELLITE
-            }
 
             languageService = LanguageService(languageManager)
 
             collectViewModel = ViewModelProviders.of(this@CollectAddFragment, CollectAddViewModelFactory(
                     requireActivity().application,
                     languageService,
-                    Single.create<GoogleMap> { single ->
-                        mapFragment.getMapAsync {
-                            single.onSuccess(it)
-                        }
-                    },
                     arguments?.getBoolean(IS_LANDMARK) == true,
                     requireContext().getCompatColor(R.color.colorAccent),
                     requireContext().getCompatColor(R.color.textColorDisabled),
@@ -118,13 +98,13 @@ class CollectAddFragment : Fragment() {
                         } catch (ex: IOException) {
                             null
                         }
-                        
+
                         newPhoto?.also {
-                            val photoUri = FileProvider.getUriForFile(requireContext(), 
+                            val photoUri = FileProvider.getUriForFile(requireContext(),
                                     "org.taskforce.episample.fileprovider",
                                     it)
                             imageUri = photoUri
-                            
+
                             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
                             startActivityForResult(takePictureIntent, TAKE_PICTURE)
                         }
@@ -148,32 +128,6 @@ class CollectAddFragment : Fragment() {
             )).get(CollectAddViewModel::class.java)
 
             lifecycle.addObserver(collectViewModel.locationService)
-            collectViewModel.locationService.locationLiveData.observe(this@CollectAddFragment, Observer {
-                it?.let { (latLng, accuracy) ->
-
-                    collectViewModel.googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, CollectViewModel.zoomLevel))
-
-                    if (!collectViewModel.useDuplicatedGps) { // Only update if not using the duplicated GPS
-                        collectViewModel.gpsDisplay.set("%.5f ".format(latLng.latitude) +
-                                ", %.5f".format(latLng.longitude))
-                    }
-
-                    if (!collectViewModel.useDuplicatedGps) {
-                        if (accuracy < collectViewModel.locationPrecision ?: 1000f) {
-                            collectViewModel.lastKnownLocation = latLng
-                            collectViewModel.locationPrecision = accuracy
-                            collectViewModel.locationLatLng = latLng
-
-                            collectViewModel.locationLatLng?.let {
-                                collectViewModel.googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(it, CollectAddViewModel.mapZoom))
-                            }
-                            collectViewModel.location.postValue(latLng)
-                            collectViewModel.gpsDisplay.set("%.5f ".format(latLng.latitude) + ", %.5f".format(latLng.longitude))
-                            gpsVm?.precision?.set(accuracy.toDouble())
-                        }
-                    }
-                }
-            })
 
             landmarkImageSelector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -229,31 +183,6 @@ class CollectAddFragment : Fragment() {
         }
         binding.setLifecycleOwner(this)
 
-        collectViewModel.gpsBreadcrumbs.observe(this@CollectAddFragment, Observer { breadcrumbs ->
-            mapFragment.getMapAsync { map ->
-                val polylineOptions= mutableListOf<PolylineOptions>()
-                breadcrumbs?.sortedBy { it.dateCreated }?.forEach {
-                    if (it.startOfSession) {
-                        polylineOptions.add(PolylineOptions()
-                                .clickable(false)
-                                .color(R.color.greyHighlights))
-                    }
-
-                    polylineOptions.last().add(it.location)
-                }
-
-                polylineOptions.forEach { breadCrumbPath ->
-                    map.addPolyline(breadCrumbPath)
-                }
-            }
-        })
-
-        collectViewModel.collectItems.observe(this, Observer { items ->
-            mapFragment.getMapAsync {
-                markerManager.addMarkerDiff(items ?: emptyList())
-            }
-        })
-
         collectViewModel.enumerations.observe(this, Observer {
             it?.let {
                 val mostRecent = it.sortedByDescending { it.dateCreated }.firstOrNull()
@@ -274,13 +203,82 @@ class CollectAddFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val types = collectViewModel.landmarkTypes ?: emptyList()
+        if (savedInstanceState == null) {
+            mapFragment = SupportMapFragment.newInstance(MapboxMapOptions().styleUrl("mapbox://styles/jesseblack/cjlwkyu3p3qjw2rpqtpxnsb5j"))
+            childFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.collectAddMap, mapFragment, MAP_FRAGMENT_TAG)
+                    .commit()
+
+        } else {
+            mapFragment = childFragmentManager.findFragmentByTag(MAP_FRAGMENT_TAG) as SupportMapFragment
+        }
+
+        mapFragment?.getMapAsync { map ->
+            markerManagerLiveData.postValue(MapboxItemMarkerManager(requireContext(), map))
+
+            collectViewModel.gpsBreadcrumbs.observe(this@CollectAddFragment, Observer { breadcrumbs ->
+                val polylineOptions = mutableListOf<PolylineOptions>()
+                breadcrumbs?.sortedBy { it.dateCreated }?.forEach {
+                    if (it.startOfSession) {
+                        polylineOptions.add(PolylineOptions()
+                                .color(R.color.greyHighlights))
+                    }
+
+                    polylineOptions.last().add(it.location.toMapboxLatLng())
+                }
+
+                polylineOptions.forEach { breadCrumbPath ->
+                    map.addPolyline(breadCrumbPath)
+                }
+            })
+
+            LiveDataPair(markerManagerLiveData, collectViewModel.collectItems).observe(this, Observer {
+                it?.let { (markerManager, items) ->
+                    markerManager.addMarkerDiff(items)
+                }
+            })
+
+            LiveDataPair(markerManagerLiveData, collectViewModel.locationService.locationLiveData).observe(this@CollectAddFragment, Observer {
+                it?.let { (markerManager, locationPair) ->
+                    locationPair.let { (latLng, accuracy) ->
+                        var cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng.toMapboxLatLng(), CollectViewModel.zoomLevel)
+                        markerManager.setCurrentLocation(latLng.toMapboxLatLng(), accuracy.toDouble())
+                        if (!collectViewModel.useDuplicatedGps) { // Only update if not using the duplicated GPS
+                            collectViewModel.gpsDisplay.set("%.5f ".format(latLng.latitude) +
+                                    ", %.5f".format(latLng.longitude))
+                        }
+
+                        if (!collectViewModel.useDuplicatedGps) {
+                            if (accuracy < collectViewModel.locationPrecision ?: 1000f) {
+                                collectViewModel.locationPrecision = accuracy
+                                collectViewModel.locationLatLng = latLng
+
+                                collectViewModel.locationLatLng?.let {
+                                    cameraUpdate = CameraUpdateFactory.newLatLngZoom(it.toMapboxLatLng(), CollectAddViewModel.mapZoom)
+                                }
+                                collectViewModel.location.postValue(latLng)
+                                collectViewModel.gpsDisplay.set("%.5f ".format(latLng.latitude) + ", %.5f".format(latLng.longitude))
+                                collectViewModel.gpsVm?.precision?.set(accuracy.toDouble())
+                            }
+                        }
+
+                        map.moveCamera(cameraUpdate)
+                    }
+                }
+
+            })
+        }
+
+        val types = collectViewModel.landmarkTypes
 
         val adapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         adapter.addAll(types.map { it.name })
 
         landmarkImageSelector.adapter = adapter
+
+        mapFragment?.onCreate(savedInstanceState)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -325,12 +323,12 @@ class CollectAddFragment : Fragment() {
                 // TODO: scale the image so it doesn't take much memory
                 imageUri?.let { photoUri ->
                     collectViewModel.setImage(photoUri)
-                    
+
                     config.userSettings.photoCompressionScale?.let { compressionScale ->
                         FileUtil.compressBitmap(requireContext(), photoUri, compressionScale)
                     }
-                    
-                    collectAddImage.loadImage(photoUri.toString(), 
+
+                    collectAddImage.loadImage(photoUri.toString(),
                             requireContext().getDrawable(R.drawable.photo_empty))
                 }
             }
@@ -360,6 +358,8 @@ class CollectAddFragment : Fragment() {
     }
 
     companion object {
+        const val MAP_FRAGMENT_TAG = "collectAddFragment.MapboxFragment"
+
         const val IS_LANDMARK = "isLandmark"
         const val HELP_TARGET = "#collectAdd"
         const val GET_TIME_CODE = 1

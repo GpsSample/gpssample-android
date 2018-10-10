@@ -39,30 +39,11 @@
                     layout="@layout/app_config_header"
                     app:vm="@{headerVm}"/>
 
-                <TextView
-                    android:id="@+id/defaultLangaugeTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/header"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="32dp"
-                    android:text="@{vm.languageTitle}"
-                    android:textColor="@color/textColorDisabled"
-                    android:textSize="12sp"/>
-
-                <Spinner
-                    android:id="@+id/defaultLanguageSelector"
-                    style="@style/Widget.AppCompat.Spinner.Underlined"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/defaultLangaugeTitle"
-                    android:adapter="@{vm.defaultLanguageAdapter}"/>
-
                 <LinearLayout
                     android:id="@+id/dateTimeWrapper"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/defaultLanguageSelector"
+                    android:layout_below="@id/header"
                     android:layout_marginTop="32dp">
 
                     <LinearLayout

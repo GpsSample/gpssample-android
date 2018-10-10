@@ -33,13 +33,6 @@
 
         <android.support.v7.widget.AppCompatImageView
             visibleOrGone="@{vm.isQuickstart}"
-            android:src="@drawable/icon_edit_darkgray_24"
-            android:onClick="@{vm::onEditClicked}"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"/>
-
-        <android.support.v7.widget.AppCompatImageView
-            visibleOrGone="@{vm.isQuickstart}"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="16dp"
             android:src="@drawable/icon_delete_darkgray_24"

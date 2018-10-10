@@ -12,10 +12,6 @@
         <variable
             name="vm"
             type="org.taskforce.episample.config.geography.GeographyViewModel"/>
-
-        <variable
-            name="transferVm"
-            type="org.taskforce.episample.config.transfer.TransferViewModel"/>
     </data>
 
     <LinearLayout

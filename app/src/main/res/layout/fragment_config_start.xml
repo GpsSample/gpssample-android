@@ -168,23 +168,6 @@
                     android:textColor="@color/colorAccent"
                     android:textSize="14sp" />
 
-                <TextView
-                    android:id="@+id/uploadExplanation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="@{languageService.getString(R.string.config_upload_explanation)}"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/uploadUrl"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{vm.uploadUrl}"
-                    android:textColor="@color/textColorDetails"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
             </LinearLayout>
 
         </android.support.v4.widget.NestedScrollView>

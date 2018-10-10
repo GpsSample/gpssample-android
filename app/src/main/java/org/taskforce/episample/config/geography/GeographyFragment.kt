@@ -17,9 +17,6 @@ import org.taskforce.episample.config.base.ConfigBuildViewModel
 import org.taskforce.episample.config.base.ConfigHeaderViewModel
 import org.taskforce.episample.config.geography.model.FeatureCollection
 import org.taskforce.episample.config.language.LanguageService
-import org.taskforce.episample.config.transfer.TransferFileBucket
-import org.taskforce.episample.config.transfer.TransferManager
-import org.taskforce.episample.config.transfer.TransferViewModel
 import org.taskforce.episample.databinding.FragmentConfigGeographyBinding
 import org.taskforce.episample.toolbar.managers.LanguageManager
 import java.io.BufferedReader
@@ -28,9 +25,6 @@ import java.io.InputStreamReader
 import javax.inject.Inject
 
 class GeographyFragment : Fragment() {
-
-    @Inject
-    lateinit var transferManager: TransferManager
 
     @Inject
     lateinit var languageManager: LanguageManager
@@ -72,11 +66,6 @@ class GeographyFragment : Fragment() {
                     R.string.config_geography_title,
                     R.string.config_geography_explanation)
             vm = viewModel
-            transferVm = TransferViewModel(
-                    LanguageService(languageManager),
-                    transferManager,
-                    childFragmentManager,
-                    TransferFileBucket.ENUMERATION)
         }
 
         fileAdapter = EnumerationFileAdapter()

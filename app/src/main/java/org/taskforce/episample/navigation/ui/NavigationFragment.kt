@@ -228,11 +228,11 @@ class NavigationFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMa
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.action_help -> {
-            }
-            R.id.action_language -> {
-                navigationToolbarViewModel.languageSelectVisibility.postValue(true)
-            }
+//            R.id.action_help -> {
+//            }
+//            R.id.action_language -> {
+//                navigationToolbarViewModel.languageSelectVisibility.postValue(true)
+//            }
         }
         return true
     }

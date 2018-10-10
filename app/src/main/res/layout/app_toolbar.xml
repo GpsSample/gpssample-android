@@ -44,26 +44,26 @@
                     android:textColor="@color/textColorInverse"
                     android:textSize="20sp" />
 
-                <ImageView
-                    android:id="@+id/toolbarHelp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="20dp"
-                    android:layout_toStartOf="@+id/toolbarLanguage"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:onClick="@{() -> vm.openHelp()}"
-                    android:src="@drawable/icon_help_white" />
+                <!--<ImageView-->
+                    <!--android:id="@+id/toolbarHelp"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--android:layout_marginEnd="20dp"-->
+                    <!--android:layout_toStartOf="@+id/toolbarLanguage"-->
+                    <!--android:background="?android:attr/selectableItemBackground"-->
+                    <!--android:onClick="@{() -> vm.openHelp()}"-->
+                    <!--android:src="@drawable/icon_help_white" />-->
 
-                <ImageView
-                    android:id="@+id/toolbarLanguage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:onClick="@{() -> vm.showLanguages()}"
-                    android:src="@drawable/icon_language_white" />
+                <!--<ImageView-->
+                    <!--android:id="@+id/toolbarLanguage"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_alignParentEnd="true"-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--android:background="?android:attr/selectableItemBackground"-->
+                    <!--android:onClick="@{() -> vm.showLanguages()}"-->
+                    <!--android:src="@drawable/icon_language_white" />-->
 
             </RelativeLayout>
 

@@ -181,87 +181,7 @@
                     android:paddingTop="16dp"
                     android:paddingEnd="16dp">
                     <!-- Require comment during collection-->
-                    <CheckBox
-                        android:id="@+id/requireComment"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:checked="@={vm.requireComment}"/>
 
-                    <TextView
-                        android:id="@+id/requireCommentTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBaseline="@id/requireComment"
-                        android:layout_marginStart="12dp"
-                        android:layout_toEndOf="@id/requireComment"
-                        android:text="@{languageService.getString(vm.requireCommentTitle)}"
-                        android:textSize="16sp"
-                        tools:text="Require comment during collection"/>
-
-                    <TextView
-                        android:id="@+id/requireCommentSmallHint"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/requireCommentTitle"
-                        android:layout_alignStart="@id/requireCommentTitle"
-                        android:layout_marginTop="4dp"
-                        android:text="@{languageService.getString(vm.requireCommentSmallHint)}"
-                        android:textColor="@color/textColorDetails"
-                        tools:text="Photos also fulfill this requirement, if enabled."/>
-
-                    <!-- Enforce distance between households -->
-                    <CheckBox
-                        android:id="@+id/displacementEnforcement"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/requireCommentSmallHint"
-                        android:layout_alignStart="@id/requireComment"
-                        android:layout_marginTop="16dp"
-                        android:checked="@={vm.minimumDistanceEnforcement}"/>
-
-                    <TextView
-                        android:id="@+id/displacementEnforcementTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBaseline="@id/displacementEnforcement"
-                        android:layout_marginStart="12dp"
-                        android:layout_toEndOf="@id/displacementEnforcement"
-                        android:text="@{languageService.getString(vm.displacementEnforcementTitle)}"
-                        android:textSize="16sp"
-                        tools:text="Enforce distance between households"/>
-
-                    <android.support.design.widget.TextInputLayout
-                        android:id="@+id/minimumDistanceWrapper"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/displacementEnforcement"
-                        android:layout_alignStart="@id/displacementEnforcementTitle"
-                        android:layout_marginTop="4dp"
-                        android:hint="@{languageService.getString(vm.minimumDistanceHint)}">
-
-                        <android.support.design.widget.TextInputEditText
-                            android:id="@+id/minimumDistance"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:singleLine="true"
-                            android:text="@={vm.minimumDistance}"
-                            android:textColorHint="@color/textColorDetails"
-                            android:textSize="16sp"
-                            tools:hint="Minimum Distance (m)"/>
-
-                    </android.support.design.widget.TextInputLayout>
-
-                    <TextView
-                        android:id="@+id/displacementEnforcementSmallHint"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/minimumDistanceWrapper"
-                        android:layout_alignStart="@id/displacementEnforcementTitle"
-                        android:text="@{languageService.getString(vm.displacementEnforcementSmallHint)}"
-                        android:textColor="@color/textColorDetails"
-                        android:textSize="12sp"
-                        tools:text="Cannot exceed minimum precision specified above."/>
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -271,69 +191,11 @@
                     android:paddingEnd="16dp">
 
                     <!-- User permissions -->
-                    <TextView
-                        android:id="@+id/permissionsTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginTop="12dp"
-                        android:text="@{languageService.getString(vm.permissionsTitle)}"
-                        android:textColor="@color/textColorDetails"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        tools:text="User Permissions"/>
 
                     <!-- Allow supervisors to disable photos -->
-                    <CheckBox
-                        android:id="@+id/supervisorDisablePhotos"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/permissionsTitle"
-                        android:layout_marginTop="16dp"
-                        android:checked="@={vm.supervisorDisablePhotos}"/>
-
-                    <TextView
-                        android:id="@+id/supervisorDisablePhotosTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBaseline="@id/supervisorDisablePhotos"
-                        android:layout_marginStart="12dp"
-                        android:layout_toEndOf="@id/supervisorDisablePhotos"
-                        android:text="@{languageService.getString(vm.supervisorDisablePhotosTitle)}"
-                        android:textSize="16sp"
-                        tools:text="Allow supervisors to disable photos"/>
 
                     <!-- Require supervisor password -->
-                    <CheckBox
-                        android:id="@+id/supervisorPassword"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/supervisorDisablePhotos"
-                        android:layout_marginTop="16dp"
-                        android:checked="@={vm.supervisorPasswordEnforcement}"/>
 
-                    <TextView
-                        android:id="@+id/supervisorPasswordTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBaseline="@id/supervisorPassword"
-                        android:layout_marginStart="12dp"
-                        android:layout_toEndOf="@id/supervisorPassword"
-                        android:text="@{languageService.getString(vm.supervisorPasswordHint)}"
-                        android:textSize="16sp"
-                        tools:text="Require supervisor password"/>
-
-                    <EditText
-                        android:id="@+id/supervisorPasswordInput"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/supervisorPassword"
-                        android:layout_alignStart="@id/supervisorPasswordTitle"
-                        android:layout_marginTop="16dp"
-                        android:hint="@string/config_user_settings_permissions_password_hint"
-                        android:inputType="textPassword"
-                        android:text="@={vm.supervisorPassword}"
-                        android:textSize="14sp"/>
                 </RelativeLayout>
             </LinearLayout>
 

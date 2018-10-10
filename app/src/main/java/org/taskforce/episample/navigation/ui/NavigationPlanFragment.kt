@@ -202,11 +202,11 @@ class NavigationPlanFragment : Fragment(), MapboxMap.OnMarkerClickListener, Mapb
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.action_help -> {
-            }
-            R.id.action_language -> {
-                navigationToolbarViewModel.languageSelectVisibility.postValue(true)
-            }
+//            R.id.action_help -> {
+//            }
+//            R.id.action_language -> {
+//                navigationToolbarViewModel.languageSelectVisibility.postValue(true)
+//            }
         }
         return true
     }

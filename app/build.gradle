@@ -12,6 +12,7 @@ fabricProperties.load(new FileInputStream(fabricPropertiesFile))
 def mapboxPropertiesFile = rootProject.file("mapbox.properties")
 def mapboxProperties = new Properties()
 mapboxProperties.load(new FileInputStream(mapboxPropertiesFile))
+def MAPBOX = { k -> "\"${mapboxProperties.get(k)}\"" }
 
 buildscript {
     repositories {
@@ -61,7 +62,7 @@ android {
         multiDexEnabled true
 
 
-        buildConfigField "String", "MAPBOX_ACCESS_TOKEN", "\"mapboxProperties['accessToken']\""
+        buildConfigField "String", "MAPBOX_ACCESS_TOKEN", MAPBOX('accessToken')
         buildConfigField "String", "FILE_DIRECTORY_NAME", "\"EpiSample\""
         manifestPlaceholders = [geoApiKey: geoApiProperties['apiKey'], fabricApiKey: fabricProperties['apiKey']]
     }

@@ -204,7 +204,7 @@ class CollectAddFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if (savedInstanceState == null) {
-            mapFragment = SupportMapFragment.newInstance(MapboxMapOptions().styleUrl("mapbox://styles/jesseblack/cjlwkyu3p3qjw2rpqtpxnsb5j"))
+            mapFragment = SupportMapFragment.newInstance(MapboxMapOptions().styleUrl(collectViewModel.config.mapboxStyle.urlString))
             childFragmentManager
                     .beginTransaction()
                     .replace(R.id.collectAddMap, mapFragment, MAP_FRAGMENT_TAG)

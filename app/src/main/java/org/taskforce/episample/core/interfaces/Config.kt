@@ -1,5 +1,6 @@
 package org.taskforce.episample.core.interfaces
 
+import org.taskforce.episample.core.models.MapboxStyleUrl
 import java.util.*
 
 interface Config {
@@ -13,4 +14,6 @@ interface Config {
     val customFields: List<CustomField>
     val landmarkTypes: List<LandmarkType>
     val enumerationAreas: List<EnumerationArea>
+    val mapboxStyle: MapboxStyleUrl
 }
+

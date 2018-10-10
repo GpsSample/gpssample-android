@@ -2,6 +2,7 @@ package org.taskforce.episample.db.config
 
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
+import org.taskforce.episample.core.models.MapboxStyleUrl
 import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.landmark.CustomLandmarkType
 import org.taskforce.episample.db.converter.DateConverter
@@ -11,7 +12,12 @@ import java.util.*
 class ResolvedConfig(var name: String,
                      @ColumnInfo(name = "date_created")
                      val dateCreated: Date = Date(),
+                     @ColumnInfo(name = "mapbox_style")
+                     val mapboxStyleString: String,
                      val id: String) {
+
+    val mapboxStyle
+        get() = MapboxStyleUrl(mapboxStyleString)
 
     @Embedded()
     lateinit var adminSettings: AdminSettings

@@ -23,6 +23,7 @@ import org.taskforce.episample.config.settings.server.ServerSettings
 import org.taskforce.episample.config.settings.user.UserSettings
 import org.taskforce.episample.core.interfaces.EnumerationArea
 import org.taskforce.episample.core.interfaces.EnumerationSubject
+import org.taskforce.episample.core.models.MapboxStyleUrl
 import org.taskforce.episample.db.config.customfield.CustomFieldType
 import org.taskforce.episample.db.filter.RuleRecord
 import org.taskforce.episample.db.filter.RuleSet
@@ -195,6 +196,10 @@ class ConfigBuildManager(val config: Config = Config(Date())):
         val mutableEnumerationAreasList = config.enumerationAreas.toMutableList()
         mutableEnumerationAreasList.addAll(enumerationAreas)
         config.enumerationAreas = mutableEnumerationAreasList.toList()
+    }
+
+    fun setMapboxStyle(style: MapboxStyleUrl) {
+        config.mapboxStyle = style
     }
 
     val photoCompressionOptions = arrayOf(100 to "No Compression", 50 to "Some Compression", 25 to "Maximum Compression")

@@ -129,7 +129,7 @@ abstract class ConfigDao : CustomFieldDao, EnumerationAreaDao {
 
     @Transaction
     open fun duplicate(sourceConfig: Config, newName: String): String {
-        val insertConfig = Config(newName)
+        val insertConfig = Config(newName, sourceConfig.mapboxStyle)
 
         val adminSettings = getAdminSettingsSync(sourceConfig.id)?.apply {
             this.configId = insertConfig.id

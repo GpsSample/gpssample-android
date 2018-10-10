@@ -181,7 +181,7 @@ class NavigationFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMa
         super.onViewCreated(view, savedInstanceState)
 
         if (savedInstanceState == null) {
-            mapFragment = SupportMapFragment.newInstance(MapboxMapOptions().styleUrl("mapbox://styles/jesseblack/cjlwkyu3p3qjw2rpqtpxnsb5j"))
+            mapFragment = SupportMapFragment.newInstance(MapboxMapOptions().styleUrl(navigationViewModel.config.mapboxStyle.urlString))
             childFragmentManager
                     .beginTransaction()
                     .replace(R.id.collectionMap, mapFragment, MAP_FRAGMENT_TAG)

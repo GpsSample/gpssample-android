@@ -76,7 +76,7 @@ class NavigationPlanFragment : Fragment(), MapboxMap.OnMarkerClickListener, Mapb
 
                 )).get(NavigationPlanCardViewModel::class.java)
 
-        navigationToolbarViewModel = ViewModelProviders.of(this@NavigationPlanFragment,
+        navigationToolbarViewModel = ViewModelProviders.of(this,
                 NavigationToolbarViewModelFactory(requireActivity().application,
                         R.string.navigation_plan)).get(NavigationToolbarViewModel::class.java)
     }
@@ -148,7 +148,7 @@ class NavigationPlanFragment : Fragment(), MapboxMap.OnMarkerClickListener, Mapb
         super.onViewCreated(view, savedInstanceState)
 
         if (savedInstanceState == null) {
-            mapFragment = SupportMapFragment.newInstance(MapboxMapOptions().styleUrl("mapbox://styles/jesseblack/cjlwkyu3p3qjw2rpqtpxnsb5j"))
+            mapFragment = SupportMapFragment.newInstance(MapboxMapOptions().styleUrl(navigationPlanViewModel.config.mapboxStyle.urlString))
             childFragmentManager
                     .beginTransaction()
                     .replace(R.id.collectionMap, mapFragment, MAP_FRAGMENT_TAG)

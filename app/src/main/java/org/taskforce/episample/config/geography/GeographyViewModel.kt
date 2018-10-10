@@ -10,6 +10,7 @@ import org.taskforce.episample.config.base.ConfigBuildManager
 import org.taskforce.episample.config.fields.CustomFieldsFragment
 import org.taskforce.episample.config.geography.model.FeatureCollection
 import org.taskforce.episample.config.language.LanguageService
+import org.taskforce.episample.config.mapbox.MapboxConfigFragment
 import org.taskforce.episample.core.interfaces.GeoJsonEnumerationArea
 
 class GeographyViewModel(
@@ -99,8 +100,8 @@ class GeographyViewModel(
             val fragmentManager = (view.context as FragmentActivity).supportFragmentManager
             fragmentManager
                     .beginTransaction()
-                    .replace(R.id.configFrame, CustomFieldsFragment())
-                    .addToBackStack(CustomFieldsFragment::class.qualifiedName)
+                    .replace(R.id.configFrame, MapboxConfigFragment())
+                    .addToBackStack(MapboxConfigFragment::class.qualifiedName)
                     .commit()
         }
     }

@@ -79,7 +79,6 @@ class GeographyFragment : Fragment() {
     }
 
     private fun pickFile() = {
-
         val openFileIntent = Intent(Intent.ACTION_GET_CONTENT)
         openFileIntent.addCategory(Intent.CATEGORY_OPENABLE)
         openFileIntent.type = "*/*" // TODO: Is there a better MIME type?

@@ -76,7 +76,7 @@ abstract class StudyDao : ConfigDao(), CustomFieldDao, ResolvedEnumerationDao, C
     @Transaction
     open fun insert(studyId: String, studyName: String, studyPassword: String, sourceConfig: ResolvedConfig): String {
 
-        val insertConfig = Config(sourceConfig.name)
+        val insertConfig = Config(sourceConfig.name, sourceConfig.mapboxStyle.urlString)
 
         val adminSettings = sourceConfig.adminSettings.apply {
             this.configId = insertConfig.id

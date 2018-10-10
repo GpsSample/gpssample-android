@@ -18,7 +18,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/toolbarHeight"
+        android:minHeight="@dimen/toolbar_height"
         app:navigationIcon="@drawable/icon_back_white_24"
         android:background="@color/colorPrimary"
         app:titleTextColor="@android:color/white"

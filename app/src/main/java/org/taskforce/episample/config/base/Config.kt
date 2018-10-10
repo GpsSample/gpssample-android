@@ -10,6 +10,7 @@ import org.taskforce.episample.config.settings.server.ServerSettings
 import org.taskforce.episample.config.settings.user.UserSettings
 import org.taskforce.episample.core.interfaces.EnumerationArea
 import org.taskforce.episample.core.interfaces.EnumerationSubject
+import org.taskforce.episample.core.models.MapboxStyleUrl
 import org.taskforce.episample.db.filter.RuleRecord
 import org.taskforce.episample.db.filter.RuleSet
 import org.taskforce.episample.fileImport.models.LandmarkType
@@ -42,6 +43,7 @@ class Config(
     var enumerationSubject: EnumerationSubject? = null
     var ruleSets = listOf<RuleSet>()
     var rules = listOf<RuleRecord>()
+    var mapboxStyle: MapboxStyleUrl? = null
 
     val size: String
         get() {

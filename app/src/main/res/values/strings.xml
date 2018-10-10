@@ -393,4 +393,18 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="rules_are_not_valid">The rules are not completely filled out or are filled out incorrectly.</string>
     <string name="cannot_save">Cannot Save</string>
     <string name="okay">OKAY</string>
+    <string name="mapbox_enter_custom_style">Enter Custom Mapbox Style Url</string>
+    <string name="mapbox_test_style">Test Style</string>
+    <string name="mapbox_config_title">Mapbox</string>
+    <string name="mapbox_end_progress_success">Region downloaded successfully.</string>
+    <string name="mapbox_toast_no_regions_yet">You have no regions yet.</string>
+    <string name="mapbox_toast_region_deleted">Region deleted</string>
+    <string name="mapbox_navigate_positive_button">Navigate to</string>
+    <string name="mapbox_navigate_neutral_button_title">Delete</string>
+    <string name="mapbox_navigate_negative_button_title">Cancel</string>
+    <string name="mapbox_navigate_title">List</string>
+    <string name="mapbox_region_name">Study Region</string>
+    <string name="mapbox_download_button_text">Download</string>
+    <string name="mapbox_list_button_text">List</string>
+
 </resources>

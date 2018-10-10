@@ -9,6 +9,10 @@ def fabricPropertiesFile = rootProject.file("app/fabric.properties")
 def fabricProperties = new Properties()
 fabricProperties.load(new FileInputStream(fabricPropertiesFile))
 
+def mapboxPropertiesFile = rootProject.file("mapbox.properties")
+def mapboxProperties = new Properties()
+mapboxProperties.load(new FileInputStream(mapboxPropertiesFile))
+
 buildscript {
     repositories {
         maven { url 'https://maven.fabric.io/public' }
@@ -56,6 +60,8 @@ android {
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
 
+
+        buildConfigField "String", "MAPBOX_ACCESS_TOKEN", "\"mapboxProperties['accessToken']\""
         buildConfigField "String", "FILE_DIRECTORY_NAME", "\"EpiSample\""
         manifestPlaceholders = [geoApiKey: geoApiProperties['apiKey'], fabricApiKey: fabricProperties['apiKey']]
     }

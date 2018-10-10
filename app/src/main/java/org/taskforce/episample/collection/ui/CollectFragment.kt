@@ -17,6 +17,7 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.MapboxMapOptions
 import com.mapbox.mapboxsdk.maps.SupportMapFragment
 import kotlinx.android.synthetic.main.fragment_collect.*
+import org.taskforce.episample.BuildConfig
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.collection.managers.CollectIconFactory
@@ -55,7 +56,7 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
         super.onCreate(savedInstanceState)
         (requireActivity().application as EpiApplication).component.inject(this)
 
-        Mapbox.getInstance(requireContext(), getString(R.string.mapbox_access_token))
+        Mapbox.getInstance(requireContext(), BuildConfig.MAPBOX_ACCESS_TOKEN)
 
         languageService = LanguageService(languageManager)
 

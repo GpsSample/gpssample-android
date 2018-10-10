@@ -393,5 +393,4 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="rules_are_not_valid">The rules are not completely filled out or are filled out incorrectly.</string>
     <string name="cannot_save">Cannot Save</string>
     <string name="okay">OKAY</string>
-    <string name="mapbox_access_token">YOUR STRING HERE</string>
 </resources>

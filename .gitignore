@@ -10,6 +10,7 @@
 .externalNativeBuild
 app/fabric.properties
 geo_api.properties
+mapbox.properties
 app/release.keystore
 keystore.properties
 app/triple-key.json

@@ -31,7 +31,6 @@ import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.navigation.SurveyStatus
 import org.taskforce.episample.core.ui.dialogs.TextInputDialogFragment
 import org.taskforce.episample.databinding.FragmentNavigationBinding
-import org.taskforce.episample.db.config.customfield.value.IntValue
 import org.taskforce.episample.utils.getCompatColor
 import org.taskforce.episample.utils.toMapboxLatLng
 
@@ -280,8 +279,8 @@ class NavigationFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMa
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "vnd.android.cursor.dir/vnd.odk.form"
             
-            getRecordId()?.let { 
-                setClipboard("$it")
+            navigationViewModel.nextNavigationItem.value?.let { item ->
+                setClipboard(item.enumerationId)
             }
             
             startActivityForResult(intent, PICK_FORM_REASON_CODE)
@@ -289,22 +288,6 @@ class NavigationFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMa
             Toast.makeText(requireContext(), R.string.odk_collect_not_installed, Toast.LENGTH_LONG)
                     .show()
             Log.e(TAG, e.localizedMessage)
-        }
-    }
-    
-    private fun getRecordId(): Int? {
-        val config = navigationViewModel.config
-        val navigationItem = navigationViewModel.nextNavigationItem.value
-        return navigationItem?.let { navItem ->
-            val recordIdField = config.customFields.firstOrNull { customField ->  
-                customField.isAutomatic && customField.name == getString(R.string.custom_field_record_id)
-            }
-            val recordIdValue = navItem.customFieldValues.firstOrNull { customFieldValue ->  
-                customFieldValue.customFieldId == recordIdField?.id
-            }
-            recordIdValue?.let {  customFieldValue ->
-                return (customFieldValue.value as IntValue).intValue
-            }
         }
     }
     

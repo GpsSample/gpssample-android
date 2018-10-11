@@ -71,6 +71,7 @@ class LiveNavigationManager(val application: Application,
                             item.enumeration.image,
                             LatLng(item.enumeration.lat, item.enumeration.lng),
                             item.enumeration.gpsPrecision,
+                            item.enumerationId,
                             item.dateCreated
                     )
                 }

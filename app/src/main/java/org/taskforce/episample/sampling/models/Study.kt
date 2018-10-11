@@ -1,4 +1,4 @@
-package org.taskforce.episample.study.models
+package org.taskforce.episample.sampling.models
 
 import org.taskforce.episample.collection.models.CollectItem
 import org.taskforce.episample.collection.models.EnumerationItem

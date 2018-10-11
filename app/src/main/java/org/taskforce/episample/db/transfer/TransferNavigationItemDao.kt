@@ -8,7 +8,6 @@ import org.taskforce.episample.db.navigation.NavigationItem
 
 @Dao
 interface TransferNavigationItemDao {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertNavigationItems(navigationItems: List<NavigationItem>)
 

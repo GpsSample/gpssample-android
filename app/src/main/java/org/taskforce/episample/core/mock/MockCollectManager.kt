@@ -6,11 +6,42 @@ import android.arch.lifecycle.Transformations
 import com.google.android.gms.maps.model.LatLng
 import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.interfaces.*
-import org.taskforce.episample.core.interfaces.Enumeration
-import org.taskforce.episample.db.config.customfield.CustomFieldType
-import java.util.*
+import org.taskforce.episample.db.DateRange
+import org.taskforce.episample.db.sampling.SampleEntity
+import org.taskforce.episample.db.sampling.WarningEntity
 
 class MockCollectManager : CollectManager {
+    override fun deleteSamples() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getNumberOfEnumerationsInSample(): LiveData<Int> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getWarnings(): LiveData<List<WarningEntity>> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getSample(): LiveData<SampleEntity> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getNumberOfSamples(): LiveData<Int> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun createSample() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getValidEnumerationsDateRange(): LiveData<DateRange> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getNumberOfValidEnumerations(): LiveData<Int> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     override fun updateLandmark(landmark: Landmark, callback: () -> Unit) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.

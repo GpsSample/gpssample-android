@@ -1,10 +1,10 @@
 package org.taskforce.episample.config.sampling
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.ForeignKey
-import android.arch.persistence.room.PrimaryKey
+import android.arch.persistence.room.*
+import org.taskforce.episample.db.collect.ResolvedEnumeration
 import org.taskforce.episample.db.config.Config
+import org.taskforce.episample.db.filter.ResolvedRuleSet
+import org.taskforce.episample.db.filter.RuleSet
 import java.io.Serializable
 import java.util.*
 
@@ -25,6 +25,35 @@ data class SamplingMethod(var type: SamplingMethodology,
                     SamplingUnits.valueOf(entity.units),
                     SamplingGrouping.valueOf(entity.grouping)
             )
+        }
+        fun fromEntity(entity: ResolvedSamplingMethodEntity): SamplingMethod {
+            return SamplingMethod(
+                    SamplingMethodology.valueOf(entity.methodology),
+                    SamplingUnits.valueOf(entity.units),
+                    SamplingGrouping.valueOf(entity.grouping)
+            )
+        }
+
+        fun simpleRandomSample(numberOfHouseholdsForSample: Int, totalPopulationForSampling: List<ResolvedEnumeration>): List<ResolvedEnumeration> {
+            if (numberOfHouseholdsForSample > totalPopulationForSampling.size) {
+                return totalPopulationForSampling.shuffled()
+            }
+            return totalPopulationForSampling.shuffled().subList(0, numberOfHouseholdsForSample)
+        }
+
+        fun systematicRandomSample(numberOfHouseholdsForSample: Int, totalPopulationForSampling: List<ResolvedEnumeration>): List<ResolvedEnumeration> {
+            val populationForSampling = totalPopulationForSampling.sortedBy { it.dateCreated }
+            if (numberOfHouseholdsForSample > populationForSampling.size) {
+                return populationForSampling
+            }
+            val samplingFrame = populationForSampling.size.toDouble() / numberOfHouseholdsForSample.toDouble()
+            var position = (Math.random() * samplingFrame) - 1
+            val sample = mutableListOf(populationForSampling[Math.ceil(position).toInt()])
+            while (sample.size < numberOfHouseholdsForSample) {
+                position += samplingFrame
+                sample.add(populationForSampling[Math.ceil(position).toInt()])
+            }
+            return sample
         }
     }
 }
@@ -63,3 +92,23 @@ class SamplingMethodEntity(
         @PrimaryKey
         var id: String = UUID.randomUUID().toString()
 )
+
+class ResolvedSamplingMethodEntity(
+        @ColumnInfo(name = "methodology")
+        var methodology: String,
+        @ColumnInfo(name = "grouping")
+        var grouping: String,
+        @ColumnInfo(name = "units")
+        var units: String,
+        @ColumnInfo(name = "config_id")
+        var configId: String,
+        @PrimaryKey
+        var id: String = UUID.randomUUID().toString()) {
+
+    @Relation(entity = RuleSet::class, parentColumn = "id", entityColumn = "methodology_id")
+    lateinit var ruleSets: List<ResolvedRuleSet>
+    val unresolved: SamplingMethodEntity
+        get() = SamplingMethodEntity(methodology, grouping, units, configId, id)
+
+    fun toMethodology(): SamplingMethod = SamplingMethod.fromEntity(this)
+}

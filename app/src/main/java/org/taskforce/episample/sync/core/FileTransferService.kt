@@ -57,7 +57,10 @@ class ReceiveFileTransferService : IntentService("FileTransferService") {
                                     sourceDao.getBreadcrumbs(),
                                     sourceDao.getCustomFieldValues(),
                                     sourceDao.getNavigationPlans(),
-                                    sourceDao.getNavigationItems()
+                                    sourceDao.getNavigationItems(),
+                                    sourceDao.getSamples(),
+                                    sourceDao.getSampleEnumerations(),
+                                    sourceDao.getSampleWarnings()
                             )
 
                             val outgoingZipFile = FileUtil.writeDatabaseToZip(context)

@@ -2,17 +2,20 @@ package org.taskforce.episample.db.config
 
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
+import org.taskforce.episample.db.DateRange
 import org.taskforce.episample.db.collect.*
 import org.taskforce.episample.db.collect.Enumeration
 import org.taskforce.episample.db.config.customfield.CustomFieldDao
 import org.taskforce.episample.db.config.customfield.CustomFieldValue
 import org.taskforce.episample.db.config.customfield.CustomFieldValueDao
 import org.taskforce.episample.db.config.landmark.CustomLandmarkType
+import org.taskforce.episample.db.sampling.SampleEntity
+import org.taskforce.episample.db.sampling.SampleEnumerationEntity
+import org.taskforce.episample.db.sampling.WarningEntity
 import java.util.*
 
 @Dao
 abstract class StudyDao : ConfigDao(), CustomFieldDao, ResolvedEnumerationDao, CustomFieldValueDao {
-
     @Insert
     abstract fun insert(study: Study)
 
@@ -25,8 +28,20 @@ abstract class StudyDao : ConfigDao(), CustomFieldDao, ResolvedEnumerationDao, C
     @Insert
     abstract fun insert(breadcrumb: GpsBreadcrumb)
 
+    @Insert
+    abstract fun insert(sample: SampleEntity)
+
+    @Insert
+    abstract fun insert(vararg sampleEnumerationEntity: SampleEnumerationEntity)
+
+    @Insert
+    abstract fun insert(vararg sampleEnumerationEntity: WarningEntity)
+
     @Delete
     abstract fun delete(study: Study)
+
+    @Query("DELETE FROM samples")
+    abstract fun deleteSamples()
 
     @Query("SELECT * FROM study_table")
     abstract fun getAllStudiesSync(): List<Study>
@@ -43,6 +58,18 @@ abstract class StudyDao : ConfigDao(), CustomFieldDao, ResolvedEnumerationDao, C
     @Query("SELECT * FROM enumeration_table WHERE study_id LIKE :studyId")
     abstract fun getEnumerations(studyId: String): LiveData<List<ResolvedEnumeration>>
 
+    @Query("SELECT COUNT(id) FROM enumeration_table WHERE study_id LIKE :studyId AND is_complete = 0 AND is_excluded = 0") // is_complete = 0 is true. doh
+    abstract fun getNumberOfValidEnumerations(studyId: String): LiveData<Int>
+
+    @Query("SELECT COUNT(id) FROM samples WHERE study_id LIKE :studyId") // is_complete = 0 is true. doh
+    abstract fun getNumberOfSamples(studyId: String): LiveData<Int>
+
+    @Query("SELECT min(date_created) as min_date, max(date_created) as max_date FROM enumeration_table WHERE study_id LIKE :studyId AND is_complete = 0 AND is_excluded = 0") // is_complete = 0 is true. doh
+    abstract fun getValidEnumerationsCollectionRange(studyId: String): LiveData<DateRange>
+
+    @Query("SELECT * FROM enumeration_table WHERE study_id LIKE :studyId AND is_complete = 0 AND is_excluded = 0")
+    abstract fun getValidEnumerationsSync(studyId: String): List<ResolvedEnumeration> // is_complete = 0 is true. doh
+
     @Query("SELECT * FROM enumeration_table WHERE study_id LIKE :studyId")
     abstract fun getEnumerationsSync(studyId: String): List<Enumeration>
 
@@ -54,6 +81,15 @@ abstract class StudyDao : ConfigDao(), CustomFieldDao, ResolvedEnumerationDao, C
 
     @Query("SELECT * FROM custom_landmark_type_table WHERE config_id LIKE :configId")
     abstract fun getCustomLandmarkTypes(configId: String): LiveData<List<CustomLandmarkType>>
+
+    @Query("SELECT * FROM sample_warnings sw JOIN samples st ON st.id = sw.sample_id WHERE study_id LIKE :studyId")
+    abstract fun getWarnings(studyId: String): LiveData<List<WarningEntity>>
+
+    @Query("SELECT * FROM samples WHERE study_id LIKE :studyId LIMIT 1")
+    abstract fun getSample(studyId: String): LiveData<SampleEntity>
+
+    @Query("SELECT COUNT(et.id) FROM sample_enumerations et JOIN samples st ON et.sample_id = st.id WHERE study_id LIKE :studyId")
+    abstract fun getNumberOfEnumerationsInSample(studyId: String): LiveData<Int>
 
     @Update
     abstract fun update(enumeration: Enumeration)
@@ -93,7 +129,6 @@ abstract class StudyDao : ConfigDao(), CustomFieldDao, ResolvedEnumerationDao, C
 
         val customFields = sourceConfig.customFields
         customFields.forEach {
-            it.id = UUID.randomUUID().toString()
             it.configId = insertConfig.id
         }
 
@@ -103,11 +138,11 @@ abstract class StudyDao : ConfigDao(), CustomFieldDao, ResolvedEnumerationDao, C
             it.configId = insertConfig.id
         }
 
-        val methodology = getMethodologyByConfigSync(sourceConfig.id)?.apply {
+        val methodology = sourceConfig.methodology.apply {
             configId = insertConfig.id
-        }
-        val ruleSets = getRuleSetsByConfigSync(sourceConfig.id)
-        val ruleRecords = getRuleRecordsByConfigSync(sourceConfig.id)
+        }.unresolved
+        val ruleSets = sourceConfig.methodology.ruleSets.map { it.unresolved }
+        val ruleRecords = sourceConfig.methodology.ruleSets.flatMap { it.ruleRecords }.map { it.unresolved }
 
         val enumerationAreas = sourceConfig.enumerationAreas
         enumerationAreas.forEach {

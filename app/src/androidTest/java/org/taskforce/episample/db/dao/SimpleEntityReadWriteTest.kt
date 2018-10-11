@@ -11,6 +11,10 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.taskforce.episample.config.fields.CustomFieldTypeConstants
+import org.taskforce.episample.config.sampling.SamplingGrouping
+import org.taskforce.episample.config.sampling.SamplingMethodEntity
+import org.taskforce.episample.config.sampling.SamplingMethodology
+import org.taskforce.episample.config.sampling.SamplingUnits
 import org.taskforce.episample.db.StudyRoomDatabase
 import org.taskforce.episample.db.collect.GpsBreakcrumbDao
 import org.taskforce.episample.db.collect.ResolvedEnumerationDao
@@ -617,8 +621,7 @@ class SimpleEntityReadWriteTest {
                 EnumerationSubject("Person", "People", "Point of Contact", config.id),
                 CommonSetup.makeUserSettings(config.id),
                 CommonSetup.makeDisplaySettings(config.id),
-                listOf(),
-                listOf(),
+                SamplingMethodEntity(SamplingMethodology.SIMPLE_RANDOM_SAMPLE.name, SamplingGrouping.SUBSETS.name, SamplingUnits.PERCENT.name, config.id),
                 listOf(),
                 listOf(),
                 listOf(),

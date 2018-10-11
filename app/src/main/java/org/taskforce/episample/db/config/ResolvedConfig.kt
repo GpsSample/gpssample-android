@@ -2,10 +2,12 @@ package org.taskforce.episample.db.config
 
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
+import org.taskforce.episample.config.sampling.SamplingMethodEntity
 import org.taskforce.episample.core.models.MapboxStyleUrl
-import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.landmark.CustomLandmarkType
 import org.taskforce.episample.db.converter.DateConverter
+import org.taskforce.episample.config.sampling.ResolvedSamplingMethodEntity
+import org.taskforce.episample.db.config.customfield.CustomField
 import java.util.*
 
 @TypeConverters(DateConverter::class)
@@ -39,6 +41,12 @@ class ResolvedConfig(var name: String,
 
     @Relation(entity = EnumerationArea::class, parentColumn = "id", entityColumn = "config_id")
     lateinit var enumerationAreas: List<ResolvedEnumerationArea>
+
+    @Relation(entity = SamplingMethodEntity::class, parentColumn = "id", entityColumn = "config_id")
+    lateinit var methodologies: List<ResolvedSamplingMethodEntity>
+
+    val methodology: ResolvedSamplingMethodEntity
+        get() = methodologies.first()
 }
 
 @Dao

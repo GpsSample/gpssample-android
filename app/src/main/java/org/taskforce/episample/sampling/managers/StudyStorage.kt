@@ -1,9 +1,9 @@
-package org.taskforce.episample.study.managers
+package org.taskforce.episample.sampling.managers
 
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import org.taskforce.episample.study.models.Study
+import org.taskforce.episample.sampling.models.Study
 import java.io.*
 
 interface StudyStorage {

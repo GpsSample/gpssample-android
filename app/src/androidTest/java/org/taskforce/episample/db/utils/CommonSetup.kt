@@ -3,6 +3,10 @@ package org.taskforce.episample.db.utils
 import android.content.Context
 import org.taskforce.episample.config.base.Config
 import org.taskforce.episample.config.fields.CustomFieldTypeConstants
+import org.taskforce.episample.config.sampling.SamplingGrouping
+import org.taskforce.episample.config.sampling.SamplingMethodEntity
+import org.taskforce.episample.config.sampling.SamplingMethodology
+import org.taskforce.episample.config.sampling.SamplingUnits
 import org.taskforce.episample.config.settings.admin.AdminSettings
 import org.taskforce.episample.core.interfaces.LiveEnumerationSubject
 import org.taskforce.episample.db.ConfigRepository
@@ -122,15 +126,15 @@ class CommonSetup {
 
             }
 
-            configDao.insert(org.taskforce.episample.db.config.Config("Config Name", id = configId),
+            configDao.insert(
+                    org.taskforce.episample.db.config.Config("Config Name", id = configId),
                     listOf(),
                     listOf(),
                     org.taskforce.episample.db.config.AdminSettings("password", configId),
                     EnumerationSubject("s", "p", "l", configId),
                     CommonSetup.makeUserSettings(configId),
                     CommonSetup.makeDisplaySettings(configId),
-                    listOf(),
-                    listOf(),
+                    SamplingMethodEntity(SamplingMethodology.SIMPLE_RANDOM_SAMPLE.name, SamplingGrouping.SUBSETS.name, SamplingUnits.PERCENT.name, configId),
                     listOf(),
                     listOf(),
                     listOf(),
@@ -149,8 +153,7 @@ class CommonSetup {
                     EnumerationSubject(enumerationSingular, enumerationPlural, enumerationLabel, config.id),
                     CommonSetup.makeUserSettings(config.id),
                     CommonSetup.makeDisplaySettings(config.id),
-                    listOf(),
-                    listOf(),
+                    SamplingMethodEntity(SamplingMethodology.SIMPLE_RANDOM_SAMPLE.name, SamplingGrouping.SUBSETS.name, SamplingUnits.PERCENT.name, config.id),
                     listOf(),
                     listOf(),
                     listOf(),
@@ -168,8 +171,7 @@ class CommonSetup {
                     EnumerationSubject("Person", "People", "Point of Contact", insertConfig.id),
                     CommonSetup.makeUserSettings(configId),
                     CommonSetup.makeDisplaySettings(insertConfig.id),
-                    listOf(),
-                    listOf(),
+                    SamplingMethodEntity(SamplingMethodology.SIMPLE_RANDOM_SAMPLE.name, SamplingGrouping.SUBSETS.name, SamplingUnits.PERCENT.name, configId),
                     listOf(),
                     listOf(),
                     listOf(),

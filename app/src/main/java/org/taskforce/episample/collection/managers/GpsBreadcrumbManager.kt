@@ -3,7 +3,7 @@ package org.taskforce.episample.collection.managers
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import org.taskforce.episample.collection.models.GpsBreadcrumb
-import org.taskforce.episample.study.managers.StudyManager
+import org.taskforce.episample.sampling.managers.StudyManager
 
 class GpsBreadcrumbManager(private val studyManager: StudyManager) {
 

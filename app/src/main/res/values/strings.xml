@@ -393,6 +393,19 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="rules_are_not_valid">The rules are not completely filled out or are filled out incorrectly.</string>
     <string name="cannot_save">Cannot Save</string>
     <string name="okay">OKAY</string>
+    <string name="generate_sample">Generate Sample</string>
+    <string name="generate_sample_explanation">To start surveying households for this study, generate a sample from the collection data.</string>
+    <string name="valid">%1$s Valid %2$s</string>
+    <string name="generate_sample_bold">GENERATE SAMPLE</string>
+    <string name="recorded_from">Recorded from %1$s to %2$s</string>
+    <string name="insufficient_households">Insufficient households in collection to satisfy sample requirements for \"%1$s\" (%2$s/%3$s)</string>
+    <string name="sample_for_survey">Sample for Survey</string>
+    <string name="see_warnings">SEE WARNINGS</string>
+    <string name="assign_households">ASSIGN HOUSEHOLDS</string>
+    <string name="delete_sample">DELETE SAMPLE</string>
+    <string name="sample_generated_with_warnings">A sample for this study was generated with warnings on %1$s</string>
+    <string name="sample_generate_on">A sample for this study was generated on %1$s</string>
+    <string name="sample_generated">Sample Generated %1$s</string>
     <string name="mapbox_enter_custom_style">Enter Custom Mapbox Style Url</string>
     <string name="mapbox_test_style">Test Style</string>
     <string name="mapbox_config_title">Mapbox</string>
@@ -406,5 +419,4 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="mapbox_region_name">Study Region</string>
     <string name="mapbox_download_button_text">Download</string>
     <string name="mapbox_list_button_text">List</string>
-
 </resources>

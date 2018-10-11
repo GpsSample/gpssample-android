@@ -62,6 +62,33 @@ class RuleSet(
     }
 }
 
+class ResolvedRuleSet(
+        @ColumnInfo(name = "methodology_id")
+        var methodologyId: String,
+        @ColumnInfo(name = "name")
+        var name: String,
+        @ColumnInfo(name = "isAny")
+        var isAny: Boolean,
+        @ColumnInfo(name = "sample_size")
+        var sampleSize: Int = 0,
+        @PrimaryKey
+        var id: String = UUID.randomUUID().toString()
+) {
+    @Relation(entity = RuleRecord::class, parentColumn = "id", entityColumn = "rule_set_id")
+    lateinit var ruleRecords: List<ResolvedRuleRecord>
+
+    val rules: List<Rule>
+        get() = ruleRecords.map {
+            it.rule
+        }
+
+    val filter: Filter
+        get() = Filter(rules)
+
+    val unresolved: RuleSet
+        get() = RuleSet(methodologyId, name, isAny, sampleSize, id)
+}
+
 @Entity(tableName = "rule_record_table",
         foreignKeys = [
             (ForeignKey(
@@ -118,14 +145,16 @@ class RuleRecord(
 }
 
 class ResolvedRuleRecord(
-        @ColumnInfo(name = "value")
-        var value: String,
+        @ColumnInfo(name = "rule_set_id")
+        var ruleSetId: String,
+        @ColumnInfo(name = "custom_field_id")
+        var customFieldId: String,
         @ColumnInfo(name = "factory")
         var factory: String,
         @ColumnInfo(name = "rule")
         var ruleName: String,
-        @ColumnInfo(name = "custom_field_id")
-        var customFieldId: String,
+        @ColumnInfo(name = "value")
+        var value: String,
         var id: String) {
     @Relation(parentColumn = "custom_field_id", entityColumn = "id")
     lateinit var customFields: List<CustomField>
@@ -155,6 +184,9 @@ class ResolvedRuleRecord(
             }
         }
     }
+
+    val unresolved: RuleRecord
+        get() = RuleRecord(ruleSetId, customFieldId, factory, ruleName, value, id)
 
     val rule: Rule
         get() {

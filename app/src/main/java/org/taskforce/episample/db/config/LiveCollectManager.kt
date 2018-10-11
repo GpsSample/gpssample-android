@@ -6,10 +6,14 @@ import android.arch.lifecycle.Transformations
 import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.interfaces.*
 import org.taskforce.episample.core.interfaces.Config
+import org.taskforce.episample.db.DateRange
 import org.taskforce.episample.db.StudyRepository
+import org.taskforce.episample.db.sampling.SampleEntity
+import org.taskforce.episample.db.sampling.WarningEntity
 import org.taskforce.episample.utils.toDBBreadcrumb
 import org.taskforce.episample.utils.toDBEnumeration
 import org.taskforce.episample.utils.toDBLandmark
+import kotlin.concurrent.thread
 
 class CommonManager {
     companion object {
@@ -64,16 +68,39 @@ class LiveCollectManager(val application: Application,
                          val config: Config,
                          val studyRepository: StudyRepository,
                          override val userSession: UserSession) : CollectManager {
-
     val studyId: String
         get() = userSession.studyId
     val configId: String
         get() = userSession.configId
 
+    override fun deleteSamples() {
+        thread {
+            studyRepository.deleteSamples()
+        }
+    }
+
+    override fun getNumberOfEnumerationsInSample(): LiveData<Int> = studyRepository.getNumberOfEnumerationsInSample(studyId)
+
+    override fun getSample(): LiveData<SampleEntity> = studyRepository.getSample(studyId)
+
+    override fun getWarnings(): LiveData<List<WarningEntity>> = studyRepository.getWarnings(studyId)
+
     override fun getEnumerations(): LiveData<List<org.taskforce.episample.core.interfaces.Enumeration>> {
         return Transformations.map(studyRepository.getEnumerations(studyId), {
             return@map it?.map { it.makeLiveEnumeration() }
         })
+    }
+
+    override fun getNumberOfSamples(): LiveData<Int> {
+        return studyRepository.getNumberOfSamples(studyId)
+    }
+
+    override fun getNumberOfValidEnumerations(): LiveData<Int> {
+        return studyRepository.getNumberOfValidEnumerations(studyId)
+    }
+
+    override fun getValidEnumerationsDateRange(): LiveData<DateRange> {
+        return studyRepository.getValidEnumerationsDateRange(studyId)
     }
 
     override fun getLandmarks(): LiveData<List<org.taskforce.episample.core.interfaces.Landmark>> {
@@ -111,5 +138,9 @@ class LiveCollectManager(val application: Application,
 
     override fun addLandmark(landmark: org.taskforce.episample.core.interfaces.Landmark, callback: (landmarkId: String) -> Unit) {
         studyRepository.insertLandmarkItem(landmark.toDBLandmark(userSession.username, studyId), callback)
+    }
+
+    override fun createSample() {
+        studyRepository.createSample(studyId, config, application.resources)
     }
 }

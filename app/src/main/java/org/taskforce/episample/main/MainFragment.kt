@@ -14,7 +14,7 @@ import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.databinding.FragmentMainBinding
 import org.taskforce.episample.db.navigation.ResolvedNavigationPlan
 import org.taskforce.episample.navigation.ui.NavigationActivity
-import org.taskforce.episample.study.ui.SurveyCreateFragment
+import org.taskforce.episample.sampling.ui.SamplingFragment
 import org.taskforce.episample.supervisor.upload.ui.StudyUploadFragment
 import org.taskforce.episample.sync.managers.SyncManager
 import org.taskforce.episample.sync.ui.SyncActivity
@@ -68,8 +68,8 @@ class MainFragment : Fragment() {
                 sampleOnClick = {
                     requireFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.mainFrame, SurveyCreateFragment())
-                            .addToBackStack(SurveyCreateFragment::class.java.name)
+                            .replace(R.id.mainFrame, SamplingFragment())
+                            .addToBackStack(SamplingFragment::class.java.name)
                             .commit()
                 },
                 finalOnClick = {

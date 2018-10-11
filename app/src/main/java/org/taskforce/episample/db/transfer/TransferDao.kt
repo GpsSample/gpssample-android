@@ -8,10 +8,13 @@ import org.taskforce.episample.db.collect.Landmark
 import org.taskforce.episample.db.config.customfield.CustomFieldValue
 import org.taskforce.episample.db.navigation.NavigationItem
 import org.taskforce.episample.db.navigation.NavigationPlan
+import org.taskforce.episample.db.sampling.SampleEntity
+import org.taskforce.episample.db.sampling.SampleEnumerationEntity
+import org.taskforce.episample.db.sampling.WarningEntity
 
 @Dao
 abstract class TransferDao: TransferEnumerationDao, TransferLandmarkDao, TransferBreadcrumbDao,
-        TransferCustomFieldValueDao, TransferNavigationPlanDao, TransferNavigationItemDao {
+        TransferCustomFieldValueDao, TransferNavigationPlanDao, TransferNavigationItemDao, TransferSampleDao {
 
     @Transaction
     open fun transfer(
@@ -20,7 +23,10 @@ abstract class TransferDao: TransferEnumerationDao, TransferLandmarkDao, Transfe
             breadcrumbs: List<GpsBreadcrumb>,
             customFieldValues: List<CustomFieldValue>,
             navigationPlans: List<NavigationPlan>,
-            navigationItems: List<NavigationItem>
+            navigationItems: List<NavigationItem>,
+            samples: List<SampleEntity>,
+            sampleEnumerations: List<SampleEnumerationEntity>,
+            sampleWarnings: List<WarningEntity>
             ) {
         insertEnumerations(enumerations)
         insertLandmarks(landmarks)
@@ -28,5 +34,8 @@ abstract class TransferDao: TransferEnumerationDao, TransferLandmarkDao, Transfe
         insertCustomFieldValues(customFieldValues)
         insertNavigationPlans(navigationPlans)
         insertNavigationItems(navigationItems)
+        insertSamples(samples)
+        insertSampleEnumerations(sampleEnumerations)
+        insertSampleWarnings(sampleWarnings)
     }
 }

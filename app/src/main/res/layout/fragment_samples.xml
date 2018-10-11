@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.sampling.ui.SamplesFragmentViewModel"/>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingTop="24dp"
+        android:paddingRight="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="@string/sample_for_survey"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            android:textStyle="normal"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif"
+            android:textColor="#000000"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            android:text="@{vm.sampleGeneratedOnExplanation}"
+            tools:text="A sample for this study was successfully generated on 06/06/2018."
+            />
+
+        <TextView
+            android:text="@{vm.warningsText}"
+            android:visibility="@{vm.warningsVisibility}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="@{vm.seeWarningsVisibility}"
+            android:text="@string/see_warnings"
+            android:textColor="@color/colorAccent"
+            android:onClick="@{vm::onSeeWarningsClicked}"
+            android:textStyle="bold"/>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:cardElevation="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:textStyle="normal"
+                    android:text="@{vm.sampleTitle}"
+                    tools:text="Sample Generated 06/06/2018"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:textColor="#757575"
+                    android:textSize="14sp"
+                    android:textStyle="normal"
+                    android:text="@{vm.numberOfEnumerationsText}"
+                    tools:text="300 Households"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/assign_households"
+                        android:textColor="@color/colorAccent"
+                        android:textStyle="bold"/>
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"/>
+
+                    <TextView
+                        android:onClick="@{vm::onDeleteClicked}"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/delete_sample"
+                        android:textColor="@color/colorError"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+    </LinearLayout>
+</layout>

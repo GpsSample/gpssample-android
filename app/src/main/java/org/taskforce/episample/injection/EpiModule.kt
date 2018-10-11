@@ -11,8 +11,8 @@ import org.taskforce.episample.config.landmark.LandmarkTypeManager
 import org.taskforce.episample.config.transfer.TransferFileService
 import org.taskforce.episample.config.transfer.TransferManager
 import org.taskforce.episample.permissions.managers.PermissionManager
-import org.taskforce.episample.study.managers.StudyManager
-import org.taskforce.episample.study.managers.StudyStorage
+import org.taskforce.episample.sampling.managers.StudyManager
+import org.taskforce.episample.sampling.managers.StudyStorage
 import org.taskforce.episample.supervisor.upload.managers.DriveUploadManager
 import org.taskforce.episample.supervisor.upload.managers.UploadManager
 import org.taskforce.episample.sync.managers.SyncManager

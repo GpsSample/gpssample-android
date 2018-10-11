@@ -20,9 +20,12 @@ import org.taskforce.episample.db.filter.RuleSet
 import org.taskforce.episample.db.navigation.NavigationDao
 import org.taskforce.episample.db.navigation.NavigationItem
 import org.taskforce.episample.db.navigation.NavigationPlan
+import org.taskforce.episample.db.sampling.SampleEntity
+import org.taskforce.episample.db.sampling.SampleEnumerationEntity
+import org.taskforce.episample.db.sampling.WarningEntity
 import org.taskforce.episample.db.transfer.TransferDao
 
-@Database(version = 3,
+@Database(version = 4,
         entities = [
             AdminSettings::class,
             Config::class,
@@ -40,9 +43,12 @@ import org.taskforce.episample.db.transfer.TransferDao
             NavigationItem::class,
             RuleSet::class,
             RuleRecord::class,
+            SampleEntity::class,
+            SampleEnumerationEntity::class,
             SamplingMethodEntity::class,
             Study::class,
-            UserSettings::class
+            UserSettings::class,
+            WarningEntity::class
         ])
 
 abstract class StudyRoomDatabase : RoomDatabase() {

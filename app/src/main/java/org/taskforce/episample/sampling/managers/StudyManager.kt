@@ -1,4 +1,4 @@
-package org.taskforce.episample.study.managers
+package org.taskforce.episample.sampling.managers
 
 import android.os.Environment
 import io.reactivex.Observable
@@ -12,7 +12,7 @@ import org.taskforce.episample.collection.models.GpsBreadcrumb
 import org.taskforce.episample.collection.models.LandmarkItem
 import org.taskforce.episample.config.base.Config
 import org.taskforce.episample.config.base.ConfigManager
-import org.taskforce.episample.study.models.Study
+import org.taskforce.episample.sampling.models.Study
 
 class StudyManager(private val configManager: ConfigManager,
                    private val studyStorage: StudyStorage) {

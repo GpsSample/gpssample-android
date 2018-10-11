@@ -1,5 +1,6 @@
 package org.taskforce.episample.core.interfaces
 
+import org.taskforce.episample.config.sampling.ResolvedSamplingMethodEntity
 import org.taskforce.episample.core.models.MapboxStyleUrl
 import java.util.*
 
@@ -14,6 +15,7 @@ interface Config {
     val customFields: List<CustomField>
     val landmarkTypes: List<LandmarkType>
     val enumerationAreas: List<EnumerationArea>
+    val methodology: ResolvedSamplingMethodEntity
     val mapboxStyle: MapboxStyleUrl
 }
 

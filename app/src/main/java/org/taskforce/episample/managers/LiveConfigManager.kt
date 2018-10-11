@@ -3,10 +3,12 @@ package org.taskforce.episample.managers
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Transformations
 import android.content.Context
-import org.taskforce.episample.core.BuiltInLandmark
-import org.taskforce.episample.core.interfaces.*
+import org.taskforce.episample.config.sampling.ResolvedSamplingMethodEntity
+import org.taskforce.episample.core.interfaces.GeoJsonEnumerationArea
 import org.taskforce.episample.db.StudyRepository
 import org.taskforce.episample.db.config.ResolvedConfig
+import org.taskforce.episample.core.BuiltInLandmark
+import org.taskforce.episample.core.interfaces.*
 
 class LiveConfigManager(val studyRepository: StudyRepository,
                         override val configId: String) : ConfigManager {
@@ -18,7 +20,10 @@ class LiveConfigManager(val studyRepository: StudyRepository,
     }
 }
 
-class LiveConfig(context: Context, dbConfig: ResolvedConfig) : Config {
+class LiveConfig(context: Context, val dbConfig: ResolvedConfig) : Config {
+    override val methodology: ResolvedSamplingMethodEntity
+        get() = dbConfig.methodology
+
     override var name: String = dbConfig.name
     override val dateCreated = dbConfig.dateCreated
     override val id = dbConfig.id

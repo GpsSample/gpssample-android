@@ -7,6 +7,7 @@ import org.taskforce.episample.core.interfaces.Enumeration
 import org.taskforce.episample.core.interfaces.LiveEnumeration
 import org.taskforce.episample.db.config.customfield.CustomFieldValue
 import org.taskforce.episample.db.converter.DateConverter
+import org.taskforce.episample.db.sampling.SampleEnumerationEntity
 import java.util.*
 
 @TypeConverters(DateConverter::class)
@@ -34,6 +35,8 @@ class ResolvedEnumeration(
 
     fun makeLiveEnumeration(): Enumeration = LiveEnumeration(collectorName, image,
             isIncomplete, isExcluded, title, note, LatLng(lat, lng), gpsPrecision, "TODO", customFieldValues.map { it as org.taskforce.episample.core.interfaces.CustomFieldValue }, id, dateCreated)
+
+    fun toSampleEnumerationEntity(sampleId: String): SampleEnumerationEntity = SampleEnumerationEntity(sampleId, id)
 }
 
 @Dao

@@ -4,10 +4,15 @@ import android.app.Application
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
+import android.content.res.Resources
 import android.os.AsyncTask
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import org.taskforce.episample.R
+import org.taskforce.episample.config.sampling.SamplingMethod
+import org.taskforce.episample.config.sampling.SamplingMethodology
+import org.taskforce.episample.config.sampling.SamplingUnits
 import org.taskforce.episample.core.InitializedLiveData
 import org.taskforce.episample.core.navigation.SurveyStatus
 import org.taskforce.episample.db.collect.Enumeration
@@ -16,8 +21,11 @@ import org.taskforce.episample.db.collect.Landmark
 import org.taskforce.episample.db.collect.ResolvedEnumeration
 import org.taskforce.episample.db.config.*
 import org.taskforce.episample.db.config.customfield.CustomFieldValue
+import org.taskforce.episample.db.filter.ResolvedRuleSet
 import org.taskforce.episample.db.navigation.NavigationDao
 import org.taskforce.episample.db.navigation.ResolvedNavigationPlan
+import org.taskforce.episample.db.sampling.SampleEntity
+import org.taskforce.episample.db.sampling.WarningEntity
 import org.taskforce.episample.sync.core.EnumerationsReceivedMessage
 import org.taskforce.episample.sync.core.StudyReceivedMessage
 import java.util.*
@@ -56,7 +64,10 @@ class StudyRepository(val application: Application, injectedDatabase: StudyRoomD
                 sourceDao.getBreadcrumbs(),
                 sourceDao.getCustomFieldValues(),
                 sourceDao.getNavigationPlans(),
-                sourceDao.getNavigationItems()
+                sourceDao.getNavigationItems(),
+                sourceDao.getSamples(),
+                sourceDao.getSampleEnumerations(),
+                sourceDao.getSampleWarnings()
         )
     }
 
@@ -228,8 +239,73 @@ class StudyRepository(val application: Application, injectedDatabase: StudyRoomD
             }
         }
     }
+
+    fun getNumberOfValidEnumerations(studyId: String): LiveData<Int> {
+        return Transformations.switchMap(studyDao) {
+            it.getNumberOfValidEnumerations(studyId)
+        }
+    }
+
+    fun getValidEnumerationsDateRange(studyId: String): LiveData<DateRange> {
+        return Transformations.switchMap(studyDao) {
+            it.getValidEnumerationsCollectionRange(studyId)
+        }
+    }
+
+    fun createSample(studyId: String, config: org.taskforce.episample.core.interfaces.Config, resources: Resources) {
+        studyDao.value?.let { CreateSampleTask(it, resources).execute(Triple(config, studyId, { _ -> })) }
+    }
+
+    fun getNumberOfSamples(studyId: String): LiveData<Int> = studyDao.value!!.getNumberOfSamples(studyId)
+    fun getWarnings(studyId: String): LiveData<List<WarningEntity>> = studyDao.value!!.getWarnings(studyId)
+    fun getSample(studyId: String): LiveData<SampleEntity> = studyDao.value!!.getSample(studyId)
+    fun getNumberOfEnumerationsInSample(studyId: String): LiveData<Int>  = studyDao.value!!.getNumberOfEnumerationsInSample(studyId)
+    fun deleteSamples() = studyDao.value!!.deleteSamples()
 }
 
+typealias SampleCreatedCallback = (Boolean) -> Unit
+
+private class CreateSampleTask(private val studyDao: StudyDao, val resources: Resources) : AsyncTask<Triple<org.taskforce.episample.core.interfaces.Config, String, SampleCreatedCallback>, Void, Void>() {
+    override fun doInBackground(vararg params: Triple<org.taskforce.episample.core.interfaces.Config, String, SampleCreatedCallback>): Void? {
+        params[0].let { (config, studyId, callback) ->
+            val samplingMethodology = config.methodology.toMethodology()
+            val ruleSets = config.methodology.ruleSets
+            val enumerations = studyDao.getValidEnumerationsSync(studyId)
+            val enumerationsForRuleSets: List<Pair<ResolvedRuleSet, List<ResolvedEnumeration>>> = ruleSets.map { ruleSet ->
+                val filteredEnumerationsForRuleSet = when(ruleSet.isAny) {
+                    true -> ruleSet.filter.filterAny(enumerations)
+                    false -> ruleSet.filter.filterAll(enumerations)
+                }
+                ruleSet to filteredEnumerationsForRuleSet
+            }
+            val warnings = mutableListOf<String>()
+            val totalPopulationForSampling: List<ResolvedEnumeration> = enumerationsForRuleSets.map { (ruleSet, filteredEnumerationsForRuleSet) ->
+                val amount: Int = when (samplingMethodology.units) {
+                    SamplingUnits.PERCENT -> (ruleSet.sampleSize/100.0 * filteredEnumerationsForRuleSet.size).toInt()
+                    SamplingUnits.FIXED -> ruleSet.sampleSize
+                }
+                val sample = when (samplingMethodology.type) {
+                    SamplingMethodology.SIMPLE_RANDOM_SAMPLE -> SamplingMethod.simpleRandomSample(amount, filteredEnumerationsForRuleSet)
+                    SamplingMethodology.SYSTEMATIC_RANDOM_SAMPLE -> SamplingMethod.systematicRandomSample(amount, filteredEnumerationsForRuleSet)
+                }
+                if (sample.size < amount) {
+                    warnings.add(resources.getString(R.string.insufficient_households, ruleSet.name, sample.size.toString(), amount.toString()))
+                }
+                return@map ruleSet to sample
+            }.flatMap { it.second }
+            //SAMPLING DONE -- move to insert data
+            val sampleEntity = SampleEntity(studyId)
+            val sampleEnumerations = totalPopulationForSampling.map { it.toSampleEnumerationEntity(sampleEntity.id) }
+            val sampleWarnings = warnings.map { WarningEntity(sampleEntity.id, it) }
+            studyDao.deleteSamples()
+            studyDao.insert(sampleEntity)
+            studyDao.insert(*sampleEnumerations.toTypedArray())
+            studyDao.insert(*sampleWarnings.toTypedArray())
+            callback(true)
+            return null
+        }
+    }
+}
 
 private class InsertEnumerationTask(private val studyDao: StudyDao) : AsyncTask<Triple<Enumeration, List<CustomFieldValue>, (enumerationId: String) -> Unit>, Void, Void>() {
     override fun doInBackground(vararg params: Triple<Enumeration, List<CustomFieldValue>, (enumerationId: String) -> Unit>): Void? {

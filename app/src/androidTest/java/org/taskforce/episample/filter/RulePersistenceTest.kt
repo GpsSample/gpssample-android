@@ -40,7 +40,7 @@ import java.util.*
 //    private val ruleSet = RuleSet("My first rule set", configId, true)
 //
 //    @Before
-//    fun createDb() {
+//    fun createEnumerations() {
 //        val context = InstrumentationRegistry.getTargetContext()
 //        db = Room.inMemoryDatabaseBuilder(context, StudyRoomDatabase::class.java).build()
 //        configDao = db?.configDao()

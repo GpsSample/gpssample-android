@@ -29,7 +29,7 @@
                 android:onClick="@{vm::showDatePicker}"
                 android:singleLine="true"
                 android:text="@{vm.input}"
-                android:textSize="14sp" />
+                android:textSize="18sp" />
 
         </android.support.design.widget.TextInputLayout>
 

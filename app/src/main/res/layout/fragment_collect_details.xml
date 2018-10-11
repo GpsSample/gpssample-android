@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <data>
+        <variable
+            name="toolbarVm"
+            type="org.taskforce.episample.navigation.ui.NavigationToolbarViewModel" />
+
+        <variable
+            name="vm"
+            type="org.taskforce.episample.collection.ui.CollectDetailsViewModel" />
+
+        <variable
+            name="gpsVm"
+            type="org.taskforce.episample.collection.ui.CollectGpsPrecisionViewModel" />
+    </data>
+
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <include
+                android:id="@+id/toolbar_layout"
+                layout="@layout/app_navigation_toolbar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:vm="@{toolbarVm}"
+                tools:visible="true" />
+
+            <FrameLayout
+                android:id="@+id/collectDetailsMap"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="56dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+            </FrameLayout>
+
+            <!-- Image card -->
+            <Space
+                android:id="@+id/mapImageSpace"
+                android:layout_width="32dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="60dp"
+                app:layout_constraintBottom_toBottomOf="@id/collectDetailsMap"
+                app:layout_constraintEnd_toEndOf="@+id/collectDetailsMap"
+                app:layout_constraintStart_toStartOf="@+id/collectDetailsMap" />
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/photoCard"
+                visibleOrGone="@{vm.showPhotoCard}"
+                android:layout_width="150dp"
+                android:layout_height="120dp"
+                android:layout_centerHorizontal="true"
+                android:background="@android:color/white"
+                app:contentPadding="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/mapImageSpace">
+
+                <ImageView
+                    android:id="@+id/collectDetailsImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@{vm.photoSource}"
+                    tools:src="@drawable/photo_empty" />
+
+            </android.support.v7.widget.CardView>
+
+            <LinearLayout
+                android:id="@+id/excludedIncompleteWrapper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/photoCard"
+                app:layout_goneMarginTop="76dp">
+
+                <TextView
+                    android:id="@+id/excludedLabel"
+                    visibleOrGone="@{vm.showExcluded}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:background="@color/excluded"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="@string/collect_excluded"
+                    android:textColor="@color/textColorInverse"
+                    android:textSize="12sp"
+                    tools:text="EXCLUDED" />
+
+                <TextView
+                    android:id="@+id/incompleteWarning"
+                    visibleOrGone="@{vm.showIncomplete}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:background="@color/incomplete"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="@string/collect_incomplete"
+                    android:textColor="@color/textColorInverse"
+                    android:textSize="12sp"
+                    tools:text="INCOMPLETE" />
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/collectDetailFields"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_goneMarginTop="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/excludedIncompleteWrapper"
+                tools:listitem="@layout/item_collect_detail_field"/>
+
+            <TextView
+                android:id="@+id/detailsDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@{vm.distanceText}"
+                android:textColor="@color/textColorDetails"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/collectDetailFields"
+                tools:text="12.1 m away" />
+
+            <TextView
+                android:id="@+id/detailsGpsView"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/textColorDisabled"
+                android:gravity="center"
+                android:paddingStart="8dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="4dp"
+                android:text="@{vm.gpsDisplay}"
+                android:textColor="@color/textColorInverse"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/detailsDistance"
+                tools:text="37.4217983, -122.084" />
+
+            <include
+                android:id="@+id/detailsGpsPrecision"
+                layout="@layout/app_gps_precision"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="32dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/detailsGpsView"
+                app:vm="@{gpsVm}" />
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v4.widget.NestedScrollView>
+</layout>

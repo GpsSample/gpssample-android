@@ -5,10 +5,12 @@ import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 
 class NavigationToolbarViewModelFactory(private val application: Application,
-                                        private val titleResId: Int) : ViewModelProvider.NewInstanceFactory() {
+                                        private val titleResId: Int,
+                                        private val titleSubject: String? = "") : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return NavigationToolbarViewModel(application,
-                titleResId) as T
+                titleResId,
+                titleSubject) as T
     }
 }

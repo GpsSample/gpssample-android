@@ -136,6 +136,7 @@ class CollectAddFragment : Fragment() {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                     val landmarkType = collectViewModel.config.landmarkTypes[position]
                     collectViewModel.selectedLandmark.postValue(landmarkType)
+                    collectViewModel.landmarkType = landmarkType
                 }
             }
 

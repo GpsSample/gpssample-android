@@ -16,10 +16,15 @@ import java.io.File
 interface IconFactory {
     fun getBitmapDescriptor(collectItem: CollectItem): BitmapDescriptor
     fun getIconUri(collectItem: CollectItem): String
+    fun getResourceUri(drawable: Int): String
 }
 
 class CollectIconFactory(
         private val resources: Resources) : IconFactory {
+    
+    override fun getResourceUri(drawable: Int): String {
+        return resources.getResourceUri(drawable).toString()
+    }
 
     override fun getBitmapDescriptor(collectItem: CollectItem): BitmapDescriptor =
             when (collectItem) {

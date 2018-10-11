@@ -6,19 +6,31 @@ import org.taskforce.episample.core.interfaces.Enumeration
 import org.taskforce.episample.utils.DateUtil
 
 
-class CollectItemViewModel(val icon: String?,
+class CollectItemViewModel(var icon: String?,
                            val title: String?,
                            val description: String,
                            val incompleteText: String,
-                           val isIncomplete: Boolean) {
+                           val isIncomplete: Boolean,
+                           val showDetails: (CollectItem) -> Unit,
+                           val data: CollectItem) {
 
-    constructor(collectItem: CollectItem, icon: String?, incompleteText: String, displaySettings: DisplaySettings) : this(
+    constructor(collectItem: CollectItem, 
+                icon: String?, 
+                incompleteText: String, 
+                displaySettings: DisplaySettings,
+                showDetails: (CollectItem) -> Unit) : this(
             icon,
             collectItem.title,
             getDateString(collectItem, displaySettings),
             incompleteText,
-            (collectItem as? Enumeration)?.isIncomplete ?: false
+            (collectItem as? Enumeration)?.isIncomplete ?: false,
+            showDetails,
+            collectItem
     )
+    
+    fun handleDetailsClick() {
+        showDetails(data)
+    }
     
     companion object {
         fun getDateString(collectItem: CollectItem, displaySettings: DisplaySettings): String {

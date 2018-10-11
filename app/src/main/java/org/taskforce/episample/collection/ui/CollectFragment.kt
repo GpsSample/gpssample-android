@@ -27,6 +27,7 @@ import org.taskforce.episample.collection.viewmodels.CollectViewModel
 import org.taskforce.episample.collection.viewmodels.CollectViewModelFactory
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.LiveDataPair
+import org.taskforce.episample.core.interfaces.CollectItem
 import org.taskforce.episample.databinding.FragmentCollectBinding
 import org.taskforce.episample.toolbar.managers.LanguageManager
 import org.taskforce.episample.utils.getCompatColor
@@ -97,7 +98,10 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
 
         adapter = CollectItemAdapter(CollectIconFactory(requireContext().resources),
                 languageService.getString(R.string.collect_incomplete),
-                collectViewModel.config.displaySettings)
+                collectViewModel.config.displaySettings
+        ) {
+            showItemDetailsScreen(it)
+        }
         binding.collectList.adapter = adapter
 
         LiveDataPair(markerManagerLiveData, collectViewModel.collectItems).observe(this, Observer {
@@ -216,6 +220,16 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
                 .addToBackStack(CollectAddFragment::class.java.name)
                 .commit()
     }
+
+
+    private fun showItemDetailsScreen(item: CollectItem) {
+        requireFragmentManager()
+                .beginTransaction()
+                .replace(R.id.mainFrame, CollectDetailsFragment.newInstance(item))
+                .addToBackStack(CollectDetailsFragment::class.java.name)
+                .commit()
+    }
+
 
     companion object {
         const val MAP_FRAGMENT_TAG = "collectFragment.MapboxFragment"

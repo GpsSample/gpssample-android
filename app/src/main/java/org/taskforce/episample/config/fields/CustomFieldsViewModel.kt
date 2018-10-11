@@ -13,7 +13,7 @@ import org.taskforce.episample.core.interfaces.LiveEnumerationSubject
 
 class CustomFieldsViewModel(
         val languageService: LanguageService,
-        val createNewField: () -> Unit,
+        var createNewField: () -> Unit,
         private val configBuildManager: ConfigBuildManager) :
         ViewModel(), BaseConfigViewModel {
     init {

@@ -15,7 +15,8 @@ import javax.inject.Inject
 
 class NavigationToolbarViewModel(
         application: Application,
-        titleResId: Int) : AndroidViewModel(application) {
+        titleResId: Int,
+        titleSubject: String? = "") : AndroidViewModel(application) {
 
     @Inject
     lateinit var languageService: LanguageService
@@ -26,7 +27,7 @@ class NavigationToolbarViewModel(
 
     var languageSelectVisibility = MutableLiveData<Boolean>().apply { value = false }
 
-    var title = languageService.getString(titleResId)
+    var title = languageService.getString(titleResId, titleSubject)
 
     override fun onCleared() {
         super.onCleared()

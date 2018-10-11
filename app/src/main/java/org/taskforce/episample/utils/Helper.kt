@@ -19,3 +19,10 @@ fun boldSubstring(target: String, substring: String): SpannableStringBuilder {
         setSpan(StyleSpan(Typeface.BOLD), boldIndex, boldIndex + substring.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
     }
 }
+
+fun italicSubstring(target: String, substring: String): SpannableStringBuilder {
+    val italicIndex = target.indexOf(substring)
+    return SpannableStringBuilder(target).apply {
+        setSpan(StyleSpan(Typeface.ITALIC), italicIndex, italicIndex + substring.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+    }
+}

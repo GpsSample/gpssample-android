@@ -12,7 +12,8 @@ import org.taskforce.episample.utils.inflater
 class CollectItemAdapter(
         private val collectIconFactory: CollectIconFactory,
         var incompleteText: String,
-        val displaySettings: DisplaySettings) : RecyclerView.Adapter<CollectItemViewHolder>() {
+        val displaySettings: DisplaySettings,
+        val viewDetails: (collectItem: CollectItem) -> Unit) : RecyclerView.Adapter<CollectItemViewHolder>() {
 
     var data = listOf<CollectItem>()
         set(value) {
@@ -30,7 +31,8 @@ class CollectItemAdapter(
                 data[position],
                 collectIconFactory.getIconUri(data[position]),
                 incompleteText, 
-                displaySettings))
+                displaySettings,
+                viewDetails))
     }
 }
 

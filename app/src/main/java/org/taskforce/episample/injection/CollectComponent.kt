@@ -3,6 +3,8 @@ package org.taskforce.episample.injection
 import dagger.Subcomponent
 import org.taskforce.episample.auth.LoginViewModel
 import org.taskforce.episample.collection.ui.CollectAddFragment
+import org.taskforce.episample.collection.ui.CollectDetailsFragment
+import org.taskforce.episample.collection.ui.CollectDetailsViewModel
 import org.taskforce.episample.collection.viewmodels.CollectAddViewModel
 import org.taskforce.episample.collection.viewmodels.CollectViewModel
 import org.taskforce.episample.core.ui.dialogs.TextInputDialogViewModel
@@ -33,4 +35,6 @@ interface CollectComponent {
     fun inject(samplingFragment: SamplingFragment)
     fun inject(samplesFragment: SamplesFragment)
     fun inject(navigationListViewModel: NavigationListViewModel)
+    fun inject(collectDetailsViewModel: CollectDetailsViewModel)
+    fun inject(collectDetailsFragment: CollectDetailsFragment)
 }

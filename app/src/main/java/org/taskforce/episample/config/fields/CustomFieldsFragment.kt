@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
@@ -25,6 +26,7 @@ class CustomFieldsFragment : Fragment() {
     lateinit var languageManager: LanguageManager
 
     lateinit var configBuildViewModel: ConfigBuildViewModel
+    lateinit var viewModel: CustomFieldsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,28 +34,36 @@ class CustomFieldsFragment : Fragment() {
         configBuildViewModel = ViewModelProviders.of(requireActivity()).get(ConfigBuildViewModel::class.java)
 
         (requireActivity().application as EpiApplication).component.inject(this)
+
+        viewModel = ViewModelProviders.of(this@CustomFieldsFragment.requireActivity(), CustomFieldsViewModelFactory(LanguageService(languageManager),
+                createNewField,
+                configBuildViewModel.configBuildManager))
+                .get(CustomFieldsViewModel::class.java)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
-            FragmentConfigFieldsBinding.inflate(inflater).apply {
-                headerVm = ConfigHeaderViewModel(
-                        LanguageService(languageManager),
-                        R.string.config_fields_title,
-                        R.string.config_fields_explanation)
-                val viewModel = ViewModelProviders.of(this@CustomFieldsFragment.requireActivity(), CustomFieldsViewModelFactory(LanguageService(languageManager),
-                        {
-                            (context as FragmentActivity).supportFragmentManager
-                                    .beginTransaction()
-                                    .add(R.id.configFrame, CustomFieldsAddFragment.newInstance())
-                                    .addToBackStack(CustomFieldsAddFragment::class.java.name)
-                                    .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_in_up)
-                                    .commit()
-                        },
-                        configBuildViewModel.configBuildManager))
-                        .get(CustomFieldsViewModel::class.java)
-
-                vm = viewModel
-            }.root
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val binding = FragmentConfigFieldsBinding.inflate(inflater).apply {
+            headerVm = ConfigHeaderViewModel(
+                    LanguageService(languageManager),
+                    R.string.config_fields_title,
+                    R.string.config_fields_explanation)
+            
+            vm = viewModel
+        }
+        
+        viewModel.createNewField = createNewField
+        
+        return binding.root
+    }
+    
+    private val createNewField: () -> Unit = {
+        (requireContext() as FragmentActivity).supportFragmentManager
+                .beginTransaction()
+                .add(R.id.configFrame, CustomFieldsAddFragment.newInstance())
+                .addToBackStack(CustomFieldsAddFragment::class.java.name)
+                .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_in_up)
+                .commit()
+    }
 
     companion object {
         const val HELP_TARGET = "#customFields"

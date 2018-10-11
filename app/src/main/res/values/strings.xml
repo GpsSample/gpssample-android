@@ -419,4 +419,8 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="mapbox_region_name">Study Region</string>
     <string name="mapbox_download_button_text">Download</string>
     <string name="mapbox_list_button_text">List</string>
+
+    <string name="empty">Empty</string>
+    <string name="view_item_title">View %s</string>
+    <string name="landmark">Landmark</string>
 </resources>

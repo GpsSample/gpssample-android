@@ -79,6 +79,12 @@ class LiveCollectManager(val application: Application,
         }
     }
 
+    override fun createNavigationPlans(sampleEntity: SampleEntity, numberOfNavigationPlansToMake: Int) {
+        thread {
+            studyRepository.createNavigationPlans(sampleEntity, numberOfNavigationPlansToMake)
+        }
+    }
+
     override fun getNumberOfEnumerationsInSample(): LiveData<Int> = studyRepository.getNumberOfEnumerationsInSample(studyId)
 
     override fun getSample(): LiveData<SampleEntity> = studyRepository.getSample(studyId)

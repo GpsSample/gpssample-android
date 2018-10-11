@@ -9,6 +9,8 @@ import org.taskforce.episample.db.config.customfield.CustomFieldDao
 import org.taskforce.episample.db.config.customfield.CustomFieldValue
 import org.taskforce.episample.db.config.customfield.CustomFieldValueDao
 import org.taskforce.episample.db.config.landmark.CustomLandmarkType
+import org.taskforce.episample.db.navigation.NavigationItem
+import org.taskforce.episample.db.navigation.NavigationPlan
 import org.taskforce.episample.db.sampling.SampleEntity
 import org.taskforce.episample.db.sampling.SampleEnumerationEntity
 import org.taskforce.episample.db.sampling.WarningEntity
@@ -40,8 +42,17 @@ abstract class StudyDao : ConfigDao(), CustomFieldDao, ResolvedEnumerationDao, C
     @Delete
     abstract fun delete(study: Study)
 
+    @Insert
+    abstract fun insertNavigationPlans(navigationPlans: List<NavigationPlan>)
+
+    @Insert
+    abstract fun insertNavigationItems(navigationItems: List<NavigationItem>)
+
     @Query("DELETE FROM samples")
     abstract fun deleteSamples()
+
+    @Query("DELETE FROM navigation_plan_table")
+    abstract fun deleteNavigationPlansSync()
 
     @Query("SELECT * FROM study_table")
     abstract fun getAllStudiesSync(): List<Study>
@@ -57,6 +68,9 @@ abstract class StudyDao : ConfigDao(), CustomFieldDao, ResolvedEnumerationDao, C
 
     @Query("SELECT * FROM enumeration_table WHERE study_id LIKE :studyId")
     abstract fun getEnumerations(studyId: String): LiveData<List<ResolvedEnumeration>>
+
+    @Query("SELECT et.id, lat, lng, note, is_excluded, is_complete, gps_precision, collector_name, title, image, date_created FROM enumeration_table et JOIN sample_enumerations se ON et.id = se.enumeration_id WHERE sample_id LIKE :sampleId")
+    abstract fun getSampleResolvedEnumerationsSync(sampleId: String): List<ResolvedEnumeration>
 
     @Query("SELECT COUNT(id) FROM enumeration_table WHERE study_id LIKE :studyId AND is_complete = 0 AND is_excluded = 0") // is_complete = 0 is true. doh
     abstract fun getNumberOfValidEnumerations(studyId: String): LiveData<Int>

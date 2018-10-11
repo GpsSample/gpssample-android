@@ -23,6 +23,8 @@ import org.taskforce.episample.db.config.*
 import org.taskforce.episample.db.config.customfield.CustomFieldValue
 import org.taskforce.episample.db.filter.ResolvedRuleSet
 import org.taskforce.episample.db.navigation.NavigationDao
+import org.taskforce.episample.db.navigation.NavigationItem
+import org.taskforce.episample.db.navigation.NavigationPlan
 import org.taskforce.episample.db.navigation.ResolvedNavigationPlan
 import org.taskforce.episample.db.sampling.SampleEntity
 import org.taskforce.episample.db.sampling.WarningEntity
@@ -261,6 +263,22 @@ class StudyRepository(val application: Application, injectedDatabase: StudyRoomD
     fun getSample(studyId: String): LiveData<SampleEntity> = studyDao.value!!.getSample(studyId)
     fun getNumberOfEnumerationsInSample(studyId: String): LiveData<Int>  = studyDao.value!!.getNumberOfEnumerationsInSample(studyId)
     fun deleteSamples() = studyDao.value!!.deleteSamples()
+    fun createNavigationPlans(sampleEntity: SampleEntity, numberOfNavigationPlansToMake: Int) {
+        val dao = studyDao.value!!
+        dao.deleteNavigationPlansSync()
+        val enumerations = dao.getSampleResolvedEnumerationsSync(sampleEntity.id).toMutableList()
+        val numberOfEnumerationsPerPlan: Int = enumerations.size / numberOfNavigationPlansToMake
+        val navigationPlans = (1..numberOfNavigationPlansToMake).map {
+            NavigationPlan(sampleEntity.studyId, "Navigation Plan $it")
+        }
+        val navigationItems = enumerations.mapIndexed { index, enumeration ->
+            val navigationPlanIndex = index / numberOfEnumerationsPerPlan
+            val navigationPlanId = navigationPlans[navigationPlanIndex % navigationPlans.size].id
+            NavigationItem(navigationPlanId, enumeration.id, index, SurveyStatus.Incomplete())
+        }
+        dao.insertNavigationPlans(navigationPlans)
+        dao.insertNavigationItems(navigationItems)
+    }
 }
 
 typealias SampleCreatedCallback = (Boolean) -> Unit

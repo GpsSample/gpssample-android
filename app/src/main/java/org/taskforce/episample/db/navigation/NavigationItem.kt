@@ -3,7 +3,6 @@ package org.taskforce.episample.db.navigation
 import android.arch.persistence.room.*
 import org.taskforce.episample.core.navigation.SurveyStatus
 import org.taskforce.episample.db.collect.Enumeration
-import org.taskforce.episample.db.collect.ResolvedEnumeration
 import org.taskforce.episample.db.converter.DateConverter
 import org.taskforce.episample.db.converter.SurveyStatusConverter
 import java.util.*
@@ -12,6 +11,9 @@ import java.util.*
         foreignKeys = [
             (ForeignKey(
                     entity = Enumeration::class, parentColumns = ["id"], childColumns = ["enumeration_id"]
+            )),
+            (ForeignKey(
+                    entity = NavigationPlan::class, parentColumns = ["id"], childColumns = ["navigation_plan_id"], onDelete = ForeignKey.CASCADE
             ))
         ])
 @TypeConverters(

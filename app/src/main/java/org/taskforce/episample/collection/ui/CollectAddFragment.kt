@@ -124,6 +124,10 @@ class CollectAddFragment : Fragment() {
                             collectViewModel.saveEnumeration(latLng, precision, shouldExclude = true)
                         }
                         outsideAreaDialog.show(childFragmentManager, OutsideAreaDialogFragment::class.java.simpleName)
+                    },
+                    { photoUri ->
+                        val photoFragment = ViewPhotoFragment.newInstance(photoUri)
+                        photoFragment.show(requireFragmentManager(), ViewPhotoFragment::class.java.simpleName)
                     }
             )).get(CollectAddViewModel::class.java)
 

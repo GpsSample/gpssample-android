@@ -33,7 +33,8 @@ class CollectAddViewModel(
         private val goToNext: () -> Unit,
         val takePicture: () -> Unit,
         private val showDuplicateGpsDialog: (enumeration: Enumeration?, subject: EnumerationSubject) -> Unit,
-        private val showOutsideEnumerationAreaDialog: (latLng: LatLng, precision: Double) -> Unit) : AndroidViewModel(application) {
+        private val showOutsideEnumerationAreaDialog: (latLng: LatLng, precision: Double) -> Unit,
+        private val viewPhoto: (String) -> Unit) : AndroidViewModel(application) {
 
     @Inject
     lateinit var userSession: UserSession
@@ -433,6 +434,12 @@ class CollectAddViewModel(
     
     fun takePhoto(view: View) {
         takePicture()
+    }
+    
+    fun seePhoto(view: View) {
+        image?.let { photoUri ->
+            viewPhoto(photoUri)
+        }
     }
     
     fun setImage(photoUri: Uri) {

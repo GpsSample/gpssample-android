@@ -17,6 +17,7 @@ import com.mapbox.mapboxsdk.annotations.PolylineOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.SupportMapFragment
+import kotlinx.android.synthetic.main.fragment_collect_details.*
 import org.taskforce.episample.BuildConfig
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
@@ -169,6 +170,13 @@ class CollectDetailsFragment(private val collectItem: CollectItem) : Fragment(),
                 fragmentManager?.popBackStack()
             } else {
                 requireActivity().finish()
+            }
+        }
+        
+        collectDetailsImage.setOnClickListener {
+            collectItem.image?.let { imageUri ->
+                val photoFragment = ViewPhotoFragment.newInstance(imageUri)
+                photoFragment.show(requireFragmentManager(), ViewPhotoFragment::class.java.simpleName)
             }
         }
     }

@@ -67,6 +67,7 @@
                             android:layout_height="wrap_content"
                             android:scaleType="centerCrop"
                             android:src="@drawable/photo_empty"
+                            android:onClick="@{vm::seePhoto}"
                             app:layout_constraintBottom_toTopOf="@id/photoText"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"

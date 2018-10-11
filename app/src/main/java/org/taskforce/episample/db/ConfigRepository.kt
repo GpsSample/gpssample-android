@@ -6,6 +6,8 @@ import android.os.AsyncTask
 import org.taskforce.episample.config.base.ConfigManagerException
 import org.taskforce.episample.config.sampling.SamplingMethodEntity
 import org.taskforce.episample.core.models.MapboxStyleUrl.Companion.DEFAULT_MAPBOX_STYLE
+import org.taskforce.episample.core.models.MapboxStyleUrl.Companion.DEFAULT_MAX_ZOOM
+import org.taskforce.episample.core.models.MapboxStyleUrl.Companion.DEFAULT_MIN_ZOOM
 import org.taskforce.episample.db.config.*
 import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.landmark.CustomLandmarkType
@@ -63,7 +65,12 @@ class ConfigRepository(application: Application, injectedDatabase: ConfigRoomDat
 
     // Domain Actions
     fun insertConfigFromBuildManager(config: org.taskforce.episample.config.base.Config, callback: (configId: String) -> Unit) {
-        val insertConfig = Config(config.name, config.mapboxStyle?.urlString ?: DEFAULT_MAPBOX_STYLE, config.dateCreated, config.id)
+        val insertConfig = Config(config.name,
+                config.mapboxStyle?.urlString ?: DEFAULT_MAPBOX_STYLE,
+                config?.mapMinZoom ?: DEFAULT_MIN_ZOOM,
+                config.mapMaxZoom ?: DEFAULT_MAX_ZOOM,
+                config.dateCreated,
+                config.id)
         val insertAdminSettings = config.adminSettings?.let {
             AdminSettings(it.password, insertConfig.id)
         }

@@ -16,6 +16,10 @@ class ResolvedConfig(var name: String,
                      val dateCreated: Date = Date(),
                      @ColumnInfo(name = "mapbox_style")
                      val mapboxStyleString: String,
+                     @ColumnInfo(name = "map_min_zoom")
+                     val mapMinZoom: Double,
+                     @ColumnInfo(name = "map_max_zoom")
+                     val mapMaxZoom: Double,
                      val id: String) {
 
     val mapboxStyle

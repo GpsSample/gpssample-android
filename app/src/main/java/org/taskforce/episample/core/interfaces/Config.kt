@@ -17,5 +17,7 @@ interface Config {
     val enumerationAreas: List<EnumerationArea>
     val methodology: ResolvedSamplingMethodEntity
     val mapboxStyle: MapboxStyleUrl
+    val mapMinZoom: Double
+    val mapMaxZoom: Double
 }
 

@@ -297,7 +297,7 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="photo_options_maximum_compression">Maximum Compression</string>
     <string name="config_all_duplicate_error">There was a problem duplicating your configuration.</string>
     <string name="config_all_delete_error">There was a problem deleting your configuration.</string>
-    
+
     <string name="navigation_overview_title_var">%1$s %2$s to Survey</string>
     <string name="start_route">Start Route</string>
     <string name="config_subject_hint">Subject (singular)</string>
@@ -331,7 +331,7 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="fixed">Fixed</string>
     <string name="save">Save</string>
     <string name="choose_plan_title">Choose Navigation Plan</string>
-    
+
     <string name="add_subset">Add Subset</string>
     <string name="add_strata_lowercase">Add Strata</string>
     <string name="close">close</string>
@@ -347,7 +347,7 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="survey_status_row_complete">Survey Complete</string>
     <string name="survey_status_row_skip">Skip Until Later</string>
     <string name="survey_status_row_problem">Problem</string>
-    
+
     <string name="sample">Sample</string>
     <string name="sample_create_title">Assign Sample Sublists</string>
     <string name="sample_create_button">Create Sample</string>
@@ -418,7 +418,16 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="mapbox_navigate_title">List</string>
     <string name="mapbox_region_name">Study Region</string>
     <string name="mapbox_download_button_text">Download</string>
+    <string name="mapbox_retry">Retry</string>
     <string name="mapbox_list_button_text">List</string>
+    <string name="northeast_lat_lng_var">Northeast\nLat: %.8f\nLng: %.8f</string>
+    <string name="southwest_lat_lng_var">Southwest\nLat: %.8f\nLng: %.8f</string>
+    <string name="mapbox_enter_max_zoom">Enter Max Zoom</string>
+    <string name="mapbox_enter_min_zoom">Enter Min Zoom</string>
+    <string name="main_map_title">Offline Tiles</string>
+    <string name="main_map_description">Download offline tiles</string>
+    <string name="mapbox_tiles_downloading">Tiles Downloading</string>
+    <string name="mapbox_tiles_downloaded">Tiles Successfully Cached</string>
 
     <string name="empty">Empty</string>
     <string name="view_item_title">View %s</string>

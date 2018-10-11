@@ -1,5 +1,6 @@
 package org.taskforce.episample.config.mapbox
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
@@ -8,7 +9,9 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.annotations.PolygonOptions
 import com.mapbox.mapboxsdk.camera.CameraPosition
@@ -18,25 +21,21 @@ import com.mapbox.mapboxsdk.geometry.LatLngBounds
 import com.mapbox.mapboxsdk.maps.MapboxMapOptions
 import com.mapbox.mapboxsdk.maps.SupportMapFragment
 import com.mapbox.mapboxsdk.offline.*
-import kotlinx.android.synthetic.main.fragment_mapbox_config.*
-import org.taskforce.episample.BuildConfig
+import kotlinx.android.synthetic.main.fragment_mapbox_download.*
 import org.json.JSONObject
+import org.taskforce.episample.BuildConfig
 import org.taskforce.episample.R
-import org.taskforce.episample.config.base.ConfigBuildViewModel
 import org.taskforce.episample.core.models.MapboxStyleUrl
-import org.taskforce.episample.core.models.MapboxStyleUrl.Companion.DEFAULT_MAPBOX_STYLE
-import org.taskforce.episample.databinding.FragmentMapboxConfigBinding
+import org.taskforce.episample.databinding.FragmentMapboxDownloadBinding
 import org.taskforce.episample.toolbar.viewmodels.AppToolbarViewModel
 import org.taskforce.episample.toolbar.viewmodels.AppToolbarViewModelFactory
 import org.taskforce.episample.utils.latLngBounds
 import java.nio.charset.Charset
 import java.util.*
 
-class MapboxConfigFragment : Fragment() {
+class MapboxDownloadFragment : Fragment() {
 
-    lateinit var viewModel: MapboxConfigViewModel
-
-    lateinit var configBuildViewModel: ConfigBuildViewModel
+    lateinit var viewModel: MapboxDownloadViewModel
 
     private var mapFragment: SupportMapFragment? = null
 
@@ -56,13 +55,11 @@ class MapboxConfigFragment : Fragment() {
         // Set up the offlineManager
         offlineManager = OfflineManager.getInstance(requireContext())
 
-        configBuildViewModel = ViewModelProviders.of(requireActivity()).get(ConfigBuildViewModel::class.java)
 
-        viewModel = ViewModelProviders.of(requireActivity(), MapboxConfigViewModelFactory(
-                configBuildViewModel.configBuildManager.config.enumerationAreas.latLngBounds,
-                resources,
-                configBuildViewModel.configBuildManager))
-                .get(MapboxConfigViewModel::class.java)
+        viewModel = ViewModelProviders.of(requireActivity(), MapboxDownloadViewModelFactory(
+                requireActivity().application,
+                resources))
+                .get(MapboxDownloadViewModel::class.java)
 
         toolbarViewModel = ViewModelProviders.of(this,
                 AppToolbarViewModelFactory(
@@ -74,7 +71,7 @@ class MapboxConfigFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val binding = DataBindingUtil.inflate<FragmentMapboxConfigBinding>(inflater, R.layout.fragment_mapbox_config, container, false)
+        val binding = DataBindingUtil.inflate<FragmentMapboxDownloadBinding>(inflater, R.layout.fragment_mapbox_download, container, false)
 
         binding.vm = viewModel
         binding.toolbarVm = toolbarViewModel
@@ -90,60 +87,59 @@ class MapboxConfigFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (savedInstanceState == null) {
-            mapFragment = SupportMapFragment.newInstance(
-                    MapboxMapOptions()
-                            .styleUrl(configBuildViewModel.configBuildManager.config.mapboxStyle?.urlString ?: MapboxStyleUrl.DEFAULT_MAPBOX_STYLE)
-            )
-            childFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.fragment_mapbox_config_mapFrame, mapFragment, MAP_FRAGMENT_TAG)
-                    .commit()
+        viewModel.studyConfig.observe(this, Observer { config ->
+            if (savedInstanceState == null) {
+                mapFragment = SupportMapFragment.newInstance(
+                        MapboxMapOptions()
+                                .styleUrl(config?.mapboxStyle?.urlString
+                                        ?: MapboxStyleUrl.DEFAULT_MAPBOX_STYLE)
+                )
+                childFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.fragment_mapbox_download_mapFrame, mapFragment, MAP_FRAGMENT_TAG)
+                        .commit()
 
-        } else {
-            mapFragment = childFragmentManager.findFragmentByTag(MAP_FRAGMENT_TAG) as SupportMapFragment
-        }
-
-        mapFragment?.getMapAsync {
-            it.moveCamera(CameraUpdateFactory.newLatLngBounds(configBuildViewModel.configBuildManager.config.enumerationAreas.latLngBounds, 1))
-
-            val enumerationAreas = configBuildViewModel.configBuildManager.config.enumerationAreas
-
-            val polygonOptions = enumerationAreas.map {
-                PolygonOptions()
-                        .fillColor(R.color.enumerationAreaColor)
-                        .addAll(it.points.map { (lat, lng) ->
-                            LatLng(lat, lng)
-                        })
+            } else {
+                mapFragment = childFragmentManager.findFragmentByTag(MAP_FRAGMENT_TAG) as SupportMapFragment
             }
-            it.addPolygons(polygonOptions)
-        }
 
-        fragment_mapbox_config_testStyle.setOnClickListener {
-            viewModel.styleUrl.get()?.let { style ->
+            val enumerationAreas = config?.enumerationAreas
+
+            enumerationAreas?.let { enumerationAreas ->
+
                 mapFragment?.getMapAsync {
-                    it.setStyle(style)
+                    it.moveCamera(CameraUpdateFactory.newLatLngBounds(enumerationAreas.latLngBounds(), 1))
+
+                    val polygonOptions = enumerationAreas.map {
+                        PolygonOptions()
+                                .fillColor(R.color.enumerationAreaColor)
+                                .addAll(it.points.map { latLng ->
+                                    LatLng(latLng.lat, latLng.lng)
+                                })
+                    }
+                    it.addPolygons(polygonOptions)
                 }
             }
-        }
+        })
 
-        fragment_mapbox_config_downloadButton.setOnClickListener {
-            mapFragment?.getMapAsync { map ->
+        fragment_mapbox_download_downloadButton.setOnClickListener {
+            viewModel.studyConfig.value?.let { config ->
                 downloadRegion(getString(R.string.mapbox_region_name),
-                        MapboxStyleUrl(viewModel.styleUrl.get() ?: DEFAULT_MAPBOX_STYLE),
-                        configBuildViewModel.configBuildManager.config.enumerationAreas.latLngBounds,
-                        viewModel.minZoomString.get()?.toDouble() ?: MapboxConfigViewModel.MIN_ZOOM,
-                        viewModel.maxZoomString.get()?.toDouble() ?: MapboxConfigViewModel.MAX_ZOOM)
+                        MapboxStyleUrl(config.mapboxStyleString),
+                        config.enumerationAreas.latLngBounds(),
+                        config.mapMinZoom,
+                        config.mapMaxZoom)
             }
         }
+
 
         offlineManager?.listOfflineRegions(object : OfflineManager.ListOfflineRegionsCallback {
             override fun onList(offlineRegions: Array<OfflineRegion>?) {
-                viewModel.offlineRegions.set(offlineRegions?.toList() ?: listOf())
+                viewModel.offlineRegions.postValue(offlineRegions?.toList() ?: listOf())
             }
 
             override fun onError(error: String?) {
-                viewModel.offlineRegions.set(listOf())
+                viewModel.offlineRegions.postValue(listOf())
             }
         })
 
@@ -177,6 +173,7 @@ class MapboxConfigFragment : Fragment() {
                         override fun onDelete() {
 
                         }
+
                         override fun onError(error: String) {
 
                         }
@@ -192,7 +189,7 @@ class MapboxConfigFragment : Fragment() {
         // Define offline region parameters, including bounds,
         // min/max zoom, and metadata
 
-        // Start the fragment_mapbox_config_progressBar
+        // Start the fragment_mapbox_download_progressBar
         startProgress()
 
         // Create offline definition using the current
@@ -220,7 +217,7 @@ class MapboxConfigFragment : Fragment() {
         offlineManager?.createOfflineRegion(definition, metadata!!, object : OfflineManager.CreateOfflineRegionCallback {
             override fun onCreate(offlineRegion: OfflineRegion) {
                 Log.d(TAG, "Offline region created: $regionName")
-                this@MapboxConfigFragment.offlineRegion = offlineRegion
+                this@MapboxDownloadFragment.offlineRegion = offlineRegion
                 launchDownload()
             }
 
@@ -246,14 +243,14 @@ class MapboxConfigFragment : Fragment() {
                     endProgress(getString(R.string.mapbox_end_progress_success))
                     offlineManager.listOfflineRegions(object : OfflineManager.ListOfflineRegionsCallback {
                         override fun onList(offlineRegions: Array<OfflineRegion>?) {
-                            viewModel.offlineRegions.set(offlineRegions?.toList() ?: listOf())
+                            viewModel.offlineRegions.postValue(offlineRegions?.toList() ?: listOf())
                         }
 
                         override fun onError(error: String?) {
 
                         }
                     })
-                            return
+                    return
                 } else if (status.isRequiredResourceCountPrecise) {
                     // Switch to determinate state
                     setPercentage(Math.round(percentage).toInt())
@@ -330,26 +327,26 @@ class MapboxConfigFragment : Fragment() {
 
                         }
                         .setNeutralButton(getString(R.string.mapbox_navigate_neutral_button_title)) { dialog13, id ->
-                            // Make fragment_mapbox_config_progressBar indeterminate and
+                            // Make fragment_mapbox_download_progressBar indeterminate and
                             // set it to visible to signal that
                             // the deletion process has begun
-                            fragment_mapbox_config_progressBar.isIndeterminate = true
-                            fragment_mapbox_config_progressBar.visibility = View.VISIBLE
+                            fragment_mapbox_download_progressBar.isIndeterminate = true
+                            fragment_mapbox_download_progressBar.visibility = View.VISIBLE
 
                             // Begin the deletion process
                             offlineRegions[regionSelected].delete(object : OfflineRegion.OfflineRegionDeleteCallback {
                                 override fun onDelete() {
                                     // Once the region is deleted, remove the
-                                    // fragment_mapbox_config_progressBar and display a toast
-                                    fragment_mapbox_config_progressBar.visibility = View.INVISIBLE
-                                    fragment_mapbox_config_progressBar.isIndeterminate = false
+                                    // fragment_mapbox_download_progressBar and display a toast
+                                    fragment_mapbox_download_progressBar.visibility = View.INVISIBLE
+                                    fragment_mapbox_download_progressBar.isIndeterminate = false
 //                                    Toast.makeText(getApplicationContext(), getString(R.string.toast_region_deleted),
 //                                            Toast.LENGTH_LONG).show()
                                 }
 
                                 override fun onError(error: String) {
-                                    fragment_mapbox_config_progressBar.visibility = View.INVISIBLE
-                                    fragment_mapbox_config_progressBar.isIndeterminate = false
+                                    fragment_mapbox_download_progressBar.visibility = View.INVISIBLE
+                                    fragment_mapbox_download_progressBar.isIndeterminate = false
                                     Log.e(TAG, "Error: $error")
                                 }
                             })
@@ -384,18 +381,19 @@ class MapboxConfigFragment : Fragment() {
     // Progress bar methods
     private fun startProgress() {
         // Disable buttons
-        fragment_mapbox_config_downloadButton.isEnabled = false
-//        fragment_mapbox_config_listButton.isEnabled = false
+        viewModel.downloadStatus.postValue(resources.getString(R.string.mapbox_tiles_downloading))
+        fragment_mapbox_download_downloadButton.isEnabled = false
+//        fragment_mapbox_download_listButton.isEnabled = false
 
         // Start and show the progress bar
         isEndNotified = false
-        fragment_mapbox_config_progressBar.isIndeterminate = true
-        fragment_mapbox_config_progressBar.visibility = View.VISIBLE
+        fragment_mapbox_download_progressBar.isIndeterminate = true
+        fragment_mapbox_download_progressBar.visibility = View.VISIBLE
     }
 
     private fun setPercentage(percentage: Int) {
-        fragment_mapbox_config_progressBar.isIndeterminate = false
-        fragment_mapbox_config_progressBar.progress = percentage
+        fragment_mapbox_download_progressBar.isIndeterminate = false
+        fragment_mapbox_download_progressBar.progress = percentage
     }
 
     private fun endProgress(message: String) {
@@ -405,13 +403,13 @@ class MapboxConfigFragment : Fragment() {
         }
 
         // Enable buttons
-        fragment_mapbox_config_downloadButton.isEnabled = true
-//        fragment_mapbox_config_listButton.isEnabled = true
+        fragment_mapbox_download_downloadButton.isEnabled = true
+//        fragment_mapbox_download_listButton.isEnabled = true
 
         // Stop and hide the progress bar
         isEndNotified = true
-        fragment_mapbox_config_progressBar.isIndeterminate = false
-        fragment_mapbox_config_progressBar.visibility = View.GONE
+        fragment_mapbox_download_progressBar.isIndeterminate = false
+        fragment_mapbox_download_progressBar.visibility = View.GONE
 
         // TODO
         // notify complete
@@ -424,5 +422,9 @@ class MapboxConfigFragment : Fragment() {
         const val JSON_FIELD_REGION_NAME = "FIELD_REGION_NAME"
         const val MAP_FRAGMENT_TAG = "mapboxConfigFragment.MapboxFragment"
         const val HELP_TARGET = "#geography"
+
+        fun newInstance(): Fragment {
+            return MapboxDownloadFragment()
+        }
     }
 }

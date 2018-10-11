@@ -77,6 +77,11 @@
                 layout="@layout/fragment_main_card"
                 app:vm="@{vm.finalVm}" />
 
+            <include
+                android:id="@+id/map"
+                layout="@layout/fragment_main_card"
+                app:vm="@{vm.mapVm}" />
+
         </LinearLayout>
 
         <include

@@ -16,6 +16,10 @@ class Config(
         var name: String,
         @ColumnInfo(name = "mapbox_style")
         val mapboxStyle: String,
+        @ColumnInfo(name = "map_min_zoom")
+        val mapMinZoom: Double,
+        @ColumnInfo(name = "map_max_zoom")
+        val mapMaxZoom: Double,
         @ColumnInfo(name = "date_created")
         val dateCreated: Date = Date(),
         @PrimaryKey()

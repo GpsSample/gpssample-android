@@ -23,7 +23,8 @@ class MainViewModel(
         navigateOnClick: () -> Unit,
         syncOnClick: () -> Unit,
         sampleOnClick: () -> Unit,
-        finalOnClick: () -> Unit) : AndroidViewModel(application) {
+        finalOnClick: () -> Unit,
+        mapOnClick: () -> Unit) : AndroidViewModel(application) {
 
 
     @Inject
@@ -103,4 +104,12 @@ class MainViewModel(
             languageService.getString(R.string.main_report_description),
             userSession.isSupervisor,
             finalOnClick)
+
+    val mapVm = MainItemViewModel(
+            R.drawable.sync_graphic,
+            languageService.getString(R.string.main_map_title),
+            languageService.getString(R.string.main_map_description),
+            true,
+            mapOnClick)
+
 }

@@ -13,7 +13,8 @@ class MainViewModelFactory(private val application: Application,
                            private val navigateOnClick: () -> Unit,
                            private val syncOnClick: () -> Unit,
                            private val sampleOnClick: () -> Unit,
-                           private val finalOnClick: () -> Unit): ViewModelProvider.NewInstanceFactory() {
+                           private val finalOnClick: () -> Unit,
+                           private val mapOnClick: () -> Unit) : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return MainViewModel(application,
                 languageService,
@@ -22,6 +23,7 @@ class MainViewModelFactory(private val application: Application,
                 navigateOnClick,
                 syncOnClick,
                 sampleOnClick,
-                finalOnClick) as T
+                finalOnClick,
+                mapOnClick) as T
     }
 }

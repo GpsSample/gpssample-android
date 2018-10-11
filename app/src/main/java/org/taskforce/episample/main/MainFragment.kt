@@ -11,6 +11,7 @@ import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.collection.ui.CollectFragment
 import org.taskforce.episample.config.language.LanguageService
+import org.taskforce.episample.config.mapbox.MapboxDownloadFragment
 import org.taskforce.episample.databinding.FragmentMainBinding
 import org.taskforce.episample.db.navigation.ResolvedNavigationPlan
 import org.taskforce.episample.navigation.ui.NavigationActivity
@@ -77,6 +78,13 @@ class MainFragment : Fragment() {
                             .beginTransaction()
                             .replace(R.id.mainFrame, StudyUploadFragment.newInstance())
                             .addToBackStack(StudyUploadFragment::class.java.name)
+                            .commit()
+                },
+                mapOnClick = {
+                    requireFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.mainFrame, MapboxDownloadFragment.newInstance())
+                            .addToBackStack(MapboxDownloadFragment::class.java.name)
                             .commit()
                 }
         )).get(MainViewModel::class.java)

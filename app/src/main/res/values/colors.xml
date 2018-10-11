@@ -23,6 +23,7 @@
     <color name="dividerColor">#1e000000</color>
     <color name="transparentOverlayColor">#7F000000</color>
     <color name="mapboxDownloadBackground">#1e000000</color>
+    <color name="enumerationAreaColor">#cfffffff</color>
     <color name="fieldTitle">#de888888</color>
     <color name="fieldValue">#de000000</color>
     <color name="darkGray">#8a000000</color>

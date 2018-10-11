@@ -17,13 +17,16 @@ import com.google.android.gms.maps.model.LatLng
 import com.mapbox.mapboxsdk.annotations.Polygon
 import com.mapbox.mapboxsdk.annotations.PolygonOptions
 import com.mapbox.mapboxsdk.annotations.PolylineOptions
+import com.mapbox.mapboxsdk.geometry.LatLngBounds
 import org.taskforce.episample.R
 import org.taskforce.episample.config.fields.CustomDropdown
 import org.taskforce.episample.config.fields.CustomFieldTypeConstants
+import org.taskforce.episample.core.interfaces.EnumerationArea
 import org.taskforce.episample.core.interfaces.LandmarkTypeMetadata
 import org.taskforce.episample.db.collect.Enumeration
 import org.taskforce.episample.db.collect.GpsBreadcrumb
 import org.taskforce.episample.db.collect.Landmark
+import org.taskforce.episample.db.config.ResolvedEnumerationArea
 import org.taskforce.episample.db.config.customfield.CustomDateType
 import org.taskforce.episample.db.config.customfield.CustomField
 import org.taskforce.episample.db.config.customfield.CustomFieldType
@@ -44,11 +47,11 @@ val Context.screenHeight: Int
     get() = resources.displayMetrics.heightPixels
 
 fun Resources.getResourceUri(res: Int): Uri =
-     Uri.Builder()
-            .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
-            .authority(getResourcePackageName(res))
-            .appendPath(res.toString())
-            .build()
+        Uri.Builder()
+                .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+                .authority(getResourcePackageName(res))
+                .appendPath(res.toString())
+                .build()
 
 val Activity.density: Float
     get() {
@@ -79,7 +82,7 @@ fun View.createSnackbar(text: String, alertText: String, action: (v: View) -> Un
     }.show()
 }
 
-val <K,V> Map<K,V>.inverse
+val <K, V> Map<K, V>.inverse
     get() = entries.associateBy({ it.value }) { it.key }
 
 fun org.taskforce.episample.config.fields.CustomField.makeDBConfig(configId: String): CustomField {
@@ -156,3 +159,30 @@ fun org.taskforce.episample.core.interfaces.Landmark.toDBLandmark(collectorName:
 }
 
 fun LatLng.toMapboxLatLng(): com.mapbox.mapboxsdk.geometry.LatLng = com.mapbox.mapboxsdk.geometry.LatLng(latitude, longitude)
+
+val List<EnumerationArea>.latLngBounds: LatLngBounds
+    get() {
+        val allLatsAscending = map { it.points.map { it.first } }.flatMap { it }.sorted()
+        val allLongsAscending = map { it.points.map { it.second } }.flatMap { it }.sorted()
+
+        val south = allLatsAscending.first()
+        val north = allLatsAscending.last()
+        val west = allLongsAscending.first()
+        val east = allLongsAscending.last()
+
+        return LatLngBounds.from(north, east, south, west)
+
+    }
+
+fun List<ResolvedEnumerationArea>.latLngBounds(): LatLngBounds {
+        val allLatsAscending = map { it.points.map { it.lat } }.flatMap { it }.sorted()
+        val allLongsAscending = map { it.points.map { it.lng } }.flatMap { it }.sorted()
+
+        val south = allLatsAscending.first()
+        val north = allLatsAscending.last()
+        val west = allLongsAscending.first()
+        val east = allLongsAscending.last()
+
+        return LatLngBounds.from(north, east, south, west)
+
+    }

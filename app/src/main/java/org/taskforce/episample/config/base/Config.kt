@@ -44,6 +44,8 @@ class Config(
     var ruleSets = listOf<RuleSet>()
     var rules = listOf<RuleRecord>()
     var mapboxStyle: MapboxStyleUrl? = null
+    var mapMinZoom: Double? = null
+    var mapMaxZoom: Double? = null
 
     val size: String
         get() {

@@ -23,8 +23,8 @@ class GeoJsonEnumerationArea(override val name: String,
                              override val id: String) : EnumerationArea, Serializable {
 
     companion object {
-        private const val kmToLatitudeRatioConstant = 110.574
-        private const val kmToLongitudeRatioConstant = 111.320
+        const val kmToLatitudeRatioConstant = 110.574
+        const val kmToLongitudeRatioConstant = 111.320
 
         fun kmToLongitude(distance: Double, latitude: Double) = distance /
                 (kmToLongitudeRatioConstant*Math.cos(Math.toRadians(latitude)))

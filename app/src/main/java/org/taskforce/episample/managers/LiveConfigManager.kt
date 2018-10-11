@@ -43,4 +43,6 @@ class LiveConfig(context: Context, val dbConfig: ResolvedConfig) : Config {
                 resolvedEnumerationArea.id)
     }
     override val mapboxStyle = dbConfig.mapboxStyle
+    override val mapMinZoom: Double = dbConfig.mapMinZoom
+    override val mapMaxZoom: Double = dbConfig.mapMaxZoom
 }

@@ -7,6 +7,7 @@ import android.arch.lifecycle.Transformations
 import android.widget.ArrayAdapter
 import org.taskforce.episample.R
 import org.taskforce.episample.config.language.LanguageService
+import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.interfaces.Config
 import org.taskforce.episample.db.StudyRepository
 import org.taskforce.episample.managers.LiveConfig
@@ -21,11 +22,12 @@ class LoginViewModel(application: Application,
 
     val studyRepository = StudyRepository(application)
     val configData = studyRepository.getResolvedConfig(configId)
+    val studyData = studyRepository.getStudy()
 
-    val adminPassword: String?
+    val studySupervisorPassword: String?
         get() {
-            return configData.value?.let {
-                return@let it.adminSettings.password
+            return studyData.value?.let {
+                return@let it.password
             }
         }
 
@@ -57,8 +59,8 @@ class LoginViewModel(application: Application,
 
     val signInText = languageService.getString(R.string.login_signin)
 
-    val signinEnabled = (Transformations.map(configData) {
-        return@map it != null
+    val signinEnabled = (Transformations.map(LiveDataPair(studyData, configData)) { (study, config) ->
+        return@map study != null && config != null
     } as MutableLiveData<Boolean>).apply { value = false }
 
     fun signIn() {
@@ -71,7 +73,8 @@ class LoginViewModel(application: Application,
                         if (password.value != null) {
                             password.value?.let { password ->
                                 name.value?.let {
-                                    if (password == adminPassword) {
+                                    if (password == studySupervisorPassword) {
+                                        this@LoginViewModel.password.postValue("")
                                         signInAsSupervisor(it, config)
                                     } else {
                                         //TODO: display incorrect password error.
@@ -97,6 +100,7 @@ class LoginViewModel(application: Application,
 
     fun displaySupervisorSignIn() {
         supervisorSignIn.value?.let {
+            password.postValue("")
             supervisorSignIn.postValue(!it)
         }
     }

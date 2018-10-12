@@ -263,7 +263,7 @@ class CollectAddFragment : Fragment() {
                         }
 
                         if (!collectViewModel.useDuplicatedGps) {
-                            if (accuracy < collectViewModel.locationPrecision ?: 1000f) {
+                            if (accuracy <= collectViewModel.locationPrecision ?: 1000f) {
                                 collectViewModel.locationPrecision = accuracy
                                 collectViewModel.locationLatLng = latLng
 

@@ -31,7 +31,8 @@ data class LocationServiceConfiguration(val minTime: Long = 15000,
                                         val minDistance: Float = 0f)
 
 class LiveLocationService(context: Context,
-                          override val collectorName: String) : LocationService {
+                          override val collectorName: String,
+                          val userSettings: UserSettings) : LocationService {
 
     override var collectManager: CollectManager? = null
 
@@ -67,7 +68,8 @@ class LiveLocationService(context: Context,
                             distanceResult)
 
                     val distance = distanceResult[0]
-                    if (distance >= CollectViewModel.breadcrumbAccuracy) {
+                    if (distance >= CollectViewModel.breadcrumbAccuracy && 
+                            location.accuracy < userSettings.gpsMinimumPrecision) {
                         collectManager?.addBreadcrumb(LiveBreadcrumb(collectorName, latLng, location.accuracy.toDouble(), startOfSession, Date()), {
                             // no-op
                         })

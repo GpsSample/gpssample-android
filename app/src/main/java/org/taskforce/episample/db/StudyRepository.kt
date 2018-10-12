@@ -260,7 +260,7 @@ class StudyRepository(val application: Application, injectedDatabase: StudyRoomD
 
     fun getNumberOfSamples(studyId: String): LiveData<Int> = studyDao.value!!.getNumberOfSamples(studyId)
     fun getWarnings(studyId: String): LiveData<List<WarningEntity>> = studyDao.value!!.getWarnings(studyId)
-    fun getSample(studyId: String): LiveData<SampleEntity> = studyDao.value!!.getSample(studyId)
+    fun getSample(studyId: String): LiveData<SampleEntity?> = studyDao.value!!.getSample(studyId)
     fun getNumberOfEnumerationsInSample(studyId: String): LiveData<Int>  = studyDao.value!!.getNumberOfEnumerationsInSample(studyId)
     fun deleteSamples() = studyDao.value!!.deleteSamples()
     fun createNavigationPlans(sampleEntity: SampleEntity, numberOfNavigationPlansToMake: Int) {
@@ -278,6 +278,10 @@ class StudyRepository(val application: Application, injectedDatabase: StudyRoomD
         }
         dao.insertNavigationPlans(navigationPlans)
         dao.insertNavigationItems(navigationItems)
+    }
+
+    fun deleteNavigationPlans() {
+        studyDao.value!!.deleteNavigationPlansSync()
     }
 }
 

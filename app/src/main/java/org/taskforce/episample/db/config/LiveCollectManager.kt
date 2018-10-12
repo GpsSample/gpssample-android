@@ -75,6 +75,7 @@ class LiveCollectManager(val application: Application,
 
     override fun deleteSamples() {
         thread {
+            studyRepository.deleteNavigationPlans()
             studyRepository.deleteSamples()
         }
     }
@@ -87,7 +88,7 @@ class LiveCollectManager(val application: Application,
 
     override fun getNumberOfEnumerationsInSample(): LiveData<Int> = studyRepository.getNumberOfEnumerationsInSample(studyId)
 
-    override fun getSample(): LiveData<SampleEntity> = studyRepository.getSample(studyId)
+    override fun getSample(): LiveData<SampleEntity?> = studyRepository.getSample(studyId)
 
     override fun getWarnings(): LiveData<List<WarningEntity>> = studyRepository.getWarnings(studyId)
 

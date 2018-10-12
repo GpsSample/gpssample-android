@@ -100,7 +100,7 @@ abstract class StudyDao : ConfigDao(), CustomFieldDao, ResolvedEnumerationDao, C
     abstract fun getWarnings(studyId: String): LiveData<List<WarningEntity>>
 
     @Query("SELECT * FROM samples WHERE study_id LIKE :studyId LIMIT 1")
-    abstract fun getSample(studyId: String): LiveData<SampleEntity>
+    abstract fun getSample(studyId: String): LiveData<SampleEntity?>
 
     @Query("SELECT COUNT(et.id) FROM sample_enumerations et JOIN samples st ON et.sample_id = st.id WHERE study_id LIKE :studyId")
     abstract fun getNumberOfEnumerationsInSample(studyId: String): LiveData<Int>

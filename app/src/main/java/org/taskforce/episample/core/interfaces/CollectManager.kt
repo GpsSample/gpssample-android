@@ -26,7 +26,7 @@ interface CollectManager {
     fun createSample()
     fun getNumberOfSamples(): LiveData<Int>
     fun getWarnings(): LiveData<List<WarningEntity>>
-    fun getSample(): LiveData<SampleEntity>
+    fun getSample(): LiveData<SampleEntity?>
     fun getNumberOfEnumerationsInSample(): LiveData<Int>
     fun deleteSamples()
     fun createNavigationPlans(numberOfNavigationPlansToMake: SampleEntity, numberOfNavigationPlansToMake1: Int)

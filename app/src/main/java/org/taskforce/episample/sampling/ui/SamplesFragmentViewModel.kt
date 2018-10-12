@@ -26,7 +26,7 @@ import org.taskforce.episample.db.sampling.WarningEntity
 
 class SamplesFragmentViewModel(val resources: Resources, val enumerationSubject: EnumerationSubject, val collectManager: CollectManager, val displaySettings: DisplaySettings) : ViewModel() {
     val warnings: LiveData<List<WarningEntity>> = collectManager.getWarnings()
-    val sample: LiveData<SampleEntity> = collectManager.getSample()
+    val sample: LiveData<SampleEntity?> = collectManager.getSample()
 
     var areWarningsVisibile = ObservableBoolean(false)
 
@@ -46,9 +46,9 @@ class SamplesFragmentViewModel(val resources: Resources, val enumerationSubject:
 
     val sampleGeneratedOnExplanation = Transformations.map(LiveDataPair(warnings, sample)) {
         if (it.first.isNotEmpty()) {
-            resources.getString(R.string.sample_generated_with_warnings, displaySettings.getFormattedDate(it.second.dateCreated, false))
+            resources.getString(R.string.sample_generated_with_warnings, it.second?.dateCreated?.let { date -> displaySettings.getFormattedDate(date, false) })
         } else {
-            resources.getString(R.string.sample_generate_on, displaySettings.getFormattedDate(it.second.dateCreated, false))
+            resources.getString(R.string.sample_generate_on, it.second?.dateCreated?.let { date -> displaySettings.getFormattedDate(date, false) })
         }
     }
 
@@ -59,7 +59,9 @@ class SamplesFragmentViewModel(val resources: Resources, val enumerationSubject:
     }
 
     val sampleTitle = Transformations.map(sample) {
-        resources.getString(R.string.sample_generated, displaySettings.getFormattedDate(it.dateCreated, false))
+        it?.let {
+            resources.getString(R.string.sample_generated, displaySettings.getFormattedDate(it.dateCreated, false))
+        }
     }
 
     val numberOfEnumerationsInSample: LiveData<Int> = collectManager.getNumberOfEnumerationsInSample()

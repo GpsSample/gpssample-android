@@ -7,10 +7,9 @@ import android.view.View
 import org.taskforce.episample.R
 import org.taskforce.episample.config.base.BaseConfigViewModel
 import org.taskforce.episample.config.base.ConfigBuildManager
-import org.taskforce.episample.config.fields.CustomFieldsFragment
 import org.taskforce.episample.config.geography.model.FeatureCollection
 import org.taskforce.episample.config.language.LanguageService
-import org.taskforce.episample.config.mapbox.MapboxConfigFragment
+import org.taskforce.episample.mapbox.MapboxConfigFragment
 import org.taskforce.episample.core.interfaces.GeoJsonEnumerationArea
 
 class GeographyViewModel(

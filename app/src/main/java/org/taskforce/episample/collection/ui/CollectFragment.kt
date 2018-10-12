@@ -4,11 +4,14 @@ import android.annotation.SuppressLint
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
+import android.view.*
+import android.widget.Toast
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.annotations.Marker
 import com.mapbox.mapboxsdk.annotations.PolylineOptions
@@ -29,6 +32,9 @@ import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.interfaces.CollectItem
 import org.taskforce.episample.databinding.FragmentCollectBinding
+import org.taskforce.episample.mapbox.MapboxLayersFragment
+import org.taskforce.episample.navigation.ui.NavigationToolbarViewModel
+import org.taskforce.episample.navigation.ui.NavigationToolbarViewModelFactory
 import org.taskforce.episample.toolbar.managers.LanguageManager
 import org.taskforce.episample.utils.getCompatColor
 import org.taskforce.episample.utils.inflater
@@ -43,6 +49,7 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
 
     lateinit var collectIconFactory: CollectIconFactory
 
+    lateinit var navigationToolbarViewModel: NavigationToolbarViewModel
     lateinit var collectViewModel: CollectViewModel
 
     var adapter: CollectItemAdapter? = null
@@ -51,6 +58,9 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
 
     private var mapFragment: SupportMapFragment? = null
     private val markerManagerLiveData = MutableLiveData<MapboxItemMarkerManager>()
+
+    val mapPreferences: SharedPreferences
+        get() = requireActivity().getSharedPreferences(MAP_PREFERENCE_NAMESPACE, Context.MODE_PRIVATE)
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,6 +86,12 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
                             requireActivity().supportFragmentManager.popBackStack()
                         })).get(CollectViewModel::class.java)
 
+        navigationToolbarViewModel = ViewModelProviders.of(this,
+                NavigationToolbarViewModelFactory(
+                        requireActivity().application,
+                        R.string.toolbar_collect_title
+                )).get(NavigationToolbarViewModel::class.java)
+
         val userSettings = collectViewModel.config.userSettings
         val enumerationSubject = collectViewModel.config.enumerationSubject
         val displaySettings = collectViewModel.config.displaySettings
@@ -94,7 +110,12 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
         val binding = FragmentCollectBinding.inflate(inflater.context.inflater).apply {
             vm = collectViewModel
             cardVm = collectCardVm
+            toolbarVm = navigationToolbarViewModel
         }
+
+        setHasOptionsMenu(true)
+        val toolbar = binding.root.findViewById<Toolbar>(R.id.toolbar)
+        (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
 
         adapter = CollectItemAdapter(CollectIconFactory(requireContext().resources),
                 languageService.getString(R.string.collect_incomplete),
@@ -117,22 +138,9 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
             }
         })
 
-        collectViewModel.gpsBreadcrumbs.observe(this, Observer { breadcrumbs ->
-            mapFragment?.getMapAsync { map ->
-
-                val polylineOptions = mutableListOf<PolylineOptions>()
-                breadcrumbs?.sortedBy { it.dateCreated }?.forEach {
-                    if (it.startOfSession) {
-                        polylineOptions.add(PolylineOptions()
-                                .color(R.color.greyHighlights))
-                    }
-
-                    polylineOptions.last().add(it.location.toMapboxLatLng())
-                }
-
-                polylineOptions.forEach { breadCrumbPath ->
-                    map.addPolyline(breadCrumbPath)
-                }
+        LiveDataPair(markerManagerLiveData, collectViewModel.gpsBreadcrumbs).observe(this, Observer {
+            it?.let { (markerManager, breadcrumbs) ->
+                markerManager.setBreadcrumbs(breadcrumbs)
             }
         })
 
@@ -159,7 +167,7 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
         }
 
         mapFragment?.getMapAsync {
-            markerManagerLiveData.postValue(MapboxItemMarkerManager(requireContext(), it))
+            markerManagerLiveData.postValue(MapboxItemMarkerManager(requireContext(), mapPreferences, it))
 
             it.setOnMarkerClickListener(this@CollectFragment)
             it.addOnMapClickListener(this@CollectFragment)
@@ -191,6 +199,48 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
                 it.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, CollectViewModel.zoomLevel))
             }
         }
+
+        markerManagerLiveData.observe(this, Observer {
+            it?.let {
+                it.applyLayerSettings()
+            }
+        })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.map, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.center_my_location -> {
+                mapFragment?.getMapAsync {
+                    markerManagerLiveData.value?.getCurrentLocation()?.let { currentLocation ->
+                        it.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, CollectViewModel.zoomLevel))
+                    } ?: run {
+                        Toast.makeText(requireContext(), R.string.current_location_unknown, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+            R.id.toggle_breadcrumbs -> {
+                markerManagerLiveData?.value?.let {
+                    it.toggleBreadcrumbs()
+                }
+            }
+            R.id.toggle_layers -> {
+                // access map on the main thread
+                markerManagerLiveData?.value?.mapboxMap?.let { map ->
+                    val mapLayersFragment = MapboxLayersFragment.newInstance(map.cameraPosition.target, map.cameraPosition.zoom, MAP_PREFERENCE_NAMESPACE)
+                    requireFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.mainFrame, mapLayersFragment)
+                            .addToBackStack(MapboxLayersFragment::class.java.name)
+                            .commit()
+                }
+            }
+        }
+        return true
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
@@ -232,6 +282,7 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
 
 
     companion object {
+        const val MAP_PREFERENCE_NAMESPACE = "SHARED_MAPBOX_LAYER_PREFERENCES"
         const val MAP_FRAGMENT_TAG = "collectFragment.MapboxFragment"
 
         fun newInstance(): Fragment {

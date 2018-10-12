@@ -1,4 +1,4 @@
-package org.taskforce.episample.config.mapbox
+package org.taskforce.episample.mapbox
 
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
@@ -10,8 +10,8 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.offline.OfflineRegion
 import com.mapbox.mapboxsdk.offline.OfflineTilePyramidRegionDefinition
 import org.taskforce.episample.R
-import org.taskforce.episample.config.mapbox.MapboxConfigViewModel.Companion.LAT_OFFSET_TOLERANCE
-import org.taskforce.episample.config.mapbox.MapboxConfigViewModel.Companion.LNG_OFFSET_TOLERANCE
+import org.taskforce.episample.mapbox.MapboxConfigViewModel.Companion.LAT_OFFSET_TOLERANCE
+import org.taskforce.episample.mapbox.MapboxConfigViewModel.Companion.LNG_OFFSET_TOLERANCE
 import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.db.StudyRepository
 import org.taskforce.episample.db.config.ResolvedConfig

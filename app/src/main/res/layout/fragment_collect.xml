@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -12,6 +13,11 @@
         <variable
             name="cardVm"
             type="org.taskforce.episample.collection.viewmodels.CollectCardViewModel" />
+
+        <variable
+            name="toolbarVm"
+            type="org.taskforce.episample.navigation.ui.NavigationToolbarViewModel" />
+
     </data>
 
     <RelativeLayout
@@ -19,71 +25,19 @@
         android:layout_height="match_parent"
         android:background="@android:color/white">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <include
+            android:id="@+id/toolbar_layout"
+            layout="@layout/app_navigation_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            android:paddingStart="24dp">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:onClick="@{() -> vm.back.invoke()}"
-                    android:src="@drawable/icon_back_white_24" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="32dp"
-                    android:textColor="@color/textColorInverse"
-                    android:textSize="20sp"
-                    tools:text="Collect" />
-
-                <ImageView
-                    android:id="@+id/more"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="12dp"
-                    android:padding="4dp"
-                    android:src="@drawable/icon_more_white_24" />
-
-                <ImageView
-                    android:id="@+id/review"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="16dp"
-                    android:layout_toStartOf="@id/more"
-                    android:padding="4dp"
-                    android:src="@drawable/icon_check_filled_white_24" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="16dp"
-                    android:layout_toStartOf="@+id/review"
-                    android:padding="4dp"
-                    android:src="@drawable/icon_help_white" />
-
-            </RelativeLayout>
-
-        </android.support.v7.widget.Toolbar>
+            bind:vm="@{toolbarVm}"
+            tools:visible="true" />
 
         <FrameLayout
             android:id="@+id/collectionMap"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/toolbar"
+            android:layout_marginTop="@dimen/toolbar_height"
             android:layout_marginBottom="160dp"
             android:keepScreenOn="true" />
 

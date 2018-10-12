@@ -1,4 +1,4 @@
-package org.taskforce.episample.config.mapbox
+package org.taskforce.episample.mapbox
 
 import android.arch.lifecycle.ViewModel
 import android.content.res.Resources

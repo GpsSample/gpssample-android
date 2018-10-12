@@ -8,7 +8,7 @@
 
         <variable
             name="vm"
-            type="org.taskforce.episample.config.mapbox.MapboxDownloadViewModel" />
+            type="org.taskforce.episample.mapbox.MapboxDownloadViewModel" />
 
         <variable
             name="toolbarVm"
@@ -45,10 +45,10 @@
                     android:layout_height="0dp"
                     android:layout_marginTop="@dimen/toolbar_height"
                     android:alpha="0"
-                    app:layout_constraintBottom_toBottomOf="@id/fragment_mapbox_config_mapFrame"
-                    app:layout_constraintEnd_toEndOf="@id/fragment_mapbox_config_mapFrame"
-                    app:layout_constraintStart_toStartOf="@id/fragment_mapbox_config_mapFrame"
-                    app:layout_constraintTop_toTopOf="@id/fragment_mapbox_config_mapFrame" />
+                    app:layout_constraintBottom_toBottomOf="@id/fragment_mapbox_download_mapFrame"
+                    app:layout_constraintEnd_toEndOf="@id/fragment_mapbox_download_mapFrame"
+                    app:layout_constraintStart_toStartOf="@id/fragment_mapbox_download_mapFrame"
+                    app:layout_constraintTop_toTopOf="@id/fragment_mapbox_download_mapFrame" />
 
                 <ProgressBar
                     android:id="@+id/fragment_mapbox_download_progressBar"

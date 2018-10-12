@@ -5,7 +5,9 @@ import android.app.Activity
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -66,6 +68,10 @@ class CollectAddFragment : Fragment() {
 
     private var mapFragment: SupportMapFragment? = null
     private val markerManagerLiveData = MutableLiveData<MapboxItemMarkerManager>()
+
+    private val mapPreferences: SharedPreferences
+        get() = requireActivity().getSharedPreferences(MAP_PREFERENCE_NAMESPACE, Context.MODE_PRIVATE)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -220,7 +226,9 @@ class CollectAddFragment : Fragment() {
         }
 
         mapFragment?.getMapAsync { map ->
-            markerManagerLiveData.postValue(MapboxItemMarkerManager(requireContext(), map))
+            markerManagerLiveData.postValue(MapboxItemMarkerManager(requireContext(),
+                    mapPreferences,
+                    map))
 
             collectViewModel.gpsBreadcrumbs.observe(this@CollectAddFragment, Observer { breadcrumbs ->
                 val polylineOptions = mutableListOf<PolylineOptions>()
@@ -284,6 +292,16 @@ class CollectAddFragment : Fragment() {
         landmarkImageSelector.adapter = adapter
 
         mapFragment?.onCreate(savedInstanceState)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        markerManagerLiveData.observe(this, Observer {
+            it?.let {
+                it.applyLayerSettings()
+            }
+        })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -363,6 +381,7 @@ class CollectAddFragment : Fragment() {
     }
 
     companion object {
+        const val MAP_PREFERENCE_NAMESPACE = "SHARED_MAPBOX_LAYER_PREFERENCES"
         const val MAP_FRAGMENT_TAG = "collectAddFragment.MapboxFragment"
 
         const val IS_LANDMARK = "isLandmark"

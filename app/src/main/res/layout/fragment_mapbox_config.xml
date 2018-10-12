@@ -8,7 +8,7 @@
 
         <variable
             name="vm"
-            type="org.taskforce.episample.config.mapbox.MapboxConfigViewModel" />
+            type="org.taskforce.episample.mapbox.MapboxConfigViewModel" />
 
         <variable
             name="toolbarVm"

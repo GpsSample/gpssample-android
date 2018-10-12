@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+        <item
+            android:id="@+id/center_my_location"
+            android:title="@string/center_on_user"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/toggle_breadcrumbs"
+            android:title="@string/toggle_breadcrumbs"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/toggle_layers"
+            android:title="@string/toggle_layers"
+            app:showAsAction="never" />
+
+</menu>

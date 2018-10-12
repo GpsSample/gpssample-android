@@ -5,10 +5,8 @@ import android.app.Activity
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.ClipData
-import android.content.ClipboardManager
+import android.content.*
 import android.content.Context.CLIPBOARD_SERVICE
-import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -47,6 +45,9 @@ class NavigationFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMa
     private lateinit var navigationPlanId: String
 
     private var lastKnownLocation: LatLng? = null
+
+    private val mapPreferences: SharedPreferences
+        get() = requireActivity().getSharedPreferences(MAP_PREFERENCE_NAMESPACE, Context.MODE_PRIVATE)
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -191,7 +192,7 @@ class NavigationFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMa
         }
 
         mapFragment?.getMapAsync {
-            markerManagerLiveData.postValue(MapboxItemMarkerManager(requireContext(), it))
+            markerManagerLiveData.postValue(MapboxItemMarkerManager(requireContext(), mapPreferences, it))
             it.setOnMarkerClickListener(this)
             it.addOnMapClickListener(this)
         }
@@ -211,6 +212,12 @@ class NavigationFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMa
 
     override fun onResume() {
         super.onResume()
+
+        markerManagerLiveData.observe(this, Observer {
+            it?.let {
+                it.applyLayerSettings()
+            }
+        })
 
         if (navigationViewModel.launchedSurvey) {
             navigationViewModel.nextNavigationItem.value?.let { navItem ->
@@ -304,6 +311,7 @@ class NavigationFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMa
     }
 
     companion object {
+        const val MAP_PREFERENCE_NAMESPACE = "SHARED_MAPBOX_LAYER_PREFERENCES"
         const val MAP_FRAGMENT_TAG = "navigationPlanFragment.MapboxFragment"
 
         const val ARG_NAVIGATION_PLAN_ID = "ARG_NAVIGATION_PLAN_ID"

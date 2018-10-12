@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
+import android.content.SharedPreferences
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -50,6 +52,9 @@ class CollectDetailsFragment(private val collectItem: CollectItem) : Fragment(),
 
     lateinit var collectIconFactory: CollectIconFactory
     private val markerManagerLiveData = MutableLiveData<MapboxItemMarkerManager>()
+
+    private val mapPreferences: SharedPreferences
+        get() = requireActivity().getSharedPreferences(MAP_PREFERENCE_NAMESPACE, Context.MODE_PRIVATE)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,7 +107,7 @@ class CollectDetailsFragment(private val collectItem: CollectItem) : Fragment(),
                     .commit()
 
             mapFragment.getMapAsync {
-                markerManagerLiveData.postValue(MapboxItemMarkerManager(requireContext(), it))
+                markerManagerLiveData.postValue(MapboxItemMarkerManager(requireContext(), mapPreferences, it))
 
                 it.setOnMarkerClickListener(this@CollectDetailsFragment)
 
@@ -181,6 +186,16 @@ class CollectDetailsFragment(private val collectItem: CollectItem) : Fragment(),
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        markerManagerLiveData.observe(this, Observer {
+            it?.let {
+                it.applyLayerSettings()
+            }
+        })
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.collect_details, menu)
         super.onCreateOptionsMenu(menu, inflater)
@@ -201,6 +216,8 @@ class CollectDetailsFragment(private val collectItem: CollectItem) : Fragment(),
     }
 
     companion object {
+        const val MAP_PREFERENCE_NAMESPACE = "SHARED_MAPBOX_LAYER_PREFERENCES"
+
         fun newInstance(collectItem: CollectItem): Fragment {
             return CollectDetailsFragment(collectItem)
         }

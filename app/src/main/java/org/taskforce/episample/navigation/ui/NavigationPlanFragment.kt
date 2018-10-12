@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
+import android.content.SharedPreferences
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -44,6 +46,9 @@ class NavigationPlanFragment : Fragment(), MapboxMap.OnMarkerClickListener, Mapb
 
     private var mapFragment: SupportMapFragment? = null
     private val markerManagerLiveData = MutableLiveData<MapboxItemMarkerManager>()
+
+    private val mapPreferences: SharedPreferences
+        get() = requireActivity().getSharedPreferences(MAP_PREFERENCE_NAMESPACE, Context.MODE_PRIVATE)
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -159,7 +164,7 @@ class NavigationPlanFragment : Fragment(), MapboxMap.OnMarkerClickListener, Mapb
         }
 
         mapFragment?.getMapAsync {
-            markerManagerLiveData.postValue(MapboxItemMarkerManager(requireContext(), it))
+            markerManagerLiveData.postValue(MapboxItemMarkerManager(requireContext(), mapPreferences, it))
             it.setOnMarkerClickListener(this)
             it.addOnMapClickListener(this)
         }
@@ -193,6 +198,13 @@ class NavigationPlanFragment : Fragment(), MapboxMap.OnMarkerClickListener, Mapb
 
     override fun onResume() {
         super.onResume()
+
+        markerManagerLiveData.observe(this, Observer {
+            it?.let {
+                it.applyLayerSettings()
+            }
+        })
+
         lastKnownLocation?.let { lastLocation ->
             mapFragment?.getMapAsync {
                 it.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, CollectViewModel.zoomLevel))
@@ -232,6 +244,7 @@ class NavigationPlanFragment : Fragment(), MapboxMap.OnMarkerClickListener, Mapb
     }
 
     companion object {
+        const val MAP_PREFERENCE_NAMESPACE = "SHARED_MAPBOX_LAYER_PREFERENCES"
         const val MAP_FRAGMENT_TAG = "navigationPlanFragment.MapboxFragment"
         private const val ARG_NAVIGATION_PLAN_ID = "ARG_NAVIGATION_PLAN_ID"
 

@@ -21,6 +21,7 @@ interface NavigationManager {
     fun getCollectItems(): LiveData<List<CollectItem>>
     fun getBreadcrumbs(): LiveData<List<Breadcrumb>>
     fun updateSurveyStatus(navigationItemId: String, surveyStatus: SurveyStatus, callback: () -> Unit)
+    fun getNavigationItem(navigationPlanId: String, navigationItemId: String): LiveData<NavigationItem>
 
     // TODO add possible path
 //    fun getPossiblePath(): LiveData<List<Breadcrumb>>
@@ -37,7 +38,15 @@ class LiveNavigationManager(val application: Application,
         get() = userSession.studyId
     val configId: String
         get() = userSession.configId
-    
+
+    override fun getNavigationItem(navigationPlanId: String, navigationItemId: String): LiveData<NavigationItem> {
+        return Transformations.map(getNavigationItems(navigationPlanId)) { items ->
+            items.first { 
+                it.id == navigationItemId
+            }
+        }
+    }
+
     override fun getNavigationPlans(): LiveData<List<NavigationPlan>> {
         return Transformations.map(studyRepository.getNavigationPlans()) { planList -> 
             planList.map { plan ->
@@ -72,7 +81,8 @@ class LiveNavigationManager(val application: Application,
                             LatLng(item.enumeration.lat, item.enumeration.lng),
                             item.enumeration.gpsPrecision,
                             item.enumerationId,
-                            item.dateCreated
+                            item.dateCreated,
+                            plan.id
                     )
                 }
         )

@@ -4,17 +4,15 @@ import android.arch.lifecycle.MutableLiveData
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import org.taskforce.episample.collection.managers.CollectIconFactory
-import org.taskforce.episample.collection.viewmodels.CollectItemViewModel
 import org.taskforce.episample.core.interfaces.DisplaySettings
-import org.taskforce.episample.core.interfaces.Enumeration
 import org.taskforce.episample.core.interfaces.NavigationItem
-import org.taskforce.episample.databinding.ItemCollectBinding
 import org.taskforce.episample.databinding.ItemNavigationBinding
 import org.taskforce.episample.utils.inflater
 
 class NavigationItemAdapter(
         private val collectIconFactory: CollectIconFactory,
-        val displaySettings: DisplaySettings) : RecyclerView.Adapter<NavigationItemViewHolder>() {
+        val displaySettings: DisplaySettings,
+        val viewDetails: (navigationItem: NavigationItem) -> Unit) : RecyclerView.Adapter<NavigationItemViewHolder>() {
 
     var data = listOf<NavigationItem>()
         set(value) {
@@ -32,7 +30,9 @@ class NavigationItemAdapter(
                 position,
                 data[position].surveyStatus,
                 data[position].title,
-                MutableLiveData<String>().apply { value = "Distance TODO" }))
+                MutableLiveData<String>().apply { value = "Distance TODO" },
+                data[position],
+                viewDetails))
     }
 }
 

@@ -28,6 +28,7 @@ import org.taskforce.episample.collection.managers.MapboxItemMarkerManager
 import org.taskforce.episample.collection.ui.CollectAddFragment
 import org.taskforce.episample.collection.viewmodels.CollectViewModel
 import org.taskforce.episample.core.LiveDataPair
+import org.taskforce.episample.core.interfaces.NavigationItem
 import org.taskforce.episample.databinding.FragmentNavigationPlanBinding
 import org.taskforce.episample.utils.getCompatColor
 import org.taskforce.episample.utils.toMapboxLatLng
@@ -99,7 +100,9 @@ class NavigationPlanFragment : Fragment(), MapboxMap.OnMarkerClickListener, Mapb
         binding.setLifecycleOwner(this)
 
         adapter = NavigationItemAdapter(CollectIconFactory(requireContext().resources),
-                navigationPlanViewModel.config.displaySettings)
+                navigationPlanViewModel.config.displaySettings) { navItem ->
+            showItemDetails(navItem)
+        }
         binding.collectList.adapter = adapter
 
         LiveDataPair(markerManagerLiveData, navigationPlanViewModel.navigationItems).observe(this, Observer {
@@ -240,6 +243,14 @@ class NavigationPlanFragment : Fragment(), MapboxMap.OnMarkerClickListener, Mapb
                     }
                 })
                 .addToBackStack(CollectAddFragment::class.java.name)
+                .commit()
+    }
+
+    private fun showItemDetails(navigationItem: NavigationItem) {
+        requireFragmentManager()
+                .beginTransaction()
+                .replace(R.id.contentFrame, NavigationDetailsFragment.newInstance(navigationItem))
+                .addToBackStack(NavigationDetailsFragment::class.java.name)
                 .commit()
     }
 

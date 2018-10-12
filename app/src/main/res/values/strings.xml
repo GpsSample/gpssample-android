@@ -235,6 +235,15 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="main_sample_description">Create a sample for surveying</string>
     <string name="main_report_title">Final Report</string>
     <string name="main_report_description">Send survey data to remote server</string>
+    
+    <string name="nav_detail_title">View %s</string>
+    <string name="nav_status_complete">COMPLETED</string>
+    <string name="nav_status_incomplete">AWAITING SURVEY</string>
+    <string name="nav_status_problem">PROBLEM</string>
+    <string name="nav_status_skipped">SKIPPED</string>
+    <string name="nav_change_status">CHANGE STATUS</string>
+    <string name="nav_problem_report">Problem Report: </string>
+    <string name="nav_launch_survey">LAUNCH SURVEY</string>
 
     <string name="collect_title">%s Places Added</string>
     <string name="collect_button_household">+ HOUSEHOLD</string>

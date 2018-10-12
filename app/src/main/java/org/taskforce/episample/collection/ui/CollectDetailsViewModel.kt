@@ -11,8 +11,6 @@ import org.taskforce.episample.collection.viewmodels.CollectDetailField
 import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.interfaces.*
 import org.taskforce.episample.db.config.customfield.CustomFieldType
-import org.taskforce.episample.db.config.customfield.value.*
-import org.taskforce.episample.utils.DateUtil
 import javax.inject.Inject
 
 class CollectDetailsViewModel(application: Application): AndroidViewModel(application) {
@@ -112,7 +110,7 @@ class CollectDetailsViewModel(application: Application): AndroidViewModel(applic
                     }
                     
                     if (!customField.isAutomatic) {
-                        var value = getValueForCustomField(customFieldValue, customField)
+                        var value = customFieldValue?.getValueForCustomField(customField, config.displaySettings) ?: ""
                         val isIncomplete = customField.isRequired && collectItem.isIncomplete && value.isBlank()
                         
                         if (value.isBlank()) {
@@ -147,8 +145,8 @@ class CollectDetailsViewModel(application: Application): AndroidViewModel(applic
             else -> emptyList<CollectDetailField>()
         }
     }
-    
-    fun deleteCollectItem() {
+
+  fun deleteCollectItem() {
         data.value?.let {
             collectManager.deleteCollectItem(it)
         }

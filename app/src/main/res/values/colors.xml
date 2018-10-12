@@ -27,4 +27,9 @@
     <color name="fieldTitle">#de888888</color>
     <color name="fieldValue">#de000000</color>
     <color name="darkGray">#8a000000</color>
+    
+    <color name="nav_complete">#88b374</color>
+    <color name="nav_incomplete">#9b9b9b</color>
+    <color name="nav_skipped">#b762a6</color>
+    <color name="nav_problem">#b71c1c</color>
 </resources>

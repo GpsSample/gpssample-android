@@ -2,12 +2,15 @@ package org.taskforce.episample.navigation.ui
 
 import android.arch.lifecycle.LiveData
 import org.taskforce.episample.R
+import org.taskforce.episample.core.interfaces.NavigationItem
 import org.taskforce.episample.core.navigation.SurveyStatus
 
 class NavigationItemViewModel(position: Int,
                               private val surveyStatus: SurveyStatus,
                               val title: String?,
-                              val distance: LiveData<String>) {
+                              val distance: LiveData<String>,
+                              val data: NavigationItem,
+                              val showDetails: (NavigationItem) -> Unit) {
 
     val positionVisibility = surveyStatus is SurveyStatus.Incomplete
     val surveyStatusImage: Int
@@ -21,4 +24,8 @@ class NavigationItemViewModel(position: Int,
     }
 
     val numericalOrder = (position + 1).toString()
+    
+    fun handleDetailsClick() {
+        showDetails(data)
+    }
 }

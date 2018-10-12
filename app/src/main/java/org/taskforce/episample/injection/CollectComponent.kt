@@ -37,4 +37,6 @@ interface CollectComponent {
     fun inject(navigationListViewModel: NavigationListViewModel)
     fun inject(collectDetailsViewModel: CollectDetailsViewModel)
     fun inject(collectDetailsFragment: CollectDetailsFragment)
+    fun inject(navigationDetailsViewModel: NavigationDetailsViewModel)
+    fun inject(navigationDetailsFragment: NavigationDetailsFragment)
 }

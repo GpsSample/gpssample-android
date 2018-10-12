@@ -9,6 +9,7 @@ interface NavigationItem : Enumeration {
     val navigationOrder: Int
     val surveyStatus: SurveyStatus
     val enumerationId: String
+    val navigationPlanId: String
 }
 
 data class LiveNavigationItem(override val collectorName: String,
@@ -24,4 +25,5 @@ data class LiveNavigationItem(override val collectorName: String,
                               override val location: LatLng,
                               override val gpsPrecision: Double,
                               override val enumerationId: String,
-                              override val dateCreated: Date) : NavigationItem
+                              override val dateCreated: Date,
+                              override val navigationPlanId: String) : NavigationItem

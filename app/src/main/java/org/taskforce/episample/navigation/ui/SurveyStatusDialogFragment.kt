@@ -24,6 +24,9 @@ class SurveyStatusDialogFragment: DialogFragment() {
         super.onCreate(savedInstanceState)
 
         surveyStatusViewModel = ViewModelProviders.of(this).get(SurveyStatusViewModel::class.java)
+        
+        val currentSurveyStatus = arguments!!.getParcelable<SurveyStatus>(ARG_SURVEY_STATUS)
+        surveyStatusViewModel.surveyStatus.postValue(currentSurveyStatus)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -85,6 +88,7 @@ class SurveyStatusDialogFragment: DialogFragment() {
             surveyStatusViewModel.navigationManager.updateSurveyStatus(navigationItemId, it, {
                 // no - op: change is observed elsewhere in UI
             })
+            
             dismiss()
         }
     }

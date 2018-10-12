@@ -15,6 +15,7 @@ interface CollectManager {
     fun getCollectItems(): LiveData<List<CollectItem>>
     fun getBreadcrumbs(): LiveData<List<Breadcrumb>>
     fun getNumberOfValidEnumerations(): LiveData<Int>
+    fun deleteCollectItem(collectItem: CollectItem)
 
     fun addBreadcrumb(breadcrumb: Breadcrumb, callback: (breadcrumbId: String) -> Unit)
     fun addEnumerationItem(item: Enumeration, callback: (enumerationId: String) -> Unit)

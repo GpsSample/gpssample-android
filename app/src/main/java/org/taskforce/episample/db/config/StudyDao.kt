@@ -41,6 +41,12 @@ abstract class StudyDao : ConfigDao(), CustomFieldDao, ResolvedEnumerationDao, C
 
     @Delete
     abstract fun delete(study: Study)
+    
+    @Delete
+    abstract fun deleteEnumeration(enumeration: Enumeration)
+    
+    @Delete
+    abstract fun deleteLandmark(landmark: Landmark)
 
     @Insert
     abstract fun insertNavigationPlans(navigationPlans: List<NavigationPlan>)

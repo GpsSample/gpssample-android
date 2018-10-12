@@ -8,7 +8,7 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/action_edit"
-        android:icon="@drawable/icon_edit_white"
+        android:icon="@drawable/icon_delete_white"
         android:title="EDIT"
         app:showAsAction="always" />
     <!--<item-->

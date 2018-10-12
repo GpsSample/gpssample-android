@@ -401,7 +401,9 @@ class CollectAddViewModel(
                     }
                 }
                 is CustomTextViewModel -> customVm.value.value?.let { TextValue(it) }
-                is CustomCheckboxViewModel -> customVm.value.value?.let { BooleanValue(it) }
+                is CustomCheckboxViewModel -> customVm.value.value?.let { 
+                    BooleanValue(it) 
+                }
                 is CustomDropdownViewModel -> customVm.value.value?.key?.let { DropdownValue(it) }
                 is CustomDateViewModel -> customVm.value.value?.let { DateValue(it) }
                 else -> null

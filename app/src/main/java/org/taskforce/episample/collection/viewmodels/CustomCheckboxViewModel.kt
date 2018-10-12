@@ -5,7 +5,6 @@ import android.databinding.ObservableField
 import org.taskforce.episample.core.interfaces.CustomField
 
 class CustomCheckboxViewModel(customField: CustomField): AbstractCustomViewModel(customField) {
-
     var checked = object : ObservableField<Boolean>(false) {
         override fun set(newValue: Boolean?) {
             super.set(newValue)
@@ -13,7 +12,7 @@ class CustomCheckboxViewModel(customField: CustomField): AbstractCustomViewModel
             value.postValue(newValue)
         }
     }
-    
+
     var title = object : ObservableField<String>("") {
         override fun get(): String? {
             var value = customField.name
@@ -24,6 +23,5 @@ class CustomCheckboxViewModel(customField: CustomField): AbstractCustomViewModel
         }
     }
 
-    override val value = MutableLiveData<Boolean>()
-
+    override val value = MutableLiveData<Boolean>().apply { value = false }
 }

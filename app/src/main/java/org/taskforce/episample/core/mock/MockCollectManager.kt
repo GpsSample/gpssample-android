@@ -46,6 +46,9 @@ class MockCollectManager : CollectManager {
     override fun getNumberOfValidEnumerations(): LiveData<Int> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+    override fun deleteCollectItem(collectItem: CollectItem) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     override fun updateLandmark(landmark: Landmark, callback: () -> Unit) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.

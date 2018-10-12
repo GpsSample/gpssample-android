@@ -119,7 +119,7 @@ class CollectDetailsViewModel(application: Application): AndroidViewModel(applic
                             value = "Empty"
                         }
                         
-                        if (isCheckbox && value == "Empty") {
+                        if (isCheckbox && (value == "Empty" || value == "false")) {
                             value = "Unchecked"
                             isCheckbox = false
                         }
@@ -145,6 +145,12 @@ class CollectDetailsViewModel(application: Application): AndroidViewModel(applic
                 return@map listOf(name, type, notes)
             }
             else -> emptyList<CollectDetailField>()
+        }
+    }
+    
+    fun deleteCollectItem() {
+        data.value?.let {
+            collectManager.deleteCollectItem(it)
         }
     }
     

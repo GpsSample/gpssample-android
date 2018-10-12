@@ -68,6 +68,8 @@ class LiveCollectManager(val application: Application,
                          val config: Config,
                          val studyRepository: StudyRepository,
                          override val userSession: UserSession) : CollectManager {
+    
+
     val studyId: String
         get() = userSession.studyId
     val configId: String
@@ -116,6 +118,10 @@ class LiveCollectManager(val application: Application,
 
     override fun getCollectItems(): LiveData<List<CollectItem>> {
         return CommonManager.getCollectItems(config, studyRepository, studyId)
+    }
+
+    override fun deleteCollectItem(collectItem: CollectItem) {
+        studyRepository.deleteCollectItem(collectItem, studyId)
     }
 
     override fun getBreadcrumbs(): LiveData<List<Breadcrumb>> {

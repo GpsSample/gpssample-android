@@ -14,6 +14,7 @@ import org.taskforce.episample.config.sampling.SamplingMethod
 import org.taskforce.episample.config.sampling.SamplingMethodology
 import org.taskforce.episample.config.sampling.SamplingUnits
 import org.taskforce.episample.core.InitializedLiveData
+import org.taskforce.episample.core.interfaces.CollectItem
 import org.taskforce.episample.core.navigation.SurveyStatus
 import org.taskforce.episample.db.collect.Enumeration
 import org.taskforce.episample.db.collect.GpsBreadcrumb
@@ -30,7 +31,10 @@ import org.taskforce.episample.db.sampling.SampleEntity
 import org.taskforce.episample.db.sampling.WarningEntity
 import org.taskforce.episample.sync.core.EnumerationsReceivedMessage
 import org.taskforce.episample.sync.core.StudyReceivedMessage
+import org.taskforce.episample.utils.toDBEnumeration
+import org.taskforce.episample.utils.toDBLandmark
 import java.util.*
+import kotlin.concurrent.thread
 
 class StudyRepository(val application: Application, injectedDatabase: StudyRoomDatabase? = null) {
 
@@ -157,6 +161,25 @@ class StudyRepository(val application: Application, injectedDatabase: StudyRoomD
     fun insertStudy(sourceConfig: ResolvedConfig, name: String, studyPassword: String, callback: (configId: String, studyId: String) -> Unit) {
         studyDao.value?.let { studyDao ->
             InsertStudyAsyncTask(studyDao).execute(InsertStudyInput(name, studyPassword, sourceConfig, callback))
+        }
+    }
+
+    fun deleteCollectItem(collectItem: CollectItem, studyId: String) {
+        studyDao.value?.let { studyDao ->
+            thread {
+                when (collectItem) {
+                    is org.taskforce.episample.core.interfaces.Enumeration -> {
+                        val dbEnumeration = collectItem.toDBEnumeration(collectItem.collectorName, studyId)
+                        dbEnumeration.id = collectItem.id!!
+                        studyDao.deleteEnumeration(dbEnumeration)
+                    }
+                    is org.taskforce.episample.core.interfaces.Landmark -> {
+                        val dbLandmark = collectItem.toDBLandmark(collectItem.collectorName, studyId)
+                        dbLandmark.id = collectItem.id!!
+                        studyDao.deleteLandmark(dbLandmark)
+                    }
+                }
+            }
         }
     }
 

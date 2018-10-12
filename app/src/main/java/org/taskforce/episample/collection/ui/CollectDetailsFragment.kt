@@ -171,11 +171,15 @@ class CollectDetailsFragment(private val collectItem: CollectItem) : Fragment(),
         (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
 
         toolbar?.setNavigationOnClickListener {
-            if (fragmentManager?.backStackEntryCount ?: 0 > 0) {
-                fragmentManager?.popBackStack()
-            } else {
-                requireActivity().finish()
-            }
+            goBack()
+        }
+    }
+    
+    private fun goBack() {
+        if (fragmentManager?.backStackEntryCount ?: 0 > 0) {
+            fragmentManager?.popBackStack()
+        } else {
+            requireActivity().finish()
         }
         
         collectDetailsImage.setOnClickListener {
@@ -206,7 +210,14 @@ class CollectDetailsFragment(private val collectItem: CollectItem) : Fragment(),
             R.id.action_help -> {
             }
             R.id.action_edit -> {
-                // TODO
+                val subject = when (collectItem) {
+                    is Enumeration -> config.enumerationSubject.singular
+                    is Landmark -> getString(R.string.landmark)
+                    else -> ""
+                }.toLowerCase()
+                
+                val deleteDialog = DeleteItemDialogFragment.newInstance(confirmedDelete, subject)
+                deleteDialog.show(childFragmentManager, DeleteItemDialogFragment::class.java.simpleName)
             }
 //            R.id.action_language -> {
 //                toolbarViewModel.languageSelectVisibility.postValue(true)
@@ -214,7 +225,12 @@ class CollectDetailsFragment(private val collectItem: CollectItem) : Fragment(),
         }
         return true
     }
-
+    
+    private val confirmedDelete: () -> Unit = {
+        viewModel.deleteCollectItem()
+        goBack()
+    }
+    
     companion object {
         const val MAP_PREFERENCE_NAMESPACE = "SHARED_MAPBOX_LAYER_PREFERENCES"
 

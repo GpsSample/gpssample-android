@@ -1,13 +1,16 @@
 package org.taskforce.episample.config.geography
 
+import android.arch.lifecycle.MutableLiveData
 import android.databinding.BaseObservable
 import android.databinding.Bindable
-import org.taskforce.episample.R
+import android.view.View
 import org.taskforce.episample.BR
+import org.taskforce.episample.R
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.utils.bindDelegate
 
 class GeographyDialogViewModel(
+        val location: MutableLiveData<Pair<com.google.android.gms.maps.model.LatLng, Float>>,
         languageService: LanguageService,
         val disabledColor: Int,
         val enabledColor: Int,
@@ -77,6 +80,13 @@ class GeographyDialogViewModel(
         quickstartReceiver.quickstartData(latitude?.toDouble() ?: 0.0, longitude?.toDouble()
                 ?: 0.0, radius?.toDouble() ?: 1.0)
         cancel()
+    }
+
+    fun useCurrentLocation(view: View) {
+        location.value?.let {
+            latitude = it.first.latitude.toString()
+            longitude = it.first.longitude.toString()
+        }
     }
 }
 

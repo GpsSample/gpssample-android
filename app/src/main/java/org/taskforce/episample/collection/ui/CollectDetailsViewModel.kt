@@ -11,6 +11,8 @@ import org.taskforce.episample.collection.viewmodels.CollectDetailField
 import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.interfaces.*
 import org.taskforce.episample.db.config.customfield.CustomFieldType
+import org.taskforce.episample.db.config.customfield.value.*
+import org.taskforce.episample.utils.DateUtil
 import javax.inject.Inject
 
 class CollectDetailsViewModel(application: Application) : AndroidViewModel(application) {

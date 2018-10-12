@@ -10,6 +10,7 @@ import org.taskforce.episample.config.base.LiveConfigManager
 import org.taskforce.episample.config.landmark.LandmarkTypeManager
 import org.taskforce.episample.config.transfer.TransferFileService
 import org.taskforce.episample.config.transfer.TransferManager
+import org.taskforce.episample.core.interfaces.LiveLocationService
 import org.taskforce.episample.permissions.managers.PermissionManager
 import org.taskforce.episample.sampling.managers.StudyManager
 import org.taskforce.episample.sampling.managers.StudyStorage
@@ -66,4 +67,7 @@ class EpiModule(private val context: Context) {
     fun provideUploadManager(): UploadManager {
         return DriveUploadManager()
     }
+
+    @Provides
+    fun providesLocationService(): LiveLocationService = LiveLocationService(context, "", org.taskforce.episample.db.config.UserSettings(30.0, 50.0, true, 50, ""))
 }

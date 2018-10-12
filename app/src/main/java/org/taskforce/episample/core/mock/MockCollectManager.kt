@@ -7,10 +7,15 @@ import com.google.android.gms.maps.model.LatLng
 import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.interfaces.*
 import org.taskforce.episample.db.DateRange
+import org.taskforce.episample.db.navigation.ResolvedNavigationPlan
 import org.taskforce.episample.db.sampling.SampleEntity
 import org.taskforce.episample.db.sampling.WarningEntity
 
 class MockCollectManager : CollectManager {
+    override fun getNavigationPlans(): LiveData<List<ResolvedNavigationPlan>> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun getNumberOfNavigationPlans(): LiveData<Int> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

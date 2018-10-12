@@ -8,6 +8,7 @@ import org.taskforce.episample.core.interfaces.*
 import org.taskforce.episample.core.interfaces.Config
 import org.taskforce.episample.db.DateRange
 import org.taskforce.episample.db.StudyRepository
+import org.taskforce.episample.db.navigation.ResolvedNavigationPlan
 import org.taskforce.episample.db.sampling.SampleEntity
 import org.taskforce.episample.db.sampling.WarningEntity
 import org.taskforce.episample.utils.toDBBreadcrumb
@@ -76,6 +77,8 @@ class LiveCollectManager(val application: Application,
         get() = userSession.configId
 
     override fun getNumberOfNavigationPlans(): LiveData<Int> = studyRepository.getNumberOfNavigationPlans(studyId)
+
+    override fun getNavigationPlans(): LiveData<List<ResolvedNavigationPlan>> = studyRepository.getNavigationPlans()
 
     override fun deleteSamples() {
         thread {

@@ -2,6 +2,8 @@ package org.taskforce.episample.core.interfaces
 
 import android.arch.lifecycle.LiveData
 import org.taskforce.episample.db.DateRange
+import org.taskforce.episample.db.navigation.NavigationPlan
+import org.taskforce.episample.db.navigation.ResolvedNavigationPlan
 import org.taskforce.episample.db.sampling.SampleEntity
 import org.taskforce.episample.db.sampling.WarningEntity
 
@@ -32,4 +34,5 @@ interface CollectManager {
     fun deleteSamples()
     fun createNavigationPlans(numberOfNavigationPlansToMake: SampleEntity, numberOfNavigationPlansToMake1: Int)
     fun getNumberOfNavigationPlans(): LiveData<Int>
+    fun getNavigationPlans(): LiveData<List<ResolvedNavigationPlan>>
 }

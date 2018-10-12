@@ -71,6 +71,7 @@ class SamplingStrataFragment : Fragment(), Observer<SamplingSubsetViewModel.Even
     override fun onResume() {
         super.onResume()
         eventBus.register(this)
+        viewModel?.events?.observe(this, this)
     }
 
     override fun onPause() {

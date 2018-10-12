@@ -75,6 +75,8 @@ class LiveCollectManager(val application: Application,
     val configId: String
         get() = userSession.configId
 
+    override fun getNumberOfNavigationPlans(): LiveData<Int> = studyRepository.getNumberOfNavigationPlans(studyId)
+
     override fun deleteSamples() {
         thread {
             studyRepository.deleteNavigationPlans()

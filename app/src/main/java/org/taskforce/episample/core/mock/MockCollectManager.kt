@@ -11,6 +11,10 @@ import org.taskforce.episample.db.sampling.SampleEntity
 import org.taskforce.episample.db.sampling.WarningEntity
 
 class MockCollectManager : CollectManager {
+    override fun getNumberOfNavigationPlans(): LiveData<Int> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun createNavigationPlans(numberOfNavigationPlansToMake: SampleEntity, numberOfNavigationPlansToMake1: Int) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

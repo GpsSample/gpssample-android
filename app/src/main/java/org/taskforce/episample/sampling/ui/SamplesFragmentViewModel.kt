@@ -13,6 +13,7 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.Toast
 import org.taskforce.episample.R
 import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.interfaces.CollectManager
@@ -22,21 +23,25 @@ import org.taskforce.episample.db.sampling.SampleEntity
 import org.taskforce.episample.db.sampling.WarningEntity
 
 
-
-
 class SamplesFragmentViewModel(val resources: Resources, val enumerationSubject: EnumerationSubject, val collectManager: CollectManager, val displaySettings: DisplaySettings) : ViewModel() {
-    val warnings: LiveData<List<WarningEntity>> = collectManager.getWarnings()
+    private val warnings: LiveData<List<WarningEntity>> = collectManager.getWarnings()
     val sample: LiveData<SampleEntity?> = collectManager.getSample()
+    val assignText: String = resources.getString(R.string.assign_households, enumerationSubject.plural)
+    var areWarningsVisible = ObservableBoolean(false)
 
-    var areWarningsVisibile = ObservableBoolean(false)
+    private val numberOfNavigationPlans: LiveData<Int> = collectManager.getNumberOfNavigationPlans()
 
-    val warningsVisibility = object : ObservableInt(areWarningsVisibile) {
+    val noNavigationPlansTextVisibility: LiveData<Int> = Transformations.map(numberOfNavigationPlans) {
+        if (it > 0) View.GONE else View.VISIBLE
+    }
+
+    val warningsVisibility = object : ObservableInt(areWarningsVisible) {
         override fun get(): Int {
-            return if (areWarningsVisibile.get()) View.VISIBLE else View.GONE
+            return if (areWarningsVisible.get()) View.VISIBLE else View.GONE
         }
     }
 
-    val seeWarningsVisibility = Transformations.map(warnings) {
+    val seeWarningsVisibility: LiveData<Int> = Transformations.map(warnings) {
         if (it.isNotEmpty()) {
             View.VISIBLE
         } else {
@@ -44,7 +49,7 @@ class SamplesFragmentViewModel(val resources: Resources, val enumerationSubject:
         }
     }
 
-    val sampleGeneratedOnExplanation = Transformations.map(LiveDataPair(warnings, sample)) {
+    val sampleGeneratedOnExplanation: LiveData<String> = Transformations.map(LiveDataPair(warnings, sample)) {
         if (it.first.isNotEmpty()) {
             resources.getString(R.string.sample_generated_with_warnings, it.second?.dateCreated?.let { date -> displaySettings.getFormattedDate(date, false) })
         } else {
@@ -58,20 +63,20 @@ class SamplesFragmentViewModel(val resources: Resources, val enumerationSubject:
         }
     }
 
-    val sampleTitle = Transformations.map(sample) {
+    val sampleTitle: LiveData<String?> = Transformations.map(sample) {
         it?.let {
             resources.getString(R.string.sample_generated, displaySettings.getFormattedDate(it.dateCreated, false))
         }
     }
 
-    val numberOfEnumerationsInSample: LiveData<Int> = collectManager.getNumberOfEnumerationsInSample()
+    private val numberOfEnumerationsInSample: LiveData<Int> = collectManager.getNumberOfEnumerationsInSample()
 
-    val numberOfEnumerationsText = Transformations.map(numberOfEnumerationsInSample) {
+    val numberOfEnumerationsText: LiveData<String> = Transformations.map(numberOfEnumerationsInSample) {
         if (it > 1 || it == 0) "$it ${enumerationSubject.plural}" else "$it ${enumerationSubject.singular}"
     }
 
     fun onSeeWarningsClicked(view: View) {
-        areWarningsVisibile.set(!areWarningsVisibile.get())
+        areWarningsVisible.set(!areWarningsVisible.get())
     }
 
     fun onAssignHouseholdsClicked(view: View) {
@@ -104,14 +109,27 @@ class SamplesFragmentViewModel(val resources: Resources, val enumerationSubject:
                         val theSample = sample.value!!
                         val numberOfEnumerationsInSample = numberOfEnumerationsInSample.value!!
                         val numberOfNavigationPlansToMake: Int = if (it > numberOfEnumerationsInSample) numberOfEnumerationsInSample else it
-                        collectManager.createNavigationPlans(theSample, numberOfNavigationPlansToMake)
+                        if (numberOfNavigationPlansToMake > 0) {
+                            collectManager.createNavigationPlans(theSample, numberOfNavigationPlansToMake)
+                        } else {
+                            Toast.makeText(view.context, resources.getString(R.string.cannot_create_navigation_plans, enumerationSubject.plural), Toast.LENGTH_LONG).show()
+                        }
                     }
                 }
                 .show()
     }
 
     fun onDeleteClicked(view: View) {
-        collectManager.deleteSamples()
+        val dialogBuilder = AlertDialog.Builder(view.context)
+        dialogBuilder
+                .setTitle(R.string.permanently_delete_sample)
+                .setMessage(R.string.delete_sample_explanation)
+                .setPositiveButton(R.string.delete_sample) { dialog, _ ->
+                    collectManager.deleteSamples()
+                    dialog.dismiss()
+                }
+                .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
+                .show()
     }
 }
 

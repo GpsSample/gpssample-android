@@ -111,6 +111,9 @@ abstract class StudyDao : ConfigDao(), CustomFieldDao, ResolvedEnumerationDao, C
     @Query("SELECT COUNT(et.id) FROM sample_enumerations et JOIN samples st ON et.sample_id = st.id WHERE study_id LIKE :studyId")
     abstract fun getNumberOfEnumerationsInSample(studyId: String): LiveData<Int>
 
+    @Query("SELECT COUNT(npt.id) FROM navigation_plan_table npt JOIN study_table st ON st.id = npt.study_id WHERE study_id LIKE :studyId")
+    abstract fun getNumberOfNavigationPlans(studyId: String): LiveData<Int>
+
     @Update
     abstract fun update(enumeration: Enumeration)
 

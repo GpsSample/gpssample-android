@@ -31,4 +31,5 @@ interface CollectManager {
     fun getNumberOfEnumerationsInSample(): LiveData<Int>
     fun deleteSamples()
     fun createNavigationPlans(numberOfNavigationPlansToMake: SampleEntity, numberOfNavigationPlansToMake1: Int)
+    fun getNumberOfNavigationPlans(): LiveData<Int>
 }

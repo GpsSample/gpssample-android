@@ -33,27 +33,27 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:fontFamily="sans-serif"
+            android:text="@{vm.sampleGeneratedOnExplanation}"
             android:textColor="#000000"
             android:textSize="14sp"
             android:textStyle="normal"
-            android:text="@{vm.sampleGeneratedOnExplanation}"
             tools:text="A sample for this study was successfully generated on 06/06/2018."
             />
 
         <TextView
-            android:text="@{vm.warningsText}"
-            android:visibility="@{vm.warningsVisibility}"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="@{vm.warningsText}"
+            android:visibility="@{vm.warningsVisibility}"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="@{vm.seeWarningsVisibility}"
+            android:onClick="@{vm::onSeeWarningsClicked}"
             android:text="@string/see_warnings"
             android:textColor="@color/colorAccent"
-            android:onClick="@{vm::onSeeWarningsClicked}"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:visibility="@{vm.seeWarningsVisibility}"/>
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
@@ -71,20 +71,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
+                    android:text="@{vm.sampleTitle}"
                     android:textColor="#000000"
                     android:textSize="18sp"
                     android:textStyle="normal"
-                    android:text="@{vm.sampleTitle}"
                     tools:text="Sample Generated 06/06/2018"
                     />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
+                    android:text="@{vm.numberOfEnumerationsText}"
                     android:textColor="#757575"
                     android:textSize="14sp"
                     android:textStyle="normal"
-                    android:text="@{vm.numberOfEnumerationsText}"
                     tools:text="300 Households"
                     />
 
@@ -95,12 +96,13 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:onClick="@{vm::onAssignHouseholdsClicked}"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/assign_households"
+                        android:onClick="@{vm::onAssignHouseholdsClicked}"
+                        android:text="@{vm.assignText}"
                         android:textColor="@color/colorAccent"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold"
+                        tools:text="ASSIGN HOUSEHOLDS"/>
 
                     <Space
                         android:layout_width="0dp"
@@ -108,14 +110,40 @@
                         android:layout_weight="1"/>
 
                     <TextView
-                        android:onClick="@{vm::onDeleteClicked}"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:onClick="@{vm::onDeleteClicked}"
                         android:text="@string/delete_sample"
                         android:textColor="@color/colorError"
                         android:textStyle="bold"/>
                 </LinearLayout>
             </LinearLayout>
         </android.support.v7.widget.CardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:fontFamily="sans-serif"
+            android:lineSpacingExtra="8sp"
+            android:textColor="#757575"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:text="@string/navigation_plans"
+            />
+
+        <TextView
+            android:visibility="@{vm.noNavigationPlansTextVisibility}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="13dp"
+            android:fontFamily="sans-serif"
+            android:lineSpacingExtra="6sp"
+            android:textColor="#9e9e9e"
+            android:textSize="14sp"
+            android:textStyle="italic"
+            android:text="@string/none"
+            />
+
     </LinearLayout>
 </layout>

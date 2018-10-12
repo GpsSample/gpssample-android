@@ -306,6 +306,8 @@ class StudyRepository(val application: Application, injectedDatabase: StudyRoomD
     fun deleteNavigationPlans() {
         studyDao.value!!.deleteNavigationPlansSync()
     }
+
+    fun getNumberOfNavigationPlans(studyId: String): LiveData<Int> = studyDao.value!!.getNumberOfNavigationPlans(studyId)
 }
 
 typealias SampleCreatedCallback = (Boolean) -> Unit
@@ -326,7 +328,7 @@ private class CreateSampleTask(private val studyDao: StudyDao, val resources: Re
             val warnings = mutableListOf<String>()
             val totalPopulationForSampling: List<ResolvedEnumeration> = enumerationsForRuleSets.map { (ruleSet, filteredEnumerationsForRuleSet) ->
                 val amount: Int = when (samplingMethodology.units) {
-                    SamplingUnits.PERCENT -> (ruleSet.sampleSize/100.0 * filteredEnumerationsForRuleSet.size).toInt()
+                    SamplingUnits.PERCENT -> Math.ceil(ruleSet.sampleSize/100.0 * filteredEnumerationsForRuleSet.size).toInt()
                     SamplingUnits.FIXED -> ruleSet.sampleSize
                 }
                 val sample = when (samplingMethodology.type) {

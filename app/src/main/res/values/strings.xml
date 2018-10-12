@@ -401,12 +401,13 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="insufficient_households">Insufficient households in collection to satisfy sample requirements for \"%1$s\" (%2$s/%3$s)</string>
     <string name="sample_for_survey">Sample for Survey</string>
     <string name="see_warnings">SEE WARNINGS</string>
-    <string name="assign_households">ASSIGN HOUSEHOLDS</string>
+    <string name="assign_households">ASSIGN %1$S</string>
     <string name="delete_sample">DELETE SAMPLE</string>
     <string name="sample_generated_with_warnings">A sample for this study was generated with warnings on %1$s</string>
     <string name="sample_generate_on">A sample for this study was generated on %1$s</string>
     <string name="sample_generated">Sample Generated %1$s</string>
     <string name="mapbox_enter_custom_style">Enter Custom Mapbox Style Url</string>
+    <string name="cannot_create_navigation_plans">You must have more than 0 %1$s and more than 0 enumerators.</string>
     <string name="mapbox_test_style">Test Style</string>
     <string name="mapbox_config_title">Mapbox</string>
     <string name="mapbox_end_progress_success">Region downloaded successfully.</string>
@@ -434,6 +435,10 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="empty">Empty</string>
     <string name="view_item_title">View %s</string>
     <string name="landmark">Landmark</string>
+    <string name="permanently_delete_sample">Permanantly Delete Sample?</string>
+    <string name="delete_sample_explanation">Deleting this sample will also remove any assignment navigation plans you’ve created. This action cannot be reversed.</string>
+    <string name="navigation_plans">Navigation Plans</string>
+    <string name="none">None</string>
     <string name="center_on_user">Find my location</string>
     <string name="current_location_unknown">Current location unknown</string>
     <string name="toggle_breadcrumbs">Toggle breadcrumbs</string>

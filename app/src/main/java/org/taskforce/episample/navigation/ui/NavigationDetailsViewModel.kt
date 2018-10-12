@@ -157,7 +157,7 @@ class NavigationDetailsViewModel(application: Application,
                     value = "Empty"
                 }
 
-                if (isCheckbox && value == "Empty") {
+                if (isCheckbox && (value == "Empty" || value == "false")) {
                     value = "Unchecked"
                     isCheckbox = false
                 }

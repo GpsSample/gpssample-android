@@ -13,12 +13,13 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v4.app.Fragment
 import android.support.v4.content.FileProvider
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
+import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
+import android.widget.Toast
 import com.mapbox.mapboxsdk.annotations.PolylineOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.maps.MapboxMapOptions
@@ -44,6 +45,10 @@ import org.taskforce.episample.core.util.FileUtil
 import org.taskforce.episample.databinding.FragmentCollectAddBinding
 import org.taskforce.episample.db.config.customfield.CustomDateType
 import org.taskforce.episample.db.config.customfield.metadata.DateMetadata
+import org.taskforce.episample.help.HelpActivity
+import org.taskforce.episample.mapbox.MapboxLayersFragment
+import org.taskforce.episample.navigation.ui.NavigationToolbarViewModel
+import org.taskforce.episample.navigation.ui.NavigationToolbarViewModelFactory
 import org.taskforce.episample.toolbar.managers.LanguageManager
 import org.taskforce.episample.toolbar.viewmodels.ToolbarViewModel
 import org.taskforce.episample.utils.getCompatColor
@@ -63,6 +68,7 @@ class CollectAddFragment : Fragment() {
     lateinit var config: Config
 
     lateinit var collectViewModel: CollectAddViewModel
+    lateinit var navigationToolbarViewModel: NavigationToolbarViewModel
 
     var imageUri: Uri? = null
 
@@ -77,65 +83,91 @@ class CollectAddFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         (requireActivity().application as EpiApplication).collectComponent?.inject(this)
+
+        languageService = LanguageService(languageManager)
+        collectViewModel = ViewModelProviders.of(this@CollectAddFragment, CollectAddViewModelFactory(
+                requireActivity().application,
+                languageService,
+                arguments?.getBoolean(IS_LANDMARK) == true,
+                requireContext().getCompatColor(R.color.colorAccent),
+                requireContext().getCompatColor(R.color.textColorDisabled),
+                requireContext().getCompatColor(R.color.textColorInverse),
+                requireContext().getCompatColor(R.color.textColorDetails),
+                {
+                    requireFragmentManager()
+                            .popBackStack()
+                }, {
+            Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+                takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
+                    val newPhoto = try {
+                        FileUtil.createImageFile(requireContext())
+                    } catch (ex: IOException) {
+                        null
+                    }
+
+                    newPhoto?.also {
+                        val photoUri = FileProvider.getUriForFile(requireContext(),
+                                "org.taskforce.episample.fileprovider",
+                                it)
+                        imageUri = photoUri
+
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+                        startActivityForResult(takePictureIntent, TAKE_PICTURE)
+                    }
+                }
+            }
+        },
+                { enumeration, subject ->
+                    enumeration?.let {
+                        val duplicateDialog = DuplicateGpsDialogFragment.newInstance(enumeration, subject) {
+                            collectViewModel.duplicateGps(enumeration)
+                        }
+                        duplicateDialog.show(childFragmentManager, DuplicateGpsDialogFragment::class.java.simpleName)
+                    }
+                },
+                { latLng, precision ->
+                    val outsideAreaDialog = OutsideAreaDialogFragment.newInstance {
+                        collectViewModel.saveEnumeration(latLng, precision, shouldExclude = true)
+                    }
+                    outsideAreaDialog.show(childFragmentManager, OutsideAreaDialogFragment::class.java.simpleName)
+                },
+                { photoUri ->
+                    val photoFragment = ViewPhotoFragment.newInstance(photoUri)
+                    photoFragment.show(requireFragmentManager(), ViewPhotoFragment::class.java.simpleName)
+                }
+        )).get(CollectAddViewModel::class.java)
+
+
+        val viewModelFactory = if (arguments?.getBoolean(IS_LANDMARK) == true) {
+            NavigationToolbarViewModelFactory(
+                    requireActivity().application,
+                    R.string.collect_add_landmark_title)
+        } else {
+            NavigationToolbarViewModelFactory(
+                    requireActivity().application,
+                    R.string.collect_add_item_title,
+                    collectViewModel.config.enumerationSubject.singular.capitalize()
+            )
+        }
+
+        navigationToolbarViewModel = ViewModelProviders.of(this,
+                viewModelFactory
+        ).get(NavigationToolbarViewModel::class.java)
+
     }
 
     @SuppressLint("MissingPermission")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = FragmentCollectAddBinding.inflate(inflater).apply {
 
-            languageService = LanguageService(languageManager)
+            vm = collectViewModel
+            toolbarVm = navigationToolbarViewModel
 
-            collectViewModel = ViewModelProviders.of(this@CollectAddFragment, CollectAddViewModelFactory(
-                    requireActivity().application,
-                    languageService,
-                    arguments?.getBoolean(IS_LANDMARK) == true,
-                    requireContext().getCompatColor(R.color.colorAccent),
-                    requireContext().getCompatColor(R.color.textColorDisabled),
-                    requireContext().getCompatColor(R.color.textColorInverse),
-                    requireContext().getCompatColor(R.color.textColorDetails),
-                    {
-                        requireFragmentManager()
-                                .popBackStack()
-                    }, {
-                Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-                    takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
-                        val newPhoto = try {
-                            FileUtil.createImageFile(requireContext())
-                        } catch (ex: IOException) {
-                            null
-                        }
+            setHasOptionsMenu(true)
+            val toolbar = root.findViewById<Toolbar>(R.id.toolbar)
+            (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
 
-                        newPhoto?.also {
-                            val photoUri = FileProvider.getUriForFile(requireContext(),
-                                    "org.taskforce.episample.fileprovider",
-                                    it)
-                            imageUri = photoUri
 
-                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-                            startActivityForResult(takePictureIntent, TAKE_PICTURE)
-                        }
-                    }
-                }
-            },
-                    { enumeration, subject ->
-                        enumeration?.let {
-                            val duplicateDialog = DuplicateGpsDialogFragment.newInstance(enumeration, subject) {
-                                collectViewModel.duplicateGps(enumeration)
-                            }
-                            duplicateDialog.show(childFragmentManager, DuplicateGpsDialogFragment::class.java.simpleName)
-                        }
-                    },
-                    { latLng, precision ->
-                        val outsideAreaDialog = OutsideAreaDialogFragment.newInstance {
-                            collectViewModel.saveEnumeration(latLng, precision, shouldExclude = true)
-                        }
-                        outsideAreaDialog.show(childFragmentManager, OutsideAreaDialogFragment::class.java.simpleName)
-                    },
-                    { photoUri ->
-                        val photoFragment = ViewPhotoFragment.newInstance(photoUri)
-                        photoFragment.show(requireFragmentManager(), ViewPhotoFragment::class.java.simpleName)
-                    }
-            )).get(CollectAddViewModel::class.java)
 
             lifecycle.addObserver(collectViewModel.locationService)
 
@@ -149,15 +181,6 @@ class CollectAddFragment : Fragment() {
                     collectViewModel.landmarkType = landmarkType
                 }
             }
-
-            vm = collectViewModel
-
-            toolbarVm = ToolbarViewModel(
-                    LanguageService(languageManager),
-                    languageManager,
-                    HELP_TARGET, {
-                requireActivity().supportFragmentManager.popBackStack()
-            })
 
             collectViewModel.customFields.forEach {
                 if (!it.isAutomatic) {
@@ -200,13 +223,6 @@ class CollectAddFragment : Fragment() {
                 collectViewModel.mostRecentEnumeration = mostRecent
             }
         })
-
-        val enumerationSubject = collectViewModel.config.enumerationSubject
-        binding.toolbarVm?.title = if (arguments?.getBoolean(IS_LANDMARK) == true) {
-            languageManager.getString(R.string.collect_add_landmark_title)
-        } else {
-            languageManager.getString(R.string.collect_add_item_title, enumerationSubject.singular.capitalize())
-        }
 
         return binding.root
     }
@@ -304,6 +320,45 @@ class CollectAddFragment : Fragment() {
         })
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.map, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.center_my_location -> {
+                mapFragment?.getMapAsync {
+                    markerManagerLiveData.value?.getCurrentLocation()?.let { currentLocation ->
+                        it.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, CollectViewModel.zoomLevel))
+                    } ?: run {
+                        Toast.makeText(requireContext(), R.string.current_location_unknown, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+            R.id.toggle_breadcrumbs -> {
+                markerManagerLiveData?.value?.let {
+                    it.toggleBreadcrumbs()
+                }
+            }
+            R.id.toggle_layers -> {
+                // access map on the main thread
+                markerManagerLiveData?.value?.mapboxMap?.let { map ->
+                    val mapLayersFragment = MapboxLayersFragment.newInstance(map.cameraPosition.target, map.cameraPosition.zoom, CollectFragment.MAP_PREFERENCE_NAMESPACE)
+                    requireFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.mainFrame, mapLayersFragment)
+                            .addToBackStack(MapboxLayersFragment::class.java.name)
+                            .commit()
+                }
+            }
+            R.id.action_help -> {
+                HelpActivity.startActivity(requireContext(), "https://github.com/EpiSample/episample-android/wiki/Welcome")
+            }
+        }
+        return true
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode != Activity.RESULT_OK) {
             return
@@ -311,7 +366,9 @@ class CollectAddFragment : Fragment() {
 
         when (requestCode) {
             GET_DATE_CODE -> {
-                if (data == null) { return }
+                if (data == null) {
+                    return
+                }
                 val customFieldId = data.getStringExtra(DatePickerFragment.EXTRA_CUSTOM_FIELD_ID)
                 val year = data.getIntExtra(DatePickerFragment.EXTRA_YEAR, 0)
                 val month = data.getIntExtra(DatePickerFragment.EXTRA_MONTH, 1) + 1
@@ -328,7 +385,9 @@ class CollectAddFragment : Fragment() {
                 }
             }
             GET_TIME_CODE -> {
-                if (data == null) { return }
+                if (data == null) {
+                    return
+                }
                 val customFieldId = data.getStringExtra(TimePickerFragment.EXTRA_CUSTOM_FIELD_ID)
                 val chosenDateLong = data.getLongExtra(TimePickerFragment.EXTRA_CHOSEN_DATE, 0)
                 val hour = data.getIntExtra(TimePickerFragment.EXTRA_HOUR, 0)

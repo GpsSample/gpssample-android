@@ -32,6 +32,7 @@ import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.interfaces.CollectItem
 import org.taskforce.episample.databinding.FragmentCollectBinding
+import org.taskforce.episample.help.HelpActivity
 import org.taskforce.episample.mapbox.MapboxLayersFragment
 import org.taskforce.episample.navigation.ui.NavigationToolbarViewModel
 import org.taskforce.episample.navigation.ui.NavigationToolbarViewModelFactory
@@ -238,6 +239,9 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
                             .addToBackStack(MapboxLayersFragment::class.java.name)
                             .commit()
                 }
+            }
+            R.id.action_help -> {
+                HelpActivity.startActivity(requireContext(), "https://github.com/EpiSample/episample-android/wiki/Welcome")
             }
         }
         return true

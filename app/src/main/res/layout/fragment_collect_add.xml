@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable
             name="toolbarVm"
-            type="org.taskforce.episample.toolbar.viewmodels.ToolbarViewModel" />
+            type="org.taskforce.episample.navigation.ui.NavigationToolbarViewModel" />
 
         <variable
             name="vm"
@@ -65,9 +67,9 @@
                             android:id="@+id/collectAddImage"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:onClick="@{vm::seePhoto}"
                             android:scaleType="centerCrop"
                             android:src="@drawable/photo_empty"
-                            android:onClick="@{vm::seePhoto}"
                             app:layout_constraintBottom_toTopOf="@id/photoText"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -370,9 +372,12 @@
         </android.support.v4.widget.NestedScrollView>
 
         <include
-            android:id="@+id/toolbar"
-            layout="@layout/app_toolbar"
-            app:vm="@{toolbarVm}" />
+            android:id="@+id/toolbar_layout"
+            layout="@layout/app_navigation_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            bind:vm="@{toolbarVm}"
+            tools:visible="true" />
 
     </RelativeLayout>
 

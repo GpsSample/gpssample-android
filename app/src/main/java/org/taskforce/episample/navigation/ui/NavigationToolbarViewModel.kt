@@ -9,7 +9,6 @@ import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.core.language.LanguageDescription
 import org.taskforce.episample.core.language.LanguageService
 import org.taskforce.episample.databinding.ItemNavigationLanguageBinding
-import org.taskforce.episample.help.HelpManager
 import org.taskforce.episample.utils.inflater
 import javax.inject.Inject
 

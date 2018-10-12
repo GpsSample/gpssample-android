@@ -59,6 +59,10 @@
         <activity
             android:name=".config.sampling.filter.RuleSetCreationActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".help.HelpActivity" />
+
+
 
         <meta-data
             android:name="io.fabric.ApiKey"

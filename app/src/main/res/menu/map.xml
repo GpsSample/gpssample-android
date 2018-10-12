@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
         <item
+            android:id="@+id/action_help"
+            android:icon="@drawable/icon_help_white"
+            android:title="HELP"
+            app:showAsAction="always" />
+        <item
             android:id="@+id/center_my_location"
             android:title="@string/center_on_user"
             app:showAsAction="never" />

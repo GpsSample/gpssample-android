@@ -4,7 +4,6 @@ import android.databinding.BaseObservable
 import android.databinding.Bindable
 import org.taskforce.episample.R
 import org.taskforce.episample.config.language.LanguageService
-import org.taskforce.episample.help.HelpManager
 import org.taskforce.episample.toolbar.ui.LanguageAdapter
 import org.taskforce.episample.toolbar.managers.LanguageManager
 import org.taskforce.episample.utils.bindDelegate
@@ -49,7 +48,7 @@ class ToolbarViewModel(
     }
 
     fun openHelp() {
-        HelpManager().openHelp(HELP_TARGET)
+        // NO - OP moving to action based toolbar pattern
     }
 
     fun showLanguages() {

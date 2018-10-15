@@ -173,6 +173,13 @@ class CollectDetailsFragment(private val collectItem: CollectItem) : Fragment(),
         toolbar?.setNavigationOnClickListener {
             goBack()
         }
+
+        collectDetailsImage.setOnClickListener {
+            collectItem.image?.let { imageUri ->
+                val photoFragment = ViewPhotoFragment.newInstance(imageUri)
+                photoFragment.show(requireFragmentManager(), ViewPhotoFragment::class.java.simpleName)
+            }
+        }
     }
     
     private fun goBack() {
@@ -180,13 +187,6 @@ class CollectDetailsFragment(private val collectItem: CollectItem) : Fragment(),
             fragmentManager?.popBackStack()
         } else {
             requireActivity().finish()
-        }
-        
-        collectDetailsImage.setOnClickListener {
-            collectItem.image?.let { imageUri ->
-                val photoFragment = ViewPhotoFragment.newInstance(imageUri)
-                photoFragment.show(requireFragmentManager(), ViewPhotoFragment::class.java.simpleName)
-            }
         }
     }
 

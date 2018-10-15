@@ -75,7 +75,9 @@ class ReceiveStudyAsyncTask(private val weakContext: WeakReference<Context>, pri
                     File("$dbFolderPath/study_database-wal"))
 
             val imagesZip = File("$dbFolderPath/images.zip")
-            FileUtil.unzipImages(context, imagesZip)
+            if (imagesZip.exists()) {
+                FileUtil.unzipImages(context, imagesZip)
+            }
 
             EventBus.getDefault().post(StudyReceivedMessage())
             publishProgress(Progress.SYNC_COMPLETE)

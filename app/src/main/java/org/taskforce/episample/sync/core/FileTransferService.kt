@@ -46,7 +46,9 @@ class ReceiveFileTransferService : IntentService("FileTransferService") {
                             FileUtil.unzip(incomingZipFile.absoluteFile, dbFolder)
 
                             val imagesZip = File(dbFolder.absolutePath + "/images.zip")
-                            FileUtil.unzipImages(context, imagesZip)
+                            if (imagesZip.exists()) {
+                                FileUtil.unzipImages(context, imagesZip)
+                            }
 
                             val targetDatabase = StudyRoomDatabase.getDatabase(application)
                             val sourceDatabase = StudyRoomDatabase.reloadIncomingInstance(application)

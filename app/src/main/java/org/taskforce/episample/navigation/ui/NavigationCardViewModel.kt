@@ -22,4 +22,5 @@ interface NavigationCardViewModel {
     val secondaryButtonText: LiveData<String?>
     fun primaryButtonAction(view: View) {}
     fun secondaryButtonAction(view: View) {}
+    fun viewPhotoAction(view: View) {}
 }

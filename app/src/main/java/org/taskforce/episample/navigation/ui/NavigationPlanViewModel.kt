@@ -6,14 +6,10 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import android.view.View
-import android.widget.Toast
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.core.LiveDataTriple
-import org.taskforce.episample.core.interfaces.Config
-import org.taskforce.episample.core.interfaces.LocationService
-import org.taskforce.episample.core.interfaces.NavigationItem
-import org.taskforce.episample.core.interfaces.NavigationManager
+import org.taskforce.episample.core.interfaces.*
 import org.taskforce.episample.core.language.LanguageService
 import org.taskforce.episample.core.navigation.SurveyStatus
 import javax.inject.Inject
@@ -21,10 +17,14 @@ import javax.inject.Inject
 class NavigationPlanViewModel(application: Application,
                               val navigationPlanId: String,
                               val startRoute: () -> Unit,
-                              val addLandmark: () -> Unit) : AndroidViewModel(application) {
+                              val addLandmark: () -> Unit,
+                              val goToSync: () -> Unit) : AndroidViewModel(application) {
 
     @Inject
     lateinit var config: Config
+    
+    @Inject
+    lateinit var userSession: UserSession
 
     @Inject
     lateinit var navigationManager: NavigationManager
@@ -142,7 +142,7 @@ class NavigationPlanViewModel(application: Application,
     }
 
     fun goToSync(view: View) {
-        Toast.makeText(getApplication(), "Go to sync TODO", Toast.LENGTH_SHORT).show()
+        goToSync()
     }
 
     fun addLandmark(view: View) {

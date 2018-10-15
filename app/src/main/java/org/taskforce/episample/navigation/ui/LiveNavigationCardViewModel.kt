@@ -25,7 +25,8 @@ class LiveNavigationCardViewModel(application: Application,
                                   mediumColor: Int,
                                   highestColor: Int,
                                   private val launchSurvey: () -> Unit,
-                                  private val showSkipDialog: () -> Unit) : AndroidViewModel(application), NavigationCardViewModel {
+                                  private val showSkipDialog: () -> Unit,
+                                  private val viewPhoto: (String?) -> Unit) : AndroidViewModel(application), NavigationCardViewModel {
 
     @Inject
     lateinit var config: Config
@@ -67,6 +68,10 @@ class LiveNavigationCardViewModel(application: Application,
 
     override fun secondaryButtonAction(view: View) {
         showSkipDialog()
+    }
+
+    override fun viewPhotoAction(view: View) {
+        viewPhoto(imageUrl.value)
     }
 
     override val navigationStatus: LiveData<String> = Transformations.switchMap(itemData, {

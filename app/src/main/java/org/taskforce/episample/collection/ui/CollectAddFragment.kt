@@ -50,7 +50,6 @@ import org.taskforce.episample.mapbox.MapboxLayersFragment
 import org.taskforce.episample.navigation.ui.NavigationToolbarViewModel
 import org.taskforce.episample.navigation.ui.NavigationToolbarViewModelFactory
 import org.taskforce.episample.toolbar.managers.LanguageManager
-import org.taskforce.episample.toolbar.viewmodels.ToolbarViewModel
 import org.taskforce.episample.utils.getCompatColor
 import org.taskforce.episample.utils.loadImage
 import org.taskforce.episample.utils.toMapboxLatLng
@@ -308,6 +307,16 @@ class CollectAddFragment : Fragment() {
         landmarkImageSelector.adapter = adapter
 
         mapFragment?.onCreate(savedInstanceState)
+
+        val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
+
+        toolbar?.setNavigationOnClickListener {
+            if (fragmentManager?.backStackEntryCount ?: 0 > 0) {
+                fragmentManager?.popBackStack()
+            } else {
+                requireActivity().finish()
+            }
+        }
     }
 
     override fun onResume() {

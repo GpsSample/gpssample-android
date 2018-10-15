@@ -12,13 +12,15 @@ class NavigationPlanCardViewModelFactory(private val application: Application,
                                          private val lastKnownLocation: LiveData<Pair<LatLng, Float>>,
                                          private val lowestColor: Int,
                                          private val mediumColor: Int,
-                                         private val highestColor: Int) : ViewModelProvider.Factory {
+                                         private val highestColor: Int,
+                                         private val viewPhoto: (String?) -> Unit) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return NavigationPlanCardViewModel(application,
                 userSettings,
                 lastKnownLocation,
                 lowestColor,
                 mediumColor,
-                highestColor) as T
+                highestColor,
+                viewPhoto) as T
     }
 }

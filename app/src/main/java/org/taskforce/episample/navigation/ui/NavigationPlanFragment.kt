@@ -26,10 +26,12 @@ import org.taskforce.episample.R
 import org.taskforce.episample.collection.managers.CollectIconFactory
 import org.taskforce.episample.collection.managers.MapboxItemMarkerManager
 import org.taskforce.episample.collection.ui.CollectAddFragment
+import org.taskforce.episample.collection.ui.ViewPhotoFragment
 import org.taskforce.episample.collection.viewmodels.CollectViewModel
 import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.interfaces.NavigationItem
 import org.taskforce.episample.databinding.FragmentNavigationPlanBinding
+import org.taskforce.episample.sync.ui.SyncActivity
 import org.taskforce.episample.utils.getCompatColor
 import org.taskforce.episample.utils.toMapboxLatLng
 
@@ -69,6 +71,9 @@ class NavigationPlanFragment : Fragment(), MapboxMap.OnMarkerClickListener, Mapb
                         },
                         {
                             showAddLocationScreen()
+                        },
+                        {
+                            goToSync()
                         })).get(NavigationPlanViewModel::class.java)
         lifecycle.addObserver(navigationPlanViewModel.locationService)
         navigationCardViewModel = ViewModelProviders.of(this@NavigationPlanFragment,
@@ -78,8 +83,8 @@ class NavigationPlanFragment : Fragment(), MapboxMap.OnMarkerClickListener, Mapb
                         navigationPlanViewModel.locationService.locationLiveData,
                         requireContext().getCompatColor(R.color.colorError),
                         requireContext().getCompatColor(R.color.colorWarning),
-                        requireContext().getCompatColor(R.color.gpsAcceptable)
-
+                        requireContext().getCompatColor(R.color.gpsAcceptable),
+                        { viewPhoto(it) }
                 )).get(NavigationPlanCardViewModel::class.java)
 
         navigationToolbarViewModel = ViewModelProviders.of(this,
@@ -244,6 +249,19 @@ class NavigationPlanFragment : Fragment(), MapboxMap.OnMarkerClickListener, Mapb
                 })
                 .addToBackStack(CollectAddFragment::class.java.name)
                 .commit()
+    }
+    
+    private fun viewPhoto(photoUri: String?) {
+        photoUri?.let { imageUri ->
+            val photoFragment = ViewPhotoFragment.newInstance(imageUri)
+            photoFragment.show(requireFragmentManager(), ViewPhotoFragment::class.java.simpleName)
+        }
+
+    }
+    
+    private fun goToSync() {
+        val isSupervisor = navigationPlanViewModel.userSession.isSupervisor
+        SyncActivity.startActivity(requireContext(), isSupervisor)
     }
 
     private fun showItemDetails(navigationItem: NavigationItem) {

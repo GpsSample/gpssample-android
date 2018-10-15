@@ -5,6 +5,7 @@ import android.arch.lifecycle.*
 import android.location.Location
 import android.text.SpannableString
 import android.text.style.StyleSpan
+import android.view.View
 import com.google.android.gms.maps.model.LatLng
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
@@ -21,7 +22,8 @@ class NavigationPlanCardViewModel(application: Application,
                                   lastKnownLocation: LiveData<Pair<LatLng, Float>>,
                                   lowestColor: Int,
                                   mediumColor: Int,
-                                  highestColor: Int) : AndroidViewModel(application), NavigationCardViewModel {
+                                  highestColor: Int,
+                                  private val viewPhoto: (String?) -> Unit) : AndroidViewModel(application), NavigationCardViewModel {
 
     @Inject
     lateinit var config: Config
@@ -75,6 +77,10 @@ class NavigationPlanCardViewModel(application: Application,
         } else {
             it.image
         }
+    }
+
+    override fun viewPhotoAction(view: View) {
+        viewPhoto(imageUrl.value)
     }
 
     override val title: LiveData<String?> = Transformations.map(itemData, {

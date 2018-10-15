@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -58,15 +59,6 @@
                         android:src="@drawable/icon_file_darkgray_24" />
 
                     <TextView
-                        android:id="@+id/name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignTop="@id/configIcon"
-                        android:layout_toEndOf="@id/configIcon"
-                        android:text="@{vm.config.name}"
-                        android:textSize="16sp" />
-
-                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_above="@id/name"
@@ -74,8 +66,19 @@
                         android:layout_marginBottom="4dp"
                         android:text="@{vm.title}"
                         android:textColor="@color/textColorDetails"
-                        android:textSize="12sp" />
-
+                        android:textSize="12sp"
+                        tools:text="Configuration" />
+                    
+                    <TextView
+                        android:id="@+id/name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@id/configIcon"
+                        android:layout_toEndOf="@id/configIcon"
+                        android:text="@{vm.config.name}"
+                        android:textSize="16sp"
+                        tools:text="Config"/>
+                    
                     <TextView
                         android:id="@+id/date"
                         android:layout_width="wrap_content"
@@ -85,31 +88,22 @@
                         android:layout_marginTop="4dp"
                         android:text="@{vm.date}"
                         android:textColor="@color/textColorDetails"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        tools:text="Created October 15, 2018"/>
 
                     <TextView
-                        android:id="@+id/share"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentStart="true"
                         android:padding="4dp"
-                        android:text="@{vm.share}"
-                        android:clickable="@{vm.shareClickable}"
-                        android:textColor="@{vm.cardTextColor}"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_toEndOf="@id/share"
-                        android:padding="4dp"
                         android:text="@{vm.createStudy}"
                         android:clickable="@{vm.createStudyClickable}"
                         android:onClick="@{vm.onCreateStudy}"
                         android:textColor="@{vm.cardTextColor}"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        tools:text="CREATE A STUDY"
+                        tools:textColor="@color/colorAccent"/>
 
                 </RelativeLayout>
 
@@ -127,7 +121,9 @@
                 android:padding="12dp"
                 android:text="@{vm.configSuccessBack}"
                 android:textColor="@color/textColorInverse"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                tools:text="RETURN TO MAIN SCREEN"
+                tools:background="@color/colorAccent"/>
 
             <TextView
                 visibleOrGone="@{vm.showError}"

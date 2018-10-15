@@ -338,7 +338,7 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="odk_collect_not_installed">Please install ODK Collect before trying to launch survey.</string>
     <string name="percentage">Percentage</string>
     <string name="fixed">Fixed</string>
-    <string name="save">Save</string>
+    <string name="save">SAVE</string>
     <string name="choose_plan_title">Choose Navigation Plan</string>
 
     <string name="add_subset">Add Subset</string>

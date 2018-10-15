@@ -14,7 +14,8 @@ class LiveNavigationCardViewModelFactory(private val application: Application,
                                          private val mediumColor: Int,
                                          private val highestColor: Int,
                                          private val launchSurvey: () -> Unit,
-                                         private val showSkipDialog: () -> Unit) : ViewModelProvider.NewInstanceFactory() {
+                                         private val showSkipDialog: () -> Unit,
+                                         private val viewPhoto: (String?) -> Unit) : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return LiveNavigationCardViewModel(application,
                 userSettings,
@@ -23,6 +24,7 @@ class LiveNavigationCardViewModelFactory(private val application: Application,
                 mediumColor,
                 highestColor,
                 launchSurvey,
-                showSkipDialog) as T
+                showSkipDialog,
+                viewPhoto) as T
     }
 }

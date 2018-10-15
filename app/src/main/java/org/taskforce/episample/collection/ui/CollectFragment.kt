@@ -179,10 +179,9 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
                 locationUpdate.let { (latLng, accuracy) ->
                     collectCardVm.currentLocation.set(latLng)
                     markerManager.setCurrentLocation(latLng.toMapboxLatLng(), accuracy.toDouble())
-                    if (collectViewModel.lastKnownLocation == null) {
-                        mapFragment?.getMapAsync {
-                            it.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng.toMapboxLatLng(), CollectViewModel.zoomLevel))
-                        }
+                    
+                    mapFragment?.getMapAsync { map ->
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng.toMapboxLatLng(), CollectViewModel.zoomLevel))
                     }
 
                     collectViewModel.lastKnownLocation = latLng.toMapboxLatLng()
@@ -191,6 +190,16 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
         })
 
         mapFragment?.onCreate(savedInstanceState)
+
+        val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
+
+        toolbar?.setNavigationOnClickListener {
+            if (fragmentManager?.backStackEntryCount ?: 0 > 0) {
+                fragmentManager?.popBackStack()
+            } else {
+                requireActivity().finish()
+            }
+        }
     }
 
     override fun onResume() {

@@ -7,12 +7,14 @@ import android.arch.lifecycle.ViewModelProvider
 class NavigationPlanViewModelFactory(private val application: Application,
                                      private val navigationPlanId: String,
                                      private val startRoute: () -> Unit,
-                                     private val addLandmark: () -> Unit) : ViewModelProvider.NewInstanceFactory() {
+                                     private val addLandmark: () -> Unit,
+                                     private val goToSync: () -> Unit) : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return NavigationPlanViewModel(application,
                 navigationPlanId,
                 startRoute,
-                addLandmark) as T
+                addLandmark,
+                goToSync) as T
     }
 }

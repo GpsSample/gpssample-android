@@ -140,6 +140,16 @@ class MapboxDownloadFragment : Fragment() {
         })
 
         mapFragment?.onCreate(savedInstanceState)
+
+        val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
+
+        toolbar?.setNavigationOnClickListener {
+            if (fragmentManager?.backStackEntryCount ?: 0 > 0) {
+                fragmentManager?.popBackStack()
+            } else {
+                requireActivity().finish()
+            }
+        }
     }
 
 //    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

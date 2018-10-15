@@ -16,6 +16,7 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import com.mapbox.mapboxsdk.annotations.Marker
+import com.mapbox.mapboxsdk.annotations.PolylineOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
@@ -24,6 +25,7 @@ import com.mapbox.mapboxsdk.maps.SupportMapFragment
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.collection.managers.MapboxItemMarkerManager
+import org.taskforce.episample.collection.ui.ViewPhotoFragment
 import org.taskforce.episample.collection.viewmodels.CollectViewModel
 import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.navigation.SurveyStatus
@@ -69,7 +71,8 @@ class NavigationFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMa
                         requireContext().getCompatColor(R.color.colorWarning),
                         requireContext().getCompatColor(R.color.gpsAcceptable),
                         { launchSurvey() },
-                        { showSkipDialog() }
+                        { showSkipDialog() },
+                        { viewPhoto(it) }
                 )).get(LiveNavigationCardViewModel::class.java)
 
         navigationToolbarViewModel = ViewModelProviders.of(this@NavigationFragment,
@@ -117,28 +120,17 @@ class NavigationFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMa
                 }
             }
         })
-//
-//        navigationViewModel.possiblePath.observe(this, Observer { breadcrumbs ->
-//            mapFragment?.getMapAsync { map ->
-//                val breadCrumbPath = PolylineOptions()
-//                        .pattern(listOf(Dot(), Gap(10.0F)))
-//                        .jointType(JointType.ROUND)
-//                        .width(15.0F)
-//                        .clickable(false)
-//                breadcrumbs?.sortedBy { it.dateCreated }?.forEach { breadCrumbPath.add(it.location) }
-//                map.addPolyline(breadCrumbPath)
-//            }
-//        })
-//
-//        navigationViewModel.breadcrumbs.observe(this, Observer { breadcrumbs ->
-//            mapFragment?.getMapAsync { map ->
-//                val breadCrumbPath = PolylineOptions()
-//                        .width(5.0F)
-//                        .clickable(false)
-//                breadcrumbs?.sortedBy { it.dateCreated }?.forEach { breadCrumbPath.add(it.location) }
-//                map.addPolyline(breadCrumbPath)
-//            }
-//        })
+        
+        navigationViewModel.breadcrumbs.observe(this, Observer { 
+            it?.let { breadcrumbs ->
+                mapFragment?.getMapAsync { map ->
+                    val breadCrumbPath = PolylineOptions()
+                            .width(5.0F)
+                    breadcrumbs?.sortedBy { it.dateCreated }?.forEach { breadCrumbPath.add(it.location.toMapboxLatLng()) }
+                    map.addPolyline(breadCrumbPath)
+                }
+            }
+        })
 
         LiveDataPair(markerManagerLiveData, navigationViewModel.locationService.locationLiveData).observe(this, Observer {
             it?.let { (markerManager, locationPair) ->
@@ -308,6 +300,13 @@ class NavigationFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMa
         val fragment = TextInputDialogFragment.newInstance(R.string.dialog_skip_reason_title, R.string.dialog_skip_reason_hint)
         fragment.setTargetFragment(this, GET_SKIP_REASON_CODE)
         fragment.show(requireFragmentManager(), TextInputDialogFragment.TAG)
+    }
+    
+    private fun viewPhoto(photoUri: String?) {
+        photoUri?.let { imageUri ->
+            val photoFragment = ViewPhotoFragment.newInstance(imageUri)
+            photoFragment.show(requireFragmentManager(), ViewPhotoFragment::class.java.simpleName)
+        }
     }
 
     companion object {

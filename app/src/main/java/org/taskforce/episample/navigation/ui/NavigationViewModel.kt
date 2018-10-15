@@ -40,4 +40,6 @@ class NavigationViewModel(application: Application, navigationPlanId: String): A
     val landmarks = navigationManager.getLandmarks()
     
     val navigationItems = navigationManager.getNavigationItems(navigationPlanId)
+    
+    val breadcrumbs = navigationManager.getBreadcrumbs()
 }

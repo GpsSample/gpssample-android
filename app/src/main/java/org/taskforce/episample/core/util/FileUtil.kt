@@ -2,7 +2,6 @@ package org.taskforce.episample.core.util
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
@@ -11,8 +10,8 @@ import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
 import java.util.zip.ZipInputStream
+import java.util.zip.ZipOutputStream
 
 
 class FileUtil {
@@ -127,6 +126,7 @@ class FileUtil {
             val shmFile = "$directory/$databaseName-shm"
             val walFile = "$directory/$databaseName-wal"
             val zipFile = "${context.filesDir}/$databaseName.zip"
+            val imageZipFile = "${context.filesDir}/images.zip"
 
             val targetDirectory = context.filesDir.absolutePath
             val renamedDbFile = "$targetDirectory/${databaseName}_incoming"
@@ -135,8 +135,20 @@ class FileUtil {
             FileUtil.copyFile(databaseFile.inputStream(), File(renamedDbFile).outputStream())
             FileUtil.copyFile(File(shmFile).inputStream(), File(renamedShm).outputStream())
             FileUtil.copyFile(File(walFile).inputStream(), File(renamedWal).outputStream())
+            
+            val images = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).listFiles().map { 
+                it.path
+            }
+            val numberOfImages = images.size
+            Log.d(TAG, "Sending $numberOfImages images")
 
-            FileUtil.zip(listOf(renamedDbFile, renamedShm, renamedWal).toTypedArray(), zipFile)
+            val filesToZip = mutableListOf(renamedDbFile, renamedShm, renamedWal)
+            if (numberOfImages > 0) {
+                FileUtil.zip(images.toTypedArray(), imageZipFile)
+                filesToZip.add(imageZipFile)
+            }
+
+            FileUtil.zip(filesToZip.toTypedArray(), zipFile)
             return File(zipFile)
         }
 
@@ -152,6 +164,11 @@ class FileUtil {
                 // Save a file: path for use with ACTION_VIEW intents
                 return this
             }
+        }
+        
+        fun unzipImages(context: Context, imagesZip: File) {
+            val imagesDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            FileUtil.unzip(imagesZip, imagesDir)
         }
         
         fun compressBitmap(context: Context, photoUri: Uri, compressionScale: Int) {

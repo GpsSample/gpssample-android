@@ -75,7 +75,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:src="@{vm.photoSource}"
+                    imageUrl="@{vm.photoSource}"
                     tools:src="@drawable/photo_empty" />
 
             </android.support.v7.widget.CardView>

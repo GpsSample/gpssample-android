@@ -45,6 +45,9 @@ class ReceiveFileTransferService : IntentService("FileTransferService") {
                             SocketUtil.writeSocketToFile(inputStream, incomingZipFile)
                             FileUtil.unzip(incomingZipFile.absoluteFile, dbFolder)
 
+                            val imagesZip = File(dbFolder.absolutePath + "/images.zip")
+                            FileUtil.unzipImages(context, imagesZip)
+
                             val targetDatabase = StudyRoomDatabase.getDatabase(application)
                             val sourceDatabase = StudyRoomDatabase.reloadIncomingInstance(application)
 

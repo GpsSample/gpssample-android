@@ -74,6 +74,9 @@ class ReceiveStudyAsyncTask(private val weakContext: WeakReference<Context>, pri
             FileUtil.moveFile(File("$dbFolderPath/study_database_incoming-wal"),
                     File("$dbFolderPath/study_database-wal"))
 
+            val imagesZip = File("$dbFolderPath/images.zip")
+            FileUtil.unzipImages(context, imagesZip)
+
             EventBus.getDefault().post(StudyReceivedMessage())
             publishProgress(Progress.SYNC_COMPLETE)
 
@@ -174,6 +177,11 @@ class EnumeratorSyncAsyncTask(private val weakContext: WeakReference<Context>, p
         ))
 
         FileUtil.unzip(zipFile, dbFolder)
+
+        weakContext.get()?.let { context ->
+            val imagesZip = File(dbFolder.absolutePath + "/images.zip")
+            FileUtil.unzipImages(context, imagesZip)
+        }
     }
 
     companion object {

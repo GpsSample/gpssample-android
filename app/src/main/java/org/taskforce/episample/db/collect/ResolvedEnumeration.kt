@@ -26,6 +26,8 @@ class ResolvedEnumeration(
         val collectorName: String,
         val title: String? = null,
         val image: String? = null,
+        @ColumnInfo(name = "incomplete_reason")
+        val incompleteReason: String? = null,
         @ColumnInfo(name = "date_created")
         val dateCreated: Date = Date()
 ) {
@@ -34,7 +36,7 @@ class ResolvedEnumeration(
     lateinit var customFieldValues: List<CustomFieldValue>
 
     fun makeLiveEnumeration(): Enumeration = LiveEnumeration(collectorName, image,
-            isIncomplete, isExcluded, title, note, LatLng(lat, lng), gpsPrecision, "TODO", customFieldValues.map { it as org.taskforce.episample.core.interfaces.CustomFieldValue }, id, dateCreated)
+            isIncomplete, isExcluded, title, note, LatLng(lat, lng), gpsPrecision, "TODO", customFieldValues.map { it as org.taskforce.episample.core.interfaces.CustomFieldValue }, id, incompleteReason, dateCreated)
 
     fun toSampleEnumerationEntity(sampleId: String): SampleEnumerationEntity = SampleEnumerationEntity(sampleId, id)
 }

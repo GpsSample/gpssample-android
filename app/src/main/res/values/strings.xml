@@ -253,6 +253,8 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="collect_notes_hint">Notes</string>
     <string name="collect_save_complete">SAVE %s</string>
     <string name="collect_save_incomplete">SAVE AS INCOMPLETE</string>
+    <string name="incomplete_reason_title">Save As Incomplete</string>
+    <string name="incomplete_reason_hint">Reason for saving incomplete</string>
     <string name="collect_save_landmark">SAVE LANDMARK</string>
     <string name="collect_landmark_name_hint">Landmark Name</string>
     <string name="collect_add_landmark_title">New Landmark</string>
@@ -462,4 +464,6 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="delete_item_message">Are you sure you want to permanently delete this %s?</string>
     <string name="delete">DELETE</string>
     <string name="use_current_location">USE CURRENT LOCATION</string>
+    
+    <string name="invalid_password">Invalid password</string>
 </resources>

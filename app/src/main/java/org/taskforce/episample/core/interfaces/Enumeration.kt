@@ -5,6 +5,7 @@ import java.util.*
 
 interface Enumeration : CollectItem {
     val isIncomplete: Boolean
+    val incompleteReason: String?
     val customFieldValues: List<CustomFieldValue>
     val isExcluded: Boolean
 }
@@ -20,4 +21,5 @@ class LiveEnumeration(override val collectorName: String,
                       override val displayDate: String,
                       override val customFieldValues: List<CustomFieldValue>,
                       override val id: String?,
+                      override val incompleteReason: String? = null,
                       override val dateCreated: Date = Date()) : Enumeration

@@ -19,7 +19,8 @@ class CollectAddViewModelFactory(private val application: Application,
                                  private val takePicture: () -> Unit,
                                  private val showDuplicateGpsDialog: (enumeration: Enumeration?, subject: EnumerationSubject) -> Unit,
                                  private val showOutsideEnumerationAreaDialog: (latLng: LatLng, precision: Double) -> Unit,
-                                 private val viewPhoto: (String) -> Unit) : ViewModelProvider.NewInstanceFactory() {
+                                 private val viewPhoto: (String) -> Unit,
+                                 private val requestIncompleteReason: () -> Unit) : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return CollectAddViewModel(application,
                 languageService,
@@ -32,6 +33,7 @@ class CollectAddViewModelFactory(private val application: Application,
                 takePicture,
                 showDuplicateGpsDialog,
                 showOutsideEnumerationAreaDialog,
-                viewPhoto) as T
+                viewPhoto,
+                requestIncompleteReason) as T
     }
 }

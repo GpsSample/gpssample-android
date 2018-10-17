@@ -34,7 +34,8 @@ class CollectAddViewModel(
         val takePicture: () -> Unit,
         private val showDuplicateGpsDialog: (enumeration: Enumeration?, subject: EnumerationSubject) -> Unit,
         private val showOutsideEnumerationAreaDialog: (latLng: LatLng, precision: Double) -> Unit,
-        private val viewPhoto: (String) -> Unit) : AndroidViewModel(application) {
+        private val viewPhoto: (String) -> Unit,
+        private val requestIncompleteReason: () -> Unit) : AndroidViewModel(application) {
 
     @Inject
     lateinit var userSession: UserSession
@@ -124,6 +125,8 @@ class CollectAddViewModel(
     var landmarkName = MutableLiveData<String>().apply { value = "" }
     
     var image: String? = null
+    
+    var incompleteReason: String? = null
 
     private val customFieldMediatorLiveData = MediatorLiveData<Boolean>().apply { value = false }
 
@@ -348,10 +351,15 @@ class CollectAddViewModel(
                     if (isLandmark) {
                         saveLandmark(latLng, gpsPrecision)
                     } else {
-                        if (!isWithinEnumerationAreas()) {
-                            showOutsideEnumerationAreaDialog(latLng, gpsPrecision)
+                        val isIncomplete = !(isEnumerationValid.value ?: false)
+                        if (isIncomplete && incompleteReason.isNullOrBlank()) {
+                            requestIncompleteReason()
                         } else {
-                            saveEnumeration(latLng, gpsPrecision)
+                            if (!isWithinEnumerationAreas()) {
+                                showOutsideEnumerationAreaDialog(latLng, gpsPrecision)
+                            } else {
+                                saveEnumeration(latLng, gpsPrecision)
+                            }
                         }
                     }
                 }
@@ -429,6 +437,7 @@ class CollectAddViewModel(
                 gpsPrecision,
                 "Display Date",
                 customFields,
+                incompleteReason = incompleteReason,
                 id = null)) {
             goToNext()
         }

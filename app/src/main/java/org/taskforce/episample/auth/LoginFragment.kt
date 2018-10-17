@@ -5,7 +5,9 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import org.taskforce.episample.EpiApplication
+import org.taskforce.episample.R
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.interfaces.LiveUserSession
 import org.taskforce.episample.databinding.FragmentLoginBinding
@@ -76,6 +78,9 @@ class LoginFragment : Fragment() {
                         },
                         {
                             showAdminLoginDialog()
+                        },
+                        {
+                            Toast.makeText(requireContext(), getString(R.string.invalid_password), Toast.LENGTH_SHORT).show()
                         }
                 )
                 vm = loginViewModel

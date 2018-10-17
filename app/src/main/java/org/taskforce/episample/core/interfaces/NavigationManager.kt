@@ -82,6 +82,7 @@ class LiveNavigationManager(val application: Application,
                             item.enumeration.gpsPrecision,
                             item.enumerationId,
                             item.dateCreated,
+                            null,
                             plan.id
                     )
                 }

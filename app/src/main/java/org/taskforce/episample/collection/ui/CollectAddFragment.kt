@@ -40,6 +40,7 @@ import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.interfaces.Config
 import org.taskforce.episample.core.interfaces.CustomField
 import org.taskforce.episample.core.ui.dialogs.DatePickerFragment
+import org.taskforce.episample.core.ui.dialogs.TextInputDialogFragment
 import org.taskforce.episample.core.ui.dialogs.TimePickerFragment
 import org.taskforce.episample.core.util.FileUtil
 import org.taskforce.episample.databinding.FragmentCollectAddBinding
@@ -133,6 +134,12 @@ class CollectAddFragment : Fragment() {
                 { photoUri ->
                     val photoFragment = ViewPhotoFragment.newInstance(photoUri)
                     photoFragment.show(requireFragmentManager(), ViewPhotoFragment::class.java.simpleName)
+                },
+                {
+                    // TODO: request reason for incomplete
+                    val fragment = TextInputDialogFragment.newInstance(R.string.incomplete_reason_title, R.string.incomplete_reason_hint)
+                    fragment.setTargetFragment(this, GET_INCOMPLETE_REASON_CODE)
+                    fragment.show(requireFragmentManager(), TextInputDialogFragment.TAG)
                 }
         )).get(CollectAddViewModel::class.java)
 
@@ -423,6 +430,11 @@ class CollectAddFragment : Fragment() {
                             requireContext().getDrawable(R.drawable.photo_empty))
                 }
             }
+            GET_INCOMPLETE_REASON_CODE -> {
+                val incompleteReason = data?.getStringExtra(TextInputDialogFragment.EXTRA_TEXT_INPUT)
+                collectViewModel.incompleteReason = incompleteReason
+                collectViewModel.saveItem() // Continue saving
+            }
         }
     }
 
@@ -451,6 +463,8 @@ class CollectAddFragment : Fragment() {
     companion object {
         const val MAP_PREFERENCE_NAMESPACE = "SHARED_MAPBOX_LAYER_PREFERENCES"
         const val MAP_FRAGMENT_TAG = "collectAddFragment.MapboxFragment"
+        
+        const val GET_INCOMPLETE_REASON_CODE = 3
 
         const val IS_LANDMARK = "isLandmark"
         const val HELP_TARGET = "#collectAdd"

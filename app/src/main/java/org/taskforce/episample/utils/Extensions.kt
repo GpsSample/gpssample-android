@@ -12,11 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
-import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
-import com.mapbox.mapboxsdk.annotations.Polygon
-import com.mapbox.mapboxsdk.annotations.PolygonOptions
-import com.mapbox.mapboxsdk.annotations.PolylineOptions
 import com.mapbox.mapboxsdk.geometry.LatLngBounds
 import org.taskforce.episample.R
 import org.taskforce.episample.config.fields.CustomDropdown
@@ -130,7 +126,8 @@ fun org.taskforce.episample.core.interfaces.Enumeration.toDBEnumeration(collecto
             studyId,
             title,
             image,
-            dateCreated)
+            dateCreated,
+            incompleteReason)
 }
 
 fun org.taskforce.episample.core.interfaces.Breadcrumb.toDBBreadcrumb(collectorName: String, studyId: String): GpsBreadcrumb {

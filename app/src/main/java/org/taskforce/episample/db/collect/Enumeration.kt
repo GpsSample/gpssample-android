@@ -31,5 +31,7 @@ class Enumeration(
         val image: String? = null,
         @ColumnInfo(name = "date_created")
         val dateCreated: Date = Date(),
+        @ColumnInfo(name = "incomplete_reason")
+        val incompleteReason: String? = null,
         @PrimaryKey
         var id: String = UUID.randomUUID().toString())

@@ -26,4 +26,5 @@ data class LiveNavigationItem(override val collectorName: String,
                               override val gpsPrecision: Double,
                               override val enumerationId: String,
                               override val dateCreated: Date,
+                              override val incompleteReason: String?,
                               override val navigationPlanId: String) : NavigationItem

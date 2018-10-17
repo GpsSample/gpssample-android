@@ -7,7 +7,7 @@ import android.arch.lifecycle.Transformations
 import android.widget.ArrayAdapter
 import org.taskforce.episample.R
 import org.taskforce.episample.config.language.LanguageService
-import org.taskforce.episample.core.LiveDataPair
+import org.taskforce.episample.core.LiveDataTriple
 import org.taskforce.episample.core.interfaces.Config
 import org.taskforce.episample.db.StudyRepository
 import org.taskforce.episample.managers.LiveConfig
@@ -18,7 +18,8 @@ class LoginViewModel(application: Application,
                      val languageSelectAdapter: ArrayAdapter<String>,
                      private val signIn: (name: String, config: Config) -> Unit,
                      private val signInAsSupervisor: (name: String, config: Config) -> Unit,
-                     private val displaysAdminLoginDialog: () -> Unit) : AndroidViewModel(application) {
+                     private val displaysAdminLoginDialog: () -> Unit,
+                     private val showIncorrectPassword: () -> Unit) : AndroidViewModel(application) {
 
     val studyRepository = StudyRepository(application)
     val configData = studyRepository.getResolvedConfig(configId)
@@ -59,8 +60,9 @@ class LoginViewModel(application: Application,
 
     val signInText = languageService.getString(R.string.login_signin)
 
-    val signinEnabled = (Transformations.map(LiveDataPair(studyData, configData)) { (study, config) ->
-        return@map study != null && config != null
+    val signinEnabled = (Transformations.map(LiveDataTriple(studyData, configData, name)) { (study, _, name) ->
+        // At this point, configData is not null due to the return type of the repository
+        return@map study != null && name.isNotBlank()
     } as MutableLiveData<Boolean>).apply { value = false }
 
     fun signIn() {
@@ -77,12 +79,12 @@ class LoginViewModel(application: Application,
                                         this@LoginViewModel.password.postValue("")
                                         signInAsSupervisor(it, config)
                                     } else {
-                                        //TODO: display incorrect password error.
+                                        showIncorrectPassword()
                                     }
                                 }
                             }
                         } else {
-                            //TODO: display supervisor password cannot be null.
+                            showIncorrectPassword()
                         }
                     } else {
                         name.value?.let {

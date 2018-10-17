@@ -27,6 +27,27 @@
                 android:orientation="horizontal"
                 app:layout_constraintGuide_percent="0.3" />
 
+            <ImageView
+                android:id="@+id/fragment_login_language"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+
+                android:background="?android:attr/selectableItemBackground"
+                android:src="@drawable/icon_language_white" />
+
+            <ImageView
+                android:id="@+id/fragment_login_help"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginRight="16dp"
+                app:layout_constraintEnd_toStartOf="@+id/fragment_login_language"
+                android:background="?android:attr/selectableItemBackground"
+                android:src="@drawable/icon_help_white" />
+
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -55,17 +76,6 @@
                     android:hint="@{vm.nameHint}"
                     android:padding="16dp"
                     android:text="@={vm.name}"
-                    android:textSize="16sp" />
-
-                <Spinner
-                    android:layout_width="400dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="40dp"
-                    android:adapter="@{vm.languageSelectAdapter}"
-                    android:background="@drawable/login_input_background"
-                    android:elevation="4dp"
-                    android:padding="16dp"
                     android:textSize="16sp" />
 
                 <LinearLayout

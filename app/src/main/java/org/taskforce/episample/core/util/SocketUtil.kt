@@ -3,10 +3,16 @@ package org.taskforce.episample.core.util
 import java.io.*
 import java.nio.ByteBuffer
 
+/**
+ * SocketUtil - Simple class designed for simple file transfer with EpiSample
+ *
+ * Will need a refactor to communicate with arbitrary sockets
+ *
+ */
 class SocketUtil {
     companion object {
         private const val BUFFER_SIZE = 1024
-        private const val COMPLETE_TEXT = "TRANSFER_COMPLETE"
+        private const val COMPLETE_TEXT = "org..task-force.epi-sample.endSignal"
         private val COMPLETE_TEXT_BYTE_SIZE: Int
             get() = COMPLETE_TEXT.toCharArray().size * 2
         private val fileTransferComplete: ByteBuffer
@@ -26,14 +32,11 @@ class SocketUtil {
             var bytesAccumulated = readSize
             while (readSize != -1 && !fileComplete) {
 
-                println("Accumulating")
-                println("bytesCarriedOver $bytesCarriedOver, accumulated $bytesAccumulated")
                 while (readSize != -1 &&
                         bytesAccumulated + bytesCarriedOver <= COMPLETE_TEXT_BYTE_SIZE) {
                     // we always want a little more than the end signal size
                     readSize = inputStream.read(buffer, bytesAccumulated + bytesCarriedOver, BUFFER_SIZE - bytesAccumulated - bytesCarriedOver)
                     bytesAccumulated += readSize
-                    println("bytesCarriedOver $bytesCarriedOver, accumulated $bytesAccumulated")
                 }
 
                 val totalBytes = bytesAccumulated + bytesCarriedOver

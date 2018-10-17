@@ -10,7 +10,6 @@ class ConfigAllViewModelFactory(private val application: Application,
                                 private val languageService: LanguageService,
                                 private val transferManager: TransferManager,
                                 private val createStudy: (org.taskforce.episample.db.config.Config) -> Unit,
-                                private val openConfigEdit: () -> Unit,
                                 private val showError: (String) -> Unit) : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -18,7 +17,6 @@ class ConfigAllViewModelFactory(private val application: Application,
                 languageService,
                 transferManager,
                 createStudy,
-                openConfigEdit,
                 showError) as T
     }
 }

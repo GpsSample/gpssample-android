@@ -2,11 +2,15 @@ package org.taskforce.episample.main
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import kotlinx.android.synthetic.main.fragment_main.*
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.collection.ui.CollectFragment
@@ -14,6 +18,7 @@ import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.mapbox.MapboxDownloadFragment
 import org.taskforce.episample.databinding.FragmentMainBinding
 import org.taskforce.episample.db.navigation.ResolvedNavigationPlan
+import org.taskforce.episample.help.HelpActivity
 import org.taskforce.episample.navigation.ui.NavigationActivity
 import org.taskforce.episample.sampling.ui.SamplingFragment
 import org.taskforce.episample.supervisor.upload.ui.StudyUploadFragment
@@ -101,11 +106,35 @@ class MainFragment : Fragment() {
                         LanguageService(languageManager),
                         languageManager,
                         HELP_TARGET)
-                viewModel.studyTitle.observe(this@MainFragment, Observer {
-                    toolbarVm!!.title = it ?: LanguageService(languageManager).getString(R.string.app_name)
-                })
 
             }.root
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewModel.studyTitle.observe(this@MainFragment, Observer {
+            toolbar?.title = it ?: LanguageService(languageManager).getString(R.string.app_name)
+        })
+
+        fragment_main_toolbarBackButton.setOnClickListener({
+            requireActivity().finish()
+        })
+
+        fragment_main_toolbarHelp.setOnClickListener({
+            HelpActivity.startActivity(requireContext(), "https://github.com/EpiSample/episample-android/wiki/Welcome")
+        })
+
+        fragment_main_toolbarLanguage.setOnClickListener({
+            val intent = Intent(Settings.ACTION_LOCALE_SETTINGS)
+
+            try {
+                startActivity(intent)
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), R.string.unable_to_open_language_preferences, Toast.LENGTH_SHORT).show()
+            }
+
+        })
+    }
 
     companion object {
         const val HELP_TARGET = "#mainScreen"

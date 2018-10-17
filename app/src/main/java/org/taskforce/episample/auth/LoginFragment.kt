@@ -1,17 +1,22 @@
 package org.taskforce.episample.auth
 
+import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import kotlinx.android.synthetic.main.fragment_login.*
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.interfaces.LiveUserSession
 import org.taskforce.episample.databinding.FragmentLoginBinding
 import org.taskforce.episample.db.StudyRoomDatabase
+import org.taskforce.episample.help.HelpActivity
 import org.taskforce.episample.injection.CollectModule
 import org.taskforce.episample.main.MainActivity
 import org.taskforce.episample.toolbar.managers.LanguageManager
@@ -85,6 +90,25 @@ class LoginFragment : Fragment() {
                 )
                 vm = loginViewModel
             }.root
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        fragment_login_help.setOnClickListener({
+            HelpActivity.startActivity(requireContext(), "https://github.com/EpiSample/episample-android/wiki/Welcome")
+        })
+
+        fragment_login_language.setOnClickListener({
+            val intent = Intent(Settings.ACTION_LOCALE_SETTINGS)
+
+            try {
+                startActivity(intent)
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), R.string.unable_to_open_language_preferences, Toast.LENGTH_SHORT).show()
+            }
+
+        })
+    }
 
     override fun onStop() {
         super.onStop()

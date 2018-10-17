@@ -212,15 +212,8 @@ class NavigationFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMa
         })
 
         if (navigationViewModel.launchedSurvey) {
-            navigationViewModel.nextNavigationItem.value?.let { navItem ->
-                navItem.id?.let { id ->
-                    val fragment = SurveyStatusDialogFragment.newInstance(id, navItem.surveyStatus)
-                    fragment.setTargetFragment(this, GET_SURVEY_STATUS_REASON_CODE)
-                    fragment.show(requireFragmentManager(), SurveyStatusDialogFragment.TAG)
-                }
-            }
+            showSurveyStatusDialog()
         }
-
         navigationViewModel.launchedSurvey = false
     }
 
@@ -235,13 +228,23 @@ class NavigationFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMa
         return true
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode != Activity.RESULT_OK) {
-            return
+    private fun showSurveyStatusDialog() {
+        navigationViewModel.nextNavigationItem.value?.let { navItem ->
+            navItem.id?.let { id ->
+                val fragment = SurveyStatusDialogFragment.newInstance(id, navItem.surveyStatus)
+                fragment.setTargetFragment(this, GET_SURVEY_STATUS_REASON_CODE)
+                fragment.show(requireFragmentManager(), SurveyStatusDialogFragment.TAG)
+            }
         }
+    }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             GET_SKIP_REASON_CODE -> {
+                if (resultCode != Activity.RESULT_OK) {
+                    return
+                }
+
                 val skipReason = data?.getStringExtra(TextInputDialogFragment.EXTRA_TEXT_INPUT)
                 skipReason?.let { skipReason ->
                     navigationViewModel.nextNavigationItem.value?.id?.let { nextItem ->
@@ -252,6 +255,10 @@ class NavigationFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMa
                 }
             }
             PICK_FORM_REASON_CODE -> {
+                if (resultCode != Activity.RESULT_OK) {
+                    showSurveyStatusDialog()
+                }
+
                 val formUri = data?.data
                 formUri?.let {
                     val intent = Intent(Intent.ACTION_EDIT)
@@ -259,8 +266,14 @@ class NavigationFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMa
                     startActivity(intent)
                     navigationViewModel.launchedSurvey = true
                 }
+
+
             }
             GET_SURVEY_STATUS_REASON_CODE -> {
+                if (resultCode != Activity.RESULT_OK) {
+                    showSurveyStatusDialog()
+                }
+
                 val surveyStatus = data?.getParcelableExtra<SurveyStatus>(SurveyStatusDialogFragment.EXTRA_SURVEY_STATUS)
                 surveyStatus?.let { surveyStatus ->
                     navigationViewModel.nextNavigationItem?.value?.id?.let {
@@ -284,6 +297,7 @@ class NavigationFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMa
             
             startActivityForResult(intent, PICK_FORM_REASON_CODE)
         } catch (e: Exception) {
+            showSurveyStatusDialog()
             Toast.makeText(requireContext(), R.string.odk_collect_not_installed, Toast.LENGTH_LONG)
                     .show()
             Log.e(TAG, e.localizedMessage)

@@ -44,7 +44,9 @@ class GeographyViewModel(
     }
 
     val viewMapVisibility = object : ObservableField<Boolean>(quickstartVisibility) {
-        override fun get(): Boolean? = itemCount.get()!! > 0
+        // TODO remove viewMap from xml and viewmodel
+        override fun get(): Boolean? = false
+                //itemCount.get()!! > 0
     }
 
     val viewMapText = ObservableField(languageService.getString(R.string.config_geography_quickstart_alternate))
@@ -90,7 +92,7 @@ class GeographyViewModel(
     override val backEnabled: ObservableField<Boolean> = ObservableField(true)
     override val nextEnabled: ObservableField<Boolean> = object : ObservableField<Boolean>(viewMapVisibility) {
         override fun get(): Boolean? {
-            return viewMapVisibility.get() ?: false
+            return itemCount.get()!! > 0
         }
     }
     override fun onNextClicked(view: View) {

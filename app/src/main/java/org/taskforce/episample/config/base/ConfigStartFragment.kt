@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import kotlinx.android.synthetic.main.fragment_config_start.*
 import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.auth.LoginActivity
@@ -16,6 +17,7 @@ import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.config.transfer.TransferManager
 import org.taskforce.episample.databinding.FragmentConfigStartBinding
 import org.taskforce.episample.db.ConfigRoomDatabase
+import org.taskforce.episample.help.HelpActivity
 import org.taskforce.episample.injection.CollectModule
 import org.taskforce.episample.sync.core.DirectTransferService
 import org.taskforce.episample.sync.core.LiveDirectTransferService
@@ -24,6 +26,9 @@ import org.taskforce.episample.sync.ui.ReceiverSyncStatusViewModelFactory
 import org.taskforce.episample.toolbar.managers.LanguageManager
 import org.taskforce.episample.toolbar.viewmodels.ToolbarViewModel
 import javax.inject.Inject
+import android.content.ComponentName
+
+
 
 class ConfigStartFragment : Fragment() {
 
@@ -63,10 +68,6 @@ class ConfigStartFragment : Fragment() {
                                     .addToBackStack(ConfigAllFragment::class.java.name)
                                     .commit()
                         },
-                        {
-                            //TODO: Open edit study screen.
-                            Toast.makeText(requireContext(), "TODO", Toast.LENGTH_SHORT).show()
-                        },
                         { config, studyId ->
                             LoginActivity.startActivity(requireContext(), config.id, studyId)
                             requireActivity().finish()
@@ -76,14 +77,24 @@ class ConfigStartFragment : Fragment() {
 
                 syncVm = syncStatusViewModel
                 setLifecycleOwner(this@ConfigStartFragment)
-
-                toolbarVm = ToolbarViewModel(
-                        LanguageService(languageManager),
-                        languageManager,
-                        HELP_TARGET)
             }.root
 
-    companion object {
-        private const val HELP_TARGET = "#configSelect"
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        fragment_config_start_toolbarHelp.setOnClickListener({
+            HelpActivity.startActivity(requireContext(), "https://github.com/EpiSample/episample-android/wiki/Welcome")
+        })
+
+        fragment_config_start_toolbarLanguage.setOnClickListener({
+            val intent = Intent(android.provider.Settings.ACTION_LOCALE_SETTINGS)
+
+            try {
+                startActivity(intent)
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), R.string.unable_to_open_language_preferences, Toast.LENGTH_SHORT).show()
+            }
+
+        })
     }
 }

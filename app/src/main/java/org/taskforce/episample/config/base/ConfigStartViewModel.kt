@@ -14,7 +14,6 @@ import org.taskforce.episample.db.config.Config
 class ConfigStartViewModel(application: Application,
                            val createNewConfiguration: () -> Unit,
                            val showAllConfigurations: () -> Unit,
-                           val editStudy: () -> Unit,
                            val signIn: (Config, String) -> Unit,
                            transferManager: TransferManager) : AndroidViewModel(application) {
 

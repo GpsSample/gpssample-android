@@ -64,10 +64,6 @@ class ConfigAllFragment : Fragment() {
                         Toast.makeText(requireContext(), "Cannot create more than one study", Toast.LENGTH_SHORT).show()
                     }
                 },
-                {
-                    // TODO open config summary
-                    Toast.makeText(requireContext(), "TODO", Toast.LENGTH_SHORT).show()
-                },
                 showError
         )).get(ConfigAllViewModel::class.java)
         viewModel.back = back
@@ -102,7 +98,7 @@ class ConfigAllFragment : Fragment() {
 
         val adapter = ConfigAllAdapter(viewModel.menuObservable, languageService.getString(R.string.study_date), {
             // TODO open config summary
-            Toast.makeText(requireContext(), "TODO", Toast.LENGTH_SHORT).show()
+            // no-op
         })
 
         fragment_config_all_recyclerView.adapter = adapter

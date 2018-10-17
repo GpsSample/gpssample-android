@@ -20,7 +20,6 @@ class ConfigAllViewModel(
         languageService: LanguageService,
         transferManager: TransferManager,
         createStudy: (org.taskforce.episample.db.config.Config) -> Unit,
-        val openConfigEdit: () -> Unit,
         showError: (String) -> Unit) : AndroidViewModel(application) {
 
     lateinit var back: () -> Unit
@@ -44,22 +43,6 @@ class ConfigAllViewModel(
                             R.drawable.icon_attach_darkgray_24,
                             languageService.getString(R.string.config_all_menu_create), {
                         createStudy(it)
-                    }),
-                    ConfigItemMenuViewModel(
-                            R.drawable.icon_copy_darkgray_24,
-                            languageService.getString(R.string.config_all_menu_duplicate), {
-                        try {
-                            configRepository.duplicateConfig(it, {
-                                // no op new config shows up in list when database changes
-                            })
-                        } catch (cme: ConfigManagerException) {
-                            showError(cme.localizedMessage)
-                        }
-                    }),
-                    ConfigItemMenuViewModel(
-                            R.drawable.icon_share_darkgray_24,
-                            languageService.getString(R.string.config_all_menu_share), {
-                        //TODO: open sync workflow
                     }),
                     ConfigItemMenuViewModel(
                             R.drawable.icon_delete_darkgray_24,

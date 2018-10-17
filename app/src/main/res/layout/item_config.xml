@@ -36,14 +36,14 @@
                 android:onClick="@{() -> vm.showMenu()}"
                 android:src="@drawable/icon_more_darkblue_24" />
 
-            <ImageView
-                android:id="@+id/item_config_settings_image_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
-                android:layout_toStartOf="@id/more"
-                android:onClick="@{() -> vm.openConfig()}"
-                android:src="@drawable/icon_settings_darkblue_24" />
+            <!--<ImageView-->
+                <!--android:id="@+id/item_config_settings_image_view"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginEnd="20dp"-->
+                <!--android:layout_toStartOf="@id/more"-->
+                <!--android:onClick="@{() -> vm.openConfig()}"-->
+                <!--android:src="@drawable/icon_settings_darkblue_24" />-->
 
             <android.support.v7.widget.RecyclerView
                 visibleOrGone="@{vm.menuVisibility}"

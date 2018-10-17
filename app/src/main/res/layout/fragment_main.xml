@@ -1,96 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
     <data>
-
         <variable
             name="vm"
             type="org.taskforce.episample.main.MainViewModel" />
-
         <variable
             name="toolbarVm"
             type="org.taskforce.episample.toolbar.viewmodels.ToolbarViewModel" />
     </data>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/mainBackground">
-
         <TextView
             android:id="@+id/signedIn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:layout_below="@id/toolbar"
-            android:layout_marginTop="12dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="66dp"
             android:background="@android:color/transparent"
             android:text="@{vm.signIn}"
             android:textSize="16sp" />
-
-        <TextView
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/mainImageView"
+            visibleOrGone="@{vm.supervisor}"
+            android:layout_below="@id/signedIn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/signedIn"
-            android:layout_centerHorizontal="true"
-            android:background="@android:color/transparent"
-            android:text="@{vm.commentary}" />
-
-        <LinearLayout
+            android:src="@drawable/main_graphic_mobile" />
+        <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:orientation="vertical"
-            android:paddingBottom="8dp"
-            android:paddingEnd="8dp"
-            android:paddingStart="8dp">
-
-            <ImageView
-                visibleOrGone="@{vm.supervisor}"
-                android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_below="@id/mainImageView"
+            android:layout_alignParentBottom="true">
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/main_graphic_mobile" />
-
-            <include
-                android:id="@+id/collect"
-                layout="@layout/fragment_main_card"
-                app:vm="@{vm.collectVm}" />
-
-            <include
-                android:id="@+id/navigate"
-                layout="@layout/fragment_main_card"
-                app:vm="@{vm.navigateVm}" />
-
-            <include
-                android:id="@+id/sync"
-                layout="@layout/fragment_main_card"
-                app:vm="@{vm.syncVm}" />
-
-            <include
-                android:id="@+id/sample"
-                layout="@layout/fragment_main_card"
-                app:vm="@{vm.sampleVm}" />
-
-            <include
-                android:id="@+id/report"
-                layout="@layout/fragment_main_card"
-                app:vm="@{vm.finalVm}" />
-
-            <include
-                android:id="@+id/map"
-                layout="@layout/fragment_main_card"
-                app:vm="@{vm.mapVm}" />
-
-        </LinearLayout>
-
-        <include
+                android:orientation="vertical"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="8dp">
+                <include
+                    android:id="@+id/collect"
+                    layout="@layout/fragment_main_card"
+                    app:vm="@{vm.collectVm}" />
+                <include
+                    android:id="@+id/navigate"
+                    layout="@layout/fragment_main_card"
+                    app:vm="@{vm.navigateVm}" />
+                <include
+                    android:id="@+id/sync"
+                    layout="@layout/fragment_main_card"
+                    app:vm="@{vm.syncVm}" />
+                <include
+                    android:id="@+id/sample"
+                    layout="@layout/fragment_main_card"
+                    app:vm="@{vm.sampleVm}" />
+                <include
+                    android:id="@+id/report"
+                    layout="@layout/fragment_main_card"
+                    app:vm="@{vm.finalVm}" />
+                <include
+                    android:id="@+id/map"
+                    layout="@layout/fragment_main_card"
+                    app:vm="@{vm.mapVm}" />
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+        <Toolbar
             android:id="@+id/toolbar"
-            layout="@layout/app_toolbar"
-            android:layout_height="56dp"
             android:layout_width="match_parent"
-            app:vm="@{toolbarVm}" />
-
+            android:layout_height="56dp"
+            android:background="@color/colorPrimary"
+            android:elevation="8dp"
+            android:paddingEnd="8dp"
+            android:paddingStart="24dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/fragment_main_toolbarBackButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="24dp"
+                    android:src="@drawable/icon_back_white_24"/>
+                <TextView
+                    android:id="@+id/toolbarTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@id/toolbarBack"
+                    android:layout_marginStart="8dp"
+                    android:lineSpacingExtra="8sp"
+                    android:textColor="@color/textColorInverse"
+                    android:textSize="20sp" />
+                <ImageView
+                    android:id="@+id/fragment_main_toolbarHelp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="20dp"
+                    android:layout_toStartOf="@+id/fragment_main_toolbarLanguage"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:src="@drawable/icon_help_white" />
+                <ImageView
+                    android:id="@+id/fragment_main_toolbarLanguage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:src="@drawable/icon_language_white" />
+            </RelativeLayout>
+        </Toolbar>
     </RelativeLayout>
-
 </layout>

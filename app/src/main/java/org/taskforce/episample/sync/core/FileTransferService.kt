@@ -7,6 +7,7 @@ import android.net.Uri
 import android.util.Log
 import org.taskforce.episample.core.util.FileUtil
 import org.taskforce.episample.core.util.SocketUtil
+import org.taskforce.episample.db.StudyRepository
 import org.taskforce.episample.db.StudyRoomDatabase
 import java.io.File
 import java.io.FileNotFoundException
@@ -34,9 +35,9 @@ class ReceiveFileTransferService : IntentService("FileTransferService") {
             val host = intent.extras!!.getString(EXTRAS_GROUP_OWNER_ADDRESS)
             val port = intent.extras!!.getInt(EXTRAS_GROUP_OWNER_PORT)
 
-
+            val socket = Socket(host, port)
             try {
-                Socket(host, port).use { socket ->
+                socket.use { socket ->
                     socket.getOutputStream().use { out ->
                         socket.getInputStream().use { inputStream ->
 
@@ -56,17 +57,7 @@ class ReceiveFileTransferService : IntentService("FileTransferService") {
                             val sourceDao = sourceDatabase.transferDao()
                             val targetDao = targetDatabase.transferDao()
 
-                            targetDao.transfer(
-                                    sourceDao.getEnumerations(),
-                                    sourceDao.getLandmarks(),
-                                    sourceDao.getBreadcrumbs(),
-                                    sourceDao.getCustomFieldValues(),
-                                    sourceDao.getNavigationPlans(),
-                                    sourceDao.getNavigationItems(),
-                                    sourceDao.getSamples(),
-                                    sourceDao.getSampleEnumerations(),
-                                    sourceDao.getSampleWarnings()
-                            )
+                            StudyRepository.mergeDatabases(sourceDao, targetDao)
 
                             val outgoingZipFile = FileUtil.writeDatabaseToZip(context)
 
@@ -82,8 +73,20 @@ class ReceiveFileTransferService : IntentService("FileTransferService") {
                 System.exit(1)
             } catch (e: Exception) {
                 // TODO don't catch everything
-                Log.d(TAG, e.localizedMessage)
-            }
+                Log.d(TAG, e.message)
+            } finally {
+                if (socket != null) {
+                    if (socket.isConnected) {
+                        try {
+                            socket.close()
+                            Log.d(SendFileTransferService.TAG, "Socket Closed")
+                        } catch (e: IOException) {
+                            // Give up
+                            e.printStackTrace()
+                        }
+
+                    }
+                }            }
         }
     }
 

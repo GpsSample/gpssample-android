@@ -12,6 +12,18 @@ interface TransferEnumerationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertEnumerations(enumerations: List<Enumeration>)
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertIgnoringConflicts(enumerations: List<Enumeration>)
+
+    @Query("SELECT * from enumeration_table WHERE note IS NOT NULL OR title IS NOT NULL OR image IS NOT NULL OR is_deleted = 1")
+    fun getNonNullOrDeletedEnumerations(): List<Enumeration>
+
+    @Query("SELECT * from enumeration_table WHERE is_deleted = 1")
+    fun getDeletedEnumerations(): List<Enumeration>
+
+    @Query("SELECT * from enumeration_table WHERE note IS NULL AND title IS NULL AND image IS NULL AND is_deleted = 0")
+    fun getNullEnumerations(): List<Enumeration>
+
     @Query("SELECT * from enumeration_table")
-    fun getEnumerations(): List<Enumeration>
+    fun getAllEnumerations(): List<Enumeration>
 }

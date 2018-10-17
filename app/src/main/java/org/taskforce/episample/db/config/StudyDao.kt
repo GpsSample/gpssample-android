@@ -41,12 +41,6 @@ abstract class StudyDao : ConfigDao(), CustomFieldDao, ResolvedEnumerationDao, C
 
     @Delete
     abstract fun delete(study: Study)
-    
-    @Delete
-    abstract fun deleteEnumeration(enumeration: Enumeration)
-    
-    @Delete
-    abstract fun deleteLandmark(landmark: Landmark)
 
     @Insert
     abstract fun insertNavigationPlans(navigationPlans: List<NavigationPlan>)
@@ -72,28 +66,28 @@ abstract class StudyDao : ConfigDao(), CustomFieldDao, ResolvedEnumerationDao, C
     @Query("SELECT * FROM study_table WHERE id LIKE :studyId")
     abstract fun getStudySync(studyId: String): Study
 
-    @Query("SELECT * FROM enumeration_table WHERE study_id LIKE :studyId")
+    @Query("SELECT * FROM enumeration_table WHERE study_id LIKE :studyId AND is_deleted = 0")
     abstract fun getEnumerations(studyId: String): LiveData<List<ResolvedEnumeration>>
 
-    @Query("SELECT et.id, lat, lng, note, is_excluded, is_complete, gps_precision, collector_name, title, image, date_created FROM enumeration_table et JOIN sample_enumerations se ON et.id = se.enumeration_id WHERE sample_id LIKE :sampleId")
+    @Query("SELECT et.id, lat, lng, note, is_excluded, is_complete, gps_precision, collector_name, title, image, date_created FROM enumeration_table et JOIN sample_enumerations se ON et.id = se.enumeration_id WHERE sample_id LIKE :sampleId AND et.is_deleted = 0")
     abstract fun getSampleResolvedEnumerationsSync(sampleId: String): List<ResolvedEnumeration>
 
-    @Query("SELECT COUNT(id) FROM enumeration_table WHERE study_id LIKE :studyId AND is_complete = 0 AND is_excluded = 0") // is_complete = 0 is true. doh
+    @Query("SELECT COUNT(id) FROM enumeration_table WHERE study_id LIKE :studyId AND is_complete = 0 AND is_excluded = 0 AND is_deleted = 0") // is_complete = 0 is true. doh
     abstract fun getNumberOfValidEnumerations(studyId: String): LiveData<Int>
 
     @Query("SELECT COUNT(id) FROM samples WHERE study_id LIKE :studyId") // is_complete = 0 is true. doh
     abstract fun getNumberOfSamples(studyId: String): LiveData<Int>
 
-    @Query("SELECT min(date_created) as min_date, max(date_created) as max_date FROM enumeration_table WHERE study_id LIKE :studyId AND is_complete = 0 AND is_excluded = 0") // is_complete = 0 is true. doh
+    @Query("SELECT min(date_created) as min_date, max(date_created) as max_date FROM enumeration_table WHERE study_id LIKE :studyId AND is_complete = 0 AND is_excluded = 0 AND is_deleted = 0") // is_complete = 0 is true. doh
     abstract fun getValidEnumerationsCollectionRange(studyId: String): LiveData<DateRange>
 
-    @Query("SELECT * FROM enumeration_table WHERE study_id LIKE :studyId AND is_complete = 0 AND is_excluded = 0")
+    @Query("SELECT * FROM enumeration_table WHERE study_id LIKE :studyId AND is_complete = 0 AND is_excluded = 0 AND is_deleted = 0")
     abstract fun getValidEnumerationsSync(studyId: String): List<ResolvedEnumeration> // is_complete = 0 is true. doh
 
-    @Query("SELECT * FROM enumeration_table WHERE study_id LIKE :studyId")
+    @Query("SELECT * FROM enumeration_table WHERE study_id LIKE :studyId AND is_deleted = 0")
     abstract fun getEnumerationsSync(studyId: String): List<Enumeration>
 
-    @Query("SELECT * from landmark_table WHERE study_id LIKE :studyId")
+    @Query("SELECT * from landmark_table WHERE study_id LIKE :studyId AND is_deleted = 0")
     abstract fun getLandmarks(studyId: String): LiveData<List<Landmark>>
 
     @Query("SELECT * from gps_breadcrumb_table WHERE study_id LIKE :studyId")
@@ -119,6 +113,18 @@ abstract class StudyDao : ConfigDao(), CustomFieldDao, ResolvedEnumerationDao, C
 
     @Update
     abstract fun update(landmark: Landmark)
+
+    @Transaction
+    open fun deleteEnumeration(enumeration: Enumeration) {
+        enumeration.isDeleted = true
+        update(enumeration)
+    }
+
+    @Transaction
+    open fun deleteLandmark(landmark: Landmark) {
+        landmark.isDeleted = true
+        update(landmark)
+    }
 
     @Transaction
     open fun update(enumeration: Enumeration, customFieldValues: List<CustomFieldValue>) {

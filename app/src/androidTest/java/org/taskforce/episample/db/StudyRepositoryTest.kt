@@ -63,7 +63,7 @@ class StudyRepositoryTest {
 
             val resolvedConfig = studyRepository!!.getResolvedConfigSync(config.id)
             val enumeration = Enumeration("Jesse",
-                    expectedLat, expectedLng, null, true, false, 25.12, studyId, null, null)
+                    expectedLat, expectedLng, null, true, false, 25.12, studyId, null, null, isDeleted = false)
 
             val customFieldValues = listOf(
                     LiveCustomFieldValue(

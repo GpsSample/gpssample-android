@@ -34,4 +34,6 @@ class Enumeration(
         @ColumnInfo(name = "incomplete_reason")
         val incompleteReason: String? = null,
         @PrimaryKey
-        var id: String = UUID.randomUUID().toString())
+        var id: String = UUID.randomUUID().toString(),
+        @ColumnInfo(name = "is_deleted")
+        var isDeleted: Boolean = false)

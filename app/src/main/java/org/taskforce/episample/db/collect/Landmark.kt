@@ -6,7 +6,6 @@ import org.taskforce.episample.core.BuiltInLandmark
 import org.taskforce.episample.core.interfaces.LandmarkType
 import org.taskforce.episample.core.interfaces.LandmarkTypeMetadata
 import org.taskforce.episample.core.interfaces.LiveLandmark
-import org.taskforce.episample.core.interfaces.LiveLandmarkType
 import org.taskforce.episample.db.config.Study
 import org.taskforce.episample.db.converter.BuiltInLandmarkConverter
 import org.taskforce.episample.db.converter.DateConverter
@@ -39,7 +38,9 @@ class Landmark(
         @ColumnInfo(name = "date_created")
         val dateCreated: Date = Date(),
         @PrimaryKey
-        var id: String = UUID.randomUUID().toString()) {
+        var id: String = UUID.randomUUID().toString(),
+        @ColumnInfo(name = "is_deleted")
+        var isDeleted: Boolean = false) {
 
     @Ignore()
     val metadata: LandmarkTypeMetadata = builtInLandmark?.let { return@let LandmarkTypeMetadata.BuiltInLandmark(it) }

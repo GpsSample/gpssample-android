@@ -19,12 +19,12 @@ interface TransferSampleDao {
     @Query("SELECT * FROM sample_warnings")
     fun getSampleWarnings(): List<WarningEntity>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertSamples(samples: List<SampleEntity>)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertSampleEnumerations(sampleEnumerations: List<SampleEnumerationEntity>)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertSampleWarnings(warnings: List<WarningEntity>)
 }

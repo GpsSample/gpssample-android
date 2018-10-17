@@ -2,6 +2,7 @@ package org.taskforce.episample.db.transfer
 
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Transaction
+import org.taskforce.episample.core.navigation.SurveyStatus
 import org.taskforce.episample.db.collect.Enumeration
 import org.taskforce.episample.db.collect.GpsBreadcrumb
 import org.taskforce.episample.db.collect.Landmark
@@ -18,24 +19,30 @@ abstract class TransferDao: TransferEnumerationDao, TransferLandmarkDao, Transfe
 
     @Transaction
     open fun transfer(
-            enumerations: List<Enumeration>,
+            overrideEnumerations: List<Enumeration>,
+            insertIgnoreConflictsEnumerations: List<Enumeration>,
             landmarks: List<Landmark>,
             breadcrumbs: List<GpsBreadcrumb>,
             customFieldValues: List<CustomFieldValue>,
-            navigationPlans: List<NavigationPlan>,
-            navigationItems: List<NavigationItem>,
             samples: List<SampleEntity>,
             sampleEnumerations: List<SampleEnumerationEntity>,
-            sampleWarnings: List<WarningEntity>
+            sampleWarnings: List<WarningEntity>,
+            targetNavigationPlans: List<NavigationPlan>,
+            sourceNavigationPlans: List<NavigationPlan>,
+            targetNavigationItems: List<NavigationItem>,
+            sourceNavigationItems: List<NavigationItem>
             ) {
-        insertEnumerations(enumerations)
+        insertEnumerations(overrideEnumerations)
+        insertIgnoringConflicts(insertIgnoreConflictsEnumerations)
         insertLandmarks(landmarks)
         insertBreadcrumbs(breadcrumbs)
         insertCustomFieldValues(customFieldValues)
-        insertNavigationPlans(navigationPlans)
-        insertNavigationItems(navigationItems)
         insertSamples(samples)
         insertSampleEnumerations(sampleEnumerations)
         insertSampleWarnings(sampleWarnings)
+        insertNavigationPlans(targetNavigationPlans)
+        insertNavigationPlans(sourceNavigationPlans)
+        insertNavigationItems(targetNavigationItems)
+        insertNavigationItems(sourceNavigationItems.filter { it.surveyStatus !is SurveyStatus.Incomplete })
     }
 }

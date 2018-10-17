@@ -127,7 +127,8 @@ fun org.taskforce.episample.core.interfaces.Enumeration.toDBEnumeration(collecto
             title,
             image,
             dateCreated,
-            incompleteReason)
+            incompleteReason,
+            isDeleted = false)
 }
 
 fun org.taskforce.episample.core.interfaces.Breadcrumb.toDBBreadcrumb(collectorName: String, studyId: String): GpsBreadcrumb {
@@ -145,14 +146,15 @@ fun org.taskforce.episample.core.interfaces.Landmark.toDBLandmark(collectorName:
             title = title,
             lat = location.latitude,
             lng = location.longitude,
-            studyId = studyId,
             note = note,
             image = image,
+            collectorName = collectorName,
             builtInLandmark = (landmarkType.metadata as? LandmarkTypeMetadata.BuiltInLandmark)?.type,
             customLandmarkTypeId = (landmarkType.metadata as? LandmarkTypeMetadata.CustomId)?.id,
+            studyId = studyId,
             gpsPrecision = gpsPrecision,
             dateCreated = dateCreated,
-            collectorName = collectorName)
+            isDeleted = false)
 }
 
 fun LatLng.toMapboxLatLng(): com.mapbox.mapboxsdk.geometry.LatLng = com.mapbox.mapboxsdk.geometry.LatLng(latitude, longitude)

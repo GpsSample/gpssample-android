@@ -54,7 +54,8 @@ class CommonSetup {
                     false,
                     10.0,
                     studyId,
-                    id = enumerationId
+                    id = enumerationId,
+                    isDeleted = false
             )
         }
 

@@ -18,19 +18,40 @@ class SocketUtil {
 
         fun writeSocketToFile(inputStream: InputStream, file: File) {
             val fileOutputStream = file.outputStream()
-            val buf = ByteArray(BUFFER_SIZE)
+            val buffer = ByteArray(BUFFER_SIZE)
 
+            var readSize = inputStream.read(buffer)
+            var fileComplete = false
+            var bytesCarriedOver = 0
+            var bytesAccumulated = readSize
+            while (readSize != -1 && !fileComplete) {
 
-            var readSize = inputStream.read(buf)
-            while (readSize != -1) {
-                readSize = if (buf.copyOfRange(readSize - COMPLETE_TEXT_BYTE_SIZE, readSize).contentEquals(fileTransferComplete.array())) {
-                    fileOutputStream.write(buf, 0, readSize - COMPLETE_TEXT_BYTE_SIZE)
-                    -1
-                } else {
-                    fileOutputStream.write(buf, 0, readSize)
-                    inputStream.read(buf)
+                println("Accumulating")
+                println("bytesCarriedOver $bytesCarriedOver, accumulated $bytesAccumulated")
+                while (readSize != -1 &&
+                        bytesAccumulated + bytesCarriedOver <= COMPLETE_TEXT_BYTE_SIZE) {
+                    // we always want a little more than the end signal size
+                    readSize = inputStream.read(buffer, bytesAccumulated + bytesCarriedOver, BUFFER_SIZE - bytesAccumulated - bytesCarriedOver)
+                    bytesAccumulated += readSize
+                    println("bytesCarriedOver $bytesCarriedOver, accumulated $bytesAccumulated")
                 }
+
+                val totalBytes = bytesAccumulated + bytesCarriedOver
+                val tailRangeBegin = totalBytes - COMPLETE_TEXT_BYTE_SIZE
+                val tailRange = buffer.copyOfRange(tailRangeBegin, totalBytes)
+                val hasEndSignal = tailRange.contentEquals(fileTransferComplete.array())
+
+                if (hasEndSignal) {
+                    fileComplete = true
+                    fileOutputStream.write(buffer, 0, totalBytes - COMPLETE_TEXT_BYTE_SIZE)
+                } else {
+                    fileOutputStream.write(buffer, 0, totalBytes - COMPLETE_TEXT_BYTE_SIZE)
+                    System.arraycopy(tailRange, 0, buffer, 0, COMPLETE_TEXT_BYTE_SIZE)
+                    bytesCarriedOver = COMPLETE_TEXT_BYTE_SIZE
+                }
+                bytesAccumulated = 0
             }
+
             fileOutputStream.close()
         }
 

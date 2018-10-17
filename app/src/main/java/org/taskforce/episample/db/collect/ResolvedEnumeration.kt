@@ -43,15 +43,15 @@ class ResolvedEnumeration(
 
 @Dao
 interface ResolvedEnumerationDao {
-    @Query("SELECT * from enumeration_table WHERE id LIKE :enumerationId")// e INNER JOIN custom_field_value_table c ON c.enumeration_id = e.id WHERE e.id LIKE :enumerationId")
+    @Query("SELECT * from enumeration_table WHERE id LIKE :enumerationId AND is_deleted= 0")// e INNER JOIN custom_field_value_table c ON c.enumeration_id = e.id WHERE e.id LIKE :enumerationId")
     fun getResolvedEnumeration(enumerationId: String): LiveData<ResolvedEnumeration?>
 
-    @Query("SELECT * from enumeration_table WHERE id LIKE :enumerationId")// e INNER JOIN custom_field_value_table c ON c.enumeration_id = e.id WHERE e.id LIKE :enumerationId")
+    @Query("SELECT * from enumeration_table WHERE id LIKE :enumerationId AND is_deleted= 0")// e INNER JOIN custom_field_value_table c ON c.enumeration_id = e.id WHERE e.id LIKE :enumerationId")
     fun getResolvedEnumerationSync(enumerationId: String): ResolvedEnumeration?
 
-    @Query("SELECT * from enumeration_table WHERE study_id LIKE :studyId")
+    @Query("SELECT * from enumeration_table WHERE study_id LIKE :studyId AND is_deleted= 0")
     fun getResolvedEnumerations(studyId: String): LiveData<ResolvedEnumeration?>
 
-    @Query("SELECT * from enumeration_table WHERE study_id LIKE :studyId")
+    @Query("SELECT * from enumeration_table WHERE study_id LIKE :studyId AND is_deleted= 0")
     fun getResolvedEnumerationsSync(studyId: String): List<ResolvedEnumeration>
 }

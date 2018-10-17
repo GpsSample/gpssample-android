@@ -6,6 +6,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import android.content.res.Resources
 import android.os.AsyncTask
+import android.util.Log
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -29,6 +30,7 @@ import org.taskforce.episample.db.navigation.NavigationPlan
 import org.taskforce.episample.db.navigation.ResolvedNavigationPlan
 import org.taskforce.episample.db.sampling.SampleEntity
 import org.taskforce.episample.db.sampling.WarningEntity
+import org.taskforce.episample.db.transfer.TransferDao
 import org.taskforce.episample.sync.core.EnumerationsReceivedMessage
 import org.taskforce.episample.sync.core.StudyReceivedMessage
 import org.taskforce.episample.utils.toDBEnumeration
@@ -64,17 +66,7 @@ class StudyRepository(val application: Application, injectedDatabase: StudyRoomD
         val sourceDao = sourceDatabase.transferDao()
         val targetDao = targetDatabase.transferDao()
 
-        targetDao.transfer(
-                sourceDao.getEnumerations(),
-                sourceDao.getLandmarks(),
-                sourceDao.getBreadcrumbs(),
-                sourceDao.getCustomFieldValues(),
-                sourceDao.getNavigationPlans(),
-                sourceDao.getNavigationItems(),
-                sourceDao.getSamples(),
-                sourceDao.getSampleEnumerations(),
-                sourceDao.getSampleWarnings()
-        )
+        mergeDatabases(sourceDao, targetDao)
     }
 
     /**
@@ -257,14 +249,6 @@ class StudyRepository(val application: Application, injectedDatabase: StudyRoomD
         }
     }
 
-    fun createDemoNavigationPlan(studyId: String, callback: (navigationPlanId: String) -> Unit) {
-        navigationDao.value?.let { navigationDao ->
-            studyDao.value?.let { studyDao ->
-                InsertDemoNavigationPlanTask(navigationDao, studyDao).execute(Pair(studyId, callback))
-            }
-        }
-    }
-
     fun getNumberOfValidEnumerations(studyId: String): LiveData<Int> {
         return Transformations.switchMap(studyDao) {
             it.getNumberOfValidEnumerations(studyId)
@@ -308,6 +292,42 @@ class StudyRepository(val application: Application, injectedDatabase: StudyRoomD
     }
 
     fun getNumberOfNavigationPlans(studyId: String): LiveData<Int> = studyDao.value!!.getNumberOfNavigationPlans(studyId)
+
+    companion object {
+        fun mergeDatabases(sourceDao: TransferDao, targetDao: TransferDao) {
+            val targetDeleteEnumerationIds = targetDao.getDeletedEnumerations().map { it.id }
+
+            val updateEnumerations = sourceDao.getNonNullOrDeletedEnumerations().filter {
+                !targetDeleteEnumerationIds.contains(it.id)
+            }
+
+            val targetDeletedLandmarkIds = targetDao.getDeletedLandmarks().map { it.id }
+
+            val updateLandmarks = sourceDao.getAllLandmarks().filter {
+                !targetDeletedLandmarkIds.contains(it.id)
+            }
+
+            val targetPlans = targetDao.getNavigationPlans()
+            val targetItems = targetDao.getNavigationItems()
+            val sourcePlans = sourceDao.getNavigationPlans()
+            val sourceItems = sourceDao.getNavigationItems()
+
+            targetDao.transfer(
+                    updateEnumerations,
+                    sourceDao.getNullEnumerations(),
+                    updateLandmarks,
+                    sourceDao.getBreadcrumbs(),
+                    sourceDao.getCustomFieldValues(),
+                    sourceDao.getSamples(),
+                    sourceDao.getSampleEnumerations(),
+                    sourceDao.getSampleWarnings(),
+                    targetPlans,
+                    sourcePlans,
+                    targetItems,
+                    sourceItems
+            )
+        }
+    }
 }
 
 typealias SampleCreatedCallback = (Boolean) -> Unit

@@ -7,7 +7,6 @@ import org.greenrobot.eventbus.EventBus
 import org.taskforce.episample.core.util.FileUtil
 import org.taskforce.episample.core.util.SocketUtil
 import org.taskforce.episample.sync.core.DirectTransferService
-import org.taskforce.episample.sync.core.EnumerationsReceivedMessage
 import org.taskforce.episample.sync.core.StudyReceivedMessage
 import java.io.File
 import java.io.FileOutputStream
@@ -35,6 +34,8 @@ class ReceiveStudyAsyncTask(private val weakContext: WeakReference<Context>, pri
     }
 
     override fun doInBackground(vararg params: File): String? {
+
+
 
         try {
             val context = weakContext.get() ?: return null
@@ -148,7 +149,7 @@ class EnumeratorSyncAsyncTask(private val weakContext: WeakReference<Context>, p
                             processBackup(incomingZipFile, dbFolder)
 
                             publishProgress(Progress.SYNC_COMPLETE)
-                            EventBus.getDefault().post(EnumerationsReceivedMessage())
+                            EventBus.getDefault().post(StudyReceivedMessage())
                         }
                     }
                 }
@@ -180,9 +181,18 @@ class EnumeratorSyncAsyncTask(private val weakContext: WeakReference<Context>, p
 
         FileUtil.unzip(zipFile, dbFolder)
 
+        FileUtil.moveFile(File("$dbFolder/study_database_incoming"),
+                File("$dbFolder/study_database"))
+        FileUtil.moveFile(File("$dbFolder/study_database_incoming-shm"),
+                File("$dbFolder/study_database-shm"))
+        FileUtil.moveFile(File("$dbFolder/study_database_incoming-wal"),
+                File("$dbFolder/study_database-wal"))
+1
         weakContext.get()?.let { context ->
             val imagesZip = File(dbFolder.absolutePath + "/images.zip")
-            FileUtil.unzipImages(context, imagesZip)
+            if (imagesZip.exists()) {
+                FileUtil.unzipImages(context, imagesZip)
+            }
         }
     }
 

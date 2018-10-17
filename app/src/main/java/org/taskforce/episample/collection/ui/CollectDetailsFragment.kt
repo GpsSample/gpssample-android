@@ -31,6 +31,7 @@ import org.taskforce.episample.core.interfaces.CollectItem
 import org.taskforce.episample.core.interfaces.Config
 import org.taskforce.episample.core.interfaces.Enumeration
 import org.taskforce.episample.core.interfaces.Landmark
+import org.taskforce.episample.core.ui.dialogs.AlertDialogFragment
 import org.taskforce.episample.databinding.FragmentCollectDetailsBinding
 import org.taskforce.episample.navigation.ui.NavigationToolbarViewModel
 import org.taskforce.episample.navigation.ui.NavigationToolbarViewModelFactory
@@ -155,6 +156,10 @@ class CollectDetailsFragment(private val collectItem: CollectItem) : Fragment(),
             }
         })
 
+        viewModel.canDelete.observe(this, Observer {
+            // no-op, handled elsewhere
+        })
+
         gpsViewModel.precision.set(collectItem.gpsPrecision)
 
         return binding.root
@@ -181,7 +186,7 @@ class CollectDetailsFragment(private val collectItem: CollectItem) : Fragment(),
             }
         }
     }
-    
+
     private fun goBack() {
         if (fragmentManager?.backStackEntryCount ?: 0 > 0) {
             fragmentManager?.popBackStack()
@@ -215,9 +220,15 @@ class CollectDetailsFragment(private val collectItem: CollectItem) : Fragment(),
                     is Landmark -> getString(R.string.landmark)
                     else -> ""
                 }.toLowerCase()
-                
-                val deleteDialog = DeleteItemDialogFragment.newInstance(confirmedDelete, subject)
-                deleteDialog.show(childFragmentManager, DeleteItemDialogFragment::class.java.simpleName)
+
+                viewModel.canDelete.value?.let {  canDelete ->
+                    if (canDelete) {
+                        val deleteDialog = DeleteItemDialogFragment.newInstance(confirmedDelete, subject)
+                        deleteDialog.show(childFragmentManager, DeleteItemDialogFragment::class.java.simpleName)
+                    } else {
+                        showCantDeleteAlert()
+                    }
+                }
             }
 //            R.id.action_language -> {
 //                toolbarViewModel.languageSelectVisibility.postValue(true)
@@ -225,12 +236,17 @@ class CollectDetailsFragment(private val collectItem: CollectItem) : Fragment(),
         }
         return true
     }
-    
+
+    private val showCantDeleteAlert: () -> Unit = {
+        AlertDialogFragment.newInstance(R.string.unable_to_delete, R.string.unable_to_delete_message)
+                .show(requireFragmentManager(), "AlertDialogFragment")
+    }
+
     private val confirmedDelete: () -> Unit = {
         viewModel.deleteCollectItem()
         goBack()
     }
-    
+
     companion object {
         const val MAP_PREFERENCE_NAMESPACE = "SHARED_MAPBOX_LAYER_PREFERENCES"
 

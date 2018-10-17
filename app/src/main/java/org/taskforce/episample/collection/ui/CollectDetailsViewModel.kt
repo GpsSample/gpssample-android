@@ -148,6 +148,10 @@ class CollectDetailsViewModel(application: Application) : AndroidViewModel(appli
             else -> emptyList<CollectDetailField>()
         }
     }
+    
+    val canDelete = Transformations.map(LiveDataPair(data, collectManager.getNumberOfSamples())) { (_, numberOfSamples) ->
+        numberOfSamples == 0
+    }
 
     fun deleteCollectItem() {
         data.value?.let {

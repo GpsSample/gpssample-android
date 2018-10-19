@@ -24,6 +24,9 @@ class MapboxConfigViewModel(private val latLngBounds: LatLngBounds, private val 
 
     val maxZoomString = ObservableField(DEFAULT_MAX_ZOOM.toString())
     val minZoomString = ObservableField(DEFAULT_MIN_ZOOM.toString())
+    
+    val maxZoomHintString = ObservableField<String>(resources.getString(R.string.mapbox_enter_max_zoom, MAX_ZOOM))
+    val minZoomHintString = ObservableField(resources.getString(R.string.mapbox_enter_min_zoom, MIN_ZOOM))
 
     val isValid = object : ObservableField<Boolean>(styleUrl, offlineRegions, maxZoomString, minZoomString) {
         override fun get(): Boolean? {

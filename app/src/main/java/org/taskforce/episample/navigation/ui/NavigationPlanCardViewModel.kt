@@ -14,6 +14,7 @@ import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.interfaces.*
 import org.taskforce.episample.core.language.LanguageService
 import org.taskforce.episample.core.navigation.SurveyStatus
+import org.taskforce.episample.core.util.DistanceUtil
 import org.taskforce.episample.utils.getResourceUri
 import javax.inject.Inject
 
@@ -99,7 +100,7 @@ class NavigationPlanCardViewModel(application: Application,
                 itemLocation.longitude,
                 results)
 
-        return@map String.format("%.1f km away", results[0] / 1000)
+        return@map DistanceUtil.convertMetersToString(results[0])
     }
 
     override val showDetailsText = Transformations.map(itemData){

@@ -13,6 +13,7 @@ import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.interfaces.*
 import org.taskforce.episample.core.language.LanguageService
 import org.taskforce.episample.core.navigation.SurveyStatus
+import org.taskforce.episample.core.util.DistanceUtil
 import org.taskforce.episample.db.config.customfield.CustomFieldType
 import javax.inject.Inject
 
@@ -115,17 +116,7 @@ class NavigationDetailsViewModel(application: Application,
                 itemLocation.longitude,
                 distanceArray)
 
-        val kilometers = distanceArray[0] / 1000
-        val meters = distanceArray[0]
-
-        var distance = kilometers
-        var unit = "km"
-        if (meters < 1000) {
-            distance = meters
-            unit = "m"
-        }
-
-        String.format("%.1f $unit away", distance)
+        DistanceUtil.convertMetersToString(distanceArray[0])
     }
 
     val gpsDisplay = Transformations.map(data) {

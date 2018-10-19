@@ -9,8 +9,8 @@ import org.taskforce.episample.config.base.BaseConfigViewModel
 import org.taskforce.episample.config.base.ConfigBuildManager
 import org.taskforce.episample.config.geography.model.FeatureCollection
 import org.taskforce.episample.config.language.LanguageService
-import org.taskforce.episample.mapbox.MapboxConfigFragment
 import org.taskforce.episample.core.interfaces.GeoJsonEnumerationArea
+import org.taskforce.episample.mapbox.MapboxConfigFragment
 
 class GeographyViewModel(
         val languageService: LanguageService,
@@ -54,6 +54,8 @@ class GeographyViewModel(
     val filesHeader = ObservableField(languageService.getString(R.string.config_upload_title))
 
     val loadFileButtonText = ObservableField(languageService.getString(R.string.config_upload_load_file))
+    
+    val loadFileHint = ObservableField(languageService.getString(R.string.config_upload_load_file_help))
 
     val enumerationAreaTitle = object : ObservableField<String>(itemCount) {
         override fun get(): String? {

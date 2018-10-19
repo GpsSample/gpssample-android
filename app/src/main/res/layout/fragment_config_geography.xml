@@ -133,7 +133,18 @@
                     android:text="@{vm.loadFileButtonText}"
                     android:textColor="@color/colorAccent"
                     android:textSize="16sp"
-                    tools:text="GET FILE"/>
+                    tools:text="@string/config_upload_load_file"/>
+                
+                <TextView
+                    android:id="@+id/loadFileHelp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:textColor="@color/textColorDisabled"
+                    android:textSize="12sp"
+                    android:lineSpacingExtra="4sp"
+                    android:text="@{vm.loadFileHint}"
+                    tools:text="@string/config_upload_load_file_help"/>
 
             </LinearLayout>
 

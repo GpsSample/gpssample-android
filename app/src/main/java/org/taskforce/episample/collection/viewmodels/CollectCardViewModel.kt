@@ -3,12 +3,12 @@ package org.taskforce.episample.collection.viewmodels
 import android.annotation.SuppressLint
 import android.databinding.BaseObservable
 import android.databinding.Bindable
-import android.databinding.Observable
 import android.databinding.ObservableField
 import android.location.Location
 import com.google.android.gms.maps.model.LatLng
 import org.taskforce.episample.collection.ui.CollectGpsPrecisionViewModel
 import org.taskforce.episample.core.interfaces.*
+import org.taskforce.episample.core.util.DistanceUtil
 import org.taskforce.episample.utils.DateUtil
 import org.taskforce.episample.utils.bindDelegate
 
@@ -106,8 +106,8 @@ class CollectCardViewModel(userSettings: UserSettings?,
                         itemLocation?.latitude ?: 0.0,
                         itemLocation?.longitude ?: 0.0,
                         results)
-                
-                distance = String.format("%.1f km away", results[0] / 1000)
+
+                distance = DistanceUtil.convertMetersToString(results[0])
             }
             
             

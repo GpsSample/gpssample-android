@@ -84,6 +84,7 @@ class CollectAddFragment : Fragment() {
         (requireActivity().application as EpiApplication).collectComponent?.inject(this)
 
         languageService = LanguageService(languageManager)
+        
         collectViewModel = ViewModelProviders.of(this@CollectAddFragment, CollectAddViewModelFactory(
                 requireActivity().application,
                 languageService,
@@ -95,27 +96,8 @@ class CollectAddFragment : Fragment() {
                 {
                     requireFragmentManager()
                             .popBackStack()
-                }, {
-            Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-                takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
-                    val newPhoto = try {
-                        FileUtil.createImageFile(requireContext())
-                    } catch (ex: IOException) {
-                        null
-                    }
-
-                    newPhoto?.also {
-                        val photoUri = FileProvider.getUriForFile(requireContext(),
-                                "org.taskforce.episample.fileprovider",
-                                it)
-                        imageUri = photoUri
-
-                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-                        startActivityForResult(takePictureIntent, TAKE_PICTURE)
-                    }
-                }
-            }
-        },
+                }, 
+                takePicture,
                 { enumeration, subject ->
                     enumeration?.let {
                         val duplicateDialog = DuplicateGpsDialogFragment.newInstance(enumeration, subject) {
@@ -288,6 +270,12 @@ class CollectAddFragment : Fragment() {
             })
         }
 
+        markerManagerLiveData.observe(this, Observer { markerManager ->
+            markerManager?.let {
+                it.addEnumerationAreas(config.enumerationAreas)
+            }
+        })
+
         val types = collectViewModel.landmarkTypes
 
         val adapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item)
@@ -305,6 +293,36 @@ class CollectAddFragment : Fragment() {
                 fragmentManager?.popBackStack()
             } else {
                 requireActivity().finish()
+            }
+        }
+        
+        photoWrapper.setOnClickListener { 
+            if (collectViewModel.image.isNullOrBlank()) {
+                takePicture()
+            }
+        }
+        
+        
+    }
+    
+    private val takePicture: () -> Unit = {
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
+                val newPhoto = try {
+                    FileUtil.createImageFile(requireContext())
+                } catch (ex: IOException) {
+                    null
+                }
+
+                newPhoto?.also {
+                    val photoUri = FileProvider.getUriForFile(requireContext(),
+                            "org.taskforce.episample.fileprovider",
+                            it)
+                    imageUri = photoUri
+
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+                    startActivityForResult(takePictureIntent, TAKE_PICTURE)
+                }
             }
         }
     }

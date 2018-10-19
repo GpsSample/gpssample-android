@@ -54,6 +54,7 @@
     <string name="config_upload_title">Upload Files</string>
     <string name="config_upload_files_explanation">Upload files for use in your configuration, such as  map data, geographical data,  icon files, and language files.</string>
     <string name="config_upload_load_file">LOAD FILE</string>
+    <string name="config_upload_load_file_help">Upload a JSON file in the GeoJSON format. GPSSample will use the polygons in the file to define enumeration areas. See the Admin Guide for more details.</string>
     <string name="config_lang_title">Languages</string>
     <string name="config_lang_explanation">Select any languages you want to include with this configuration. Users will be able to choose from these languages in their settings.
 If the file contains data for Admin as well, the language will be immediately accessible from the language overflow menu in the toolbar.</string>
@@ -437,8 +438,8 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="num_of_enumerators">Number of Enumerators</string>
     <string name="northeast_lat_lng_var">Northeast\nLat: %.8f\nLng: %.8f</string>
     <string name="southwest_lat_lng_var">Southwest\nLat: %.8f\nLng: %.8f</string>
-    <string name="mapbox_enter_max_zoom">Enter Max Zoom</string>
-    <string name="mapbox_enter_min_zoom">Enter Min Zoom</string>
+    <string name="mapbox_enter_max_zoom">Enter Max Zoom (up to %.1f)</string>
+    <string name="mapbox_enter_min_zoom">Enter Min Zoom (down to %.1f)</string>
     <string name="main_map_title">Offline Tiles</string>
     <string name="main_map_description">Download offline tiles</string>
     <string name="mapbox_tiles_downloading">Tiles Downloading</string>

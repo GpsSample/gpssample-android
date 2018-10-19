@@ -20,7 +20,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.Toast
-import com.mapbox.mapboxsdk.annotations.PolylineOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.maps.MapboxMapOptions
 import com.mapbox.mapboxsdk.maps.SupportMapFragment
@@ -252,22 +251,6 @@ class CollectAddFragment : Fragment() {
                     mapPreferences,
                     map))
 
-            collectViewModel.gpsBreadcrumbs.observe(this@CollectAddFragment, Observer { breadcrumbs ->
-                val polylineOptions = mutableListOf<PolylineOptions>()
-                breadcrumbs?.sortedBy { it.dateCreated }?.forEach {
-                    if (it.startOfSession) {
-                        polylineOptions.add(PolylineOptions()
-                                .color(R.color.greyHighlights))
-                    }
-
-                    polylineOptions.last().add(it.location.toMapboxLatLng())
-                }
-
-                polylineOptions.forEach { breadCrumbPath ->
-                    map.addPolyline(breadCrumbPath)
-                }
-            })
-
             LiveDataPair(markerManagerLiveData, collectViewModel.collectItems).observe(this, Observer {
                 it?.let { (markerManager, items) ->
                     markerManager.addMarkerDiff(items)
@@ -350,11 +333,6 @@ class CollectAddFragment : Fragment() {
                     } ?: run {
                         Toast.makeText(requireContext(), R.string.current_location_unknown, Toast.LENGTH_LONG).show()
                     }
-                }
-            }
-            R.id.toggle_breadcrumbs -> {
-                markerManagerLiveData?.value?.let {
-                    it.toggleBreadcrumbs()
                 }
             }
             R.id.toggle_layers -> {

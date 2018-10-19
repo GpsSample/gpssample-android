@@ -11,7 +11,6 @@ import org.taskforce.episample.db.StudyRepository
 import org.taskforce.episample.db.navigation.ResolvedNavigationPlan
 import org.taskforce.episample.db.sampling.SampleEntity
 import org.taskforce.episample.db.sampling.WarningEntity
-import org.taskforce.episample.utils.toDBBreadcrumb
 import org.taskforce.episample.utils.toDBEnumeration
 import org.taskforce.episample.utils.toDBLandmark
 import kotlin.concurrent.thread
@@ -129,16 +128,8 @@ class LiveCollectManager(val application: Application,
         studyRepository.deleteCollectItem(collectItem, studyId)
     }
 
-    override fun getBreadcrumbs(): LiveData<List<Breadcrumb>> {
-        return CommonManager.getBreadcrumbs(studyRepository, studyId)
-    }
-
     override fun getLandmarkTypes(): List<org.taskforce.episample.core.interfaces.LandmarkType> {
         return config.landmarkTypes
-    }
-
-    override fun addBreadcrumb(breadcrumb: Breadcrumb, callback: (breadcrumbId: String) -> Unit) {
-        studyRepository.addBreadcrumb(breadcrumb.toDBBreadcrumb(userSession.username, studyId), callback)
     }
 
     override fun updateEnumerationItem(item: org.taskforce.episample.core.interfaces.Enumeration, callback: () -> Unit) {

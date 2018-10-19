@@ -161,27 +161,20 @@ fun LatLng.toMapboxLatLng(): com.mapbox.mapboxsdk.geometry.LatLng = com.mapbox.m
 
 val List<EnumerationArea>.latLngBounds: LatLngBounds
     get() {
-        val allLatsAscending = map { it.points.map { it.first } }.flatMap { it }.sorted()
-        val allLongsAscending = map { it.points.map { it.second } }.flatMap { it }.sorted()
+        val allLatLongs = map { it.points.map { com.mapbox.mapboxsdk.geometry.LatLng(it.first, it.second)} }.flatten()
+        
+        val boundsBuilder = LatLngBounds.Builder()
+        boundsBuilder.includes(allLatLongs)
 
-        val south = allLatsAscending.first()
-        val north = allLatsAscending.last()
-        val west = allLongsAscending.first()
-        val east = allLongsAscending.last()
-
-        return LatLngBounds.from(north, east, south, west)
-
+        return boundsBuilder.build()
     }
 
 fun List<ResolvedEnumerationArea>.latLngBounds(): LatLngBounds {
-        val allLatsAscending = map { it.points.map { it.lat } }.flatMap { it }.sorted()
-        val allLongsAscending = map { it.points.map { it.lng } }.flatMap { it }.sorted()
+    val allLatLongs = map { it.points.map { com.mapbox.mapboxsdk.geometry.LatLng(it.lat, it.lng)} }.flatten()
 
-        val south = allLatsAscending.first()
-        val north = allLatsAscending.last()
-        val west = allLongsAscending.first()
-        val east = allLongsAscending.last()
+    val boundsBuilder = LatLngBounds.Builder()
+    boundsBuilder.includes(allLatLongs)
 
-        return LatLngBounds.from(north, east, south, west)
+    return boundsBuilder.build()
 
-    }
+}

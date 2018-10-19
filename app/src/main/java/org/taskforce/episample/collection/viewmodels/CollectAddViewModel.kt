@@ -59,8 +59,6 @@ class CollectAddViewModel(
 
     var gpsVm: CollectGpsPrecisionViewModel? = null
 
-    val gpsBreadcrumbs = collectManager.getBreadcrumbs()
-
     val collectItems = collectManager.getCollectItems()
 
     val landmarkTypes = collectManager.getLandmarkTypes()

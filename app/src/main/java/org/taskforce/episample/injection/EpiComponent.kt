@@ -2,7 +2,6 @@ package org.taskforce.episample.injection
 
 import org.taskforce.episample.auth.LoginAdminDialogFragment
 import org.taskforce.episample.auth.LoginFragment
-import org.taskforce.episample.collection.ui.CollectFragment
 import org.taskforce.episample.collection.ui.DeleteItemDialogFragment
 import org.taskforce.episample.collection.ui.DuplicateGpsDialogFragment
 import org.taskforce.episample.config.base.*
@@ -63,7 +62,6 @@ interface EpiComponent {
     fun inject(loginFragment: LoginFragment)
     fun inject(transferDownloadDialogFragment: TransferDownloadDialogFragment)
     fun inject(customFieldsAddDropdownDialog: CustomFieldsAddDropdownDialog)
-    fun inject(collectFragment: CollectFragment)
     fun inject(configUploadFragment: ConfigUploadFragment)
     fun inject(geographyDialogFragment: GeographyDialogFragment)
     fun inject(geographyFragment: GeographyFragment)

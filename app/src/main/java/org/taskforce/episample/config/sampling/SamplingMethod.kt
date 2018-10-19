@@ -18,7 +18,9 @@ data class SamplingMethod(var type: SamplingMethodology,
     }
 
     companion object {
-        val DEFAULT_METHOD = SamplingMethod(SamplingMethodology.SIMPLE_RANDOM_SAMPLE, SamplingUnits.PERCENT, SamplingGrouping.SUBSETS)
+        val DEFAULT_METHOD: SamplingMethod
+            get() = SamplingMethod(SamplingMethodology.SIMPLE_RANDOM_SAMPLE, SamplingUnits.PERCENT, SamplingGrouping.SUBSETS)
+        
         fun fromEntity(entity: SamplingMethodEntity): SamplingMethod {
             return SamplingMethod(
                     SamplingMethodology.valueOf(entity.methodology),

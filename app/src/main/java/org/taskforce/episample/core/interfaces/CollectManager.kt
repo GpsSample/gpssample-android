@@ -2,7 +2,6 @@ package org.taskforce.episample.core.interfaces
 
 import android.arch.lifecycle.LiveData
 import org.taskforce.episample.db.DateRange
-import org.taskforce.episample.db.navigation.NavigationPlan
 import org.taskforce.episample.db.navigation.ResolvedNavigationPlan
 import org.taskforce.episample.db.sampling.SampleEntity
 import org.taskforce.episample.db.sampling.WarningEntity
@@ -15,11 +14,9 @@ interface CollectManager {
     fun getEnumerations(): LiveData<List<Enumeration>>
     fun getLandmarks(): LiveData<List<Landmark>>
     fun getCollectItems(): LiveData<List<CollectItem>>
-    fun getBreadcrumbs(): LiveData<List<Breadcrumb>>
     fun getNumberOfValidEnumerations(): LiveData<Int>
     fun deleteCollectItem(collectItem: CollectItem)
 
-    fun addBreadcrumb(breadcrumb: Breadcrumb, callback: (breadcrumbId: String) -> Unit)
     fun addEnumerationItem(item: Enumeration, callback: (enumerationId: String) -> Unit)
     fun addLandmark(landmark: Landmark, callback: (landmarkId: String) -> Unit)
     

@@ -77,7 +77,7 @@ class SamplingSelectionViewModel(
     }
 
     override val progress: Int
-        get() = 4
+        get() = 5
     override val backEnabled: ObservableField<Boolean> = ObservableField(true)
     override val nextEnabled: ObservableField<Boolean> = ObservableField(true)
 

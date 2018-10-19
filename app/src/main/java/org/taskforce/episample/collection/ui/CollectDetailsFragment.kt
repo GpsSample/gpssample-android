@@ -15,7 +15,6 @@ import android.support.v7.widget.Toolbar
 import android.view.*
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.annotations.Marker
-import com.mapbox.mapboxsdk.annotations.PolylineOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.SupportMapFragment
@@ -129,24 +128,6 @@ class CollectDetailsFragment(private val collectItem: CollectItem) : Fragment(),
                 detailItemAdapter.resources = resources
                 detailItemAdapter.data = it.toMutableList()
                 detailItemAdapter.notifyDataSetChanged()
-            }
-        })
-
-        viewModel.gpsBreadcrumbs.observe(this, Observer { breadcrumbs ->
-            mapFragment.getMapAsync { map ->
-                val polylineOptions = mutableListOf<PolylineOptions>()
-                breadcrumbs?.sortedBy { it.dateCreated }?.forEach {
-                    if (it.startOfSession) {
-                        polylineOptions.add(PolylineOptions()
-                                .color(R.color.greyHighlights))
-                    }
-
-                    polylineOptions.last().add(it.location.toMapboxLatLng())
-                }
-
-                polylineOptions.forEach { breadCrumbPath ->
-                    map.addPolyline(breadCrumbPath)
-                }
             }
         })
 

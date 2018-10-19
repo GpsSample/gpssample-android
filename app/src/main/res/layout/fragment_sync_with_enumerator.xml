@@ -12,7 +12,8 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:keepScreenOn="true">
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/fragment_sync_with_enumerator_refreshButton"

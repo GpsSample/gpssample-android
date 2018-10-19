@@ -42,7 +42,7 @@ class MapboxConfigViewModel(private val latLngBounds: LatLngBounds, private val 
                 } catch (e: NumberFormatException) {
                     return false
                 }
-
+                
                 val paddedBounds = bounds
                         .include(LatLng(bounds.latSouth - LAT_OFFSET_TOLERANCE, bounds.lonWest - LNG_OFFSET_TOLERANCE))
                         .include(LatLng(bounds.latNorth + LAT_OFFSET_TOLERANCE, bounds.lonEast + LNG_OFFSET_TOLERANCE))
@@ -124,10 +124,13 @@ class MapboxConfigViewModel(private val latLngBounds: LatLngBounds, private val 
         fragmentManager.popBackStack()
     }
 
+    override val progress: Int
+        get() = 3
+
     companion object {
-        const val MAX_ZOOM = 16.0
+        const val MAX_ZOOM = 22.0
         const val MIN_ZOOM = 1.0
-        val LAT_OFFSET_TOLERANCE = Math.pow(1.0, -14.0)
-        val LNG_OFFSET_TOLERANCE = Math.pow(1.0, -14.0)
+        val LAT_OFFSET_TOLERANCE = Math.pow(10.0, -14.0)
+        val LNG_OFFSET_TOLERANCE = Math.pow(10.0, -14.0)
     }
 }

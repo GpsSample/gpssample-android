@@ -35,14 +35,11 @@ class CollectViewModel(application: Application,
         (application as EpiApplication).collectComponent?.inject(this)
 
         locationService.collectManager = collectManager
-        locationService.collectBreadcrumbs = true
     }
 
     val enumerationSubject: EnumerationSubject = config.enumerationSubject
 
     val collectItems = collectManager.getCollectItems()
-
-    val gpsBreadcrumbs = collectManager.getBreadcrumbs()
 
     private val collectDescriptionLiveData = LiveDataPair(collectManager.getEnumerations(),
             collectManager.getLandmarks())

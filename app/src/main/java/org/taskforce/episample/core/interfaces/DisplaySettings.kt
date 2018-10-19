@@ -27,17 +27,24 @@ interface DisplaySettings {
         val calendar = Calendar.getInstance()
         calendar.time = date
 
+        val month = calendar.get(Calendar.MONTH) + 1
+
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val year = calendar.get(Calendar.YEAR)
+
         return if (longForm) {
             if (isMetricDate) {
-                "${calendar.get(Calendar.DAY_OF_MONTH)} ${calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())}, ${calendar.get(Calendar.YEAR)}"
+                "$day ${calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())}, $year"
             } else {
-                "${calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())} ${calendar.get(Calendar.DAY_OF_MONTH)}, ${calendar.get(Calendar.YEAR)}"
+                "${calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())} $day, $year"
             }
         } else {
             if (isMetricDate) {
-                "${calendar.get(Calendar.DAY_OF_MONTH)}/${calendar.get(Calendar.MONTH)}/${calendar.get(Calendar.YEAR)}"
+                "$day/$month/$year"
             } else {
-                "${calendar.get(Calendar.MONTH)}/${calendar.get(Calendar.DAY_OF_MONTH)}/${calendar.get(Calendar.YEAR)}"
+                
+                "$month/$day/$year"
             }
         }
     }

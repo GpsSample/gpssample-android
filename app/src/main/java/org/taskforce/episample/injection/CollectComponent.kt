@@ -5,6 +5,7 @@ import org.taskforce.episample.auth.LoginViewModel
 import org.taskforce.episample.collection.ui.CollectAddFragment
 import org.taskforce.episample.collection.ui.CollectDetailsFragment
 import org.taskforce.episample.collection.ui.CollectDetailsViewModel
+import org.taskforce.episample.collection.ui.CollectFragment
 import org.taskforce.episample.collection.viewmodels.CollectAddViewModel
 import org.taskforce.episample.collection.viewmodels.CollectViewModel
 import org.taskforce.episample.core.ui.dialogs.TextInputDialogViewModel
@@ -19,6 +20,7 @@ import org.taskforce.episample.sampling.ui.SamplingGenerationViewModel
 @Subcomponent(modules = [CollectModule::class])
 interface CollectComponent {
     fun inject(collectViewModel: CollectViewModel)
+    fun inject(collectFragment: CollectFragment)
     fun inject(loginViewModel: LoginViewModel)
     fun inject(mainViewModel: MainViewModel)
     fun inject(collectAddViewModel: CollectAddViewModel)

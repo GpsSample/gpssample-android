@@ -11,10 +11,6 @@
             android:title="@string/center_on_user"
             app:showAsAction="never" />
         <item
-            android:id="@+id/toggle_breadcrumbs"
-            android:title="@string/toggle_breadcrumbs"
-            app:showAsAction="never" />
-        <item
             android:id="@+id/toggle_layers"
             android:title="@string/toggle_layers"
             app:showAsAction="never" />

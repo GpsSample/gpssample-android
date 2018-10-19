@@ -13,8 +13,8 @@ import com.mapbox.mapboxsdk.style.layers.Property.NONE
 import com.mapbox.mapboxsdk.style.layers.Property.VISIBLE
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.visibility
 import org.taskforce.episample.R
-import org.taskforce.episample.core.interfaces.Breadcrumb
 import org.taskforce.episample.core.interfaces.CollectItem
+import org.taskforce.episample.core.interfaces.EnumerationArea
 import org.taskforce.episample.mapbox.MapboxLayerSetting
 import org.taskforce.episample.utils.toMapboxLatLng
 import kotlin.math.cos
@@ -34,6 +34,34 @@ class MapboxItemMarkerManager(
 
     private var currentBreacrumbPolylineOptions = listOf<PolylineOptions>()
     private var currentBreacrumbPolylines = listOf<Polyline>()
+
+    private var currentEnumerationAreasPolylineOptions = listOf<PolylineOptions>()
+    private var currentEnumerationAreasPolygons = listOf<Polyline>()
+
+    fun addEnumerationAreas(enumerationAreas: List<EnumerationArea>) {
+        currentEnumerationAreasPolygons.forEach {
+            mapboxMap.removePolyline(it)
+        }
+
+        val polygonOptions = mutableListOf<PolylineOptions>()
+        enumerationAreas.forEach { area ->
+            val points = area.points.map { LatLng(it.first, it.second) }
+            polygonOptions.add(PolylineOptions()
+                    .addAll(points)
+                    .width(5.0f)
+                    .color(R.color.greyHighlights))
+            
+        }
+        
+        val polygons = mutableListOf<Polyline>()
+        polygonOptions.forEach { option -> 
+            val polygon = mapboxMap.addPolyline(option)
+            polygons.add(polygon)
+        }
+
+        currentEnumerationAreasPolylineOptions = polygonOptions
+        currentEnumerationAreasPolygons = polygons
+    }
 
     fun applyLayerSettings() {
         layerSettings.forEach { layerSetting ->
@@ -65,30 +93,6 @@ class MapboxItemMarkerManager(
 
     init {
         applyLayerSettings()
-    }
-
-    fun setBreadcrumbs(breadcrumbs: List<Breadcrumb>) {
-        currentBreacrumbPolylines.forEach {
-            mapboxMap.removePolyline(it)
-        }
-
-        val polylineOptions = mutableListOf<PolylineOptions>()
-        breadcrumbs.sortedBy { it.dateCreated }?.forEach {
-            if (it.startOfSession) {
-                polylineOptions.add(PolylineOptions()
-                        .color(R.color.greyHighlights))
-            }
-
-            polylineOptions.last().add(it.location.toMapboxLatLng())
-        }
-
-        val polylines = mutableListOf<Polyline>()
-        polylineOptions.forEach { breadCrumbPath ->
-            val polyline = mapboxMap.addPolyline(breadCrumbPath)
-            polylines.add(polyline)
-        }
-        currentBreacrumbPolylines = polylines
-        currentBreacrumbPolylineOptions = polylineOptions
     }
 
     fun addMarker(collectItem: CollectItem) {

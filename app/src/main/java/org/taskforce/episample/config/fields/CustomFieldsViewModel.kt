@@ -104,7 +104,7 @@ class CustomFieldsViewModel(
     }
 
     override val progress: Int
-        get() = 3
+        get() = 4
     override val backEnabled: ObservableField<Boolean> = ObservableField(true)
     override val nextEnabled: ObservableField<Boolean> = isValid
 

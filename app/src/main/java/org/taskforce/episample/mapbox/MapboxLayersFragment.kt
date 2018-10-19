@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -18,21 +17,18 @@ import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.annotations.PolygonOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
-import com.mapbox.mapboxsdk.geometry.LatLngBounds
 import com.mapbox.mapboxsdk.maps.MapboxMapOptions
 import com.mapbox.mapboxsdk.maps.SupportMapFragment
 import com.mapbox.mapboxsdk.style.layers.Property.NONE
 import com.mapbox.mapboxsdk.style.layers.Property.VISIBLE
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.visibility
 import kotlinx.android.synthetic.main.fragment_mapbox_layers.*
-import kotlinx.android.synthetic.main.fragment_sync_with_enumerator.*
 import org.taskforce.episample.BuildConfig
 import org.taskforce.episample.R
 import org.taskforce.episample.collection.managers.MapboxItemMarkerManager
 import org.taskforce.episample.core.models.MapboxStyleUrl
 import org.taskforce.episample.databinding.FragmentMapboxLayersBinding
 import org.taskforce.episample.db.config.EnumerationSubject
-import org.taskforce.episample.sync.ui.EnumeratorsAdapter
 import org.taskforce.episample.toolbar.viewmodels.AppToolbarViewModel
 import org.taskforce.episample.toolbar.viewmodels.AppToolbarViewModelFactory
 import org.taskforce.episample.utils.latLngBounds
@@ -157,6 +153,16 @@ class MapboxLayersFragment : Fragment() {
                 }
             }
         })
+
+        val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
+
+        toolbar?.setNavigationOnClickListener {
+            if (fragmentManager?.backStackEntryCount ?: 0 > 0) {
+                fragmentManager?.popBackStack()
+            } else {
+                requireActivity().finish()
+            }
+        }
     }
 
     companion object {

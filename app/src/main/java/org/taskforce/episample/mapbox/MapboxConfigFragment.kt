@@ -4,14 +4,15 @@ import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.annotations.Polygon
 import com.mapbox.mapboxsdk.annotations.PolygonOptions
-import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.geometry.LatLngBounds
@@ -19,8 +20,8 @@ import com.mapbox.mapboxsdk.maps.MapboxMapOptions
 import com.mapbox.mapboxsdk.maps.SupportMapFragment
 import com.mapbox.mapboxsdk.offline.*
 import kotlinx.android.synthetic.main.fragment_mapbox_config.*
-import org.taskforce.episample.BuildConfig
 import org.json.JSONObject
+import org.taskforce.episample.BuildConfig
 import org.taskforce.episample.R
 import org.taskforce.episample.config.base.ConfigBuildViewModel
 import org.taskforce.episample.core.models.MapboxStyleUrl
@@ -30,8 +31,6 @@ import org.taskforce.episample.databinding.FragmentMapboxConfigBinding
 import org.taskforce.episample.toolbar.viewmodels.AppToolbarViewModel
 import org.taskforce.episample.toolbar.viewmodels.AppToolbarViewModelFactory
 import org.taskforce.episample.utils.latLngBounds
-import java.nio.charset.Charset
-import java.util.*
 
 class MapboxConfigFragment : Fragment() {
 
@@ -149,6 +148,16 @@ class MapboxConfigFragment : Fragment() {
         })
 
         mapFragment?.onCreate(savedInstanceState)
+
+        val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
+
+        toolbar?.setNavigationOnClickListener {
+            if (fragmentManager?.backStackEntryCount ?: 0 > 0) {
+                fragmentManager?.popBackStack()
+            } else {
+                requireActivity().finish()
+            }
+        }
     }
 
 //    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

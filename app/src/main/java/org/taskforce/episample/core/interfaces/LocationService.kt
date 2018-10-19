@@ -11,8 +11,6 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import com.google.android.gms.maps.model.LatLng
-import org.taskforce.episample.collection.viewmodels.CollectViewModel
-import java.util.*
 
 interface LocationService: LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
@@ -23,7 +21,6 @@ interface LocationService: LifecycleObserver {
 
     val collectorName: String
     var collectManager: CollectManager?
-    var collectBreadcrumbs: Boolean
     var configuration: LocationServiceConfiguration
     val locationLiveData: MutableLiveData<Pair<LatLng, Float>>
 }
@@ -35,11 +32,6 @@ class LiveLocationService(context: Context,
                           val userSettings: UserSettings) : LocationService {
 
     override var collectManager: CollectManager? = null
-
-    override var collectBreadcrumbs: Boolean = false
-
-    private var startOfSession = true
-    private var lastKnownBreadcrumbLocation: LatLng? = null
 
     override var configuration: LocationServiceConfiguration = LocationServiceConfiguration()
         @SuppressLint("MissingPermission")
@@ -57,34 +49,6 @@ class LiveLocationService(context: Context,
         override fun onLocationChanged(location: Location) {
             val latLng = LatLng(location.latitude, location.longitude)
             locationLiveData.postValue(latLng to location.accuracy)
-
-            if (collectBreadcrumbs) {
-                lastKnownBreadcrumbLocation?.let {
-                    val distanceResult = FloatArray(1)
-                    Location.distanceBetween(it.latitude,
-                            it.longitude,
-                            latLng.latitude,
-                            latLng.longitude,
-                            distanceResult)
-
-                    val distance = distanceResult[0]
-                    if (distance >= CollectViewModel.breadcrumbAccuracy && 
-                            location.accuracy < userSettings.gpsMinimumPrecision) {
-                        collectManager?.addBreadcrumb(LiveBreadcrumb(collectorName, latLng, location.accuracy.toDouble(), startOfSession, Date()), {
-                            // no-op
-                        })
-
-                    }
-                } ?: run {
-                    lastKnownBreadcrumbLocation = latLng
-                    collectManager?.addBreadcrumb(LiveBreadcrumb(collectorName, latLng, location.accuracy.toDouble(), startOfSession, Date()), {
-                        // no-op
-                    })
-                }
-                lastKnownBreadcrumbLocation = latLng
-            }
-
-            startOfSession = false
         }
 
         override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
@@ -102,8 +66,6 @@ class LiveLocationService(context: Context,
 
     @SuppressLint("MissingPermission")
     override fun connectListener() {
-        lastKnownBreadcrumbLocation = null
-        startOfSession = true
         locationClient.requestLocationUpdates(LocationManager.GPS_PROVIDER, configuration.minTime, configuration.minDistance, listener)
     }
 

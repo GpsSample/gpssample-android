@@ -31,6 +31,7 @@ import org.taskforce.episample.collection.viewmodels.CollectViewModelFactory
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.interfaces.CollectItem
+import org.taskforce.episample.core.interfaces.Config
 import org.taskforce.episample.databinding.FragmentCollectBinding
 import org.taskforce.episample.help.HelpActivity
 import org.taskforce.episample.mapbox.MapboxLayersFragment
@@ -47,6 +48,9 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
     @Inject
     lateinit var languageManager: LanguageManager
     lateinit var languageService: LanguageService
+    
+    @Inject
+    lateinit var config: Config
 
     lateinit var collectIconFactory: CollectIconFactory
 
@@ -66,7 +70,7 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        (requireActivity().application as EpiApplication).component.inject(this)
+        (requireActivity().application as EpiApplication).collectComponent?.inject(this)
 
         Mapbox.getInstance(requireContext(), BuildConfig.MAPBOX_ACCESS_TOKEN)
 
@@ -139,11 +143,11 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
             }
         })
 
-        LiveDataPair(markerManagerLiveData, collectViewModel.gpsBreadcrumbs).observe(this, Observer {
-            it?.let { (markerManager, breadcrumbs) ->
-                markerManager.setBreadcrumbs(breadcrumbs)
-            }
-        })
+//        LiveDataPair(markerManagerLiveData, collectViewModel.gpsBreadcrumbs).observe(this, Observer {
+//            it?.let { (markerManager, breadcrumbs) ->
+//                markerManager.setBreadcrumbs(breadcrumbs)
+//            }
+//        })
 
         binding.setLifecycleOwner(this)
 
@@ -173,15 +177,23 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
             it.setOnMarkerClickListener(this@CollectFragment)
             it.addOnMapClickListener(this@CollectFragment)
         }
+        
+        markerManagerLiveData.observe(this, Observer { markerManager -> 
+            markerManager?.let {
+                it.addEnumerationAreas(config.enumerationAreas)
+            }
+        })
 
         LiveDataPair(markerManagerLiveData, collectViewModel.locationService.locationLiveData).observe(this, Observer {
             it?.let { (markerManager, locationUpdate) ->
                 locationUpdate.let { (latLng, accuracy) ->
                     collectCardVm.currentLocation.set(latLng)
                     markerManager.setCurrentLocation(latLng.toMapboxLatLng(), accuracy.toDouble())
-                    
-                    mapFragment?.getMapAsync { map ->
-                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng.toMapboxLatLng(), CollectViewModel.zoomLevel))
+
+                    if (collectViewModel.lastKnownLocation == null) {
+                        mapFragment?.getMapAsync { map ->
+                            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng.toMapboxLatLng(), CollectViewModel.zoomLevel))
+                        }
                     }
 
                     collectViewModel.lastKnownLocation = latLng.toMapboxLatLng()
@@ -231,11 +243,6 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
                     } ?: run {
                         Toast.makeText(requireContext(), R.string.current_location_unknown, Toast.LENGTH_LONG).show()
                     }
-                }
-            }
-            R.id.toggle_breadcrumbs -> {
-                markerManagerLiveData?.value?.let {
-                    it.toggleBreadcrumbs()
                 }
             }
             R.id.toggle_layers -> {

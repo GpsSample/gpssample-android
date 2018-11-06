@@ -105,7 +105,7 @@ class NavigationPlanFragment : Fragment(), MapboxMap.OnMarkerClickListener, Mapb
         binding.setLifecycleOwner(this)
 
         adapter = NavigationItemAdapter(CollectIconFactory(requireContext().resources),
-                navigationPlanViewModel.config.displaySettings) { navItem ->
+                navigationPlanViewModel.config.displaySettings, this) { navItem ->
             showItemDetails(navItem)
         }
         binding.collectList.adapter = adapter
@@ -188,6 +188,12 @@ class NavigationPlanFragment : Fragment(), MapboxMap.OnMarkerClickListener, Mapb
                     }
                     lastKnownLocation = location.toMapboxLatLng()
                 }
+            }
+        })
+        
+        navigationPlanViewModel.locationService.locationLiveData.observe(this, Observer { locationPair ->
+            locationPair?.let { (location, _) ->
+                adapter?.location?.postValue(location.toMapboxLatLng())
             }
         })
 

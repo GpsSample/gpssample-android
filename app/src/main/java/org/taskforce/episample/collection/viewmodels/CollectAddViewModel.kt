@@ -328,7 +328,8 @@ class CollectAddViewModel(
     private val customFieldViewModels = mutableListOf<AbstractCustomViewModel>()
 
     private val isSufficientlyPrecise
-        get() = (locationPrecision ?: 9999.0f <= config.userSettings.gpsPreferredPrecision)
+        get() = (locationPrecision ?: 9999.0f <= config.userSettings.gpsPreferredPrecision) || // Within the preferred precision is always good enough
+                (countdownDone && locationPrecision ?: 9999.0f <= config.userSettings.gpsMinimumPrecision) // Within the minimum is good enough only if the countdown is done
 
     init {
         useDuplicatedGps = false // reset

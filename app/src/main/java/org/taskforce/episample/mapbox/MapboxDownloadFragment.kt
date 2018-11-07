@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.annotations.PolygonOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
@@ -43,6 +44,8 @@ class MapboxDownloadFragment : Fragment() {
     // Offline objects
     private lateinit var offlineManager: OfflineManager
     private var offlineRegion: OfflineRegion? = null
+    
+    private var shouldShowErrorAlert = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -238,6 +241,11 @@ class MapboxDownloadFragment : Fragment() {
         // notify the user when the region is finished downloading
         offlineRegion?.setObserver(object : OfflineRegion.OfflineRegionObserver {
             override fun onStatusChanged(status: OfflineRegionStatus) {
+                if (fragment_mapbox_download_progressBar.visibility != View.VISIBLE) {
+                    shouldShowErrorAlert = true
+                    startProgress()
+                }
+                
                 // Compute a percentage
                 val percentage = if (status.requiredResourceCount >= 0)
                     100.0 * status.completedResourceCount / status.requiredResourceCount
@@ -270,11 +278,22 @@ class MapboxDownloadFragment : Fragment() {
             }
 
             override fun onError(error: OfflineRegionError) {
-                endProgress(getString(R.string.mapbox_end_progress_success))
-                AlertDialogFragment.newInstance(R.string.offline_tile_error_title, R.string.something_went_wrong)
-                        .show(requireFragmentManager(), "AlertDialogFragment")
-                Log.e(TAG, "onError reason: " + error.reason)
-                Log.e(TAG, "onError message: " + error.message)
+                Log.e(MapboxDownloadFragment.TAG, "onError reason: " + error.reason)
+                Log.e(MapboxDownloadFragment.TAG, "onError message: " + error.message)
+
+                if (error.reason == OfflineRegionError.REASON_CONNECTION) {
+                    Toast.makeText(this@MapboxDownloadFragment.requireContext(),
+                            getString(R.string.mapbox_tiles_error_toast),
+                            Toast.LENGTH_SHORT)
+                            .show()
+                } else {
+                    if(shouldShowErrorAlert) {
+                        AlertDialogFragment.newInstance(R.string.offline_tile_error_title, R.string.something_went_wrong)
+                                .show(requireFragmentManager(), "AlertDialogFragment")
+                        shouldShowErrorAlert = false
+                    }
+                    endProgress(getString(R.string.mapbox_end_progress_success))
+                }
             }
 
             override fun mapboxTileCountLimitExceeded(limit: Long) {

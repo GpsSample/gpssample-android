@@ -444,6 +444,7 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="main_map_description">Download offline tiles</string>
     <string name="mapbox_tiles_downloading">Tiles Downloading</string>
     <string name="mapbox_tiles_downloaded">Tiles Successfully Cached</string>
+    <string name="mapbox_tiles_error_toast">Download in progress, experiencing connectivity issues</string>
     <string name="empty">Empty</string>
     <string name="view_item_title">View %s</string>
     <string name="landmark">Landmark</string>

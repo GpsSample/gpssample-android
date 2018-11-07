@@ -10,8 +10,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.mapbox.mapboxsdk.Mapbox
-import com.mapbox.mapboxsdk.annotations.Polygon
 import com.mapbox.mapboxsdk.annotations.PolygonOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -48,6 +48,8 @@ class MapboxConfigFragment : Fragment() {
     // Offline objects
     private lateinit var offlineManager: OfflineManager
     private var offlineRegion: OfflineRegion? = null
+    
+    private var shouldShowErrorAlert = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,7 +95,8 @@ class MapboxConfigFragment : Fragment() {
         if (savedInstanceState == null) {
             mapFragment = SupportMapFragment.newInstance(
                     MapboxMapOptions()
-                            .styleUrl(configBuildViewModel.configBuildManager.config.mapboxStyle?.urlString ?: MapboxStyleUrl.DEFAULT_MAPBOX_STYLE)
+                            .styleUrl(configBuildViewModel.configBuildManager.config.mapboxStyle?.urlString
+                                    ?: MapboxStyleUrl.DEFAULT_MAPBOX_STYLE)
             )
             childFragmentManager
                     .beginTransaction()
@@ -187,6 +190,7 @@ class MapboxConfigFragment : Fragment() {
                         override fun onDelete() {
 
                         }
+
                         override fun onError(error: String) {
 
                         }
@@ -245,6 +249,11 @@ class MapboxConfigFragment : Fragment() {
         // notify the user when the region is finished downloading
         offlineRegion?.setObserver(object : OfflineRegion.OfflineRegionObserver {
             override fun onStatusChanged(status: OfflineRegionStatus) {
+                if (fragment_mapbox_config_progressBar.visibility != View.VISIBLE) {
+                    shouldShowErrorAlert = true
+                    startProgress()
+                }
+                
                 // Compute a percentage
                 val percentage = if (status.requiredResourceCount >= 0)
                     100.0 * status.completedResourceCount / status.requiredResourceCount
@@ -263,7 +272,7 @@ class MapboxConfigFragment : Fragment() {
 
                         }
                     })
-                            return
+                    return
                 } else if (status.isRequiredResourceCountPrecise) {
                     // Switch to determinate state
                     setPercentage(Math.round(percentage).toInt())
@@ -277,11 +286,22 @@ class MapboxConfigFragment : Fragment() {
             }
 
             override fun onError(error: OfflineRegionError) {
-                endProgress(getString(R.string.mapbox_end_progress_success))
-                AlertDialogFragment.newInstance(R.string.offline_tile_error_title, R.string.something_went_wrong)
-                        .show(requireFragmentManager(), "AlertDialogFragment")
                 Log.e(MapboxDownloadFragment.TAG, "onError reason: " + error.reason)
                 Log.e(MapboxDownloadFragment.TAG, "onError message: " + error.message)
+                
+                if (error.reason == OfflineRegionError.REASON_CONNECTION) {
+                    Toast.makeText(this@MapboxConfigFragment.requireContext(), 
+                            getString(R.string.mapbox_tiles_error_toast), 
+                            Toast.LENGTH_SHORT)
+                            .show()
+                } else {
+                    if(shouldShowErrorAlert) {
+                        AlertDialogFragment.newInstance(R.string.offline_tile_error_title, R.string.something_went_wrong)
+                                .show(requireFragmentManager(), "AlertDialogFragment")
+                        shouldShowErrorAlert = false
+                    }
+                    endProgress(getString(R.string.mapbox_end_progress_success))
+                }
             }
 
             override fun mapboxTileCountLimitExceeded(limit: Long) {

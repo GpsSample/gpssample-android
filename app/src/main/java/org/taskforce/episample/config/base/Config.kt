@@ -32,7 +32,6 @@ class Config(
     var userSettings: UserSettings? = null
     var serverSettings: ServerSettings? = null
     var samplingMethod: SamplingMethod = SamplingMethod.DEFAULT_METHOD
-    var offlineTiles: Collection<OfflineTile>? = null
     var landmarkTypes = listOf<LandmarkType>()
     var customLandmarkTypes = listOf<CustomLandmarkTypeInput>()
     var enumerationAreas: List<EnumerationArea> = listOf()

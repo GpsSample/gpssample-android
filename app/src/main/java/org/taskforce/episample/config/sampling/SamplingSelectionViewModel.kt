@@ -14,13 +14,12 @@ import org.taskforce.episample.config.sampling.strata.SamplingStrataFragment
 import org.taskforce.episample.config.sampling.subsets.SamplingSubsetFragment
 
 class SamplingSelectionViewModel(
-        method: SamplingMethodology,
-        unit: SamplingUnits) :
+        method: SamplingMethod) :
         ViewModel(), SamplingSelectionOnDatasetChanged, BaseConfigViewModel {
 
-    val methodology = ObservableField<SamplingMethodology>(method)
-    val units = ObservableField<SamplingUnits>(unit)
-    val samplingGrouping = ObservableField<SamplingGrouping>(SamplingGrouping.SUBSETS)
+    val methodology = ObservableField<SamplingMethodology>(method.type)
+    val units = ObservableField<SamplingUnits>(method.units)
+    val samplingGrouping = ObservableField<SamplingGrouping>(method.grouping)
 
     val eventBus: EventBus = EventBus.getDefault()
 

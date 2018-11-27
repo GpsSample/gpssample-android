@@ -8,9 +8,9 @@
             name="headerVm"
             type="org.taskforce.episample.config.base.ConfigHeaderViewModel" />
 
-        <variable
-            name="vm"
-            type="org.taskforce.episample.config.settings.server.ServerSettingsViewModel" />
+        <!--<variable-->
+        <!--name="vm"-->
+        <!--type="org.taskforce.episample.config.settings.server.ServerSettingsViewModel" />-->
     </data>
 
     <ScrollView
@@ -35,30 +35,29 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:textColor="@color/textColorDetails"
-                android:textSize="12sp"
-                android:text="@{vm.selectTitle}" />
+                android:textSize="12sp" />
+            <!--android:text="@{vm.selectTitle}"-->
 
             <Spinner
+                android:id="@+id/serverSelectDropdown"
                 style="@style/Widget.AppCompat.Spinner.Underlined"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/serverSelectDropdown"
-                android:adapter="@{vm.serverTypeAdapter}" />
+                android:layout_height="wrap_content" />
+            <!--android:adapter="@{vm.serverTypeAdapter}"-->
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/urlInputWrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:hint="@{vm.urlHint}">
-
+                android:layout_marginTop="16dp">
+                <!--android:hint="@{vm.urlHint}"-->
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/urlInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
-                    android:text="@={vm.url}"
                     android:textSize="18sp" />
+                <!--android:text="@={vm.url}"-->
 
             </android.support.design.widget.TextInputLayout>
 
@@ -66,16 +65,16 @@
                 android:id="@+id/usernameInputWrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:hint="@{vm.userHint}">
+                android:layout_marginTop="16dp">
+                <!--android:hint="@{vm.userHint}"-->
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/usernameInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
-                    android:text="@={vm.username}"
                     android:textSize="18sp" />
+                <!--android:text="@={vm.username}"-->
 
             </android.support.design.widget.TextInputLayout>
 
@@ -83,17 +82,17 @@
                 android:id="@+id/passwordInputWrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:hint="@{vm.passwordHint}">
+                android:layout_marginTop="16dp">
+                <!--android:hint="@{vm.passwordHint}"-->
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/passwordInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
                     android:inputType="textPassword"
-                    android:text="@={vm.password}"
+                    android:singleLine="true"
                     android:textSize="18sp" />
+                <!--android:text="@={vm.password}"-->
 
             </android.support.design.widget.TextInputLayout>
 

@@ -58,8 +58,7 @@ class SamplingSelectionFragment : Fragment() {
         }
 
         samplingSelectionViewModel = ViewModelProviders.of(requireActivity(), SamplingSelectionViewModelFactory(
-                config.samplingMethod.type,
-                config.samplingMethod.units))
+                config.samplingMethod))
                 .get(SamplingSelectionViewModel::class.java)
 
 
@@ -68,6 +67,7 @@ class SamplingSelectionFragment : Fragment() {
         binding.sampleMethodTypeSelector.onItemSelectedListener = samplingSelectionViewModel.samplingMethodOnItemSelectedListener
 
         binding.vm = samplingSelectionViewModel
+        samplingSelectionViewModel.eventBus.post(SamplingMethodChanged(config.samplingMethod.type, config.samplingMethod.grouping))
 
         return binding.root
     }

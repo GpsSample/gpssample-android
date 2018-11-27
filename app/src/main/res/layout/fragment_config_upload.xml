@@ -4,9 +4,6 @@
 
     <data>
 
-        <variable
-            name="vm"
-            type="org.taskforce.episample.config.base.ConfigUploadViewModel" />
 
         <variable
             name="headerVm"
@@ -47,10 +44,11 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
-                android:onClick="@{() -> vm.skip()}"
-                android:text="@{vm.skipText}"
                 android:textColor="@color/colorAccent"
                 android:textStyle="bold" />
+            <!--android:onClick="@{() -> vm.skip()}"-->
+            <!--android:text="@{vm.skipText}"-->
+
 
         </RelativeLayout>
 

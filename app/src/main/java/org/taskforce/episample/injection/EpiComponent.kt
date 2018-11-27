@@ -4,7 +4,9 @@ import org.taskforce.episample.auth.LoginAdminDialogFragment
 import org.taskforce.episample.auth.LoginFragment
 import org.taskforce.episample.collection.ui.DeleteItemDialogFragment
 import org.taskforce.episample.collection.ui.DuplicateGpsDialogFragment
-import org.taskforce.episample.config.base.*
+import org.taskforce.episample.config.base.ConfigAllFragment
+import org.taskforce.episample.config.base.ConfigStartFragment
+import org.taskforce.episample.config.base.ConfigSuccessFragment
 import org.taskforce.episample.config.fields.CustomFieldsAddDropdownDialog
 import org.taskforce.episample.config.fields.CustomFieldsAddFragment
 import org.taskforce.episample.config.fields.CustomFieldsFragment
@@ -12,8 +14,6 @@ import org.taskforce.episample.config.geography.GeographyDialogFragment
 import org.taskforce.episample.config.geography.GeographyFragment
 import org.taskforce.episample.config.geography.OutsideAreaDialogFragment
 import org.taskforce.episample.config.landmark.LandmarkAddFragment
-import org.taskforce.episample.config.landmark.LandmarkFragment
-import org.taskforce.episample.config.language.LanguageFragment
 import org.taskforce.episample.config.language.LanguageImporter
 import org.taskforce.episample.config.name.ConfigNameFragment
 import org.taskforce.episample.config.sampling.SamplingSelectionFragment
@@ -21,7 +21,6 @@ import org.taskforce.episample.config.sampling.strata.SamplingStrataFragment
 import org.taskforce.episample.config.sampling.subsets.SamplingSubsetFragment
 import org.taskforce.episample.config.settings.admin.AdminSettingsFragment
 import org.taskforce.episample.config.settings.display.DisplaySettingsFragment
-import org.taskforce.episample.config.settings.server.ServerSettingsFragment
 import org.taskforce.episample.config.settings.user.UserSettingsFragment
 import org.taskforce.episample.config.study.StudyCreateFragment
 import org.taskforce.episample.config.survey.SurveyExportFragment
@@ -40,13 +39,9 @@ interface EpiComponent {
     fun inject(splashActivity: SplashActivity)
     fun inject(languageImporter: LanguageImporter)
     fun inject(permissionsFragment: PermissionsFragment)
-    fun inject(configFragment: ConfigFragment)
     fun inject(configNameFragment: ConfigNameFragment)
-    fun inject(languageFragment: LanguageFragment)
-    fun inject(serverSettingsFragment: ServerSettingsFragment)
     fun inject(configStartFragment: ConfigStartFragment)
     fun inject(landmarkAddFragment: LandmarkAddFragment)
-    fun inject(landmarkFragment: LandmarkFragment)
     fun inject(surveyExportFragment: SurveyExportFragment)
     fun inject(adminSettingsFragment: AdminSettingsFragment)
     fun inject(customFieldsFragment: CustomFieldsFragment)
@@ -62,7 +57,6 @@ interface EpiComponent {
     fun inject(loginFragment: LoginFragment)
     fun inject(transferDownloadDialogFragment: TransferDownloadDialogFragment)
     fun inject(customFieldsAddDropdownDialog: CustomFieldsAddDropdownDialog)
-    fun inject(configUploadFragment: ConfigUploadFragment)
     fun inject(geographyDialogFragment: GeographyDialogFragment)
     fun inject(geographyFragment: GeographyFragment)
     fun inject(samplingSubsetFragment: SamplingSubsetFragment)

@@ -3,13 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="headerVm"
             type="org.taskforce.episample.config.base.ConfigHeaderViewModel" />
 
-        <variable
-            name="vm"
-            type="org.taskforce.episample.config.landmark.LandmarkViewModel" />
+        <!--<variable-->
+        <!--name="vm"-->
+        <!--type="org.taskforce.episample.config.landmark.LandmarkViewModel" />-->
 
         <variable
             name="transferVm"
@@ -37,42 +38,42 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:text="@{vm.landmarkHeader}"
-                android:textSize="16sp"
-                android:textColor="@color/textColorDetails"
-                android:textStyle="bold" />
 
+                android:textColor="@color/textColorDetails"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+            <!--android:text="@{vm.landmarkHeader}"-->
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/landmarkList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
                 android:layout_marginTop="4dp"
-                android:adapter="@{vm.landmarkAdapter}"
-                app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
+                android:layout_marginBottom="8dp"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+            <!--android:adapter="@{vm.landmarkAdapter}"-->
 
             <TextView
                 android:id="@+id/landmarkError"
-                visibleOrGone="@{vm.landmarkErrorVisibility}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/textColorDetails"
-                android:textStyle="italic"
-                android:text="@{vm.landmarkError}" />
+                android:textStyle="italic" />
+            <!--android:text="@{vm.landmarkError}"-->
+            <!--visibleOrGone="@{vm.landmarkErrorVisibility}"-->
 
             <TextView
                 android:id="@+id/addLandmark"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:paddingEnd="8dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="12dp"
-                android:textSize="16sp"
+                android:paddingTop="8dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="8dp"
                 android:textColor="@color/colorAccent"
-                android:onClick="@{() -> vm.addLandmark.invoke()}"
-                android:text="@{vm.addLandmarkText}" />
+                android:textSize="16sp" />
+            <!--android:text="@{vm.addLandmarkText}"-->
+            <!--android:onClick="@{() -> vm.addLandmark.invoke()}"-->
 
             <include
                 android:id="@+id/transfer"
@@ -81,16 +82,18 @@
 
             <TextView
                 android:id="@+id/skip"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="24dp"
                 android:gravity="end"
                 android:textColor="@color/colorAccent"
-                android:textSize="14sp"
-                android:layout_marginTop="24dp"
-                android:layout_gravity="end"
-                visibleOrGone="@{vm.skipVisibility}"
-                android:onClick="@{() -> vm.skip()}"
-                android:text="@{vm.skip}" />
+                android:textSize="14sp" />
+            <!--visibleOrGone="@{vm.skipVisibility}"-->
+            <!--android:onClick="@{() -> vm.skip()}"-->
+            <!--android:text="@{vm.skip}"-->
+
 
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>

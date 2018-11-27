@@ -156,6 +156,7 @@
                         android:id="@+id/dateExplanation"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
                         android:text="@{vm.dateExplanation}" />
 
                     <LinearLayout
@@ -171,7 +172,7 @@
                                 android:id="@+id/year"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginEnd="20dp"
+                                android:layout_marginEnd="@dimen/checkbox_margin_end"
                                 android:checked="@={vm.dateInput}" />
 
                             <TextView
@@ -191,6 +192,7 @@
                                 android:id="@+id/time"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/checkbox_margin_end"
                                 android:checked="@={vm.timeInput}"
                                 android:textSize="16sp" />
 
@@ -213,7 +215,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:layout_marginEnd="20dp"
+                            android:layout_marginEnd="@dimen/checkbox_margin_end"
                             android:checked="@={vm.useDefaultTimeInput}" />
 
                         <TextView
@@ -243,7 +245,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:layout_marginEnd="16dp"
+                            android:layout_marginEnd="@dimen/checkbox_margin_end"
                             android:checked="@={vm.integerOnly}" />
 
                         <TextView
@@ -265,7 +267,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:layout_marginEnd="16dp"
+                            android:layout_marginEnd="@dimen/checkbox_margin_end"
                             android:checked="@={vm.containsPii}" />
 
                         <TextView
@@ -288,7 +290,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:layout_marginEnd="16dp"
+                            android:layout_marginEnd="@dimen/checkbox_margin_end"
                             android:checked="@={vm.required}" />
 
                         <TextView

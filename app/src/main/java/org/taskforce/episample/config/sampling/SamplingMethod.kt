@@ -19,7 +19,7 @@ data class SamplingMethod(var type: SamplingMethodology,
 
     companion object {
         val DEFAULT_METHOD: SamplingMethod
-            get() = SamplingMethod(SamplingMethodology.SIMPLE_RANDOM_SAMPLE, SamplingUnits.PERCENT, SamplingGrouping.SUBSETS)
+            get() = SamplingMethod(SamplingMethodology.SIMPLE_RANDOM_SAMPLE, SamplingUnits.FIXED, SamplingGrouping.NONE)
         
         fun fromEntity(entity: SamplingMethodEntity): SamplingMethod {
             return SamplingMethod(
@@ -66,8 +66,8 @@ enum class SamplingMethodology(val displayText: String) : Serializable {
 }
 
 enum class SamplingUnits(val displayName: String) : Serializable {
-    PERCENT("Percent"),
-    FIXED("Households");
+    FIXED("Households"),
+    PERCENT("Percent");
 }
 
 enum class SamplingGrouping {

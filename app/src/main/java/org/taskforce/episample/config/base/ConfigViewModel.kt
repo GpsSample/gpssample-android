@@ -18,37 +18,13 @@ class ConfigViewModel(
         stepperButtonDisabledColor: Int,
         private val closeKeyboard: () -> Unit,
         private val success: () -> Unit,
-        private val viewPager: ViewPager) : BaseObservable(), Stepper {
+        private val viewPager: ViewPager) : BaseObservable() {
 
     @get:Bindable
     var backText by bindDelegate(languageService.getString(R.string.config_back))
 
     @get:Bindable
     var nextText by bindDelegate(languageService.getString(R.string.config_next))
-
-    @get:Bindable
-    override var backEnabled by bindDelegate(false, { _, newValue ->
-        backButtonTextColor = if (newValue) {
-            stepperButtonColor
-        } else {
-            stepperButtonDisabledColor
-        }
-    })
-
-    @get:Bindable
-    var backButtonTextColor by bindDelegate(stepperButtonDisabledColor)
-
-    @get:Bindable
-    override var nextEnabled by bindDelegate(false, { _, newValue ->
-        nextButtonTextColor = if (newValue) {
-            stepperButtonColor
-        } else {
-            stepperButtonDisabledColor
-        }
-    })
-
-    @get:Bindable
-    var nextButtonTextColor by bindDelegate(stepperButtonDisabledColor)
 
     @get:Bindable
     var completeness by bindDelegate(configBuildManager.config.completeness, { oldValue, newValue ->
@@ -62,7 +38,7 @@ class ConfigViewModel(
 
     @get:Bindable
     val configScreenCount
-        get() = ConfigAdapter.configFragmentMap.size
+        get() = 8
 
     private val stepperCallbacks = mutableSetOf<Pair<Int, StepperCallback?>>()
 
@@ -84,72 +60,7 @@ class ConfigViewModel(
             }
         }
 
-        nextEnabled = queryCallbacks(viewPager.currentItem, StepperCallback::enableNext)
     }
-
-    override fun addCallback(screen: Class<out Fragment>, callback: StepperCallback) {
-        ConfigAdapter.configFragmentMap.inverse[screen]?.let {
-            stepperCallbacks.add(Pair(it, callback))
-        }
-    }
-
-    override fun removeCallback(callback: StepperCallback) {
-        stepperCallbacks.removeAll(stepperCallbacks.filter {
-            it.second == callback
-        })
-    }
-
-    override fun enableNext(value: Boolean, screen: Class<out Fragment>) {
-        if (ConfigAdapter.configFragmentMap.inverse[screen] == completeness - 1) {
-            nextEnabled = value
-        }
-    }
-
-    override fun enableBack(value: Boolean, screen: Class<out Fragment>) {
-        if (ConfigAdapter.configFragmentMap.inverse[screen] == completeness - 1) {
-            backEnabled = value
-        }
-    }
-
-    override fun next() {
-        if (nextEnabled && queryCallbacks(viewPager.currentItem, StepperCallback::onNext)) {
-            if (completeness != configScreenCount) {
-                completeness++
-                nextEnabled = queryCallbacks(viewPager.currentItem, StepperCallback::enableNext)
-                backEnabled = true
-
-                closeKeyboard()
-                stepperStateSubject.onNext(completeness)
-            } else {
-                success()
-            }
-        }
-    }
-
-    override fun back() {
-        if (backEnabled && queryCallbacks(viewPager.currentItem, StepperCallback::onBack)) {
-            completeness--
-            backEnabled = completeness != 1
-            stepperStateSubject.onNext(completeness)
-            nextEnabled = queryCallbacks(viewPager.currentItem, StepperCallback::enableNext)
-        }
-    }
-
-    private fun queryCallbacks(page: Int, target: StepperCallback.() -> Boolean) =
-            stepperCallbacks
-                    .filter {
-                        it.first == page
-                    }
-                    .map {
-                        it.second?.let {
-                            target(it)
-                        } ?: false
-                    }
-                    .fold(true) { current, next ->
-                        current && next
-                    }
-
-    internal fun removeCallbacks() = stepperCallbacks.clear()
 }
 
 interface StepperCallback {

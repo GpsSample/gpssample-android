@@ -100,7 +100,7 @@ class RuleAssemblerViewModel(private val ruleSetId: String, val fields: List<Cus
             }
             is CustomFieldForRules.BooleanField -> {
                 val ruleName = BooleanRuleFactory.Rules.values()[selectedRuleIndex].name
-                RuleRecord(ruleSetId, selectedField!!.fieldId, ResolvedRuleRecord.Factories.BOOLEAN_FACTORY.factoryName, ruleName, (selectedFieldIndex == 0).toString())
+                RuleRecord(ruleSetId, selectedField!!.fieldId, ResolvedRuleRecord.Factories.BOOLEAN_FACTORY.factoryName, ruleName, (selectedValueIndex == 0).toString())
             }
             is CustomFieldForRules.IntegerField -> {
                 val ruleName = IntRuleFactory.Rules.values()[selectedRuleIndex].name

@@ -3,10 +3,12 @@ package org.taskforce.episample.utils
 import android.app.Activity
 import android.content.ContentResolver
 import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
 import android.net.Uri
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
@@ -176,5 +178,4 @@ fun List<ResolvedEnumerationArea>.latLngBounds(): LatLngBounds {
     boundsBuilder.includes(allLatLongs)
 
     return boundsBuilder.build()
-
 }

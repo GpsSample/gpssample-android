@@ -16,7 +16,7 @@ import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.interfaces.LiveUserSession
 import org.taskforce.episample.databinding.FragmentLoginBinding
 import org.taskforce.episample.db.StudyRoomDatabase
-import org.taskforce.episample.help.HelpActivity
+import org.taskforce.episample.help.HelpUtil
 import org.taskforce.episample.injection.CollectModule
 import org.taskforce.episample.main.MainActivity
 import org.taskforce.episample.toolbar.managers.LanguageManager
@@ -95,7 +95,7 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         fragment_login_help.setOnClickListener({
-            HelpActivity.startActivity(requireContext(), "https://github.com/EpiSample/episample-android/wiki/Welcome")
+            HelpUtil.startHelpActivity(requireContext())
         })
 
         fragment_login_language.setOnClickListener({

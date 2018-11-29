@@ -125,15 +125,6 @@ class NavigationPlanFragment : Fragment(), MapboxMap.OnMarkerClickListener, Mapb
             }
         })
 
-        navigationPlanViewModel.breadcrumbs.observe(this, Observer { breadcrumbs ->
-            mapFragment?.getMapAsync { map ->
-                val breadCrumbPath = PolylineOptions()
-                        .width(5.0F)
-                breadcrumbs?.sortedBy { it.dateCreated }?.forEach { breadCrumbPath.add(it.location.toMapboxLatLng()) }
-                map.addPolyline(breadCrumbPath)
-            }
-        })
-
         return binding.root
     }
 

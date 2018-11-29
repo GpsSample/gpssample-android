@@ -246,7 +246,7 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="nav_problem_report">Problem Report: </string>
     <string name="nav_launch_survey">LAUNCH SURVEY</string>
 
-    <string name="collect_title">%s Places Added</string>
+    <string name="collect_title_var">%s Places Added</string>
     <string name="collect_button_household">+ HOUSEHOLD</string>
     <string name="collect_button_landmark">+ LANDMARK</string>
     <string name="collect_add_text">TAKE A PICTURE</string>

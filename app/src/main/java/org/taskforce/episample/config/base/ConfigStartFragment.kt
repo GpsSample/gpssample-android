@@ -16,18 +16,11 @@ import org.taskforce.episample.auth.LoginActivity
 import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.config.transfer.TransferManager
 import org.taskforce.episample.databinding.FragmentConfigStartBinding
-import org.taskforce.episample.db.ConfigRoomDatabase
-import org.taskforce.episample.help.HelpActivity
-import org.taskforce.episample.injection.CollectModule
-import org.taskforce.episample.sync.core.DirectTransferService
-import org.taskforce.episample.sync.core.LiveDirectTransferService
+import org.taskforce.episample.help.HelpUtil
 import org.taskforce.episample.sync.ui.ReceiverSyncStatusViewModel
 import org.taskforce.episample.sync.ui.ReceiverSyncStatusViewModelFactory
 import org.taskforce.episample.toolbar.managers.LanguageManager
-import org.taskforce.episample.toolbar.viewmodels.ToolbarViewModel
 import javax.inject.Inject
-import android.content.ComponentName
-
 
 
 class ConfigStartFragment : Fragment() {
@@ -83,7 +76,7 @@ class ConfigStartFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         fragment_config_start_toolbarHelp.setOnClickListener({
-            HelpActivity.startActivity(requireContext(), "https://github.com/EpiSample/episample-android/wiki/Welcome")
+            HelpUtil.startHelpActivity(requireContext())
         })
 
         fragment_config_start_toolbarLanguage.setOnClickListener({

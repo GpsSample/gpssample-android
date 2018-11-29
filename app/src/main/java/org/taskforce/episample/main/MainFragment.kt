@@ -15,10 +15,10 @@ import org.taskforce.episample.EpiApplication
 import org.taskforce.episample.R
 import org.taskforce.episample.collection.ui.CollectFragment
 import org.taskforce.episample.config.language.LanguageService
-import org.taskforce.episample.mapbox.MapboxDownloadFragment
 import org.taskforce.episample.databinding.FragmentMainBinding
 import org.taskforce.episample.db.navigation.ResolvedNavigationPlan
-import org.taskforce.episample.help.HelpActivity
+import org.taskforce.episample.help.HelpUtil
+import org.taskforce.episample.mapbox.MapboxDownloadFragment
 import org.taskforce.episample.navigation.ui.NavigationActivity
 import org.taskforce.episample.sampling.ui.SamplingFragment
 import org.taskforce.episample.supervisor.upload.ui.StudyUploadFragment
@@ -121,7 +121,7 @@ class MainFragment : Fragment() {
         })
 
         fragment_main_toolbarHelp.setOnClickListener({
-            HelpActivity.startActivity(requireContext(), "https://github.com/EpiSample/episample-android/wiki/Welcome")
+            HelpUtil.startHelpActivity(requireContext())
         })
 
         fragment_main_toolbarLanguage.setOnClickListener({

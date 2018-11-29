@@ -18,10 +18,11 @@ import org.taskforce.episample.core.interfaces.LocationService
 import javax.inject.Inject
 
 class CollectViewModel(application: Application,
-                       languageService: LanguageService,
                        val addPoint: (Boolean) -> Unit,
                        val back: () -> Unit) : AndroidViewModel(application) {
 
+    private val resources = application.resources
+    
     @Inject
     lateinit var collectManager: CollectManager
 
@@ -44,13 +45,6 @@ class CollectViewModel(application: Application,
     private val collectDescriptionLiveData = LiveDataPair(collectManager.getEnumerations(),
             collectManager.getLandmarks())
 
-    init {
-        languageService.update = {
-            descriptionText.value = "${subjectCount.value} ${config.enumerationSubject.plural}, " +
-                    "${landmarkCount.value} ${languageService.getString(R.string.config_landmarks_title)}"
-        }
-    }
-
     private val subjectCount: LiveData<Int> = Transformations.map(collectManager.getEnumerations()) { it.size }
 
     private val landmarkCount: LiveData<Int> = Transformations.map(collectManager.getLandmarks()) { it.size }
@@ -61,13 +55,13 @@ class CollectViewModel(application: Application,
         val enumerationSubject = config.enumerationSubject
 
         "${enumerations.size} ${enumerationSubject.plural.capitalize()}, " +
-                "${landmarks.size} ${languageService.getString(R.string.config_landmarks_title)}"
+                "${landmarks.size} ${resources.getString(R.string.config_landmarks_title)}"
     } as MutableLiveData<String>
 
     val householdButtonText = ObservableField<String>("+ ${enumerationSubject.singular}")
 
     val landmarkButtonText = MutableLiveData<String>().apply {
-        value = languageService.getString(R.string.collect_button_landmark)
+        value = resources.getString(R.string.collect_button_landmark)
     }
 
     var lastKnownLocation: LatLng? = null

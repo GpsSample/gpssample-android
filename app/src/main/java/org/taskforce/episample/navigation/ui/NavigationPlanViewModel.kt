@@ -44,8 +44,6 @@ class NavigationPlanViewModel(application: Application,
         languageService.cleanup()
     }
 
-    val breadcrumbs = navigationManager.getBreadcrumbs()
-
     val navigationItems: LiveData<List<NavigationItem>> = navigationManager.getNavigationItems(navigationPlanId)
     
     val landmarks = navigationManager.getLandmarks()

@@ -28,16 +28,14 @@ import org.taskforce.episample.collection.managers.MapboxItemMarkerManager
 import org.taskforce.episample.collection.viewmodels.CollectCardViewModel
 import org.taskforce.episample.collection.viewmodels.CollectViewModel
 import org.taskforce.episample.collection.viewmodels.CollectViewModelFactory
-import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.LiveDataPair
 import org.taskforce.episample.core.interfaces.CollectItem
 import org.taskforce.episample.core.interfaces.Config
 import org.taskforce.episample.databinding.FragmentCollectBinding
-import org.taskforce.episample.help.HelpActivity
+import org.taskforce.episample.help.HelpUtil
 import org.taskforce.episample.mapbox.MapboxLayersFragment
 import org.taskforce.episample.navigation.ui.NavigationToolbarViewModel
 import org.taskforce.episample.navigation.ui.NavigationToolbarViewModelFactory
-import org.taskforce.episample.toolbar.managers.LanguageManager
 import org.taskforce.episample.utils.getCompatColor
 import org.taskforce.episample.utils.inflater
 import org.taskforce.episample.utils.toMapboxLatLng
@@ -45,10 +43,6 @@ import javax.inject.Inject
 
 class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.OnMapClickListener {
 
-    @Inject
-    lateinit var languageManager: LanguageManager
-    lateinit var languageService: LanguageService
-    
     @Inject
     lateinit var config: Config
 
@@ -74,8 +68,6 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
 
         Mapbox.getInstance(requireContext(), BuildConfig.MAPBOX_ACCESS_TOKEN)
 
-        languageService = LanguageService(languageManager)
-
         collectIconFactory = CollectIconFactory(requireContext().resources)
 
         breadcrumbPath = PolylineOptions()
@@ -83,7 +75,6 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
         collectViewModel = ViewModelProviders.of(this@CollectFragment,
                 CollectViewModelFactory(
                         requireActivity().application,
-                        languageService,
                         {
                             showCollectAddScreen(it)
                         },
@@ -123,7 +114,7 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
         (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
 
         adapter = CollectItemAdapter(CollectIconFactory(requireContext().resources),
-                languageService.getString(R.string.collect_incomplete),
+                getString(R.string.collect_incomplete),
                 collectViewModel.config.displaySettings
         ) {
             showItemDetailsScreen(it)
@@ -136,18 +127,12 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
                 val sortedItems = items.sortedByDescending { it.dateCreated }
                 adapter?.data = sortedItems
 
-                val titleText = languageService.getString(R.string.collect_title, "${items.size}")
+                val titleText = String.format(getString(R.string.collect_title_var), "${items.size}")
                 collectTitle.text = titleText
 
                 markerManager.addMarkerDiff(items)
             }
         })
-
-//        LiveDataPair(markerManagerLiveData, collectViewModel.gpsBreadcrumbs).observe(this, Observer {
-//            it?.let { (markerManager, breadcrumbs) ->
-//                markerManager.setBreadcrumbs(breadcrumbs)
-//            }
-//        })
 
         binding.setLifecycleOwner(this)
 
@@ -257,7 +242,7 @@ class CollectFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMap.O
                 }
             }
             R.id.action_help -> {
-                HelpActivity.startActivity(requireContext(), "https://github.com/EpiSample/episample-android/wiki/Welcome")
+                HelpUtil.startHelpActivity(requireContext())
             }
         }
         return true

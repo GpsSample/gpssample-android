@@ -12,12 +12,10 @@ import org.taskforce.episample.config.language.LanguageService
 import org.taskforce.episample.core.interfaces.EnumerationSubject
 
 class CollectViewModelFactory(private val application: Application,
-                              private val languageService: LanguageService,
                               private val addPoint: (Boolean) -> Unit,
                               private val back: () -> Unit) : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return CollectViewModel(application,
-                languageService,
                 addPoint,
                 back) as T
     }

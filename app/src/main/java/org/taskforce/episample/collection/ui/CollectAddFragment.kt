@@ -45,7 +45,7 @@ import org.taskforce.episample.core.util.FileUtil
 import org.taskforce.episample.databinding.FragmentCollectAddBinding
 import org.taskforce.episample.db.config.customfield.CustomDateType
 import org.taskforce.episample.db.config.customfield.metadata.DateMetadata
-import org.taskforce.episample.help.HelpActivity
+import org.taskforce.episample.help.HelpUtil
 import org.taskforce.episample.mapbox.MapboxLayersFragment
 import org.taskforce.episample.navigation.ui.NavigationToolbarViewModel
 import org.taskforce.episample.navigation.ui.NavigationToolbarViewModelFactory
@@ -365,7 +365,7 @@ class CollectAddFragment : Fragment() {
                 }
             }
             R.id.action_help -> {
-                HelpActivity.startActivity(requireContext(), "https://github.com/EpiSample/episample-android/wiki/Welcome")
+                HelpUtil.startHelpActivity(requireContext())
             }
         }
         return true

@@ -5,15 +5,24 @@ import android.app.Activity
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.*
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
+import android.content.Intent
+import android.content.SharedPreferences
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import com.mapbox.mapboxsdk.annotations.Marker
 import com.mapbox.mapboxsdk.annotations.PolylineOptions
@@ -144,6 +153,10 @@ class NavigationFragment : Fragment(), MapboxMap.OnMarkerClickListener, MapboxMa
                     lastKnownLocation = latLng.toMapboxLatLng()
                 }
             }
+        })
+
+        markerManagerLiveData.observe(this, Observer { markerManager ->
+            markerManager?.addEnumerationAreas(navigationViewModel.config.enumerationAreas)
         })
 
         return binding.root

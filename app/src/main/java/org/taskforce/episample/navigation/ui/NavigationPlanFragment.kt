@@ -11,10 +11,14 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.annotations.Marker
-import com.mapbox.mapboxsdk.annotations.PolylineOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
@@ -186,6 +190,10 @@ class NavigationPlanFragment : Fragment(), MapboxMap.OnMarkerClickListener, Mapb
             locationPair?.let { (location, _) ->
                 adapter?.location?.postValue(location.toMapboxLatLng())
             }
+        })
+
+        markerManagerLiveData.observe(this, Observer { markerManager ->
+            markerManager?.addEnumerationAreas(navigationPlanViewModel.config.enumerationAreas)
         })
 
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)

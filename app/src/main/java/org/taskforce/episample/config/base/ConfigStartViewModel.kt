@@ -1,20 +1,25 @@
 package org.taskforce.episample.config.base
 
 import android.app.Application
-import android.arch.lifecycle.*
+import android.arch.lifecycle.AndroidViewModel
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.Transformations
 import android.databinding.ObservableField
 import android.view.View
 import org.taskforce.episample.config.transfer.TransferManager
 import org.taskforce.episample.core.LiveDataPair
+import org.taskforce.episample.core.util.FileUtil
 import org.taskforce.episample.db.ConfigRepository
 import org.taskforce.episample.db.StudyRepository
 import org.taskforce.episample.db.config.Config
-
 
 class ConfigStartViewModel(application: Application,
                            val createNewConfiguration: () -> Unit,
                            val showAllConfigurations: () -> Unit,
                            val signIn: (Config, String) -> Unit,
+                           val confirmDelete: () -> Unit,
                            transferManager: TransferManager) : AndroidViewModel(application) {
 
     val configRepository = ConfigRepository(getApplication())
@@ -77,6 +82,20 @@ class ConfigStartViewModel(application: Application,
             study.value?.let { study ->
                 val studyConfig = configs.first { it.id == study.configId }
                 signIn.invoke(studyConfig, study.id)
+            }
+        }
+    }
+
+    fun confirmDelete(view: View) {
+        confirmDelete.invoke()
+    }
+
+    fun deleteStudy() {
+        studyConfigs.value?.let { configs ->
+            study.value?.let { study ->
+                val studyConfig = configs.first { it.id == study.configId }
+                FileUtil.deleteAllImages(getApplication())
+                studyRepository.deleteStudy(study, studyConfig)
             }
         }
     }

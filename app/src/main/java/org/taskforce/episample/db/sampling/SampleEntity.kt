@@ -2,15 +2,17 @@ package org.taskforce.episample.db.sampling
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.ForeignKey
 import android.arch.persistence.room.PrimaryKey
 import android.arch.persistence.room.TypeConverters
 import org.taskforce.episample.db.converter.DateConverter
-import java.util.*
+import java.util.Date
+import java.util.UUID
 
 @Entity(tableName = "samples",
         foreignKeys = [
             (android.arch.persistence.room.ForeignKey(
-                    entity = org.taskforce.episample.db.config.Study::class, parentColumns = ["id"], childColumns = ["study_id"]
+                    entity = org.taskforce.episample.db.config.Study::class, parentColumns = ["id"], childColumns = ["study_id"], onDelete = ForeignKey.CASCADE
             ))
         ])
 @TypeConverters(DateConverter::class)

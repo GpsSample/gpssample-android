@@ -187,6 +187,13 @@ class FileUtil {
                 fileOut?.close()
             }
         }
+
+        fun deleteAllImages(context: Context) {
+            val images = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).listFiles().map {
+                it
+            }
+            delete(images)
+        }
     }
 
 }

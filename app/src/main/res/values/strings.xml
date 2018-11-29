@@ -197,6 +197,9 @@ If the file contains data for Admin as well, the language will be immediately ac
     <string name="study_title">Current Study</string>
     <string name="study_date">Created %s</string>
     <string name="study_sign_in">SIGN IN</string>
+    <string name="study_delete">DELETE</string>
+    <string name="study_delete_confirm">Are you sure you want to delete this study? This action cannot be reversed.</string>
+    <string name="study_delete_title">Delete Study</string>
     <string name="study_edit_config">EDIT SETTINGS</string>
     <string name="study_name">Study Name</string>
     <string name="study_password">Study Password</string>

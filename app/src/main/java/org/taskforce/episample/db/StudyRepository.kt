@@ -6,7 +6,6 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import android.content.res.Resources
 import android.os.AsyncTask
-import android.util.Log
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -21,7 +20,12 @@ import org.taskforce.episample.db.collect.Enumeration
 import org.taskforce.episample.db.collect.GpsBreadcrumb
 import org.taskforce.episample.db.collect.Landmark
 import org.taskforce.episample.db.collect.ResolvedEnumeration
-import org.taskforce.episample.db.config.*
+import org.taskforce.episample.db.config.Config
+import org.taskforce.episample.db.config.ConfigDao
+import org.taskforce.episample.db.config.ResolvedConfig
+import org.taskforce.episample.db.config.ResolvedConfigDao
+import org.taskforce.episample.db.config.Study
+import org.taskforce.episample.db.config.StudyDao
 import org.taskforce.episample.db.config.customfield.CustomFieldValue
 import org.taskforce.episample.db.filter.ResolvedRuleSet
 import org.taskforce.episample.db.navigation.NavigationDao
@@ -35,7 +39,7 @@ import org.taskforce.episample.sync.core.EnumerationsReceivedMessage
 import org.taskforce.episample.sync.core.StudyReceivedMessage
 import org.taskforce.episample.utils.toDBEnumeration
 import org.taskforce.episample.utils.toDBLandmark
-import java.util.*
+import java.util.UUID
 import kotlin.concurrent.thread
 
 class StudyRepository(val application: Application, injectedDatabase: StudyRoomDatabase? = null) {
@@ -120,6 +124,17 @@ class StudyRepository(val application: Application, injectedDatabase: StudyRoomD
 
     fun getStudy(): LiveData<Study?> {
         return study
+    }
+
+    fun deleteStudy(study: Study, config: Config) {
+        studyDao.value?.let { studyDao ->
+            thread {
+                configDao.value?.let {  configDao ->
+                    configDao.delete(config) // Need to also delete the copied Config that was saved with the Study
+                    studyDao.delete(study)
+                }
+            }
+        }
     }
 
     fun getConfig(configId: String): LiveData<Config> {
@@ -268,7 +283,7 @@ class StudyRepository(val application: Application, injectedDatabase: StudyRoomD
     fun getNumberOfSamples(studyId: String): LiveData<Int> = studyDao.value!!.getNumberOfSamples(studyId)
     fun getWarnings(studyId: String): LiveData<List<WarningEntity>> = studyDao.value!!.getWarnings(studyId)
     fun getSample(studyId: String): LiveData<SampleEntity?> = studyDao.value!!.getSample(studyId)
-    fun getNumberOfEnumerationsInSample(studyId: String): LiveData<Int>  = studyDao.value!!.getNumberOfEnumerationsInSample(studyId)
+    fun getNumberOfEnumerationsInSample(studyId: String): LiveData<Int> = studyDao.value!!.getNumberOfEnumerationsInSample(studyId)
     fun deleteSamples() = studyDao.value!!.deleteSamples()
     fun createNavigationPlans(sampleEntity: SampleEntity, numberOfNavigationPlansToMake: Int) {
         val dao = studyDao.value!!
@@ -339,7 +354,7 @@ private class CreateSampleTask(private val studyDao: StudyDao, val resources: Re
             val ruleSets = config.methodology.ruleSets
             val enumerations = studyDao.getValidEnumerationsSync(studyId)
             val enumerationsForRuleSets: List<Pair<ResolvedRuleSet, List<ResolvedEnumeration>>> = ruleSets.map { ruleSet ->
-                val filteredEnumerationsForRuleSet = when(ruleSet.isAny) {
+                val filteredEnumerationsForRuleSet = when (ruleSet.isAny) {
                     true -> ruleSet.filter.filterAny(enumerations)
                     false -> ruleSet.filter.filterAll(enumerations)
                 }
@@ -348,7 +363,7 @@ private class CreateSampleTask(private val studyDao: StudyDao, val resources: Re
             val warnings = mutableListOf<String>()
             val totalPopulationForSampling: List<ResolvedEnumeration> = enumerationsForRuleSets.map { (ruleSet, filteredEnumerationsForRuleSet) ->
                 val amount: Int = when (samplingMethodology.units) {
-                    SamplingUnits.PERCENT -> Math.ceil(ruleSet.sampleSize/100.0 * filteredEnumerationsForRuleSet.size).toInt()
+                    SamplingUnits.PERCENT -> Math.ceil(ruleSet.sampleSize / 100.0 * filteredEnumerationsForRuleSet.size).toInt()
                     SamplingUnits.FIXED -> ruleSet.sampleSize
                 }
                 val sample = when (samplingMethodology.type) {
@@ -425,7 +440,6 @@ private class InsertBreadcrumbTask(private val studyDao: StudyDao) : AsyncTask<P
         return null
     }
 }
-
 
 private data class InsertStudyInput(val name: String,
                                     val password: String,

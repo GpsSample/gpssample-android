@@ -1,7 +1,10 @@
 package org.taskforce.episample.config.base
 
+import android.app.AlertDialog
 import android.arch.lifecycle.ViewModelProviders
+import android.content.DialogInterface
 import android.content.Intent
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.provider.Settings
 import android.support.v4.app.Fragment
@@ -45,32 +48,47 @@ class ConfigStartFragment : Fragment() {
         lifecycle.addObserver(syncStatusViewModel.directTransferService)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
-            FragmentConfigStartBinding.inflate(inflater).apply {
-                setLifecycleOwner(this@ConfigStartFragment)
-                languageService = LanguageService(languageManager)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val binding = DataBindingUtil.inflate<FragmentConfigStartBinding>(inflater, R.layout.fragment_config_start, container, false)
 
-                vm = ViewModelProviders.of(this@ConfigStartFragment, ConfigStartViewModelFactory(
-                        requireActivity().application,
-                        {
-                            BuildConfigActivity.startActivity(this@ConfigStartFragment.requireContext())
-                        },
-                        {
-                            requireActivity().supportFragmentManager.beginTransaction()
-                                    .replace(R.id.configFrame, ConfigAllFragment())
-                                    .addToBackStack(ConfigAllFragment::class.java.name)
-                                    .commit()
-                        },
-                        { config, studyId ->
-                            LoginActivity.startActivity(requireContext(), config.id, studyId)
-                            requireActivity().finish()
-                        },
-                        transferManager
-                )).get(ConfigStartViewModel::class.java)
+        binding.setLifecycleOwner(this@ConfigStartFragment)
+        binding.languageService = LanguageService(languageManager)
 
-                syncVm = syncStatusViewModel
-                setLifecycleOwner(this@ConfigStartFragment)
-            }.root
+        binding.vm = ViewModelProviders.of(this@ConfigStartFragment, ConfigStartViewModelFactory(
+                requireActivity().application,
+                {
+                    BuildConfigActivity.startActivity(this@ConfigStartFragment.requireContext())
+                },
+                {
+                    requireActivity().supportFragmentManager.beginTransaction()
+                            .replace(R.id.configFrame, ConfigAllFragment())
+                            .addToBackStack(ConfigAllFragment::class.java.name)
+                            .commit()
+                },
+                { config, studyId ->
+                    LoginActivity.startActivity(requireContext(), config.id, studyId)
+                    requireActivity().finish()
+                },
+                {
+                    AlertDialog.Builder(requireContext())
+                            .setTitle(R.string.study_delete_title)
+                            .setMessage(R.string.study_delete_confirm)
+                            .setPositiveButton(R.string.delete) { dialog: DialogInterface, _: Int ->
+                                binding.vm?.deleteStudy()
+                                dialog.dismiss()
+                            }
+                            .setNeutralButton(R.string.cancel) { dialog: DialogInterface, _: Int ->
+                                dialog.dismiss()
+                            }
+                            .show()
+                },
+                transferManager
+        )).get(ConfigStartViewModel::class.java)
+
+        binding.syncVm = syncStatusViewModel
+
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
